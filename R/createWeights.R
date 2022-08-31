@@ -1,15 +1,18 @@
 #See CBPS documentation for more detail: https://cran.r-project.org/web/packages/CBPS/CBPS.pdf
 
-#' Title
+#' createWeights
 #'
-#' @return
+#' @return weights_models
 #' @export
 #' @importFrom CBPS CBPS
 #' @importFrom CBPS balance
-#' @importFrom data.tabe setDT
-#'
+#' @importFrom data.table setDT
+#' @importFrom ggplot2
+#' @param wide_long_datasets from formatForWeights
+#' @param forms from createForms
 #' @param exposures list of exposures
 #' @param time_pts list of time points
+#' @param m number of imputations from Amelia
 #' @param balance_thresh correlation value above which covariates are not considered balanced with respect to expsure
 #' @param ATT CBPS parameter 1= average treatment effect on the treated, 0=average treatment effect
 #' @param iteraetions CBPS parameter for maximum number of number of iterations for optimization
@@ -23,14 +26,16 @@
 
 #' @examples
 #'
-createWeights <-function(exposures, time_pts, balance_thresh=0.12, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL){
+createWeights <-function(wide_long_datasets,forms, exposures, time_pts, m, balance_thresh=0.12, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL){
 
   ####Fit CBPS for all treatments and time points using forms created above for each imputed dataset, each tx, and each time point. Creates variables fit_k_treat for each imputed dataset. Also saves out balance checking image, histogram, and weights when PLOT_CODE is set to "yes" to 'weights' folder.
 
+  weights_models=list()
   #Cycles through imputed datasets
-  for (k in 1:5){
+  for (k in 1:m){
 
-    MSMDATA=get(paste("imp", k, "_widelong", sep="")) #reads in widelong imputed data
+    # MSMDATA=get(paste("imp", k, "_widelong", sep="")) #reads in widelong imputed data
+    MSMDATA=wide_long_datasets[[paste("imp", k, "_widelong", sep="")]]
 
     #cycles through exposures
     for (y in 1:length(exposures)){
@@ -43,7 +48,8 @@ createWeights <-function(exposures, time_pts, balance_thresh=0.12, ATT=0, iterat
         #references newly ordered time variable (1:n(time_pts))
         new_time=as.numeric(c(1:length(time_pts))[x])
 
-        form=get(paste("form_", exposure, "_", time, sep="")) #pulls appropriate form
+        # form=get(paste("form_", exposure, "_", time, sep="")) #pulls appropriate form
+        form=forms[[paste("form_", exposure, "_", time, sep="")]]
 
         #Order by time
         MSMDATA <- MSMDATA[order(MSMDATA$WAVE),]
@@ -53,60 +59,45 @@ createWeights <-function(exposures, time_pts, balance_thresh=0.12, ATT=0, iterat
           dplyr::filter(WAVE==as.numeric(new_time))
 
         #Use the CBPS continuous version of this function to generate weights
-        fit <- CBPS(form, data=MSMDATA_temp, ATT=ATT, iterations = iterations,
+        fit <- CBPS::CBPS(form, data=MSMDATA_temp, ATT=ATT, iterations = iterations,
                     standardize = standardize, method = method, twostep = twostep, #twostep=false does continuous updating
                     sample.weights = sample.weights, baseline.formula = NULL,
                     diff.formula = NULL)
 
-        return(assign(paste("fit_", k, "_", exposure, "_", time, sep=""), fit))
+        # return(assign(paste("fit_", k, "_", exposure, "_", time, sep=""), fit))
+        weights_models[[paste("fit_", k, "_", exposure, "_", time, sep="")]] <-fit
 
         #saves out fit objects made by CBPS so user can re-load at later time
-        saveRDS(get(paste("fit_", k, "_", treat, "_", time, sep="")), file = paste(paste0(home_dir, "weight fits/fit_", k, "_", treat, "_", time, ".rds", sep="")))
-        print("Weights objects have been saved in the 'weight fits' folder so you can access them later")
+        saveRDS(fit, file = paste(paste0(home_dir, "weight fits/fit_", k, "_", exposure, "_", time, ".rds", sep="")))
+        message("Weights model objects have been saved in the 'weight fits' folder so you can access them later")
 
         #get weights from output
-        weights=as.data.frame(cbind(MSMDATA_temp$s_id, fit$weights))
-
-        #Writes image to balance check in imp folder
-        jpeg(filename=paste(homedir, "balance/Balance_", exposure, "_", time, "_",k, ".jpg", sep=""), width=480,height=480)
-        plot(fit, covars = NULL, silent = FALSE, boxplot = TRUE)
-        dev.off()
-
-        print("Please check for successful balancing using the images in the 'balance' folder")
-
-
-        #added by IS 3.21.20 for more formal balance checking (prints out which variables are unbalanced)
-
-        #assessing balance and determining unbalanced covariates (i.e., those still correlated above 0.12)
-
-        balance=balance(fit)
-        balance=as.data.frame(balance$balanced)
-        balance=as.data.frame(balance)
-        balance=setDT(balance, keep.rownames = TRUE)[]
-        unbalanced_vars=balance[abs(balance$`Pearson Correlation`)>balance_thresh,] #0.12 corr default threshold
-
-        #returns covariates that remain associated with exposure
-        return(assign(paste("unbalanced_vars", exposure, "_", time, "_", k, sep=""), unbalanced_vars))
-
-        #writes out list of unbalanced variables
-        write.csv(x=as.data.frame(unbalanced_vars), file=paste(home_dir, "balance/unbalanced_vars_", exposure, "_", time,"_",k, ".csv", sep=""))
-        unbalanced_vars=NULL
-
-
-        # #Writes image of histogram of weights to assess heavy tails
-        ggplot(data=as.data.frame(fit$weight), aes(x = fit$weight)) +
-          geom_histogram(color = 'black', bins = 15)
-        ggsave(paste("Hist_", exposure, "_", time, "_", k, ".png", sep=""), path=paste0(home_dir, "weights/", height=8, width=14))
+        weights=as.data.frame(cbind(MSMDATA_temp[,colnames(MSMDATA_temp)==ID], fit$weights))
 
         #Save weights
         write.csv(x=as.data.frame(fit$weights), file=paste(home_dir, "weights/weights_", exposure, "_", time, "_", k, ".csv", sep=""))
-
         #Save weights merged with ID variable
-        write.csv(x=as.data.frame(wights), file=paste(home_dir, "weights/weights_id_", exposure, "_", time,"_",k, ".csv", sep=""))
+        write.csv(x=as.data.frame(weights), file=paste(home_dir, "weights/weights_id_", exposure, "_", time,"_",k, ".csv", sep=""))
+        message("Weights have now been saved into the 'weights' folder")
+
+        # #Writes image of histogram of weights to assess heavy tails
+        ggplot2::ggplot(data=as.data.frame(fit$weight), aes(x = fit$weight)) +
+          geom_histogram(color = 'black', bins = 15)
+        ggplot2::ggsave(paste("Hist_", exposure, "_", time, "_", k, ".png", sep=""), path=paste0(home_dir, "weights/"), height=8, width=14)
+        message("Weights histograms have now been saved in the 'weights' folder --likely have heavy tails")
+
+
+        #Writes image to balance check
+        jpeg(filename=paste(home_dir, "balance/Balance_", exposure, "_", time, "_",k, ".jpg", sep=""), width=480,height=480)
+        plot(fit, covars = NULL, silent = FALSE, boxplot = TRUE)
+        dev.off()
+        message("Balancing figures have now been saved into the 'balance' folder")
 
       }
     }
   }
+
+  return(weights_models)
 }
 
 
