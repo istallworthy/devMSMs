@@ -1,10 +1,13 @@
 
-#This function assess the data structure including time points, identifiers, and potential covariates.
-#' Title
+#This function creates the required directories, assesses the data structure including time points, identifiers, and potential covariates.
+#' assessDataStruct
 #'
-#' @param data
-#'
-#' @return
+#' @param data_path path to cleaned dataset
+#' @param home_dir path to home directory for the project
+#
+
+#' @return time_pt_datasets list of datasets segmented by time point
+
 #' @export
 #' @importFrom readr read_csv
 #' @importFrom dplyr
@@ -13,7 +16,9 @@
 #'
 
 #This function requires a clean dataset in long format that contain columns for ID, time, exposure, outcome, and potential covariate confounds
-assessDataStruct <-function(data_path, home_dir, ID, time_pts, time_var, missing, exposures, outcomes){
+formatDataStruct <-function(data_path, home_dir, factor_covariates){
+
+  options(readr.num_columns = 0)
 
   #creating all necessary directories within the home directory
   if(dir.exists(paste0(home_dir, "imputations/"))==F){dir.create(paste0(home_dir, "imputations/"))}
@@ -25,24 +30,39 @@ assessDataStruct <-function(data_path, home_dir, ID, time_pts, time_var, missing
   if(dir.exists(paste0(home_dir, "forms/"))==F){dir.create(paste0(home_dir, "forms/"))}
   if(dir.exists(paste0(home_dir, "balance/"))==F){dir.create(paste0(home_dir, "balance/"))}
 
-
-  #reading and formatting dataset
-  data=as.data.frame(readr::read_csv(data_path))
+  #reading and formatting LONG dataset
+  data=as.data.frame(readr::read_csv(data_path), col_types=cols(), show_col_types=FALSE)
   colnames(data)[colnames(data)==time_var] <- "WAVE"
   data[data == missing] <- NA
   data[,factor_covariates] <- lapply(data[,factor_covariates] , factor)
 
+  return(data)
+}
 
-  #identifying potential covariates (time-varying and time invariant)
-  potential_covariates=colnames(data)[colnames(data) %in% (c(ID, "WAVE", exposures, outcomes))==FALSE]
 
-  #creating dataset for each time point
+#' makeTimePtDatasets
+#'
+#' @param ID
+#' @param time_pts
+#' @param time_var
+#' @param missing
+#' @param exposures
+#' @param outcomes
+#'
+#' @return
+#' @export
+#'
+#' @examples
+makeTimePtDatasets <-function(data, ID, time_pts, time_var, missing, exposures, outcomes){
+  #creating dataset for each time point and store in a list
   data_list={}
+  time_pt_datasets=list()
   for (t in 1:length(time_pts)){
     assign(paste0("Data_", time_pts[t]), data%>% dplyr::filter(WAVE==time_pts[t]))
+    time_pt_datasets[[paste0("Data_", time_pts[t])]] <-data%>% dplyr::filter(WAVE==time_pts[t])
     data_list=c(data_list, paste0("Data_", time_pts[t]))
   }
 
-  return(data, potential_covariates)
+  return(time_pt_datasets)
 
 }
