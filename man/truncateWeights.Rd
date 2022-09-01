@@ -6,12 +6,15 @@
 \usage{
 truncateWeights(
   data_for_model_with_weights,
+  home_dir,
   exposures,
   percentile_cutoff = 0.9
 )
 }
 \arguments{
 \item{data_for_model_with_weights}{output from condenseWeights}
+
+\item{home_dir}{path to home directory for the project}
 
 \item{exposures}{list of variables that represent your exposures/treatments of interest}
 

@@ -10,7 +10,6 @@
 #' @param time_pts identifier
 #' @param time_var_exclude list any time-varying variables that should not be present because of planned missingness design
 #' @param just_imputed "yes"= you have imputed datasets in global environment or "no" but they are saved locally from previous run
-
 #' @return wide_long_datasets
 #' @export
 #' @importFrom readr read_csv
@@ -86,7 +85,7 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
 
   }
 
-  message("Inspect the list above of time-varying covariates and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' and re-running")
+  print("USER ALERT: Inspect the list above of time-varying covariates and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' and re-running")
   # print(time_varying_wide)
 
 
@@ -115,7 +114,7 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
   #Create long/wide hybrid: merge this newly created wide dataset with long dataset
   # data_for_model=merge(imp, imp_wide, by="s_id", all.x=T) #dont delete rows
   write.csv(imp_wide, paste0(home_dir, "data_for_final_model.csv"))
-  message("Saved out dataset for final modeling as a csv file in home directory")
+  print("Saved out dataset for final modeling as a csv file in home directory")
 
 
   return(wide_long_datasets)

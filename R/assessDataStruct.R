@@ -52,12 +52,14 @@ formatDataStruct <-function(data_path, home_dir, missing, factor_covariates) {
 #' @importFrom dplyr filter
 #' @examples
 makeTimePtDatasets <-function(data, ID, time_pts, time_var, missing, exposures, outcomes){
+  require(dplyr)
   #creating dataset for each time point and store in a list
   data_list={}
   time_pt_datasets=list()
   for (t in 1:length(time_pts)){
-    assign(paste0("Data_", time_pts[t]), data%>% dplyr::filter(WAVE==time_pts[t]))
-    time_pt_datasets[[paste0("Data_", time_pts[t])]] <-data%>% dplyr::filter(WAVE==time_pts[t])
+    # assign(paste0("Data_", time_pts[t]), data%>% dplyr::filter(WAVE==time_pts[t]))
+    time_pt_datasets[[paste0("Data_", time_pts[t])]] <-data%>%
+      dplyr::filter(WAVE==time_pts[t])
     data_list=c(data_list, paste0("Data_", time_pts[t]))
   }
 

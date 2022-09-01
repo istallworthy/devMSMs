@@ -48,7 +48,6 @@ outcome_time_pts=54
 
 ### 1. Define your causal question 
 Prints the causal questions you wish to answer using MSMs
-
 ```{r}
 
 defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
@@ -57,8 +56,7 @@ defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
 
 
 ### 2. Format data & identify potential covariate confounding variables within the data provided
-These functions requires a clean dataset in long format that contains columns for ID, time, exposure, outcome, and all potential covariate confounds as columns. 
-
+These functions requires a clean dataset in long format that contains columns for ID, time, exposure, outcome, and all potential covariate confounds as columns.
 ```{r}
 #list any covariates that are factors here 
 factor_covariates=c("NC","TcSex2", "TcBlac2") 
@@ -99,7 +97,7 @@ Create m imputed datasets using the Amelia package and functions and weights wil
 ```{r}
 
 #list continous variables here; all others assumed ordinal for imputation 
-continuous_variables=c("GrosPay1", "SwghtLB", "RMomAgeU", "RMAge1st", "RWghtLb", "IBQDnovm", "MDI", "INR", "WIND", "ECBQ", "HOMEETA1", "CTSETA1", "ESETA1", "pcx_sensitive", "pcx_pos", "pcx_neg", "pcx_engaged", "pcx_sensitive", "SHCircCm", "pcx_CompTwo", "pcx_pomd", "pcx_nomd", "pcx_qrel", "BSI")
+continuous_variables=c("GrosPay1", "SwghtLB", "RMomAgeU", "RMAge1st", "RWghtLb", "IBQDnovm", "MDI", "INR", "WIND", "ECBQ", "HOMEETA1", "CTSETA1", "ESETA1", "pcx_sensitive", "pcx_pos", "pcx_neg", "pcx_engaged", "pcx_sensitive", "SHCircCm", "pcx_CompTwo", "pcx_pomd", "pcx_nomd", "pcx_qrel", "BSI", "AGE")
 
 imputed_datasets= imputeData(home_dir, ID, data_to_impute, continuous_variables, m=2, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
@@ -113,7 +111,7 @@ Making sure imputed datasets have the appropriate variables and are formatted in
 time_var_exclude=c("WIND.1", "WIND.24", "BSI.35", "pcx_CompTwo.6", "pcx_CompTwo.1", "pcx_CompTwo.2", "pcx_CompTwo.35")
 
 #creates wide/long datasets for each imputation. if you have just created imputations in the global environment, select just_imputed="yes", otherwise "no" will indicate to read them in from local storage
-wide_long_datasets=formatForWeights(ID, home_dir, m, data, imputed_datasets, time_varying_covariates, time_pts, time_var_exclude, just_imputed="yes")
+wide_long_datasets=formatForWeights(ID, home_dir, m, data, imputed_datasets, time_varying_covariates, time_pts, time_var_exclude, just_imputed="no")
 
 ```
 
@@ -139,9 +137,10 @@ weights_models=createWeights(wide_long_datasets,forms, exposures, time_pts, m,  
 ```
 
 ### 8. Assess balance and determine variables for which balance could not be achieved for use as covariates in final model
+This code evaluates which covariates are still correlated with exposures above the designated threshold (i.e., for which balancing was not successful), after averaging across imputed datasets and time points, and saves out a list of those covariates to include in your final model. 
 ```{r}
 
-assessBalance(home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no")
+unbalanced_covariates_for_models=assessBalance(home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no")
 
 ```
 

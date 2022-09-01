@@ -91,7 +91,7 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
 
   data_for_model_with_weights=merge(data_for_model, all_weights, by=ID, all.x=T)
   write.csv(data_for_model_with_weights, paste0(home_dir, "final weights/data_for_model_with_weights.csv"))
-  print("Final dataset including weights for each treatment is now saved in the 'final weights' folder as a csv file")
+  print("USER ALERT: Final dataset including weights for each treatment is now saved in the 'final weights' folder as a csv file")
 
   return(data_for_model_with_weights)
 

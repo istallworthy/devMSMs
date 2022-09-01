@@ -54,15 +54,15 @@ identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pt
 
   #Loop through different time point datasets and determine all correlations at each time point
   # and populate them all into covariate_correlations
-
+  # browser()
   #generates all correlations above 0.1 for all data variables in dataset
   covariate_correlations={}
   for (x in 1:length(time_pts)){
     time_pt=time_pts[x]
     # d=get(paste("Data_", time_pt, sep=""))
     d=time_pt_datasets[[x]] #gathers data at given time point
-    # d <- lapply(data, function(x) as.numeric(x))
-    # c <-suppressWarnings(cor(as.matrix(d), use="p"))
+    d=d[,3:ncol(d)]
+    d=as.data.frame(lapply(d, as.numeric))
     c <- suppressWarnings(Hmisc::rcorr(as.matrix(d))) #makes corr table of all vars; cannot have dates or non-factored characters
     c=flattenCorrMatrix(c$r, c$P)
     filtered=c%>%
@@ -73,9 +73,11 @@ identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pt
     c=NULL
   }
 
+
+
   #save out correlations
   write.csv(covariate_correlations, paste0(home_dir, "balance/covariate_correlations.csv"))
-  message("Check the 'balance' folder to view a csv file of all correlations between covariates and exposures/outcomes > 0.1")
+  print("Check the 'balance' folder to view a csv file of all correlations between covariates and exposures/outcomes > 0.1")
 
   #for each exposure, list correlated covariates that include only that exposure and/or outcomes of interest
   variables_to_include=c(ID, "WAVE", exposures, outcomes)
@@ -138,12 +140,12 @@ dataToImpute <-function(ID, data, exposures, outcomes, covariates_to_include, ex
   View_hi_corr_covars=hi_corr_covars%>%
     filter(abs(hi_corr_covars$cor)>0.6)
 
-  message("To simplify the balancing models consider removing any highly correlated, redundant covariates by listing them in the 'exclude_covariates' field above and re-running this function:")
+  print("USER ALERT: To simplify the balancing models consider removing any highly correlated, redundant covariates by listing them in the 'exclude_covariates' field above and re-running this function:")
   print(knitr::kable(View_hi_corr_covars))
 
   data_to_impute=data2
   write.csv(data_to_impute, paste0(home_dir, "imputations/data_to_impute.csv"))
-  message("See the 'imputations' folder for a csv file of the data to be imputed")
+  print("See the 'imputations' folder for a csv file of the data to be imputed")
 
   return(data_to_impute)
 }

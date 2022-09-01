@@ -36,6 +36,8 @@ createWeights(
 
 \item{ATT}{CBPS parameter 1= average treatment effect on the treated, 0=average treatment effect}
 
+\item{iterations}{CBPS parameter for maximum number of number of iterations for optimization}
+
 \item{standardize}{CBPS parameter for whether weights should be normalized to sum to 1; F returns Horvitz-Thompson weights}
 
 \item{method}{CBPS parameter "exact"= fit a model that contains only covariate balancing conditions, "over"= over-identified model}
@@ -45,8 +47,6 @@ createWeights(
 \item{sample.weights}{CBPS parameter for survey sampling weights for obs, NULL defaults to sampling weight of 1 for each observation}
 
 \item{diff.formula}{CBPS parameter for iCBPS, only works with binary treatments}
-
-\item{iteraetions}{CBPS parameter for maximum number of number of iterations for optimization}
 
 \item{baseline.formula}{CBPS parameter for iCBPS, only works with binary treatments}
 }

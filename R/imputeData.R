@@ -50,7 +50,7 @@ imputeData <- function(home_dir, ID, data_to_impute, continuous_variables, m=5, 
   for (k in 1:m){
     write.csv(imputed_datasets[[paste0("imp", k)]], file=paste0(home_dir,"imputations/imp", k,".csv"))
   }
-  message("See the 'imputations' folder for a csv file of each imputed dataset ")
+  print("See the 'imputations' folder for a csv file of each imputed dataset ")
 
   return(imputed_datasets)
 

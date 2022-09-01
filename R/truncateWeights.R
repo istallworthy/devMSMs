@@ -15,17 +15,21 @@
 #'
 truncateWeights <-function(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90){
 
+  data_for_model_with_weights_cutoff=data_for_model_with_weights
   #creating truncated weights at 90th percentile for sensitivity analyses; changed to top coding to avoid exclusion
   #loops through all treatments and creates tx_weight_cutoff variable: replaces any weights above the 90th quantile with the 90th quantile value
   for (t in 1:length(exposures)){
     exposure=exposures[t]
     new_var=paste0(exposure, "_weight_cutoff")
-    data_for_model_with_weights_cutoff=data_for_model_with_weights%>%
+    cutoff_weights=data_for_model_with_weights%>%
       dplyr::mutate(!!new_var := ifelse(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "_weight")]<
                                           quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "_weight")], probs=percentile_cutoff),
                                         data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "_weight")],
                                         quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "_weight")], probs=percentile_cutoff)
-      ) )
+      ) )%>%dplyr::select(all_of(new_var))
+
+    data_for_model_with_weights_cutoff=cbind(data_for_model_with_weights_cutoff, cutoff_weights)
+
 
     #print histogram of new weights
     ggplot2::ggplot(data=as.data.frame(data_for_model_with_weights_cutoff), aes(x = as.numeric(data_for_model_with_weights_cutoff[,colnames(data_for_model_with_weights_cutoff)==paste0(exposure, "_weight_cutoff")]))) +
@@ -37,6 +41,7 @@ truncateWeights <-function(data_for_model_with_weights, home_dir, exposures, per
   }
 
   write.csv(data_for_model_with_weights_cutoff,paste0(home_dir, "final weights/ data_for_model_with_weights_cutoff_", percentile_cutoff, ".csv") )
+  print("USER ALERT: final cutoff weights have now been saved merged into datast in 'final weights' folder")
   return(data_for_model_with_weights_cutoff)
 
 }

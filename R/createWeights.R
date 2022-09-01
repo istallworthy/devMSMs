@@ -8,6 +8,7 @@
 #' @importFrom CBPS balance
 #' @importFrom data.table setDT
 #' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
 #' @importFrom ggplot2 ggsave
 #' @param wide_long_datasets from formatForWeights
 #' @param forms from createForms
@@ -34,8 +35,8 @@ createWeights <-function(wide_long_datasets,forms, exposures, time_pts, m, balan
   weights_models=list()
   #Cycles through imputed datasets
   for (k in 1:m){
-
     # browser()
+    require(ggplot2)
 
     # MSMDATA=get(paste("imp", k, "_widelong", sep="")) #reads in widelong imputed data
     MSMDATA=wide_long_datasets[[paste("imp", k, "_widelong", sep="")]]
@@ -71,9 +72,9 @@ createWeights <-function(wide_long_datasets,forms, exposures, time_pts, m, balan
         weights_models[[paste("fit_", k, "_", exposure, "_", time, sep="")]] <-fit
 
         #saves out fit objects made by CBPS so user can re-load at later time
-        saveRDS(fit, file = paste(paste0(home_dir, "weight fits/fit_imp=", k, "_exp=", exposure, "_t=", time, ".rds", sep="")))
+        # saveRDS(fit, file = paste(paste0(home_dir, "weight fits/fit_imp=", k, "_exp=", exposure, "_t=", time, ".rds", sep="")))
 
-        print(paste0("Weights model objects for exposure ", exposure, " at time ", time, " for imputation ", k,  " have been saved in the 'weight fits' folder"))
+        # print(paste0("Weights model objects for exposure ", exposure, " at time ", time, " for imputation ", k,  " have been saved in the 'weight fits' folder"))
 
         #get weights from output
         weights=as.data.frame(cbind(MSMDATA_temp[,colnames(MSMDATA_temp)==ID], fit$weights))
@@ -98,11 +99,14 @@ createWeights <-function(wide_long_datasets,forms, exposures, time_pts, m, balan
         plot(fit, covars = NULL, silent = FALSE, boxplot = TRUE)
         dev.off()
 
-        print(paste0("Balancing figures for exposure ", exposure, " at time ", time, " for imputation ", k,  " have now been saved into the 'balance' folder for future inspection"))
+        print(paste0("USER ALERT: Balancing figures for exposure ", exposure, " at time ", time, " for imputation ", k,  " have now been saved into the 'balance' folder for future inspection"))
 
       }
     }
   }
+
+  saveRDS(weights_models, file = paste(paste0(home_dir, "weight fits/weights_models.rds", sep="")))
+  print("Weights models have been saved in the 'weight fits' folder")
 
   return(weights_models)
 }

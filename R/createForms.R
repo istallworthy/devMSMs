@@ -21,8 +21,8 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
 
   forms=list()
 
-  message("Please inspect the weights formula below.Balancing weights will attempt to balance on all of these potential confounding variables. If there are any time-varying variables you wish to omit at this time point, please list it in the 'potential_colliders' field and re-run")
-  message("They are also saved out in 'forms' folder as csv files")
+  print("USER ALERT: Please inspect the weights formula below. Balancing weights will attempt to balance on all of these potential confounding variables. If there are any time-varying variables you wish to omit at this time point, please list it in the 'potential_colliders' field and re-run")
+  print("They are also saved out in 'forms' folder as csv files")
 
   #Cycles through all exposures
   for (y in 1:length(exposures)){
@@ -58,7 +58,7 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
       #USER: Place where you can manually delete variables that should not be included in forms such as index variables and possible colliders (e.g., outcomes that could also cause a given tx )
       vars_to_include=vars_to_include[!vars_to_include %in% c(ID, "WAVE",
                                                               time_varying_covariates, #exclude time-varying covariates in long form (already in wide)
-                                                              paste(exposure, time_pt, sep=""), #exclude exposure at that time point
+                                                              paste(exposure, time, sep=""), #exclude exposure at that time point
                                                               paste(outcomes, time, sep="."), #exclude any outcomes at that time point --collider bias
                                                               apply(expand.grid(potential_colliders, as.character(time)), 1, paste, sep="", collapse="."))] #exclude any variables deemed colliders
 
@@ -67,7 +67,7 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
       f=paste(exposure, "~", paste0(vars_to_include, sep="", collapse=" + "))
 
       #prints form for user inspection
-      message(paste0("Formulia for exposure ", exposure, " at time point ", as.character(time),
+      print(paste0("Formulia for exposure ", exposure, " at time point ", as.character(time),
                    ": "))
       print(f)
 
