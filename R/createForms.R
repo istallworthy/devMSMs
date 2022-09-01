@@ -21,6 +21,9 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
 
   forms=list()
 
+  message("Please inspect the weights formula below.Balancing weights will attempt to balance on all of these potential confounding variables. If there are any time-varying variables you wish to omit at this time point, please list it in the 'potential_colliders' field and re-run")
+  message("They are also saved out in 'forms' folder as csv files")
+
   #Cycles through all exposures
   for (y in 1:length(exposures)){
     exposure=exposures[y]
@@ -30,7 +33,9 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
       time=time_pts[x]
 
       #Finds relevant concurrent and lagged time points
-      lags=as.data.frame(time_pts[time_pts<time | time_pts==time])
+      lags=c(time_pts[time_pts<time | time_pts==time])
+
+      # browser()
 
       lagged_vars={}
 
@@ -38,10 +43,10 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
       #exclude exposure at that time point
       covariates=covariates[!covariates %in% paste0(exposure, ".", time)]
 
-      #Checks to see if lagged time-varying covariates exist in widelong dataset
-      if (sum(covariates %in% imp_col_names)<length(covariates)){
-        message(paste0("The following lagged covariates for ", exposure, " at time ", time, " were not found in the dataset and thus skipped: ", c(covariates[!covariates %in% imp_col_names])))
-      }
+      # #Checks to see if lagged time-varying covariates exist in widelong dataset
+      # if (sum(covariates %in% imp_col_names)<length(covariates)){
+      #   message(paste0("The following lagged covariates for ", exposure, " at time ", time, " were not found in the dataset and thus skipped: ", c(covariates[!covariates %in% imp_col_names])))
+      # }
 
       lagged_vars=rbind(lagged_vars, covariates[covariates %in% imp_col_names])
 
@@ -62,8 +67,8 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
       f=paste(exposure, "~", paste0(vars_to_include, sep="", collapse=" + "))
 
       #prints form for user inspection
-      message(paste0("Please inspect the weights formula below for exposure ", exposure, " at time point ", as.character(time),
-                   ". Balancing weights will attempt to balance on all of these potential confounding variables. If there are any time-varying variables you wish to omit at this time point, please list it in the 'potential_colliders' field and re-run"))
+      message(paste0("Formulia for exposure ", exposure, " at time point ", as.character(time),
+                   ": "))
       print(f)
 
       #saves out form to global workspace and local directory
@@ -71,7 +76,7 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
       forms[[paste("form_", exposure, "_", time, sep="")]] <- f
 
       write.csv(f, paste0(home_dir, "forms/form_", exposure, "_", time, ".csv", sep=""))
-      message("Please see the 'forms' folder for csv files of each of the formulae to be used in creating the balancing weights")
+
 
     }
   }

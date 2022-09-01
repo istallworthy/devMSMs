@@ -20,7 +20,7 @@
 #' @param lgstc Amelia input for cols that require lgstc transformation
 #' @param noms Amelia input for cols that are nominal
 #' @param bounds Amelia input for 3-col matrix for logical bounds on imputations
-#' @return
+#' @return imputed_datasets imputation results
 #' @export
 #' @importFrom Amelia amelia
 
