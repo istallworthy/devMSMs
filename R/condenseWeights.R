@@ -49,7 +49,7 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
       ggplot2::ggplot(data=as.data.frame(treat_temp_prod), aes(x = as.numeric(unlist(treat_temp_prod)))) +
         geom_histogram(color = 'black', bins = 15)
       ggplot2::ggsave(paste("Hist_imp_", k, "_", exposure, "_ALL_TIMES", ".png", sep=""), path=paste0(home_dir, "combined weights"), height=8, width=14)
-      message("Histograms of weights per exposure per imputed dataset have been saved to the 'combined weights' folder")
+      print(paste0("A histograms of weights for imputation ", k, " and exposure ", exposure, " has been saved to the 'combined weights' folder"))
 
       #Assigns tx weights per imputed dataset
       weights_exposure_k[[paste(exposure, "_", k, "_mean_weight", sep="")]] <-treat_temp_prod
@@ -57,7 +57,7 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
 
       # #Writes out new weights per each tx for each imputed dataset.
       write.csv(x=as.data.frame(treat_temp_prod), file=paste(home_dir, "combined weights/Imp_", k, "_", exposure, "_mean_weight.csv", sep=""))
-      message("Weights per exposure and imputed dataset have been saevd as csv files in 'combined weights'")
+      print(paste0("Weights  for imputation ", k, " and exposure ", exposure, " have been saved as csv files in 'combined weights'"))
 
     }
 
@@ -73,6 +73,7 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
   for (y in 1:length(exposures)){
     exposure=exposures[y]
     temp=(rep(1, nrow(data_for_model)))
+
     for (k in 1:m){
       temp=cbind(temp, weights_exposure_k[[paste(exposure, "_", k, "_mean_weight", sep="")]]) #col binds all imputed datasets
     }
@@ -85,12 +86,12 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
     all_weights=merge(all_weights, mean_weight, by=ID)
 
     write.csv(x=as.data.frame(n), file=paste(home_dir, "final weights/", exposure, "_mean_weight_all_imp.csv", sep=""))
-    message("Weights for each exposure are now saved as a csv file in the 'final weights' folder")
+    print(paste0("Weights for exposure ", exposure, " are now saved as a csv file in the 'final weights' folder"))
   }
 
   data_for_model_with_weights=merge(data_for_model, all_weights, by=ID, all.x=T)
-  write.csv(data_for_model_with_weights, paste0(home_dir, "data_for_model_with_weights.csv"))
-  message("Final dataset including weights for each treatment is now saved in home directory as a csv file")
+  write.csv(data_for_model_with_weights, paste0(home_dir, "final weights/data_for_model_with_weights.csv"))
+  print("Final dataset including weights for each treatment is now saved in the 'final weights' folder as a csv file")
 
   return(data_for_model_with_weights)
 

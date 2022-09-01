@@ -5,17 +5,19 @@
 #' @param home_dir path to home directory for project
 #' @param m number of imputed datasets from Amelia
 #' @param data output from formatDataStruct
-#' @param imputed_datasets
+#' @param imputed_datasets output from imputeData
 #' @param time_varying_covariates
 #' @param time_pts identifier
-#' @param time_var_exclude
+#' @param time_var_exclude list any time-varying variables that should not be present because of planned missingness design
 #' @param just_imputed "yes"= you have imputed datasets in global environment or "no" but they are saved locally from previous run
 
 #' @return wide_long_datasets
 #' @export
 #' @importFrom readr read_csv
 #' @importFrom stats reshape
-#' @importFrom dplyr
+#' @importFrom dplyr select
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarise
 #' @importFrom tidyr pivot_wider
 #' @importFrom plyr join
 #' @examples
@@ -53,17 +55,14 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
 
     #Make wide so that all time-varying now in wide, #Then select all the new wide time varying vars --IS SHOULD AUTOMATE THIS STEP ....
     #MAKE SURE ALL YOUR TX AND OUTCOME VARIABLES AT EACH TIME PT ARE LISTED BELOW IN WIDE FORMAT
-    imp_wide=reshape(data=imp,
+    # browser()
+    imp_wide=suppressWarnings(stats::reshape(data=imp,
                      idvar=ID,
                      v.names= time_varying_covariates, #list ALL time-varying covariates
                      timevar="WAVE",
                      times=c(time_pts),
-                     direction="wide")%>%
+                     direction="wide"))%>%
       dplyr::select(dput(as.character(time_varying_wide)))
-
-
-    message("Inspect the list below of time-varying covariates and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' and re-running")
-    print(time_varying_wide)
 
     imp_wide=imp_wide[,!colnames(imp_wide) %in% time_var_exclude]
 
@@ -87,6 +86,8 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
 
   }
 
+  message("Inspect the list above of time-varying covariates and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' and re-running")
+  # print(time_varying_wide)
 
 
   #create dataset for future modeling
@@ -100,10 +101,15 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
   invar=colnames(imp)[colnames(imp) %in% time_varying_covariates==FALSE]
   invar=invar[!grepl("WAVE", invar)]
   invars=imp[invar] #pulls only invariant vars
+  invars[] <- suppressWarnings(lapply(invars, as.numeric))
+
+  ID_temp=sym(ID)
 
   t=invars%>%
-    dplyr::group_by(get(ID)) %>%
+    dplyr::group_by(!!ID_temp)%>%
     dplyr::summarise(across(everything(), mean, na.rm=T))
+
+    # suppressWarnings(dplyr::summarise(across(everything(), mean, na.rm=T)))
 
   imp_wide=plyr::join(test,t, by=ID)
   #Create long/wide hybrid: merge this newly created wide dataset with long dataset

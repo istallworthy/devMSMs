@@ -18,8 +18,5 @@ defineCausalQuestion<- function(exposures, exposure_time_pts, outcomes, outcome_
     for (x in 1:length(outcomes)){
       message(paste0("Goal: examine causal effects of ", exposures[i], " at times ", paste0(exposure_time_pts,sep=",", collapse=""), " on ", outcomes[x], " at time(s) ", outcome_time_pts))
     }}
-  return(exposures)
-  return(exposure_time_pts)
-  return(outcomes)
-  return(outcome)
+
 }

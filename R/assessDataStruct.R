@@ -4,20 +4,18 @@
 #'
 #' @param data_path path to cleaned dataset
 #' @param home_dir path to home directory for the project
-#
+#' @param factor_covariates list of covariates that are factors
 
-#' @return time_pt_datasets list of datasets segmented by time point
+
+#' @return data formatted dataset
 
 #' @export
 #' @importFrom readr read_csv
-#' @importFrom dplyr
-
 #' @examples
 #'
-
 #This function requires a clean dataset in long format that contain columns for ID, time, exposure, outcome, and potential covariate confounds
-formatDataStruct <-function(data_path, home_dir, factor_covariates){
-
+formatDataStruct <-function(data_path, home_dir, missing, factor_covariates) {
+# require(readr)
   options(readr.num_columns = 0)
 
   #creating all necessary directories within the home directory
@@ -41,17 +39,17 @@ formatDataStruct <-function(data_path, home_dir, factor_covariates){
 
 
 #' makeTimePtDatasets
+#' @param data output from formatDataStruct
+#' @param ID person-level identifier in your dataset
+#' @param time_pts list of time points along your developmental path of interest for which you have at least one measurement
+#' @param time_var variable in your long dataset that designates developmental time
+#' @param missing missing data marker in your dataset
+#' @param exposures list of variables that represent your exposures/treatments of interest
+#' @param outcomes list of variables that represent your outcomes of interest
 #'
-#' @param ID
-#' @param time_pts
-#' @param time_var
-#' @param missing
-#' @param exposures
-#' @param outcomes
-#'
-#' @return
+#' @return time_pt_datasets datasets split by time point
 #' @export
-#'
+#' @importFrom dplyr filter
 #' @examples
 makeTimePtDatasets <-function(data, ID, time_pts, time_var, missing, exposures, outcomes){
   #creating dataset for each time point and store in a list
