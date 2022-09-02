@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectCovariates.R
 \name{dataToImpute}
 \alias{dataToImpute}
-\title{dataToImpute}
+\title{Creates data structure for imputation}
 \usage{
 dataToImpute(
   ID,
@@ -30,5 +30,12 @@ dataToImpute(
 data_to_impute
 }
 \description{
-dataToImpute
+Creates data structure for imputation with only the variables needed (i.e., exposures, outcomes, potential confounds)
+}
+\examples{
+dataToImpute(ID, data, exposures, outcomes, covariates_to_include, exclude_covariates)
+
+}
+\seealso{
+\code{\link[=formatDataStruct]{formatDataStruct()}}, \code{\link[=identifyPotenialConfounds]{identifyPotenialConfounds()}}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectCovariates.R
 \name{identifyCovariates}
 \alias{identifyCovariates}
-\title{identifyCovariates}
+\title{Identifies the available covariates}
 \usage{
 identifyCovariates(data, ID, exposures, outcomes, exclude_covariates = NULL)
 }
@@ -21,5 +21,15 @@ identifyCovariates(data, ID, exposures, outcomes, exclude_covariates = NULL)
 potential_covariates
 }
 \description{
+Identifies the covariates in in the dataset that will be candidates for confounding
+}
+\details{
 identifyCovariates
+}
+\examples{
+identifyCovariates(data, ID, exposures, outcomes, exclude_covariates)
+
+}
+\seealso{
+\code{\link[=formatDataStruct]{formatDataStruct()}}
 }

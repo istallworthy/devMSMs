@@ -2,7 +2,7 @@
 % Please edit documentation in R/truncateWeights.R
 \name{truncateWeights}
 \alias{truncateWeights}
-\title{truncateWeights}
+\title{Truncates weights}
 \usage{
 truncateWeights(
   data_for_model_with_weights,
@@ -24,5 +24,12 @@ truncateWeights(
 data_for_model_with_weights_cutoff
 }
 \description{
-truncateWeights
+Code to 'cut off' weights at 90th percentile and populate all of those above at 90th percentile value to avoid heavy tails that can bias results
+}
+\examples{
+truncateWeights(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90)
+
+}
+\seealso{
+\code{\link[=condenseWeights]{condenseWeights()}}
 }

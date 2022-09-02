@@ -2,7 +2,7 @@
 % Please edit documentation in R/createForms.R
 \name{createForms}
 \alias{createForms}
-\title{createForms}
+\title{Creates formulae for generating weights}
 \usage{
 createForms(
   wide_long_datasets,
@@ -30,5 +30,12 @@ createForms(
 forms
 }
 \description{
-createForms
+Creates formulae for each exposure at each time point for the CBPS function that will make weights returning a list of forms
+}
+\examples{
+createForms(wide_long_datasets,covariates_to_include, exposures, outcomes, time_pts, potential_colliders)
+
+}
+\seealso{
+\code{\link[=formatForWeights]{formatForWeights()}}, \link{identifyPotentialConfounds} for more on inputs
 }

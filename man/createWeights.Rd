@@ -2,7 +2,7 @@
 % Please edit documentation in R/createWeights.R
 \name{createWeights}
 \alias{createWeights}
-\title{createWeights}
+\title{Creates balancing weights for potential confounding covariates in relation to exposures at each time point}
 \usage{
 createWeights(
   wide_long_datasets,
@@ -54,5 +54,13 @@ createWeights(
 weights_models
 }
 \description{
-createWeights
+Creates balancing weights using the CBPS package (See CBPS documentation for more detail: https://cran.r-project.org/web/packages/CBPS/CBPS.pdf) for more
+returns a list of weights_models
+}
+\examples{
+createWeights(wide_long_datasets,forms, exposures, time_pts, m,  ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
+
+}
+\seealso{
+\code{\link[CBPS:CBPS]{CBPS::CBPS()}}, \code{\link[=formatForWeights]{formatForWeights()}}, \code{\link[=createForms]{createForms()}}
 }
