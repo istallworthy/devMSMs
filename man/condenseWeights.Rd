@@ -2,7 +2,7 @@
 % Please edit documentation in R/condenseWeights.R
 \name{condenseWeights}
 \alias{condenseWeights}
-\title{condenseWeights}
+\title{Condense weights across time points and imputed datasets}
 \usage{
 condenseWeights(ID, home_dir, m, weights_models, exposures, time_pts)
 }
@@ -23,5 +23,12 @@ condenseWeights(ID, home_dir, m, weights_models, exposures, time_pts)
 data_for_model_with_weights
 }
 \description{
-condenseWeights
+Condenses weights by multiplying across time point and averaging across imputed dataset to return a single weight per exposure per person in data_for_model_with_weights
+}
+\examples{
+condenseWeights(ID, home_dir, m, weights_models, exposures, time_pts)
+
+}
+\seealso{
+\code{\link[=createWeights]{createWeights()}} for more on weights_models input
 }

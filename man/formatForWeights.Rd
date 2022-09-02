@@ -2,7 +2,7 @@
 % Please edit documentation in R/formatForWeights.R
 \name{formatForWeights}
 \alias{formatForWeights}
-\title{formatForWeights}
+\title{Format data for creating balancing weights}
 \usage{
 formatForWeights(
   ID,
@@ -17,7 +17,7 @@ formatForWeights(
 )
 }
 \arguments{
-\item{ID}{identifier}
+\item{ID}{person-level identifier in your dataset}
 
 \item{home_dir}{path to home directory for project}
 
@@ -27,7 +27,9 @@ formatForWeights(
 
 \item{imputed_datasets}{output from imputeData}
 
-\item{time_pts}{identifier}
+\item{time_varying_covariates}{covariates in your dataset that are time-varying}
+
+\item{time_pts}{list of time points along your developmental path of interest for which you have at least one measurement}
 
 \item{time_var_exclude}{list any time-varying variables that should not be present because of planned missingness design}
 
@@ -37,5 +39,12 @@ formatForWeights(
 wide_long_datasets
 }
 \description{
-formatForWeights
+This code formats the imputed datasets for calculating balancing weights using CBPS and reutrns a list of wide/long datasets and creates dataset for future modeling
+}
+\examples{
+formatForWeights(ID, home_dir, m, data, imputed_datasets, time_varying_covariates, time_pts, time_var_exclude, just_imputed="no")
+
+}
+\seealso{
+\code{\link[=formatDataStruct]{formatDataStruct()}}, \code{\link[=imputeData]{imputeData()}}
 }

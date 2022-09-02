@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectCovariates.R
 \name{identifyPotentialConfounds}
 \alias{identifyPotentialConfounds}
-\title{identifyPotentialConfounds}
+\title{Identify potential confounds}
 \usage{
 identifyPotentialConfounds(
   home_dir,
@@ -27,5 +27,12 @@ identifyPotentialConfounds(
 covariates_to_include
 }
 \description{
-identifyPotentialConfounds
+Identifies potential confounds from the covariates based on those that are correlated with either exposures or outcomes above 0.1
+}
+\examples{
+identifyPotentialConfounds(home_dir, data, time_pt_datasets, time_pts, exclude_covariates=NULL)
+
+}
+\seealso{
+\code{\link[=formatDataStruct]{formatDataStruct()}}, \code{\link[=makeTimePtDatasets]{makeTimePtDatasets()}}
 }

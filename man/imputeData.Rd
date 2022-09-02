@@ -2,7 +2,7 @@
 % Please edit documentation in R/imputeData.R
 \name{imputeData}
 \alias{imputeData}
-\title{Title}
+\title{Imputes dataset so there is no missing at each time point}
 \usage{
 imputeData(
   home_dir,
@@ -63,5 +63,12 @@ imputeData(
 imputed_datasets imputation results
 }
 \description{
-Title
+Creates m imputed datasets from original dataset using the Aeelia package. See Amelia documentation for more detail: https://cran.r-project.org/web/packages/Amelia/Amelia.pdf
+}
+\examples{
+imputeData(home_dir, ID, data_to_impute, continuous_variables, m, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+
+}
+\seealso{
+\code{\link[=dataToImput]{dataToImput()}}, \code{\link[Amelia:amelia]{Amelia::amelia()}}
 }

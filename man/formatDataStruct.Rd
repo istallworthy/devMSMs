@@ -2,7 +2,7 @@
 % Please edit documentation in R/assessDataStruct.R
 \name{formatDataStruct}
 \alias{formatDataStruct}
-\title{assessDataStruct}
+\title{Formats dataset and creates required directory}
 \usage{
 formatDataStruct(data_path, home_dir, missing, factor_covariates)
 }
@@ -11,11 +11,18 @@ formatDataStruct(data_path, home_dir, missing, factor_covariates)
 
 \item{home_dir}{path to home directory for the project}
 
+\item{missing}{missing data marker in your dataset}
+
 \item{factor_covariates}{list of covariates that are factors}
 }
 \value{
 data formatted dataset
 }
 \description{
-assessDataStruct
+Creates the required directories, assesses the data structure and makes it uniform for future functions and returns data
+This function requires a clean dataset in long format that contain columns for ID, time, exposure, outcome, and potential covariate confounds
+}
+\examples{
+formatDataStruct(data_path, home_dir, missing, factor_covariates)
+
 }

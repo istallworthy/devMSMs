@@ -2,19 +2,23 @@
 % Please edit documentation in R/defineCausalQuestion.R
 \name{defineCausalQuestion}
 \alias{defineCausalQuestion}
-\title{Title}
+\title{Define causal questions at the heart of the subsequent marginal structural models}
 \usage{
 defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
 }
 \arguments{
+\item{exposures}{string of the core exposure/treatment of interest variable}
+
 \item{exposure_time_pts}{sequence of integer time points of exposure}
 
+\item{outcomes}{string of core outcome of interest variable}
+
 \item{outcome_time_pts}{sequence of integer time points of outcome}
-
-\item{exposure}{string of the core exposure/treatment of interest variable}
-
-\item{outcome}{string of core outcome of interest variable}
 }
 \description{
-Title
+This code helps the individual delineate core aspects of their causal questions
+}
+\examples{
+defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
+
 }

@@ -7,7 +7,7 @@
 #' @param outcomes string of core outcome of interest variable
 #' @param outcome_time_pts sequence of integer time points of outcome
 #' @export
-#' @examples
+#' @examples defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
 #'
 defineCausalQuestion<- function(exposures, exposure_time_pts, outcomes, outcome_time_pts){
 

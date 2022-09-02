@@ -2,9 +2,9 @@
 % Please edit documentation in R/assessDataStruct.R
 \name{makeTimePtDatasets}
 \alias{makeTimePtDatasets}
-\title{makeTimePtDatasets}
+\title{Makes timepoint datasets}
 \usage{
-makeTimePtDatasets(data, ID, time_pts, time_var, missing, exposures, outcomes)
+makeTimePtDatasets(data, ID, time_pts)
 }
 \arguments{
 \item{data}{output from formatDataStruct}
@@ -12,18 +12,17 @@ makeTimePtDatasets(data, ID, time_pts, time_var, missing, exposures, outcomes)
 \item{ID}{person-level identifier in your dataset}
 
 \item{time_pts}{list of time points along your developmental path of interest for which you have at least one measurement}
-
-\item{time_var}{variable in your long dataset that designates developmental time}
-
-\item{missing}{missing data marker in your dataset}
-
-\item{exposures}{list of variables that represent your exposures/treatments of interest}
-
-\item{outcomes}{list of variables that represent your outcomes of interest}
 }
 \value{
 time_pt_datasets datasets split by time point
 }
 \description{
-makeTimePtDatasets
+Creates datasets unique to each time point for future use and returns a list of time point datasets
+}
+\examples{
+makeTimePtDatasets(data, ID, time_pts)
+
+}
+\seealso{
+\code{\link[=fomatDataStruct]{fomatDataStruct()}}
 }
