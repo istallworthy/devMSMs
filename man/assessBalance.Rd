@@ -2,7 +2,7 @@
 % Please edit documentation in R/assessBalance.R
 \name{assessBalance}
 \alias{assessBalance}
-\title{assessBalance}
+\title{Assess success of covariate balancing}
 \usage{
 assessBalance(
   home_dir,
@@ -29,6 +29,18 @@ assessBalance(
 
 \item{just_made_weights="no"}{no=weights are not assigned in global environment and are instead saved locally}
 }
+\value{
+list of unbalanced_covariates_for_models for each exposure
+}
 \description{
-assessBalance
+#Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposures,
+and returns a list of unbalanced covariates for each exposure to add to future models
+}
+\examples{
+assessBalance(home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no")
+}
+\seealso{
+\code{\link[CBPS:balance]{CBPS::balance()}} for more on the balance function
+
+\code{\link[=createWeights]{createWeights()}} for more on the weights_models param
 }

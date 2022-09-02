@@ -1,22 +1,23 @@
-#The functions below allow the user to select the appropriate covariates, or potential confounds in their
-#causal investigation
-
+#' Identifies the available covariates
+#'
+#' Identifies the covariates in in the dataset that will be candidates for confounding
+#'
 #' identifyCovariates
 #' @param data output from formatDataStruct
 #' @param ID person-level identifier in your dataset
 #' @param exposures list of variables that represent your exposures/treatments of interest
 #' @param outcomes list of variables that represent your outcomes of interest
 #' @param exclude_covariates list of variables to exclude based on theoretical or practical reasons
-#'
 #' @return potential_covariates
 #' @export
+#' @seealso [formatDataStruct()]
+#' @examples identifyCovariates(data, ID, exposures, outcomes, exclude_covariates)
 #'
-#' @examples
 identifyCovariates <- function(data, ID, exposures, outcomes, exclude_covariates=NULL){
   #identifying potential covariates (time-varying and time invariant)
   potential_covariates=colnames(data)[colnames(data) %in% (c(ID, "WAVE", exposures, outcomes, exclude_covariates))==FALSE]
 
-  message(paste0("Below are the ", as.character(length(potential_covariates)), " covariates that will be considered as potential confounding variables. If you would like to exclude any variables, please add them to 'exclude_covariates' and re-run. "))
+  print(paste0("Below are the ", as.character(length(potential_covariates)), " covariates that will be considered as potential confounding variables. If you would like to exclude any variables, please add them to 'exclude_covariates' and re-run. "))
   print(potential_covariates)
 
   return(potential_covariates)
@@ -26,21 +27,22 @@ identifyCovariates <- function(data, ID, exposures, outcomes, exclude_covariates
 
 
 
-#' identifyPotentialConfounds
+#' Identify potential confounds
 #'
-#' @param data output from formatDataStruct
+#' Identifies potential confounds from the covariates based on those that are correlated with either exposures or outcomes above 0.1
+#'
 #' @param home_dir path to home directory for the project
+#' @param data output from formatDataStruct
 #' @param time_pt_datasets output from makeTimePtDatasets
 #' @param time_pts list of time points along your developmental path of interest for which you have at least one measurement
 #' @param exclude_covariates list of variables to exclude based on theoretical or practical reasons
-#'
 #' @return covariates_to_include
 #' @export
 #' @importFrom Hmisc rcorr
-
-#' @examples
+#' @seealso [formatDataStruct()], [makeTimePtDatasets()]
+#' @examples identifyPotentialConfounds(home_dir, data, time_pt_datasets, time_pts, exclude_covariates=NULL)
+#'
 identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pts, exclude_covariates=NULL){
-  #defines functions
   #Formats rcorr output for easy manipulation
   flattenCorrMatrix <- function(cormat, pmat) {
     ut <- upper.tri(cormat)
@@ -53,8 +55,6 @@ identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pt
   }
 
   #Loop through different time point datasets and determine all correlations at each time point
-  # and populate them all into covariate_correlations
-  # browser()
   #generates all correlations above 0.1 for all data variables in dataset
   covariate_correlations={}
   for (x in 1:length(time_pts)){
@@ -72,8 +72,6 @@ identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pt
     filtered=NULL
     c=NULL
   }
-
-
 
   #save out correlations
   write.csv(covariate_correlations, paste0(home_dir, "balance/covariate_correlations.csv"))
@@ -96,7 +94,9 @@ identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pt
 
 
 
-#' dataToImpute
+#' Creates data structure for imputation
+#'
+#' Creates data structure for imputation with only the variables needed (i.e., exposures, outcomes, potential confounds)
 #'
 #' @param ID person-level identifier in your dataset
 #' @param data output from formatDataStruct
@@ -104,14 +104,13 @@ identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pt
 #' @param outcomes list of variables that represent your outcomes of interest
 #' @param covariates_to_include output from identifyPotentialConfounds
 #' @param exclude_covariates list of variables to exclude based on theoretical or practical reasons
-#'
 #' @importFrom Hmisc rcorr
 #' @importFrom knitr kable
-
 #' @return data_to_impute
 #' @export
+#' @seealso [formatDataStruct()], [identifyPotenialConfounds()]
+#' @examples dataToImpute(ID, data, exposures, outcomes, covariates_to_include, exclude_covariates)
 #'
-#' @examples
 dataToImpute <-function(ID, data, exposures, outcomes, covariates_to_include, exclude_covariates){
   flattenCorrMatrix <- function(cormat, pmat) {
     ut <- upper.tri(cormat)
@@ -129,11 +128,6 @@ dataToImpute <-function(ID, data, exposures, outcomes, covariates_to_include, ex
   data2=data2[,!colnames(data2) %in% exclude_covariates]
 
   #inspect correlations among covariates to check for redundancy and opportunities to simplify the model
-  #View corr in final data for EACH TX to see if anything is highly correlated
-  #creates correlation matrix of final dataset for inspection of highly correlated variables
-  # data2[] <- lapply(data, function(x) as.numeric(x))
-  #
-  # hi_corr_covars <- suppressWarnings(cor(as.matrix(data2[,3:ncol(data2)]), use="p"))
   hi_corr_covars <- suppressWarnings(Hmisc::rcorr(as.matrix(data2[,3:ncol(data2)])))
 
   hi_corr_covars=flattenCorrMatrix(hi_corr_covars$r, hi_corr_covars$P)

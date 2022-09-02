@@ -1,6 +1,7 @@
-#code to condense weights by multiplying across time point and averaging across imputed dataset
-
-#' condenseWeights
+#' Condense weights across time points and imputed datasets
+#'
+#' Condenses weights by multiplying across time point and averaging across imputed dataset to return a single weight per exposure per person in data_for_model_with_weights
+#'
 #' @param ID person-level identifier in your dataset
 #' @param home_dir path to home directory for the project
 #' @param m number of imputed datasets from Amelia
@@ -11,12 +12,12 @@
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom matrixStats rowProds
-
-#' @examples
+#' @seealso [createWeights()] for more on weights_models input
+#' @examples condenseWeights(ID, home_dir, m, weights_models, exposures, time_pts)
+#'
 condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts){
 
   ####Multiplies weights for each tx across all time points so you end up with one weight per person across time for each imputed dataset.
-  #Saves histogram of weights for each tx (across all time points), saves new weights, and assigns new weights to treat_k_mean_weights for each imputed dataset. Set PLOT_CO
   weights_exposure_k=list()
 
   #iterates over imputed datasets
@@ -26,24 +27,21 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
     for (y in 1:length(exposures)){
 
       exposure=exposures[y]
-
       treat_temp={}
+
       #Cycles through all time points
       for (x in 1:length(time_pts)){
         time=time_pts[x]
 
         #Collects all of the weights for each time pt for a given tx
-        # treat_temp=as.data.frame(cbind(treat_temp, get(paste("fit_",k, "_", exposure, "_", time, sep=""))$weight))
         weights=weights_models[[paste("fit_", k, "_", exposure, "_", time, sep="")]]
         weights=weights$weight
         treat_temp=cbind(treat_temp, weights)
       }
 
-
       colnames(treat_temp)=time_pts
       #Finds the product of weights across all time pts for a given tx
       treat_temp_prod=as.data.frame(matrixStats::rowProds(as.matrix(treat_temp)))
-
 
       #Plots histogram of weight product for each tx and imputed dataset
       ggplot2::ggplot(data=as.data.frame(treat_temp_prod), aes(x = as.numeric(unlist(treat_temp_prod)))) +
@@ -58,11 +56,8 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
       # #Writes out new weights per each tx for each imputed dataset.
       write.csv(x=as.data.frame(treat_temp_prod), file=paste(home_dir, "combined weights/Imp_", k, "_", exposure, "_mean_weight.csv", sep=""))
       print(paste0("Weights  for imputation ", k, " and exposure ", exposure, " have been saved as csv files in 'combined weights'"))
-
     }
-
   }
-
 
   ####Averages weights across all imputed datasets to generate mean weights across time for each treatment, with ID merged
   data_for_model=read.csv(paste0(home_dir, "data_for_final_model.csv"))

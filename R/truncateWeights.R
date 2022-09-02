@@ -1,6 +1,6 @@
-#Code to 'cut off' weights at 90th percentile and populate all of those above at 90th percentile value
-
-#' truncateWeights
+#' Truncates weights
+#'
+#'Code to 'cut off' weights at 90th percentile and populate all of those above at 90th percentile value to avoid heavy tails that can bias results
 #'
 #' @return data_for_model_with_weights_cutoff
 #' @param data_for_model_with_weights output from condenseWeights
@@ -11,7 +11,8 @@
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 ggsave
-#' @examples
+#' @seealso [condenseWeights()]
+#' @examples truncateWeights(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90)
 #'
 truncateWeights <-function(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90){
 

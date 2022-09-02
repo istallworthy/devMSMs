@@ -1,6 +1,8 @@
-#Code to asssess how well balance was achieved for each of the covariates/potential confounds
-
-#' assessBalance
+#' Assess success of covariate balancing
+#'
+#' #Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposures,
+#' and returns a list of unbalanced covariates for each exposure to add to future models
+#'
 #' @param home_dir path to home directory for the project
 #' @param weights_models list of weights models from CBPS
 #' @param m number of imputations from Amelia
@@ -8,11 +10,13 @@
 #' @param time_pts list of time points along your developmental path of interest for which you have at least one measurement
 #' @param balance_thresh correlation value between covariate and exposure over which it is not considered balanced
 #' @param just_made_weights="no" no=weights are not assigned in global environment and are instead saved locally
-#' @return unbalanced_covariates_for_models
+#' @return list of unbalanced_covariates_for_models for each exposure
+#' @seealso [CBPS::balance()] for more on the balance function
+#' @seealso [createWeights()] for more on the weights_models param
 #' @export
 #' @importFrom CBPS balance
 
-#' @examples
+#' @examples assessBalance(home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no")
 assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no"){
 
   #read in weights saved locally if user has not just made them and they are not yet in global environment
@@ -23,14 +27,10 @@ assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_p
 
   }
 
-
-  #added by IS 3.21.20 for more formal balance checking (prints out which variables are unbalanced)
-
   #assessing balance and determining unbalanced covariates (i.e., those still correlated above 0.12)
   unbalanced_variables=list()
   all_post_balance_corrs=list()
 
-  # browser()
   #iterating through saved weights models ("fits")
   for (f in 1:length(weights_models)){
 
@@ -85,8 +85,6 @@ assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_p
     }
 
     #compiles all remaining correlations over 0.12 for each treatment (including all time points)
-    # assign(paste("sig_unbalanced_vars_",  exposures[x], sep=""), tx_all_t)
-
     print(paste0("USER ALERT: Inspect the following list of unbalanced covariates for exposure ", exposures[x], " :"))
     print(significant_corrs_remaining)
 
@@ -102,9 +100,7 @@ assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_p
 
   }
 
-
   return(unbalanced_covariates_for_models)
-
 
 }
 

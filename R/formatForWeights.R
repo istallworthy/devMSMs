@@ -1,13 +1,14 @@
-#this code formats the imputed datasets for calculating balancing weights
-#' formatForWeights
+#' Format data for creating balancing weights
 #'
-#' @param ID identifier
+#' This code formats the imputed datasets for calculating balancing weights using CBPS and reutrns a list of wide/long datasets and creates dataset for future modeling
+#'
+#' @param ID person-level identifier in your dataset
 #' @param home_dir path to home directory for project
 #' @param m number of imputed datasets from Amelia
 #' @param data output from formatDataStruct
 #' @param imputed_datasets output from imputeData
-#' @param time_varying_covariates
-#' @param time_pts identifier
+#' @param time_varying_covariates covariates in your dataset that are time-varying
+#' @param time_pts list of time points along your developmental path of interest for which you have at least one measurement
 #' @param time_var_exclude list any time-varying variables that should not be present because of planned missingness design
 #' @param just_imputed "yes"= you have imputed datasets in global environment or "no" but they are saved locally from previous run
 #' @return wide_long_datasets
@@ -19,7 +20,8 @@
 #' @importFrom dplyr summarise
 #' @importFrom tidyr pivot_wider
 #' @importFrom plyr join
-#' @examples
+#' @seealso [formatDataStruct()], [imputeData()]
+#' @examples formatForWeights(ID, home_dir, m, data, imputed_datasets, time_varying_covariates, time_pts, time_var_exclude, just_imputed="no")
 #'
 formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), time_varying_covariates, time_pts, time_var_exclude=NULL, just_imputed="yes"){
   options(readr.num_columns = 0)
@@ -38,9 +40,6 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
   #makes hybrid "wide/long" dataset for each impute dataset: all time-varying covariates listed as long and wide
 
   #Cyles through imputed datasets and puts them in hybrid wide/long dataset
-  #USER INPUT: make sure that all time-varying covariates are listed below (long) and in the select() list (wide).
-  #Also, make sure that all variables that should not be there (e.g., outcomes in final MSM models) are made to NULL below.
-
   wide_long_datasets=list()
   for (k in 1:m){
 
@@ -68,9 +67,6 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
     #creates hybrid wide/long dataset
     msm_data=merge(imp, imp_wide, by=ID, all.x=T) #dont delete rows
 
-    # #Delete the time-varying long covariates since we focus on lags in the forms below
-    # msm_data=msm_data[!colnames(msm_data) %in% time_varying_covariates]
-
     #remove time points that should not be there (but may have been added by imputation)
     msm_data=msm_data[msm_data$WAVE %in% time_pts,]
 
@@ -86,7 +82,6 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
   }
 
   print("USER ALERT: Inspect the list above of time-varying covariates and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' and re-running")
-  # print(time_varying_wide)
 
 
   #create dataset for future modeling
@@ -108,11 +103,8 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
     dplyr::group_by(!!ID_temp)%>%
     dplyr::summarise(across(everything(), mean, na.rm=T))
 
-    # suppressWarnings(dplyr::summarise(across(everything(), mean, na.rm=T)))
-
   imp_wide=plyr::join(test,t, by=ID)
   #Create long/wide hybrid: merge this newly created wide dataset with long dataset
-  # data_for_model=merge(imp, imp_wide, by="s_id", all.x=T) #dont delete rows
   write.csv(imp_wide, paste0(home_dir, "data_for_final_model.csv"))
   print("Saved out dataset for final modeling as a csv file in home directory")
 
