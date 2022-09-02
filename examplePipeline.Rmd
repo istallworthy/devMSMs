@@ -31,11 +31,11 @@ time_var="TAge"
 missing=-9999
 
 #number of imputations
-m=2
+m=5
 
 #exposures of interest that potentially have causal effects on outcomes and exposure time point(s) (corresponding to values in time_var)
-# exposures=c("HOMEETA1", "INR", "ESETA1", "CTSETA1")
-exposures=c("HOMEETA1", "INR")
+exposures=c("HOMEETA1", "INR", "ESETA1", "CTSETA1")
+# exposures=c("HOMEETA1", "INR")
 exposure_time_pts=c(6, 15, 25, 36)
 
 #outcomes of interest and outcome time point(s)
@@ -65,7 +65,7 @@ factor_covariates=c("NC","TcSex2", "TcBlac2")
 data=formatDataStruct(data_path, home_dir, missing, factor_covariates)
 
 #Makes separate datasets for each time point 
-time_pt_datasets= makeTimePtDatasets(data, ID, time_pts, time_var, missing, exposures, outcomes)
+time_pt_datasets= makeTimePtDatasets(data, ID, time_pts)
 
 ```
 
@@ -99,7 +99,7 @@ Create m imputed datasets using the Amelia package and functions and weights wil
 #list continous variables here; all others assumed ordinal for imputation 
 continuous_variables=c("GrosPay1", "SwghtLB", "RMomAgeU", "RMAge1st", "RWghtLb", "IBQDnovm", "MDI", "INR", "WIND", "ECBQ", "HOMEETA1", "CTSETA1", "ESETA1", "pcx_sensitive", "pcx_pos", "pcx_neg", "pcx_engaged", "pcx_sensitive", "SHCircCm", "pcx_CompTwo", "pcx_pomd", "pcx_nomd", "pcx_qrel", "BSI", "AGE")
 
-imputed_datasets= imputeData(home_dir, ID, data_to_impute, continuous_variables, m=2, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+imputed_datasets= imputeData(home_dir, ID, data_to_impute, continuous_variables, m, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
 ```
 

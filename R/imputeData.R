@@ -1,8 +1,7 @@
-#Function to create 5 imputed datasets from original dataset
-# See Amelia documentation for more detail: https://cran.r-project.org/web/packages/Amelia/Amelia.pdf
-#
-#' Title
+#' Imputes dataset so there is no missing at each time point
 #'
+#' Creates m imputed datasets from original dataset using the Aeelia package. See Amelia documentation for more detail: https://cran.r-project.org/web/packages/Amelia/Amelia.pdf
+
 #' @param home_dir path to home directory for the project
 #' @param ID person-level identifier in your dataset
 #' @param data_to_impute output from dataToImpute
@@ -23,8 +22,9 @@
 #' @return imputed_datasets imputation results
 #' @export
 #' @importFrom Amelia amelia
-
-#' @examples
+#' @seealso [dataToImput()], [Amelia::amelia()]
+#' @examples imputeData(home_dir, ID, data_to_impute, continuous_variables, m, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+#'
 imputeData <- function(home_dir, ID, data_to_impute, continuous_variables, m=5, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL){
 
   data_to_impute=as.data.frame(data_to_impute)

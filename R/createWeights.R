@@ -1,15 +1,8 @@
-#See CBPS documentation for more detail: https://cran.r-project.org/web/packages/CBPS/CBPS.pdf
-
-#' createWeights
+#' Creates balancing weights for potential confounding covariates in relation to exposures at each time point
 #'
-#' @return weights_models
-#' @export
-#' @importFrom CBPS CBPS
-#' @importFrom CBPS balance
-#' @importFrom data.table setDT
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 aes
-#' @importFrom ggplot2 ggsave
+#' Creates balancing weights using the CBPS package (See CBPS documentation for more detail: https://cran.r-project.org/web/packages/CBPS/CBPS.pdf) for more
+#' returns a list of weights_models
+
 #' @param wide_long_datasets from formatForWeights
 #' @param forms from createForms
 #' @param exposures list of exposures
@@ -24,13 +17,18 @@
 #' @param sample.weights CBPS parameter for survey sampling weights for obs, NULL defaults to sampling weight of 1 for each observation
 #' @param baseline.formula CBPS parameter for iCBPS, only works with binary treatments
 #' @param diff.formula CBPS parameter for iCBPS, only works with binary treatments
-
-
-#' @examples
+#' @return weights_models
+#' @export
+#' @importFrom CBPS CBPS
+#' @importFrom CBPS balance
+#' @importFrom data.table setDT
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 ggsave
+#' @seealso [CBPS::CBPS()], [formatForWeights()], [createForms()]
+#' @examples createWeights(wide_long_datasets,forms, exposures, time_pts, m,  ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
 #'
-createWeights <-function(wide_long_datasets,forms, exposures, time_pts, m, balance_thresh=0.12, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL){
-
-  ####Fit CBPS for all treatments and time points using forms created above for each imputed dataset, each tx, and each time point. Creates variables fit_k_treat for each imputed dataset. Also saves out balance checking image, histogram, and weights when PLOT_CODE is set to "yes" to 'weights' folder.
+createWeights <-function(wide_long_datasets, forms, exposures, time_pts, m, balance_thresh=0.12, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL){
 
   weights_models=list()
   #Cycles through imputed datasets
@@ -38,7 +36,6 @@ createWeights <-function(wide_long_datasets,forms, exposures, time_pts, m, balan
     # browser()
     require(ggplot2)
 
-    # MSMDATA=get(paste("imp", k, "_widelong", sep="")) #reads in widelong imputed data
     MSMDATA=wide_long_datasets[[paste("imp", k, "_widelong", sep="")]]
 
     #cycles through exposures
@@ -52,7 +49,6 @@ createWeights <-function(wide_long_datasets,forms, exposures, time_pts, m, balan
         #references newly ordered time variable (1:n(time_pts))
         new_time=as.numeric(c(1:length(time_pts))[x])
 
-        # form=get(paste("form_", exposure, "_", time, sep="")) #pulls appropriate form
         form=forms[[paste("form_", exposure, "_", time, sep="")]]
 
         #Order by time
@@ -68,7 +64,6 @@ createWeights <-function(wide_long_datasets,forms, exposures, time_pts, m, balan
                     sample.weights = sample.weights, baseline.formula = NULL,
                     diff.formula = NULL)
 
-        # return(assign(paste("fit_", k, "_", exposure, "_", time, sep=""), fit))
         weights_models[[paste("fit_", k, "_", exposure, "_", time, sep="")]] <-fit
 
         #saves out fit objects made by CBPS so user can re-load at later time
@@ -92,7 +87,6 @@ createWeights <-function(wide_long_datasets,forms, exposures, time_pts, m, balan
         ggplot2::ggsave(paste("Hist_exp=", exposure, "_t=", time, "_imp=", k, ".png", sep=""), path=paste0(home_dir, "weights/"), height=8, width=14)
 
         print(paste0("A weights histogram for exposure ", exposure, " at time ", time, " for imputation ", k,  " has now been saved in the 'weights' folder --likely has heavy tails"))
-
 
         #Writes image to balance check
         jpeg(filename=paste(home_dir, "balance/Balance_exp=", exposure, "_t=", time, "_imp=",k, ".jpg", sep=""), width=480,height=480)

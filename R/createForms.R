@@ -1,20 +1,21 @@
-#code to create CBPS forms at each time point for each exposure
-#' createForms
+#' Creates formulae for generating weights
 #'
-#' @return forms
-#' @export
+#' Creates formulae for each exposure at each time point for the CBPS function that will make weights returning a list of forms
+#'
 #' @param wide_long_datasets from formatForWeights
 #' @param covariates_to_include from identifyPotentialConfounds
 #' @param exposures list of exposures of interest
 #' @param outcomes list of outcomes of interest
 #' @param time_pts list of time points
 #' @param potential_colliders optional list of variables to be excluded from balancing at time point of exposure
-
-#' @examples
+#' @return forms
+#' @export
+#' @seealso [formatForWeights()], [identifyPotentialConfounds] for more on inputs
+#' @examples createForms(wide_long_datasets,covariates_to_include, exposures, outcomes, time_pts, potential_colliders)
+#'
 createForms <- function(wide_long_datasets, covariates_to_include, exposures, outcomes, time_pts, potential_colliders=NULL){
 
   ####Creates CBPS forms for each treatment at each time point (e.g., HOMEETA.6) that includes: all identified potential confounds for that treatment (at any time point) and lagged time points of the treatment, excludes other outcomes a the given time point (as potential colliders).
-  ####Call tx variables and lagged variables for each tx. Creates variables form_tx_time for each tx and time point. Could be helpful to spot check a few of these forms in the global environment.
 
   #determining column names
   imp_col_names=colnames(wide_long_datasets[[1]])
@@ -34,9 +35,6 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
 
       #Finds relevant concurrent and lagged time points
       lags=c(time_pts[time_pts<time | time_pts==time])
-
-      # browser()
-
       lagged_vars={}
 
       covariates=apply(expand.grid(time_varying_covariates, as.character(lags)), 1, paste, sep="", collapse=".")
@@ -44,14 +42,9 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
       covariates=covariates[!covariates %in% paste0(exposure, ".", time)]
 
       # #Checks to see if lagged time-varying covariates exist in widelong dataset
-      # if (sum(covariates %in% imp_col_names)<length(covariates)){
-      #   message(paste0("The following lagged covariates for ", exposure, " at time ", time, " were not found in the dataset and thus skipped: ", c(covariates[!covariates %in% imp_col_names])))
-      # }
-
       lagged_vars=rbind(lagged_vars, covariates[covariates %in% imp_col_names])
 
       #Makes list of variables to include in form for a given tx and time point: USER CHECK THIS!
-      # vars_to_include=c(as.character(unlist(get(paste(exposure, "_covars_to_include", sep="")))), lagged_vars)
       vars_to_include=c(covariates_to_include[[paste(exposure, "_covars_to_include", sep="")]], lagged_vars)
 
       #Removes time-varying vars that have now been coverted to wide;
@@ -61,7 +54,6 @@ createForms <- function(wide_long_datasets, covariates_to_include, exposures, ou
                                                               paste(exposure, time, sep=""), #exclude exposure at that time point
                                                               paste(outcomes, time, sep="."), #exclude any outcomes at that time point --collider bias
                                                               apply(expand.grid(potential_colliders, as.character(time)), 1, paste, sep="", collapse="."))] #exclude any variables deemed colliders
-
 
       #Creates form for the given exposure time point
       f=paste(exposure, "~", paste0(vars_to_include, sep="", collapse=" + "))
