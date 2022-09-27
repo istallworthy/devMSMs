@@ -25,6 +25,8 @@ formatDataStruct <-function(data_path, home_dir, missing, factor_covariates) {
   if(dir.exists(paste0(home_dir, "plots/"))==F){dir.create(paste0(home_dir, "plots/"))}
   if(dir.exists(paste0(home_dir, "forms/"))==F){dir.create(paste0(home_dir, "forms/"))}
   if(dir.exists(paste0(home_dir, "balance/"))==F){dir.create(paste0(home_dir, "balance/"))}
+  if(dir.exists(paste0(home_dir, "msms/"))==F){dir.create(paste0(home_dir, "msms/"))}
+  if(dir.exists(paste0(home_dir, "results figures/"))==F){dir.create(paste0(home_dir, "results figures/"))}
 
   #reading and formatting LONG dataset
   data=as.data.frame(readr::read_csv(data_path), col_types=cols(), show_col_types=FALSE)

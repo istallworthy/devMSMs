@@ -86,24 +86,34 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
 
   #create dataset for future modeling
   #run this code to make wide dataset for future use in actual msm model (i.e., non-imputed wide data)
-  imp=as.data.frame(data)
-  test=tidyr::pivot_wider(imp,
-                   id_cols=ID,
-                   names_from=WAVE,
-                   values_from=c(time_varying_covariates))
+  # imp=as.data.frame(data)
+  imp=as.data.frame(imputed_datasets$imp1) #IS changed to ue imputed dataset
 
-  invar=colnames(imp)[colnames(imp) %in% time_varying_covariates==FALSE]
-  invar=invar[!grepl("WAVE", invar)]
-  invars=imp[invar] #pulls only invariant vars
-  invars[] <- suppressWarnings(lapply(invars, as.numeric))
+  imp_wide=suppressWarnings(stats::reshape(data=imp,
+                                           idvar=ID,
+                                           v.names= time_varying_covariates, #list ALL time-varying covariates
+                                           timevar="WAVE",
+                                           times=c(time_pts),
+                                           direction="wide"))
+  imp_wide=imp_wide[,!colnames(imp_wide) %in% time_var_exclude]
 
-  ID_temp=sym(ID)
-
-  t=invars%>%
-    dplyr::group_by(!!ID_temp)%>%
-    dplyr::summarise(across(everything(), mean, na.rm=T))
-
-  imp_wide=plyr::join(test,t, by=ID)
+  # test=tidyr::pivot_wider(imp,
+  #                  id_cols=ID,
+  #                  names_from=WAVE,
+  #                  values_from=c(time_varying_covariates))
+  #
+  # invar=colnames(imp)[colnames(imp) %in% time_varying_covariates==FALSE]
+  # invar=invar[!grepl("WAVE", invar)]
+  # invars=imp[invar] #pulls only invariant vars
+  # invars[] <- suppressWarnings(lapply(invars, as.numeric))
+  #
+  # ID_temp=sym(ID)
+  #
+  # t=invars%>%
+  #   dplyr::group_by(!!ID_temp)%>%
+  #   dplyr::summarise(across(everything(), mean, na.rm=T))
+  #
+  # imp_wide=plyr::join(test,t, by=ID)
   #Create long/wide hybrid: merge this newly created wide dataset with long dataset
   write.csv(imp_wide, paste0(home_dir, "data_for_final_model.csv"))
   print("Saved out dataset for final modeling as a csv file in home directory")
