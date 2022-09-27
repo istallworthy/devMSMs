@@ -22,7 +22,6 @@ assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_p
   #read in weights saved locally if user has not just made them and they are not yet in global environment
   if (just_made_weights=="no"){
 
-    # ReadRDSFiles(paste0(home_dir, "weight fits/"))
     weights_models=readRDS(paste0(home_dir, "weight fits/weights_models.rds"))
 
   }
@@ -92,6 +91,7 @@ assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_p
     print(paste0("All covariates still significantly correlated with ", exposures[x], " have been saved as a csv file in 'final weights"))
 
     covariates_for_model=unique(c(as.character(unlist(significant_corrs_remaining[,1]))))
+    covariates_for_model=covariates_for_model[!grepl(exposures[x], covariates_for_model)] #removing exposure (as this will be modeled explicitly)
     covariates_for_model=covariates_for_model[! covariates_for_model %in% exposures[x]]
     covariates_for_model=paste0(covariates_for_model, sep="", collapse=" + ")
     covariates_for_model=gsub(".", "_", covariates_for_model, fixed=TRUE)
@@ -102,5 +102,23 @@ assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_p
 
   return(unbalanced_covariates_for_models)
 
+}
+
+#' Get weights
+#' Code to get and assign weights output if code has already been run to save weights locally
+#' @param home_dir path to home directory for the project
+#' @param just_made_weights="no" no=weights are not assigned in global environment and are instead saved locally
+#' @return weights_models
+#' @export
+#' @examples getWeights(home_dir, just_made_weights="no")
+#' @seealso [assessBalance()] for more on the weights_models param
+
+getWeights <- function(home_dir, just_made_weights="no"){
+
+  if  (just_made_weights=="no"){
+    weights_models=readRDS(paste0(home_dir, "weight fits/weights_models.rds"))
+
+    return(weights_models)
+  }
 }
 

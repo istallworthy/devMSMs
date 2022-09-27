@@ -11,6 +11,7 @@
 #' @return data_for_model_with_weights
 #' @export
 #' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 geom_histogram
 #' @importFrom matrixStats rowProds
 #' @seealso [createWeights()] for more on weights_models input
 #' @examples condenseWeights(ID, home_dir, m, weights_models, exposures, time_pts)
@@ -45,7 +46,7 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
 
       #Plots histogram of weight product for each tx and imputed dataset
       ggplot2::ggplot(data=as.data.frame(treat_temp_prod), aes(x = as.numeric(unlist(treat_temp_prod)))) +
-        geom_histogram(color = 'black', bins = 15)
+        ggplot2::geom_histogram(color = 'black', bins = 15)
       ggplot2::ggsave(paste("Hist_imp_", k, "_", exposure, "_ALL_TIMES", ".png", sep=""), path=paste0(home_dir, "combined weights"), height=8, width=14)
       print(paste0("A histograms of weights for imputation ", k, " and exposure ", exposure, " has been saved to the 'combined weights' folder"))
 
@@ -80,7 +81,7 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
 
     all_weights=merge(all_weights, mean_weight, by=ID)
 
-    write.csv(x=as.data.frame(n), file=paste(home_dir, "final weights/", exposure, "_mean_weight_all_imp.csv", sep=""))
+    write.csv(x=as.data.frame(all_weights), file=paste(home_dir, "final weights/", exposure, "_mean_weight_all_imp.csv", sep=""))
     print(paste0("Weights for exposure ", exposure, " are now saved as a csv file in the 'final weights' folder"))
   }
 

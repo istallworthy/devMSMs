@@ -23,7 +23,12 @@ Imports:
     ggplot2,
     matrixStats,
     plyr,
-    knitr
+    knitr,
+    survey,
+    car,
+    sjPlot,
+    stargazer,
+    gtools
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

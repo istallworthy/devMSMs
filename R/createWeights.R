@@ -34,7 +34,7 @@ createWeights <-function(wide_long_datasets, forms, exposures, time_pts, m, bala
   #Cycles through imputed datasets
   for (k in 1:m){
     # browser()
-    require(ggplot2)
+    # require(ggplot2)
 
     MSMDATA=wide_long_datasets[[paste("imp", k, "_widelong", sep="")]]
 
@@ -82,8 +82,8 @@ createWeights <-function(wide_long_datasets, forms, exposures, time_pts, m, bala
         print(paste0("Weights for exposure ", exposure, " at time ", time, " for imputation ", k,  " have now been saved into the 'weights' folder"))
 
         # #Writes image of histogram of weights to assess heavy tails
-        ggplot2::ggplot(data=as.data.frame(fit$weight), aes(x = fit$weight)) +
-          geom_histogram(color = 'black', bins = 15)
+        ggplot2::ggplot(data=as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
+          ggplot2::geom_histogram(color = 'black', bins = 15)
         ggplot2::ggsave(paste("Hist_exp=", exposure, "_t=", time, "_imp=", k, ".png", sep=""), path=paste0(home_dir, "weights/"), height=8, width=14)
 
         print(paste0("A weights histogram for exposure ", exposure, " at time ", time, " for imputation ", k,  " has now been saved in the 'weights' folder --likely has heavy tails"))
