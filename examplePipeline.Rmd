@@ -1,7 +1,7 @@
 ---
 title: "examplePipeline"
 author: "Isa Stallworthy"
-date: "8/26/2022"
+date: "9/30/2022"
 output: html_document
 ---
 
@@ -162,7 +162,7 @@ data_for_model_with_weights=condenseWeights(ID, home_dir, m, weights_models, exp
 
 
 ### 10. Truncate final weights to avoid heavy tails
-This code caps weights at a designated percentile, populating all weights larger than that value with that percentile value. These weights can now be used in the formal marginal structural model, or weighted model. You can stop here if you have specific MSM models you want to fit or you can continue on to fit a single-outcome model. 
+This code caps weights at a designated percentile (that the user has the option to specify with 'percentile_cutoff'), populating all weights larger than that value with that percentile value. These weights can now be used in the formal marginal structural model, or weighted model. You can stop here if you have specific MSM models you want to fit or you can continue on to fit a single-outcome model. 
 ```{r}
 
 data_for_model_with_weights_cutoff=truncateWeights(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90)
