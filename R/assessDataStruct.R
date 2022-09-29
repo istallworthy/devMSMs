@@ -16,6 +16,16 @@ formatDataStruct <-function(data_path, home_dir, missing, factor_covariates) {
 
   options(readr.num_columns = 0)
 
+  #error checking
+  if (!file.exists(data_path)){
+    stop('Please provide a valid directory for your data in data_path')
+  }
+  if (!dir.exists(home_dir)){
+    stop('Please provide a valid home directory in home_dir')
+  }
+
+
+
   #creating all necessary directories within the home directory
   if(dir.exists(paste0(home_dir, "imputations/"))==F){dir.create(paste0(home_dir, "imputations/"))}
   if(dir.exists(paste0(home_dir, "weight fits/"))==F){dir.create(paste0(home_dir, "weight fits/"))}
@@ -32,6 +42,11 @@ formatDataStruct <-function(data_path, home_dir, missing, factor_covariates) {
   data=as.data.frame(readr::read_csv(data_path), col_types=cols(), show_col_types=FALSE)
   colnames(data)[colnames(data)==time_var] <- "WAVE"
   data[data == missing] <- NA
+
+  if (!factor_covariates %in% colnames(data)){
+    stop('Please provide factor covariates that correspond to columns in your data')
+  }
+
   data[,factor_covariates] <- lapply(data[,factor_covariates] , factor)
 
   return(data)
@@ -51,15 +66,13 @@ formatDataStruct <-function(data_path, home_dir, missing, factor_covariates) {
 #' @importFrom dplyr %>%
 #' @seealso [fomatDataStruct()]
 #' @examples makeTimePtDatasets(data, ID, time_pts)
-#'
 makeTimePtDatasets <-function(data, ID, time_pts){
-  require(dplyr)
 
   #creating dataset for each time point and store in a list
   data_list={}
   time_pt_datasets=list()
   for (t in 1:length(time_pts)){
-    time_pt_datasets[[paste0("Data_", time_pts[t])]] <-data%>%
+    time_pt_datasets[[paste0("Data_", time_pts[t])]] <-data %>%
       dplyr::filter(WAVE==time_pts[t])
     data_list=c(data_list, paste0("Data_", time_pts[t]))
   }

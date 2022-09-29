@@ -15,25 +15,22 @@
 #' @seealso [assessModel()]
 #' @return history_comparisons lists of linear hypothesis tests
 #' @examples compareHistories(home_dir, exposures, exposure_epochs, hi_cutoff=.75, lo_cutoff=.25, outcome, outcome_time_pts, best_models, comparisons, reference)
-compareHistories <-function(home_dir, exposures, exposure_epochs, hi_cutoff=.75, lo_cutoff=.25, outcome, outcome_time_pts, best_models, comparisons="", reference=apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")[length(apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-"))]){
+compareHistories <-function(home_dir, exposures, exposure_epochs, hi_cutoff=.75, lo_cutoff=.25, outcome, outcome_time_pts, best_models, comparisons="", reference=""){
 
   epochs=exposure_epochs$epochs
   data=read.csv(paste0(home_dir, 'msms/data_for_msms.csv'))
 
+  #creates permutations of high ("h") and low ("l") levels of exposures for each exposure epoch
+  exposure_levels=apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
+
+
   #error checking
   if (hi_cutoff>1 | hi_cutoff<0){
     stop('Please select hi_cutoff between 0 and 1')}
-
   if (lo_cutoff>1 | lo_cutoff<0){
     stop('Please select lo_cutoff between 0 and 1')}
-
-
   if (sum(exposure_levels %in% reference)==0){
     stop('Please select a valid reference history from the list')}
-
-
-  #creates permutations of high ("h") and low ("l") levels of exposures for each exposure epoch
-  exposure_levels=apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
 
 
   #if no comparison is specified by the user, compare to all histories aside from the reference
@@ -42,9 +39,17 @@ compareHistories <-function(home_dir, exposures, exposure_epochs, hi_cutoff=.75,
   }else {
     if (sum(exposure_levels %in% comparisons)==0){
       stop('Please select a valid comparison history from the list')}
-
     comp_histories=exposure_levels[exposure_levels %in% comparisons]
   }
+
+  #if no reference is set by user, set to low exposure at all time points
+  if (reference==""){
+    reference=apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")[length(apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-"))]
+  }else {
+    if (sum(exposure_levels %in% reference)==0){
+      stop('Please select a valid reference history from the list')}
+  }
+
 
   #final list of all comparisons for all exposure-outcome pairs
   history_comparisons=list()
@@ -77,11 +82,6 @@ compareHistories <-function(home_dir, exposures, exposure_epochs, hi_cutoff=.75,
       parameters=parameters[parameters !="+"]
 
 
-      # #finding all possible interactions for exposure main effects
-      # interactions=sapply(strsplit(paste(apply(combn(exp_epochs,2), 2, paste, sep="", collapse=":"), sep="", collapse=" + "), " +"), "[")
-      # interactions=as.data.frame(interactions[interactions!="+"])
-      # names(interactions)="parameter"
-
       #gathering epoch information for each exposure for deriving betas
       epoch_info=as.data.frame(rep(exposure, length(epochs)))
       epoch_info$time=epochs
@@ -111,7 +111,6 @@ compareHistories <-function(home_dir, exposures, exposure_epochs, hi_cutoff=.75,
       #finds reference beta values and formula based on parameters of best-fitting model
       ref_parameters_betas=as.data.frame(parameters[2:length(parameters)])
       names(ref_parameters_betas)="parameter"
-      # parameters_betas=rbind(parameters_betas, interactions)
       ref_parameters_betas$beta=NA
 
       #finding the reference beta values for each parameter
@@ -145,7 +144,6 @@ compareHistories <-function(home_dir, exposures, exposure_epochs, hi_cutoff=.75,
       for (c in 1:length(comp_histories)){
         comparison=comp_histories[c]
 
-
         #finds comparison betas based on specified comparison history
         epoch_info$comparison=sapply(strsplit(comparison, "-"),"[")
         epoch_info$comp_betas=NA
@@ -159,7 +157,6 @@ compareHistories <-function(home_dir, exposures, exposure_epochs, hi_cutoff=.75,
         #finds comparison beta values and formula based on parameters of best-fitting model
         comp_parameters_betas=as.data.frame(parameters[2:length(parameters)])
         names(comp_parameters_betas)="parameter"
-        # parameters_betas=rbind(parameters_betas, interactions)
         comp_parameters_betas$beta=NA
 
         #finding the comparison beta values for each parameter
