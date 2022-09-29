@@ -2,13 +2,26 @@
 % Please edit documentation in R/plotResults.R
 \name{plotResults}
 \alias{plotResults}
-\title{Title}
+\title{Plot results from history comparisons
+Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure}
 \usage{
-plotResults(home_dir, best_models, history_comparisons)
+plotResults(home_dir, best_models)
 }
 \arguments{
-\item{history_comparisons}{}
+\item{home_dir}{path to home directory for the project}
+
+\item{history_comparisons}{output from compareHistories}
+}
+\value{
+plots
 }
 \description{
-Title
+Plot results from history comparisons
+Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure
+}
+\examples{
+plotResults(home_dir, best_models)
+}
+\seealso{
+\code{\link[=compareHistories]{compareHistories()}}
 }

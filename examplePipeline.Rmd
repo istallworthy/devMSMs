@@ -25,7 +25,6 @@ ID="s_id"
 time_pts=c(6, 15, 24, 35, 58)
 time_var="TAge"
 
-
 #marker for missing data
 missing=-9999
 
@@ -88,7 +87,6 @@ time_varying_covariates= c("INR", "WIND", "pcx_sensitive", "BSI","ESETA1", "HOME
 #of those covariates, identify those that correlate with each exposure or outcome at each time point at >0.1 and thus could be potential confounders
 covariates_to_include= identifyPotentialConfounds(home_dir, data, time_pt_datasets, time_pts, exclude_covariates=NULL)
 
-
 #create final dataset for imputations with only the necessary variables
 data_to_impute=dataToImpute(ID, data, exposures, outcomes, covariates_to_include, exclude_covariates)
 
@@ -96,7 +94,7 @@ data_to_impute=dataToImpute(ID, data, exposures, outcomes, covariates_to_include
 
 
 ### 4. Impute dataset so that each time point has complete data*
-Create m imputed datasets using the Amelia package and functions and weights will be generated for each imputed dataset (and combined at the end). This code takes a few minutes to run per imputation. The next step of code, parameter 'just_imputed', will allow you to read imputed data in from local storage so as not to have to re-run. 
+Create m imputed datasets using the Amelia package and functions and weights will be generated for each imputed dataset (and combined at the end). ONly run this when needed! This code takes a few minutes to run per imputation. The next step of code, parameter 'just_imputed', will allow you to read imputed data in from local storage so as not to have to re-run. 
 ```{r}
 
 #list continous variables here; all others assumed ordinal for imputation 
@@ -132,7 +130,7 @@ forms=createForms(wide_long_datasets,covariates_to_include, exposures, outcomes,
 
 
 ### 7. Creating balancing weights for each exposure at each time point, for each imputed dataset*
-This step creates balancing weights using the CBPS package and function. This code takes a little while to run and the parameter 'just_made_weights' in the next step allows you to instead read in weights that have already been saved locally. 
+This step creates balancing weights using the CBPS package and function. Only run this code when needed! This code takes a little while to run and the parameter 'just_made_weights' in the next step allows you to instead read in weights that have already been saved locally. 
 ```{r}
 
 weights_models=createWeights(wide_long_datasets,forms, exposures, time_pts, m,  ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
@@ -142,7 +140,7 @@ weights_models=createWeights(wide_long_datasets,forms, exposures, time_pts, m,  
 
 
 ### 8. Assess balance and determine variables for which balance could not be achieved for use as covariates in final model
-This code evaluates which covariates are still correlated with exposures above the designated threshold (i.e., for which balancing was not successful), after averaging across imputed datasets and time points, and saves out a list of those covariates to include in your final model. Use the parameter 'just_made_weights' to designate whether you just made the weights and they are in the global environment ('yes') or you'd rather read them in from an earlier run ('no'). 
+This code evaluates which covariates are still correlated with exposures above the designated threshold (i.e., for which balancing was not successful) which the user has the option to define ('balance_thresh'), after averaging across imputed datasets and time points, and saves out a list of those covariates to include in your final model. Use the parameter 'just_made_weights' to designate whether you just made the weights and they are in the global environment ('yes') or you'd rather read them in from an earlier run ('no'). 
 ```{r}
 #assesses covariate balance and produces figures for user inspection
 unbalanced_covariates_for_models=assessBalance(home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no")
@@ -154,7 +152,7 @@ weights_models=getWeights(home_dir, just_made_weights="no")
 
 
 ### 9. Condense weights to create one per person per exposure
-This code multiplies weights across time points and averages across imputed datasets to condense down to final individual weights per exposure for modeling
+This code multiplies weights across time points and averages across imputed datasets to condense down to final individual weights per exposure for modeling.
 ```{r}
 
 data_for_model_with_weights=condenseWeights(ID, home_dir, m, weights_models, exposures, time_pts)
@@ -173,12 +171,12 @@ data_for_model_with_weights_cutoff=truncateWeights(data_for_model_with_weights, 
 
 
 ### 11. Fit a series of marginal structural models to determine best fit
-This code fits a weighted regression model using the final truncated weights to separately examine the putative causal effects of each of your exposures on each (single time point) outcome, including any covariates that were not successfully balanced. Fit is assessed using AIC. The current approach retains main effects of each exposure epoch for the purpose of examining different histories in the next step, and tests for all 2-way interactions between exposure main effects. 
+This code fits a series of weighted generalized linear models (using the 'survey' package) using the final truncated weights to separately examine the putative causal effects of each of your exposures on each (single time point) outcome, including any covariates that were not successfully balanced. Fit is assessed using AIC. The current approach retains main effects of each exposure epoch for the purpose of examining different histories in the next step, and tests for all 2-way interactions between exposure main effects. 
 Model dictionary:
   *m0 baseline model with only main effects for each exposure epoch
   *m1 full covariate model adding in all unbalanced covariates (if any)
   *m2 covariate model including only significant covariates (retaining all epoch main effects)
-  *m3 full interaction model adding in all possible epoch interactions
+  *m3 full interaction model adding in all possible epoch main effect interactions
   *m4 final model including all epoch main effects and only the significant covariates and interactions 
 ```{r}
 
@@ -193,28 +191,29 @@ best_models=assessModel(home_dir, all_models)
 
 
 ### 12. Compare exposure histories and correct for multiple comparisons
-This code fits a series of linear hypothesis tests to examine the effects of different combinations of exposures, or histories/regimes) on each outcome using the best-fitting model from the previous step. Because we use a continuous approach, the user needs to specify cutoffs for values of the exposures that will be considered high ("hi_cutoff") and low ("lo_cutoff"). The user must also specify a reference history ("reference") and an optional comparison history ("comparisons") on which to base comparisons and which multiple comparison correction method to implement. 
+This code fits a series of linear hypothesis tests to examine the effects of different combinations of exposures, or histories/regimes) on each outcome using the best-fitting model from the previous step. Because we use a continuous approach, the user has the option to specify cutoffs for values of the exposures that will be considered high ("hi_cutoff") and low ("lo_cutoff"). The user also has the option to specify a reference history ("reference") and an optional comparison history ("comparisons") on which to base comparisons and which multiple comparison correction method ('method') to implement. 
 ```{r}
 #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
 apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
 
 #select one of the above histories as your reference event, or the history/sequence to which you would like to compare the other histories  
-reference="l-l-l" #the default is set to the history denoting low exposure atat all time points 
+reference="l-l-l" #optional: set a reference history from the list above; the default is set to the history denoting low exposure at all time points 
 comparisons="" #optional: set a comparison history from list above; the default is to include all non-reference histories as comparisons
 
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
 history_comparisons=compareHistories(home_dir, exposures, exposure_epochs, hi_cutoff=.75, lo_cutoff=.25, outcome, outcome_time_pts, best_models, comparisons, reference)
 
-#adjust p-values for multiple comparisons with user-specified method
+#adjust p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
 signifcant_comparisons=mcCorrection(history_comparisons, method="BH")
 
 ```
 
 
 ### 13. Plot results by exposure history and dose
-This code uses predicted values to plot the effects of the different exposure histories and resulting comparisons for each exposure-outcome pairing. Use the results from the above step to determine which exposure histories are significantly different from one another. 
+This code uses predicted values to plot the effects of the different exposure histories and resulting comparisons for each exposure-outcome pairing. Use the results from the above step to determine which exposure histories are significantly different from one another. The user has the option to provide more formal labels for the exposure(s) ('exposure_labels') and outcome ('outcome_labels') to be used for plotting.  
 ```{r}
 #saves out plots of exposure histories for each out exposure-outcome pairing, colored by dosage of exposure 
-plotResults(home_dir, best_models)
+plotResults(home_dir, exposures, outcomes, best_models, exposure_labels=c("Home Resources", "Income-to-Needs-Ratio", "Threat", "Conflict"), outcome_labels=c("Sensitive Parenting","Parent Positive Affect"))
+
 ```
 

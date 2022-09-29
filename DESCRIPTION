@@ -26,6 +26,7 @@ Imports:
     knitr,
     survey,
     car,
+    jtools,
     sjPlot,
     stargazer,
     gtools

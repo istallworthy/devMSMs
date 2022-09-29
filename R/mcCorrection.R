@@ -27,11 +27,9 @@ mcCorrection <- function(history_comparisons, method="BH"){
     sig_comparisons=comparisons[comparisons$p_vals_corr<0.05,]
 
     significant_comparisons[[exp_out]] <- sig_comparisons
-
-    stargazer::stargazer(comparisons, type="html", digits=2, column.labels = colnames(comparisons),summary=FALSE, rownames = FALSE,
+    #save out table for all contrasts with old and corrected p-values
+    stargazer::stargazer(comparisons, type="html", digits=2, column.labels = colnames(comparisons),summary=FALSE, rownames = FALSE, header=FALSE,
                          out=paste0(home_dir, "msms/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
-
-
 
   }
 

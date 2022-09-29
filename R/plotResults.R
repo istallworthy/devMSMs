@@ -1,16 +1,38 @@
-
 #' Plot results from history comparisons
 #' Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure
 #' @param home_dir path to home directory for the project
-#' @param history_comparisons output from compareHistories
-#' @seealso [compareHistories()]
+#' @param exposures list of variables that represent your exposures/treatments of interest
+#' @param outcomes list of variables that represent your outcomes of interest
+#' @param best_models outcome from assessModels
+#' @param exposure_labels optional list of labels for exposure variables for plotting purposes
+#' @param outcome_labels optional list of labels for outcome variables for plotting purposes
+#' @seealso [assessModels()]
 #' @return plots
 #' @importFrom ggplot2 ggplot
-#' @examples plotResults(home_dir, best_models)
-plotResults <- function(home_dir, best_models){
+#' @examples plotResults(home_dir, exposures, outcomes, best_models, exposure_labels="", outcome_labels="")
+plotResults <- function(home_dir, exposures, outcomes, best_models, exposure_labels="", outcome_labels=""){
+
+  if (exposure_labels==""){
+    exposure_labels=exposures #default is to use
+  }else {
+    if (length(exposure_labels) != length(exposures)){
+      stop('Please provide labels for all exposures (in the same order as listed in the exposures field)')
+    }
+  }
+
+  if (outcome_labels==""){
+    outcome_labels=outcomes #default is to use
+  }else {
+    if (length(outcome_labels) != length(outcomes)){
+      stop('Please provide labels for all outcomes (in the same order as listed in the outcome field)')
+    }
+  }
+
 
   for (x in 1:length(best_models)){
     exp_out=names(best_models)[x]
+    exposure=sapply(strsplit(exp_out, "-"), "[",1)
+    outcome=sapply(strsplit(exp_out, "-"), "[",2)
 
     final_model=best_models[[exp_out]]
 
@@ -19,11 +41,10 @@ plotResults <- function(home_dir, best_models){
     parameters=parameter_beta_info[[exp_out]][[1]]$ref$parameter
 
 
-    #getting predicted value info for ref
+    #getting predicted value info for ref and comparison histories
     param_betas_ref=lapply(parameter_beta_info[[exp_out]], function(x) x$ref)
     param_betas_ref=as.data.frame(t(as.data.frame(param_betas_ref[[1]]$beta))) #pulls first one bc ref is always the same for all contrasts
     colnames(param_betas_ref)=parameters
-    # param_betas_ref=as.data.frame(lapply(param_betas_ref, function(x) as.numeric(x)))
     param_betas_ref=cbind(sapply(strsplit(names(lapply(parameter_beta_info[[exp_out]], function(x) x$ref))[1], "vs."), "[",1),  param_betas_ref)
     colnames(param_betas_ref)=c("seq", parameters)
     param_betas_comp=lapply(parameter_beta_info[[exp_out]], function(x) x$comp)
@@ -57,10 +78,9 @@ plotResults <- function(home_dir, best_models){
     ggplot2::ggplot(aes(x=fit, y=seq, color=dose), data=plot_data)+
       ggplot2::geom_point()+
       ggplot2::scale_color_manual(values=c("blue4", "darkgreen", "darkgoldenrod", "red2"))+
-      # scale_color_brewer(palette="RdYlGn")+
       ggplot2::geom_errorbarh(xmin = plot_data$fit-plot_data$se, xmax = plot_data$fit+plot_data$se, height=0.6)+
-      ggplot2::xlab(paste0("Predicted ", sapply(strsplit(exp_out, "-"), "[",2), " Value"))+
-      ggplot2::ylab(paste0(sapply(strsplit(exp_out, "-"), "[",1), " exposure history"))+
+      ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcomes)], " Value"))+
+      ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposures)], " Exposure History"))+
       ggplot2::xlim(min(plot_data$fit-plot_data$se)-2*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+2*sd(plot_data$fit+plot_data$se))+
       ggplot2::theme(text = ggplot2::element_text(size=18))+
       ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
@@ -68,5 +88,5 @@ plotResults <- function(home_dir, best_models){
     ggplot2::ggsave(paste0(home_dir, "results figures/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
 
   }
-  print("See the 'results figures' folder for graphical representations of findings")
+  print("See the 'results figures' folder for graphical representations of results")
 }
