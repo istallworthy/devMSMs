@@ -43,7 +43,7 @@ formatDataStruct <-function(data_path, home_dir, missing, factor_covariates) {
   colnames(data)[colnames(data)==time_var] <- "WAVE"
   data[data == missing] <- NA
 
-  if (!factor_covariates %in% colnames(data)){
+  if (sum(factor_covariates %in% colnames(data))<length(factor_covariates)){
     stop('Please provide factor covariates that correspond to columns in your data')
   }
 
