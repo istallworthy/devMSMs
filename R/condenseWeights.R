@@ -48,7 +48,7 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, time_pts)
       ggplot2::ggplot(data=as.data.frame(treat_temp_prod), aes(x = as.numeric(unlist(treat_temp_prod)))) +
         ggplot2::geom_histogram(color = 'black', bins = 15)
       ggplot2::ggsave(paste("Hist_imp_", k, "_", exposure, "_ALL_TIMES", ".png", sep=""), path=paste0(home_dir, "combined weights"), height=8, width=14)
-      print(paste0("A histograms of weights for imputation ", k, " and exposure ", exposure, " has been saved to the 'combined weights' folder"))
+      print(paste0("A histogram of weights for imputation ", k, " and exposure ", exposure, " has been saved to the 'combined weights' folder"))
 
       #Assigns tx weights per imputed dataset
       weights_exposure_k[[paste(exposure, "_", k, "_mean_weight", sep="")]] <-treat_temp_prod

@@ -7,8 +7,11 @@
 identifyPotentialConfounds(
   home_dir,
   data,
+  exposures,
+  outcomes,
   time_pt_datasets,
   time_pts,
+  time_varying_covariates,
   exclude_covariates = NULL
 )
 }

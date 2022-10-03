@@ -5,12 +5,27 @@
 \title{Plot results from history comparisons
 Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure}
 \usage{
-plotResults(home_dir, best_models)
+plotResults(
+  home_dir,
+  exposures,
+  outcomes,
+  best_models,
+  exposure_labels = "",
+  outcome_labels = ""
+)
 }
 \arguments{
 \item{home_dir}{path to home directory for the project}
 
-\item{history_comparisons}{output from compareHistories}
+\item{exposures}{list of variables that represent your exposures/treatments of interest}
+
+\item{outcomes}{list of variables that represent your outcomes of interest}
+
+\item{best_models}{outcome from assessModels}
+
+\item{exposure_labels}{optional list of labels for exposure variables for plotting purposes}
+
+\item{outcome_labels}{optional list of labels for outcome variables for plotting purposes}
 }
 \value{
 plots
@@ -20,8 +35,8 @@ Plot results from history comparisons
 Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure
 }
 \examples{
-plotResults(home_dir, best_models)
+plotResults(home_dir, exposures, outcomes, best_models, exposure_labels="", outcome_labels="")
 }
 \seealso{
-\code{\link[=compareHistories]{compareHistories()}}
+\code{\link[=assessModels]{assessModels()}}
 }
