@@ -15,10 +15,7 @@ compareHistories(
   outcome_time_pts,
   best_models,
   comparisons = "",
-  reference = apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"),
-    repeats.allowed = TRUE), 1, paste, sep = "", collapse =
-    "-")[length(apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"),
-    repeats.allowed = TRUE), 1, paste, sep = "", collapse = "-"))]
+  reference = ""
 )
 }
 \arguments{

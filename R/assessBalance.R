@@ -15,7 +15,6 @@
 #' @seealso [createWeights()] for more on the weights_models param
 #' @export
 #' @importFrom CBPS balance
-
 #' @examples assessBalance(home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no")
 assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no"){
 

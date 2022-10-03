@@ -86,8 +86,6 @@ fitModel <- function(home_dir, ID, exposures, exposure_epochs, outcomes, outcome
         f1=paste(f0) #no covars
         f2=paste(f0) #no sig covars
 
-        #form for interactions
-        # f3=paste(paste0(outcome, "_", outcome_time_pts), "~", paste0(exp_epochs, sep="", collapse=" + "), "+", interactions)
 
       }else{
 
@@ -108,9 +106,12 @@ fitModel <- function(home_dir, ID, exposures, exposure_epochs, outcomes, outcome
         sig_covars=c(as.character(sig_covars))
         print(paste0("The only significant covariate(s) for this model are: ", paste(sig_covars, sep="", collapse=" , ")))
 
-        #final covariate model retaining only significant covariates
-        # f2=paste(paste0(outcome, "_", outcome_time_pts), "~", paste0(exp_epochs, sep="", collapse=" + "), "+", sig_covars)
+        #in the case of no signfiicant covariates
+        if (length(sig_covars)!=0){
         f2=paste(f0, "+", paste(sig_covars, sep="", collapse=" + "))
+        }else{
+          f2=f0
+        }
 
         m2=svyglm(noquote(f2), design=s)
         print(paste0("Final covariate model results for effects of ", exposure, " on ", outcome))
@@ -118,9 +119,6 @@ fitModel <- function(home_dir, ID, exposures, exposure_epochs, outcomes, outcome
         models[["m2"]]<-m2
         # anova(m0, m2)
       }
-
-        #form for interactions
-        # f3=paste(paste0(outcome, "_", outcome_time_pts), "~", paste0(exp_epochs, sep="", collapse=" + "), "+", sig_covars, "+", interactions)
 
       #getting interactions
       interactions=paste(apply(combn(exp_epochs,2), 2, paste, sep="", collapse=":"), sep="", collapse=" + ")

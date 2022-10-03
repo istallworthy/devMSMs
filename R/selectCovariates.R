@@ -39,10 +39,31 @@ identifyCovariates <- function(data, ID, exposures, outcomes, exclude_covariates
 #' @return covariates_to_include
 #' @export
 #' @importFrom Hmisc rcorr
+#' @importFrom stargazer stargazer
 #' @seealso [formatDataStruct()], [makeTimePtDatasets()]
 #' @examples identifyPotentialConfounds(home_dir, data, time_pt_datasets, time_pts, exclude_covariates=NULL)
 #'
-identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pts, exclude_covariates=NULL){
+identifyPotentialConfounds <- function(home_dir, data, exposures, outcomes, time_pt_datasets, time_pts, time_varying_covariates,exclude_covariates=NULL){
+
+  user_input_exclude_covariates=exclude_covariates
+  exclude_covariates=NULL
+  if (length(user_input_exclude_covariates)>0){
+    for (c in 1:length(user_input_exclude_covariates)){
+      if (user_input_exclude_covariates[c] %in% time_varying_covariates){ #find any time-varying covariates to exclude
+        if (grepl(time_pts, user_input_exclude_covariates[c])){
+          exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c]) #check to see if they have specified a time point
+        }else{ #if no time point specified, add all time points
+          temp=apply(expand.grid(user_input_exclude_covariates[c], as.character(as.numeric(time_pts))), 1, paste0, sep="", collapse=".") #appends all time points
+          exclude_covariates=c(exclude_covariates,temp)
+        }
+      }else{
+        exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c])
+      }
+    }
+  }
+
+
+
   #Formats rcorr output for easy manipulation
   flattenCorrMatrix <- function(cormat, pmat) {
     ut <- upper.tri(cormat)
@@ -73,20 +94,28 @@ identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pt
     c=NULL
   }
 
+  #keeps only those that involve either an exposure or outcome
+  # test2=subset(covariate_correlations, subset=grepl(exposures, row) | grepl(exposures, column) | grepl(outcomes, row) | grepl(outcomes, column))
+  covariate_correlations=covariate_correlations[covariate_correlations$row %in% c(exposures, outcomes) | covariate_correlations$column %in% c(exposures,outcomes),]
+
   #save out correlations
-  write.csv(covariate_correlations, paste0(home_dir, "balance/covariate_correlations.csv"))
-  print("Check the 'balance' folder to view a csv file of all correlations between covariates and exposures/outcomes > 0.1")
+  stargazer::stargazer(covariate_correlations,type="html", digits=2, column.labels = colnames(covariate_correlations),summary=FALSE, rownames = FALSE, header=FALSE,
+                        out=paste0(home_dir, "balance/covariate_correlations.html"))
+  # write.csv(covariate_correlations, paste0(home_dir, "balance/covariate_correlations.csv"))
+  print("Check the 'balance' folder to view an html file of a table of all correlations between covariates and exposures/outcomes > 0.1 at each time point")
 
   #for each exposure, list correlated covariates that include only that exposure and/or outcomes of interest
   variables_to_include=c(ID, "WAVE", exposures, outcomes)
   covariates_to_include=list()
   for (y in 1:length(exposures)){
     variables=covariate_correlations[covariate_correlations$row %in% c(exposures[y], outcomes) | covariate_correlations$column %in% c(exposures[y], outcomes),]
-    unique_variables=unique(c(variables$row, variables$column))
-    unique_variables=unique_variables[!unique_variables %in% c(exclude_covariates, "WAVE", ID)]
+    unique_variables=unique(c(variables$row, variables$column)) #finds variables correlated at any time point
+    unique_variables=unique_variables[!unique_variables %in% c(user_input_exclude_covariates, "WAVE", ID)]
     variables_to_include=c(variables_to_include, unique_variables)
     # assign(paste(exposures[y], "_covars_to_include", sep=""), unique_variables) #makes data frames for each tx with only relevant covariates
-    covariates_to_include[[paste(exposures[y], "_covars_to_include", sep="")]] <- unique_variables #saves to list
+    # covariates_to_include[[paste(exposures[y], "_covars_to_include", sep="")]] <- unique_variables #saves to list
+    covariates_to_include[[paste(exposures[y], "_covars_to_include", sep="")]] <- variables #saves relevant covariates at different time points
+
   }
 
   return(covariates_to_include)
@@ -111,7 +140,7 @@ identifyPotentialConfounds <- function(home_dir, data, time_pt_datasets, time_pt
 #' @seealso [formatDataStruct()], [identifyPotenialConfounds()]
 #' @examples dataToImpute(ID, data, exposures, outcomes, covariates_to_include, exclude_covariates)
 #'
-dataToImpute <-function(ID, data, exposures, outcomes, covariates_to_include, exclude_covariates){
+dataToImpute <-function(ID, data, exposures, outcomes, covariates_to_include, exclude_covariates=NULL, keep_covariates=NULL){
   flattenCorrMatrix <- function(cormat, pmat) {
     ut <- upper.tri(cormat)
     data.frame(
@@ -123,7 +152,9 @@ dataToImpute <-function(ID, data, exposures, outcomes, covariates_to_include, ex
   }
 
   #creates final dataset with only relevant variables
-  variables_to_include=unique(c(ID, "WAVE", exposures, outcomes, unique(unlist(covariates_to_include))))
+  covariates_to_include=unique(unlist(lapply(covariates_to_include, function(x) c(x$row, x$column))))
+
+  variables_to_include=unique(c(ID, "WAVE", exposures, outcomes, covariates_to_include, keep_covariates))
   data2=as.data.frame(data[names(data)[names(data) %in% variables_to_include] ])
   data2=data2[,!colnames(data2) %in% exclude_covariates]
 

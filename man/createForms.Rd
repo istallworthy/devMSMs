@@ -10,7 +10,8 @@ createForms(
   exposures,
   outcomes,
   time_pts,
-  potential_colliders = NULL
+  potential_colliders = NULL,
+  keep_covariates = NULL
 )
 }
 \arguments{

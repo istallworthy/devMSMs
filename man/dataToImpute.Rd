@@ -10,7 +10,8 @@ dataToImpute(
   exposures,
   outcomes,
   covariates_to_include,
-  exclude_covariates
+  exclude_covariates = NULL,
+  keep_covariates = NULL
 )
 }
 \arguments{

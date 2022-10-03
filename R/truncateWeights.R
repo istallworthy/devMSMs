@@ -7,7 +7,6 @@
 #' @param home_dir path to home directory for the project
 #' @param exposures list of variables that represent your exposures/treatments of interest
 #' @param percentile_cutoff percentile value for cutting off and replacing heavy tails of weights
-#' @export
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 ggsave
@@ -15,6 +14,10 @@
 #' @examples truncateWeights(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90)
 #'
 truncateWeights <-function(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90){
+
+  if (percentile_cutoff>1 | percentile_cutoff<0){
+    stop('Please select a percentile cutoff between 0 and 1')}
+
 
   data_for_model_with_weights_cutoff=data_for_model_with_weights
   #creating truncated weights at 90th percentile for sensitivity analyses; changed to top coding to avoid exclusion

@@ -21,7 +21,6 @@ Creates datasets unique to each time point for future use and returns a list of 
 }
 \examples{
 makeTimePtDatasets(data, ID, time_pts)
-
 }
 \seealso{
 \code{\link[=fomatDataStruct]{fomatDataStruct()}}
