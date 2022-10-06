@@ -29,7 +29,8 @@ Imports:
     jtools,
     sjPlot,
     stargazer,
-    gtools
+    gtools,
+    MplusAutomation
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

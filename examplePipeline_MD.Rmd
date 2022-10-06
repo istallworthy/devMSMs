@@ -15,15 +15,15 @@ Steps marked with * indicate an optional step if you have already run that code 
 ## User inputs
 ```{r}
 #directories to long dataset with all exposures, outcomes, and covariates in long format and project directory
-data_path="/Users/isabella/Desktop/BSL Lab/FLP/New/data_long.csv"
+data_path="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/MSM_ALL_LONG_8.25.20.csv"
 # home_dir= "/Users/isabella/Desktop/BSL Lab/FLP/New/"
-home_dir="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/"
+home_dir="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/"
 
 #individual identifier 
 ID="s_id"
 
 #time points of interest and name of time variable in long dataset
-time_pts=c(6, 15, 24, 35, 58)
+time_pts=c(6, 15, 24, 35, 58, 90, 154)
 time_var="TAge"
 
 #marker for missing data
@@ -33,18 +33,18 @@ missing=-9999
 m=5
 
 #exposures of interest that potentially have causal effects on outcomes and exposure time point(s) (corresponding to values in time_var)
-exposures=c("HOMEETA1", "INR", "ESETA1", "CTSETA1")
+exposures=c("HOMEETA1", "CTSETA1", "ESETA1")
 # exposures=c("HOMEETA1", "INR")
-exposure_time_pts=c(6, 15, 25, 36)
+exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154)
 
 #developmental time periods and their corresponding time points that constitute regime/history units --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects exposure histories (e.g, chronically high exposure vs. exposure only in infancy)
 exposure_epochs=data.frame(epochs=c("early", "middle", "late"), #names of epochs 
-                           values=I(list(c(6,15), c(24,35), c(58)))) #time point(s) encompassed in each epoch that correspond to data
+                           values=I(list(c(6,15), c(24,35), c(58, 90, 154)))) #time point(s) encompassed in each epoch that correspond to data
 
 #outcomes of interest and outcome time point(s)
 # outcomes=c("pcx_sensitive", "pcx_pomd", "pcx_nomd", "pcx_qrel", "pcx_CompTwo")
-outcomes=c("pcx_sensitive", "pcx_pomd")
-outcome_time_pts=58
+outcomes=c("CORTBASE", "sAABASE")
+outcome_time_pts=NA
 
 ```
 

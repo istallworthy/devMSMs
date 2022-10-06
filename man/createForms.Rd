@@ -11,7 +11,8 @@ createForms(
   outcomes,
   time_pts,
   potential_colliders = NULL,
-  keep_covariates = NULL
+  keep_covariates = NULL,
+  time_var_exclude
 )
 }
 \arguments{
