@@ -116,6 +116,8 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
   # imp_wide=plyr::join(test,t, by=ID)
   #Create long/wide hybrid: merge this newly created wide dataset with long dataset
   write.csv(imp_wide, paste0(home_dir, "data_for_final_model.csv"))
+  write.csv(wide_long_datasets[[1]], paste0(home_dir, "data_for_final_Mplus_model.csv"))
+
   print("Saved out dataset for final modeling as a csv file in home directory")
 
 

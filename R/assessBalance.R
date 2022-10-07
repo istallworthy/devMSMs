@@ -16,7 +16,7 @@
 #' @export
 #' @importFrom CBPS balance
 #' @examples assessBalance(home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no")
-assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no"){
+assessBalance <- function (home_dir, weights_models=list(), m, exposures, outcomes, time_pts, balance_thresh=0.12, just_made_weights="no"){
 
   #read in weights saved locally if user has not just made them and they are not yet in global environment
   if (just_made_weights=="no"){
@@ -51,52 +51,59 @@ assessBalance <- function (home_dir, weights_models=list(), m, exposures, time_p
   sig_unbalanced_averaged_k=list()
   unbalanced_covariates_for_models=list()
 
-  for (x in 1:length(exposures)){
+  for (z in seq(length(outcomes))){
 
-    significant_corrs_remaining={}
-    for (y in 1:length(time_pts)){
+    for (x in 1:length(exposures)){
 
-      #finds all unbalanced variable list for the given exposure and time point
-      exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "_", time_pts[y]), names(all_post_balance_corrs))]]
-      exposure_time_corrs=do.call(cbind, exposure_list) #cbinds them
-      names=exposure_time_corrs[,1] #extracts variable names
-      exposure_time_corrs=as.data.frame((exposure_time_corrs))
-      exposure_time_corrs=exposure_time_corrs[,unlist(lapply(exposure_time_corrs, is.numeric), use.names = FALSE)] #extracts numeric columns (i.e., correlations)
-      exposure_time_corrs$mean_cor=rowMeans(exposure_time_corrs) #takes row means to find average correlation
-      exposure_time_corrs=cbind(names, exposure_time_corrs) #adds names back
+      significant_corrs_remaining={}
+      for (y in 1:length(time_pts)){
 
-      #saves out all correlations
-      write.csv(exposure_time_corrs, file=paste(home_dir, "final weights/all_post_balance_cors_", exposures[x], "_", time_pts[y], ".csv", sep=""))
-      print(paste0("Check 'weights' folder for a csv file for ",exposures[x], "_", time_pts[y] ," of all correlations post-balancing and averages"))
+        #gathering all imputed data set lists for a given exposure, outcome, and time point
+        exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "-", outcomes[z], "_", time_pts[y]), names(all_post_balance_corrs))]]
+        exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[sapply(strsplit(names(all_post_balance_corrs), "_"),"[",6)==time_pts[y] &
+                                                                             sapply(strsplit(names(all_post_balance_corrs), "_"),"[",5)==paste0(exposures[x], "-", outcomes[z])]]
+        # exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "_", time_pts[time_pts!=time_pts[y]]), names(all_post_balance_corrs))==F]] #making sure other time pts not included for nested cases (e.g., 15 and 154)
 
-      #writes out only remaining mean correlations over 0.12--the ones left unbalanced
-      sig=exposure_time_corrs[abs(exposure_time_corrs$mean_cor)>balance_thresh,]
-      colnames(sig)= c("covariate", apply(expand.grid("corr_imp", 1:m), 1, paste, sep="", collapse="_"), "mean_corr")
-      # assign(paste("sig_unbalanced_vars_",  exposures[x], "_", time_pts[y], sep=""), sig)
-      sig_unbalanced_averaged_k[[paste("sig_unbalanced_vars_",  exposures[x], "_", time_pts[y], sep="")]] <- sig
+        exposure_time_corrs=do.call(cbind, exposure_list) #cbinds them
+        names=exposure_time_corrs[,1] #extracts variable names
+        exposure_time_corrs=as.data.frame((exposure_time_corrs))
+        exposure_time_corrs=exposure_time_corrs[,unlist(lapply(exposure_time_corrs, is.numeric), use.names = FALSE)] #extracts numeric columns (i.e., correlations)
+        exposure_time_corrs$mean_cor=rowMeans(exposure_time_corrs) #takes row means to find average correlation
+        exposure_time_corrs=cbind(names, exposure_time_corrs) #adds names back
 
-      write.csv(sig, file=paste(home_dir, "final weights/all_sig_post_balance_cors_", exposures[x], "_", time_pts[y], ".csv", sep=""))
-      print(paste0("USER ALERT: Check 'final weights' folder for a csv file of all SIGNIFICANT correlations above ", as.character(balance_thresh), " for ",  exposures[x], "_", time_pts[y]," post-balancing and averages"))
+        #saves out all correlations
+        write.csv(exposure_time_corrs, file=paste(home_dir, "final weights/all_post_balance_cors_", exposures[x],"-", outcomes[z], "_", time_pts[y], ".csv", sep=""))
+        print(paste0("Check 'weights' folder for a csv file for ",exposures[x],"-", outcomes[z], "_", time_pts[y] ," of all correlations post-balancing and averages"))
 
-      significant_corrs_remaining=rbind(significant_corrs_remaining, sig)
+        #writes out only remaining mean correlations over 0.12--the ones left unbalanced
+        sig=exposure_time_corrs[abs(exposure_time_corrs$mean_cor)>balance_thresh,]
+        colnames(sig)= c("covariate", apply(expand.grid("corr_imp", 1:m), 1, paste, sep="", collapse="_"), "mean_corr")
+        # assign(paste("sig_unbalanced_vars_",  exposures[x], "_", time_pts[y], sep=""), sig)
+        sig_unbalanced_averaged_k[[paste("sig_unbalanced_vars_",  exposures[x], "-", outcomes[z],"_", time_pts[y], sep="")]] <- sig
+
+        write.csv(sig, file=paste(home_dir, "final weights/all_sig_post_balance_cors_", exposures[x],"-", outcomes[z], "_", time_pts[y], ".csv", sep=""))
+        print(paste0("USER ALERT: Check 'final weights' folder for a csv file of all SIGNIFICANT correlations above ", as.character(balance_thresh), " for ",  exposures[x], "-", outcomes[z],"_", time_pts[y]," post-balancing and averages"))
+
+        significant_corrs_remaining=rbind(significant_corrs_remaining, sig)
+
+      }
+
+      #compiles all remaining correlations over 0.12 for each treatment (including all time points)
+      print(paste0("USER ALERT: Inspect the following list of unbalanced covariates for exposure ", exposures[x], "-", outcomes[z], " :"))
+      print(significant_corrs_remaining)
+
+      write.csv(significant_corrs_remaining, file=paste(home_dir, "final weights/all_sig_post_balance_cors_", exposures[x], "-", outcomes[z],".csv", sep=""))
+      print(paste0("All covariates still significantly correlated with ", exposures[x], " have been saved as a csv file in 'final weights"))
+
+      covariates_for_model=unique(c(as.character(unlist(significant_corrs_remaining[,1]))))
+      covariates_for_model=covariates_for_model[!grepl(exposures[x], covariates_for_model)] #removing exposure (as this will be modeled explicitly)
+      covariates_for_model=covariates_for_model[! covariates_for_model %in% exposures[x]]
+      covariates_for_model=paste0(covariates_for_model, sep="", collapse=" + ")
+      covariates_for_model=gsub(".", "_", covariates_for_model, fixed=TRUE)
+
+      unbalanced_covariates_for_models[[paste0(exposures[x], "-", outcomes[z])]] <-covariates_for_model
 
     }
-
-    #compiles all remaining correlations over 0.12 for each treatment (including all time points)
-    print(paste0("USER ALERT: Inspect the following list of unbalanced covariates for exposure ", exposures[x], " :"))
-    print(significant_corrs_remaining)
-
-    write.csv(significant_corrs_remaining, file=paste(home_dir, "final weights/all_sig_post_balance_cors_", exposures[x], ".csv", sep=""))
-    print(paste0("All covariates still significantly correlated with ", exposures[x], " have been saved as a csv file in 'final weights"))
-
-    covariates_for_model=unique(c(as.character(unlist(significant_corrs_remaining[,1]))))
-    covariates_for_model=covariates_for_model[!grepl(exposures[x], covariates_for_model)] #removing exposure (as this will be modeled explicitly)
-    covariates_for_model=covariates_for_model[! covariates_for_model %in% exposures[x]]
-    covariates_for_model=paste0(covariates_for_model, sep="", collapse=" + ")
-    covariates_for_model=gsub(".", "_", covariates_for_model, fixed=TRUE)
-
-    unbalanced_covariates_for_models[[exposures[x]]] <-covariates_for_model
-
   }
 
   return(unbalanced_covariates_for_models)

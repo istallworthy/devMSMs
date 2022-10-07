@@ -14,6 +14,10 @@ Steps marked with * indicate an optional step if you have already run that code 
 
 ## User inputs
 ```{r}
+#location of the downloaded package from github: https://github.com/istallworthy/MSMs 
+source()
+
+
 #directories to long dataset with all exposures, outcomes, and covariates in long format and project directory
 data_path="/Users/isabella/Desktop/BSL Lab/FLP/New/data_long.csv"
 # home_dir= "/Users/isabella/Desktop/BSL Lab/FLP/New/"
@@ -59,7 +63,7 @@ defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
 
 
 ### 2. Format data & identify potential covariate confounding variables within the data provided
-These functions requires a clean dataset in long format that contains columns for ID, time, exposure, outcome, and all potential covariate confounds as columns.
+These functions requires a clean dataset in long format that contains columns for ID, time, exposure, outcome, and all potential covariate confounds as columns.Column names can include only an underscore delimeter. 
 ```{r}
 #list any covariates that are factors here 
 factor_covariates=c("NC","TcSex2", "TcBlac2") 
@@ -74,7 +78,8 @@ time_pt_datasets= makeTimePtDatasets(data, ID, time_pts)
 
 
 ### 3. Identify which covariates could potentially confound the relationship between exposure and outcome that will be used to create balancing weights
-MSMs focus on the covariates that are associated with both exposure and outcome and thus could act like a confounding variable. This code assumes that you have included all possible confounding variables as columns in your dataset. More specifically, a potential confound for a given exposure at a given time point is any covariate correlated with the exposure at that time point, lagged values of the exposure. The user can specify any covariates to exclude ('exclude_covariates') as well as those to include ('keep_covariates'), regardless of their correlation with exposures/outcomes. 
+MSMs focus on the covariates that are associated with both exposure and outcome and thus could act like a confounding variable. This code assumes that you have included all possible confounding variables as columns in your dataset. More specifically, a potential confound for a given exposure at a given time point is any covariate correlated with the exposure at that time point, lagged values of the exposure. 
+The user can specify any covariates to exclude ('exclude_covariates') as well as those to include ('keep_covariates'), regardless of their correlation with exposures/outcomes.  Append ".x" to indicate a time-varying variable at a specific time point only. 
 ```{r}
 #list out any variables that should be excluded from balancing based on practical or theoretical reasons; default set to none
 exclude_covariates=c("Index1")
@@ -112,7 +117,7 @@ imputed_datasets= imputeData(home_dir, ID, data_to_impute, continuous_variables,
 ### 5. Format each imputed dataset for calculating balancing weights 
 Making sure imputed datasets have the appropriate variables and are formatted in "wide/long" format to create the balancing weights. This code also saves out a dataset structured for future modeling. The parameter 'just_imputed' allows you to specify whether you just ran the imputed code ("yes") or you'd rather read in the imputations saved locally from a previous run ("no"). 
 ```{r}
-#list any time-varying variables that should NOT be present in the datasets because of planned missingness design 
+#list any time-varying variables that should NOT be present in the datasets because of planned missingness design with ".time format 
 time_var_exclude=c("WIND.1", "WIND.24", "BSI.35", "pcx_CompTwo.6", "pcx_CompTwo.1", "pcx_CompTwo.2", "pcx_CompTwo.35")
 
 #creates wide/long datasets for each imputation. if you have just created imputations in the global environment, select just_imputed="yes", otherwise "no" will indicate to read them in from local storage
@@ -171,6 +176,8 @@ This code caps weights at a designated percentile (that the user has the option 
 data_for_model_with_weights_cutoff=truncateWeights(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90)
 
 ```
+
+The following steps (11-13) are for if you have a single time point outcome. If you have multiple outcome time points, skip to step 14 to fit weighted growth models in MPlus. 
 
 
 ### 11. Fit a series of marginal structural models to determine best fit

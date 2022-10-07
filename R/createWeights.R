@@ -1,7 +1,7 @@
 #' Creates balancing weights for potential confounding covariates in relation to exposures at each time point
 #'
 #' Creates balancing weights using the CBPS package (See CBPS documentation for more detail: https://cran.r-project.org/web/packages/CBPS/CBPS.pdf) for more
-#' returns a list of weights_models
+#' returns a list of weights_models for each exposure-outcome pair
 
 #' @param wide_long_datasets from formatForWeights
 #' @param forms from createForms
@@ -28,7 +28,7 @@
 #' @seealso [CBPS::CBPS()], [formatForWeights()], [createForms()]
 #' @examples createWeights(wide_long_datasets,forms, exposures, time_pts, m,  ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
 #'
-createWeights <-function(wide_long_datasets, forms, exposures, time_pts, m, balance_thresh=0.12, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL){
+createWeights <-function(wide_long_datasets, forms, exposures, outcomes, time_pts, m, balance_thresh=0.12, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL){
 
   weights_models=list()
   #Cycles through imputed datasets
@@ -38,63 +38,67 @@ createWeights <-function(wide_long_datasets, forms, exposures, time_pts, m, bala
 
     MSMDATA=wide_long_datasets[[paste("imp", k, "_widelong", sep="")]]
 
-    #cycles through exposures
-    for (y in 1:length(exposures)){
-      exposure=exposures[y]
+    for (z in seq(length(outcomes))){
+      outcome=outcomes[z]
 
-      #Cycles through all time points
-      for (x in 1:length(time_pts)){
-        time=time_pts[x]
+      #cycles through exposures
+      for (y in 1:length(exposures)){
+        exposure=exposures[y]
 
-        #references newly ordered time variable (1:n(time_pts))
-        new_time=as.numeric(c(1:length(time_pts))[x])
+        #Cycles through all time points
+        for (x in 1:length(time_pts)){
+          time=time_pts[x]
 
-        form=forms[[paste("form_", exposure, "_", time, sep="")]]
+          #references newly ordered time variable (1:n(time_pts))
+          new_time=as.numeric(c(1:length(time_pts))[x])
 
-        #Order by time
-        MSMDATA <- MSMDATA[order(MSMDATA$WAVE),]
+          form=forms[[paste("form_", exposure, "-", outcome, "_", time, sep="")]]
 
-        #select only data at the appropriate time point
-        MSMDATA_temp<- MSMDATA %>%
-          dplyr::filter(WAVE==as.numeric(new_time))
+          #Order by time
+          MSMDATA <- MSMDATA[order(MSMDATA$WAVE),]
 
-        #Use the CBPS continuous version of this function to generate weights
-        fit <- CBPS::CBPS(form, data=MSMDATA_temp, ATT=ATT, iterations = iterations,
-                    standardize = standardize, method = method, twostep = twostep, #twostep=false does continuous updating
-                    sample.weights = sample.weights, baseline.formula = NULL,
-                    diff.formula = NULL)
+          #select only data at the appropriate time point
+          MSMDATA_temp<- MSMDATA %>%
+            dplyr::filter(WAVE==as.numeric(new_time))
 
-        weights_models[[paste("fit_", k, "_", exposure, "_", time, sep="")]] <-fit
+          #Use the CBPS continuous version of this function to generate weights
+          fit <- CBPS::CBPS(form, data=MSMDATA_temp, ATT=ATT, iterations = iterations,
+                            standardize = standardize, method = method, twostep = twostep, #twostep=false does continuous updating
+                            sample.weights = sample.weights, baseline.formula = NULL,
+                            diff.formula = NULL)
 
-        #saves out fit objects made by CBPS so user can re-load at later time
-        # saveRDS(fit, file = paste(paste0(home_dir, "weight fits/fit_imp=", k, "_exp=", exposure, "_t=", time, ".rds", sep="")))
+          weights_models[[paste("fit_", k, "_", exposure, "-", outcome, "_", time, sep="")]] <-fit
 
-        # print(paste0("Weights model objects for exposure ", exposure, " at time ", time, " for imputation ", k,  " have been saved in the 'weight fits' folder"))
+          #saves out fit objects made by CBPS so user can re-load at later time
+          # saveRDS(fit, file = paste(paste0(home_dir, "weight fits/fit_imp=", k, "_exp=", exposure, "_t=", time, ".rds", sep="")))
 
-        #get weights from output
-        weights=as.data.frame(cbind(MSMDATA_temp[,colnames(MSMDATA_temp)==ID], fit$weights))
+          # print(paste0("Weights model objects for exposure ", exposure, " at time ", time, " for imputation ", k,  " have been saved in the 'weight fits' folder"))
 
-        #Save weights
-        write.csv(x=as.data.frame(fit$weights), file=paste(home_dir, "weights/weights_exp=", exposure, "_t=", time, "_imp=", k, ".csv", sep=""))
-        #Save weights merged with ID variable
-        write.csv(x=as.data.frame(weights), file=paste(home_dir, "weights/weights_id_exp=", exposure, "_t=", time,"_imp=",k, ".csv", sep=""))
+          #get weights from output
+          weights=as.data.frame(cbind(MSMDATA_temp[,colnames(MSMDATA_temp)==ID], fit$weights))
 
-        print(paste0("Weights for exposure ", exposure, " at time ", time, " for imputation ", k,  " have now been saved into the 'weights' folder"))
+          #Save weights
+          write.csv(x=as.data.frame(fit$weights), file=paste(home_dir, "weights/weights_exp=", exposure, "-", outcome, "_t=", time, "_imp=", k, ".csv", sep=""))
+          #Save weights merged with ID variable
+          write.csv(x=as.data.frame(weights), file=paste(home_dir, "weights/weights_id_exp=", exposure, "-", outcome, "_t=", time,"_imp=",k, ".csv", sep=""))
 
-        # #Writes image of histogram of weights to assess heavy tails
-        ggplot2::ggplot(data=as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
-          ggplot2::geom_histogram(color = 'black', bins = 15)
-        ggplot2::ggsave(paste("Hist_exp=", exposure, "_t=", time, "_imp=", k, ".png", sep=""), path=paste0(home_dir, "weights/"), height=8, width=14)
+          print(paste0("Weights for exposure ", exposure, "-", outcome," at time ", time, " for imputation ", k,  " have now been saved into the 'weights' folder"))
 
-        print(paste0("A weights histogram for exposure ", exposure, " at time ", time, " for imputation ", k,  " has now been saved in the 'weights' folder --likely has heavy tails"))
+          # #Writes image of histogram of weights to assess heavy tails
+          ggplot2::ggplot(data=as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
+            ggplot2::geom_histogram(color = 'black', bins = 15)
+          ggplot2::ggsave(paste("Hist_exp=", exposure, "-", outcome, "_t=", time, "_imp=", k, ".png", sep=""), path=paste0(home_dir, "weights/"), height=8, width=14)
 
-        #Writes image to balance check
-        jpeg(filename=paste(home_dir, "balance/Balance_exp=", exposure, "_t=", time, "_imp=",k, ".jpg", sep=""), width=480,height=480)
-        plot(fit, covars = NULL, silent = FALSE, boxplot = TRUE)
-        dev.off()
+          print(paste0("A weights histogram for exposure ", exposure,  "-", outcome," at time ", time, " for imputation ", k,  " has now been saved in the 'weights' folder --likely has heavy tails"))
 
-        print(paste0("USER ALERT: Balancing figures for exposure ", exposure, " at time ", time, " for imputation ", k,  " have now been saved into the 'balance' folder for future inspection"))
+          #Writes image to balance check
+          jpeg(filename=paste(home_dir, "balance/Balance_exp=", exposure, "-", outcome, "_t=", time, "_imp=",k, ".jpg", sep=""), width=480,height=480)
+          plot(fit, covars = NULL, silent = FALSE, boxplot = TRUE)
+          dev.off()
 
+          print(paste0("USER ALERT: Balancing figures for exposure ", exposure,  "-", outcome," at time ", time, " for imputation ", k,  " have now been saved into the 'balance' folder for future inspection"))
+
+        }
       }
     }
   }
