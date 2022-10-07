@@ -13,7 +13,7 @@
 #' @seealso [condenseWeights()]
 #' @examples truncateWeights(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90)
 #'
-truncateWeights <-function(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90){
+truncateWeights <-function(data_for_model_with_weights, home_dir, exposures, outcomes, percentile_cutoff=0.90){
 
   if (percentile_cutoff>1 | percentile_cutoff<0){
     stop('Please select a percentile cutoff between 0 and 1')}
@@ -22,27 +22,33 @@ truncateWeights <-function(data_for_model_with_weights, home_dir, exposures, per
   data_for_model_with_weights_cutoff=data_for_model_with_weights
   #creating truncated weights at 90th percentile for sensitivity analyses; changed to top coding to avoid exclusion
   #loops through all treatments and creates tx_weight_cutoff variable: replaces any weights above the 90th quantile with the 90th quantile value
+
+  for (z in seq(length(outcomes))){
+    outcome=outcomes[z]
+
   for (t in 1:length(exposures)){
     exposure=exposures[t]
-    new_var=paste0(exposure, "_weight_cutoff")
+
+    new_var=paste0(exposure, "-", outcome, "_weight_cutoff")
     cutoff_weights=data_for_model_with_weights%>%
-      dplyr::mutate(!!new_var := ifelse(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "_weight")]<
-                                          quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "_weight")], probs=percentile_cutoff),
-                                        data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "_weight")],
-                                        quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "_weight")], probs=percentile_cutoff)
+      dplyr::mutate(!!new_var := ifelse(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "-", outcome, "_weight")]<
+                                          quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "-", outcome, "_weight")], probs=percentile_cutoff),
+                                        data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure,"-", outcome,"_weight")],
+                                        quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "-", outcome, "_weight")], probs=percentile_cutoff)
       ) )%>%dplyr::select(all_of(new_var))
 
     data_for_model_with_weights_cutoff=cbind(data_for_model_with_weights_cutoff, cutoff_weights)
 
 
     #print histogram of new weights
-    ggplot2::ggplot(data=as.data.frame(data_for_model_with_weights_cutoff), aes(x = as.numeric(data_for_model_with_weights_cutoff[,colnames(data_for_model_with_weights_cutoff)==paste0(exposure, "_weight_cutoff")]))) +
+    ggplot2::ggplot(data=as.data.frame(data_for_model_with_weights_cutoff), aes(x = as.numeric(data_for_model_with_weights_cutoff[,colnames(data_for_model_with_weights_cutoff)==paste0(exposure, "-", outcome,"_weight_cutoff")]))) +
       geom_histogram(color = 'black', bins = 15)
-    ggplot2::ggsave(paste("Hist_", exposure, "_weights_cutoff_", percentile_cutoff, ".png", sep=""), path=paste0(home_dir, "final weights"), height=8, width=14)
+    ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_weights_cutoff_", percentile_cutoff, ".png", sep=""), path=paste0(home_dir, "final weights"), height=8, width=14)
 
-    print(paste0("Histogram of weights cut off at ", percentile_cutoff, " for exposure ", exposure, " has been saved to the 'final weights' folder"))
+    print(paste0("Histogram of weights cut off at ", percentile_cutoff, " for exposure ", exposure, " on ", outcome, " has been saved to the 'final weights' folder"))
 
   }
+}
 
   write.csv(data_for_model_with_weights_cutoff,paste0(home_dir, "final weights/ data_for_model_with_weights_cutoff_", percentile_cutoff, ".csv") )
   print("USER ALERT: final cutoff weights have now been saved merged into datast in 'final weights' folder")

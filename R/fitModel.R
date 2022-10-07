@@ -77,7 +77,7 @@ fitModel <- function(home_dir, ID, exposures, exposure_epochs, outcomes, outcome
       models[["m0"]]<-m0
 
       #adding in covariates that did not fully balance when creating the weights
-      covariate_list= unbalanced_covariates_for_models[[exposure]]
+      covariate_list= unbalanced_covariates_for_models[[exposure, "-", outcome,]]
 
       if (covariate_list[1]==""){
         print(paste0("There are no unbalanced covariates to include in the model of effects of ", exposure, " on ", outcome))

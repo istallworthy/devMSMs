@@ -16,27 +16,50 @@
 #'
 #' @examples makeMplusInputs(ID, home_dir, missing, exposures, exposure_epochs, covariates, reference, outcomes, hi_cutoff=.75, lo_cutoff=.25)
 
-makeMplusInputs <- function(ID, home_dir, missing, exposures, exposure_epochs, covariates=NULL, reference="LLL", outcomes, hi_cutoff=.75, lo_cutoff=.25) {
+makeMplusInputs <- function(ID, home_dir,data_file, missing, time_var, exposures, exposure_epochs, covariates=NULL, reference="LLL", outcomes, hi_cutoff=.75, lo_cutoff=.25) {
 
+  #makes MPlus dir if necessary
   if(dir.exists(paste0(home_dir, "for Mplus/"))==F){dir.create(paste0(home_dir, "for Mplus/"))}
 
+  # #making a long dataset with weights
+  # weights=read.csv(paste0(home_dir,"final weights/data_for_model_with_weights_cutoff_0.9.csv"))
+  # weights=weights%>%
+  #   dplyr::select(ID, contains("weight"))
+  # data=read.csv(data_path)
+  # colnames(data)[colnames(data)==time_var] <- "WAVE"
+  # write.csv(data, paste0(home_dir, "for Mplus/data_long_weights.csv"))
+  # data_file=paste0(home_dir, "for Mplus/data_long_weights.csv")
+  #
+  # data[data == missing] <- NA
+  #
+  # data=data%>%dplyr::select(ID, "WAVE", contains(c(exposures, outcomes)), unlist(covariates$covariates))
+  # data=merge(data, weights, by=ID, all.x=T)
+  #
+  #
+  data=read.csv(data_file)
+  data=data%>%dplyr::select(ID, "WAVE", contains("treatmn"), contains( c(unlist(covariates$outcomes), exposures)), unlist(covariates$covariates))
+  #
+
+
   epochs=exposure_epochs$epochs
-
-  #pulling in output from truncateWeights
-  data_file="data_for_model_with_weights_cutoff_0.9.csv"
-  # data_file=" Meriah_predValues_CORT_quad"
-
-  data=read.csv(paste0(home_dir, 'final weights/', data_file))
+  #
+  # if (length(covariates>0)){
+  #   if ("transform" %in% colnames(covariates)){
+  #     for (i in seq(nrow(covariates))){
+  #       new_var=paste0(covariates$transform[i], covariates$outcome[i])
+  #       if (covariates$transform[i]=="ln")
+  #       temp=log(data[,colnames(data)==covariates$outcome[i]], 10)
+  #     }
+  #   }
+  # }
 
 
   #cycles through outcomes
-  for (y in 1:length(outcomes)){
+  for (y in 1:unlist(covariates$outcomes)){
     outcome=outcomes[y]
 
     #cycling through exposures
     for (e in 1:length(exposures)){
-      comparisons=list()
-      param_info=list()
 
       exposure=exposures[e]
 
