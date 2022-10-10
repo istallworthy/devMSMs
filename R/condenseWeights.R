@@ -21,10 +21,12 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, outcomes,
   ####Multiplies weights for each tx across all time points so you end up with one weight per person across time for each imputed dataset.
   weights_exposure_k=list()
 
+
+
   #iterates over imputed datasets
   for (k in 1:m){
 
-    for (x in seq(length(outcomes))){
+    for (z in seq(length(outcomes))){
       outcome=outcomes[z]
 
       #iterates through exposures
@@ -64,6 +66,7 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, outcomes,
     }
   }
 
+
   ####Averages weights across all imputed datasets to generate mean weights across time for each treatment, with ID merged
   data_for_model=read.csv(paste0(home_dir, "data_for_final_model.csv"))
   weights_exposure=list()
@@ -73,25 +76,25 @@ condenseWeights <-function(ID, home_dir, m, weights_models, exposures, outcomes,
   for (z in seq(outcomes)){
     outcome=outcomes[z]
 
-  for (y in 1:length(exposures)){
-    exposure=exposures[y]
-    temp=(rep(1, nrow(data_for_model)))
+    for (y in 1:length(exposures)){
+      exposure=exposures[y]
+      temp=(rep(1, nrow(data_for_model)))
 
-    for (k in 1:m){
-      temp=cbind(temp, weights_exposure_k[[paste(exposure, "-", outcome, "_", k, "_mean_weight", sep="")]]) #col binds all imputed datasets
+      for (k in 1:m){
+        temp=cbind(temp, weights_exposure_k[[paste(exposure, "-", outcome, "_", k, "_mean_weight", sep="")]]) #col binds all imputed datasets
+      }
+      treat_mean=rowMeans(temp) #finds mean across rows
+
+      weights_exposure[[paste(exposure,  "-", outcome,"_", "mean_weight_all_imp", sep="")]] <- treat_mean
+      mean_weight=as.data.frame(cbind(data_for_model[,colnames(data_for_model)==ID], treat_mean)) #adds IDs to mean weights
+      colnames(mean_weight)=c(ID, paste(exposure,  "-", outcome, "_weight", sep=""))
+
+      all_weights=merge(all_weights, mean_weight, by=ID)
+
+      write.csv(x=as.data.frame(all_weights), file=paste(home_dir, "final weights/", exposure, "-", outcome, "_mean_weight_all_imp.csv", sep=""))
+      print(paste0("Weights for exposure ", exposure, " on ", outcome, " are now saved as a csv file in the 'final weights' folder"))
     }
-    treat_mean=rowMeans(temp) #finds mean across rows
-
-    weights_exposure[[paste(exposure,  "-", outcome,"_", "mean_weight_all_imp", sep="")]] <- treat_mean
-    mean_weight=as.data.frame(cbind(data_for_model[,colnames(data_for_model)==ID], treat_mean)) #adds IDs to mean weights
-    colnames(mean_weight)=c(ID, paste(exposure,  "-", outcome, "_weight", sep=""))
-
-    all_weights=merge(all_weights, mean_weight, by=ID)
-
-    write.csv(x=as.data.frame(all_weights), file=paste(home_dir, "final weights/", exposure, "-", outcome, "_mean_weight_all_imp.csv", sep=""))
-    print(paste0("Weights for exposure ", exposure, " on ", outcome, " are now saved as a csv file in the 'final weights' folder"))
   }
-}
 
   data_for_model_with_weights=merge(data_for_model, all_weights, by=ID, all.x=T)
   write.csv(data_for_model_with_weights, paste0(home_dir, "final weights/data_for_model_with_weights.csv"))

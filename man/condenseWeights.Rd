@@ -4,7 +4,7 @@
 \alias{condenseWeights}
 \title{Condense weights across time points and imputed datasets}
 \usage{
-condenseWeights(ID, home_dir, m, weights_models, exposures, time_pts)
+condenseWeights(ID, home_dir, m, weights_models, exposures, outcomes, time_pts)
 }
 \arguments{
 \item{ID}{person-level identifier in your dataset}

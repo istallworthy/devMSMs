@@ -9,6 +9,7 @@ assessBalance(
   weights_models = list(),
   m,
   exposures,
+  outcomes,
   time_pts,
   balance_thresh = 0.12,
   just_made_weights = "no"

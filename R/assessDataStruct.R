@@ -12,7 +12,7 @@
 #' @importFrom readr read_csv
 #' @examples formatDataStruct(data_path, home_dir, missing, factor_covariates)
 #'
-formatDataStruct <-function(data_path, home_dir, missing, factor_covariates) {
+formatDataStruct <-function(data_path, home_dir, missing, factor_covariates=NULL) {
 
   options(readr.num_columns = 0)
 
