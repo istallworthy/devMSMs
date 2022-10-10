@@ -8,7 +8,9 @@ Code for assessing effects of exposure histories with repeated outcomes}
 makeMplusInputs(
   ID,
   home_dir,
+  data_file,
   missing,
+  time_var,
   exposures,
   exposure_epochs,
   covariates = NULL,

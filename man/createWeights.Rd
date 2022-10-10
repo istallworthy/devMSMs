@@ -8,6 +8,7 @@ createWeights(
   wide_long_datasets,
   forms,
   exposures,
+  outcomes,
   time_pts,
   m,
   balance_thresh = 0.12,
@@ -55,7 +56,7 @@ weights_models
 }
 \description{
 Creates balancing weights using the CBPS package (See CBPS documentation for more detail: https://cran.r-project.org/web/packages/CBPS/CBPS.pdf) for more
-returns a list of weights_models
+returns a list of weights_models for each exposure-outcome pair
 }
 \examples{
 createWeights(wide_long_datasets,forms, exposures, time_pts, m,  ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)

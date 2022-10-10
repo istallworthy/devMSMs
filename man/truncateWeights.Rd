@@ -8,6 +8,7 @@ truncateWeights(
   data_for_model_with_weights,
   home_dir,
   exposures,
+  outcomes,
   percentile_cutoff = 0.9
 )
 }
