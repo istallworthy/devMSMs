@@ -4,8 +4,7 @@
 #'
 #' @return data_for_model_with_weights_cutoff
 #' @param data_for_model_with_weights output from condenseWeights
-#' @param home_dir path to home directory for the project
-#' @param exposures list of variables that represent your exposures/treatments of interest
+#' @param object msm object that contains all relevant user inputs
 #' @param percentile_cutoff percentile value for cutting off and replacing heavy tails of weights
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 ggplot
@@ -13,7 +12,11 @@
 #' @seealso [condenseWeights()]
 #' @examples truncateWeights(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90)
 #'
-truncateWeights <-function(data_for_model_with_weights, home_dir, exposures, outcomes, percentile_cutoff=0.90){
+truncateWeights <-function(object, data_for_model_with_weights, percentile_cutoff=0.90){
+
+  home_dir=object$home_dir
+  exposures=object$exposures
+  outcomes=object$outcomes
 
   if (percentile_cutoff>1 | percentile_cutoff<0){
     stop('Please select a percentile cutoff between 0 and 1')}
@@ -43,14 +46,14 @@ truncateWeights <-function(data_for_model_with_weights, home_dir, exposures, out
     #print histogram of new weights
     ggplot2::ggplot(data=as.data.frame(data_for_model_with_weights_cutoff), aes(x = as.numeric(data_for_model_with_weights_cutoff[,colnames(data_for_model_with_weights_cutoff)==paste0(exposure, "-", outcome,"_weight_cutoff")]))) +
       geom_histogram(color = 'black', bins = 15)
-    ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_weights_cutoff_", percentile_cutoff, ".png", sep=""), path=paste0(home_dir, "final weights"), height=8, width=14)
+    ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_weights_cutoff_", percentile_cutoff, ".png", sep=""), path=paste0(home_dir, "final weights/histograms/"), height=8, width=14)
 
-    print(paste0("Histogram of weights cut off at ", percentile_cutoff, " for exposure ", exposure, " on ", outcome, " has been saved to the 'final weights' folder"))
+    print(paste0("Histogram of weights cut off at ", percentile_cutoff, " for exposure ", exposure, " on ", outcome, " has been saved to the 'final weights/histograms/' folder"))
 
   }
 }
 
-  write.csv(data_for_model_with_weights_cutoff,paste0(home_dir, "final weights/ data_for_model_with_weights_cutoff_", percentile_cutoff, ".csv") )
+  write.csv(data_for_model_with_weights_cutoff,paste0(home_dir, "final weights/data_for_model_with_weights_cutoff_", percentile_cutoff, ".csv") )
   print("USER ALERT: final cutoff weights have now been saved merged into datast in 'final weights' folder")
   return(data_for_model_with_weights_cutoff)
 

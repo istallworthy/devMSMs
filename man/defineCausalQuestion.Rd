@@ -4,21 +4,15 @@
 \alias{defineCausalQuestion}
 \title{Define causal questions at the heart of the subsequent marginal structural models}
 \usage{
-defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
+defineCausalQuestion(object)
 }
 \arguments{
-\item{exposures}{string of the core exposure/treatment of interest variable}
-
-\item{exposure_time_pts}{sequence of integer time points of exposure}
-
-\item{outcomes}{string of core outcome of interest variable}
-
-\item{outcome_time_pts}{sequence of integer time points of outcome}
+\item{object}{msm object that contains all relevant user inputs}
 }
 \description{
 This code helps the individual delineate core aspects of their causal questions
 }
 \examples{
-defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
+defineCausalQuestion(object)
 
 }

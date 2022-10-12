@@ -5,33 +5,19 @@
 \title{Format data for creating balancing weights}
 \usage{
 formatForWeights(
-  ID,
-  home_dir,
-  m,
+  object,
   data,
   imputed_datasets = list(),
   time_varying_covariates,
-  time_pts,
-  time_var_exclude = NULL,
   just_imputed = "yes"
 )
 }
 \arguments{
-\item{ID}{person-level identifier in your dataset}
-
-\item{home_dir}{path to home directory for project}
-
-\item{m}{number of imputed datasets from Amelia}
-
-\item{data}{output from formatDataStruct}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{imputed_datasets}{output from imputeData}
 
 \item{time_varying_covariates}{covariates in your dataset that are time-varying}
-
-\item{time_pts}{list of time points along your developmental path of interest for which you have at least one measurement}
-
-\item{time_var_exclude}{list any time-varying variables that should not be present because of planned missingness design}
 
 \item{just_imputed}{"yes"= you have imputed datasets in global environment or "no" but they are saved locally from previous run}
 }
@@ -42,7 +28,7 @@ wide_long_datasets
 This code formats the imputed datasets for calculating balancing weights using CBPS and reutrns a list of wide/long datasets and creates dataset for future modeling
 }
 \examples{
-formatForWeights(ID, home_dir, m, data, imputed_datasets, time_varying_covariates, time_pts, time_var_exclude, just_imputed="no")
+formatForWeights(object, data, imputed_datasets=list(), time_varying_covariates, just_imputed="yes")
 
 }
 \seealso{

@@ -6,36 +6,26 @@
 This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome u sing linear hypothesis testing}
 \usage{
 compareHistories(
-  home_dir,
-  exposures,
-  exposure_epochs,
+  object,
   hi_cutoff = 0.75,
   lo_cutoff = 0.25,
-  outcome,
-  outcome_time_pts,
   best_models,
   comparisons = "",
   reference = ""
 )
 }
 \arguments{
-\item{home_dir}{path to home directory for the project}
-
-\item{exposure_epochs}{data frame containing epochs and correponding time points for exposure histories}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{hi_cutoff}{integer for percentile considered "high" for exposure}
 
 \item{lo_cutoff}{integer for percentile considered "low" for exposure}
-
-\item{outcome_time_pts}{list of time points for outcomes}
 
 \item{best_models}{best-fitting models outcome from assessModel}
 
 \item{comparisons}{list of histories to compare to the reference history}
 
 \item{reference}{reference history to compare comparison histories}
-
-\item{outcomes}{list of variables that represent your outcomes of interest}
 }
 \value{
 history_comparisons lists of linear hypothesis tests
@@ -45,7 +35,7 @@ Compare exposure histories
 This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome u sing linear hypothesis testing
 }
 \examples{
-compareHistories(home_dir, exposures, exposure_epochs, hi_cutoff=.75, lo_cutoff=.25, outcome, outcome_time_pts, best_models, comparisons, reference)
+compareHistories(object, hi_cutoff=.75, lo_cutoff=.25, best_models, comparisons, reference)
 }
 \seealso{
 \code{\link[=assessModel]{assessModel()}}

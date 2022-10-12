@@ -5,10 +5,10 @@
 \title{Get weights
 Code to get and assign weights output if code has already been run to save weights locally}
 \usage{
-getWeights(home_dir, just_made_weights = "no")
+getWeights(object, just_made_weights = "no")
 }
 \arguments{
-\item{home_dir}{path to home directory for the project}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{just_made_weights="no"}{no=weights are not assigned in global environment and are instead saved locally}
 }
@@ -24,4 +24,6 @@ getWeights(home_dir, just_made_weights="no")
 }
 \seealso{
 \code{\link[=assessBalance]{assessBalance()}} for more on the weights_models param
+
+\code{\link[=msmObject]{msmObject()}} for more on the weights_models param
 }

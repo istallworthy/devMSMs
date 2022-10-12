@@ -5,26 +5,16 @@
 \title{Assess success of covariate balancing}
 \usage{
 assessBalance(
-  home_dir,
+  object,
   weights_models = list(),
-  m,
-  exposures,
-  outcomes,
-  time_pts,
   balance_thresh = 0.12,
   just_made_weights = "no"
 )
 }
 \arguments{
-\item{home_dir}{path to home directory for the project}
+\item{object}{msm object that contains all relevant user inputs}
 
-\item{weights_models}{list of weights models from CBPS}
-
-\item{m}{number of imputations from Amelia}
-
-\item{exposures}{list of variables that represent your exposures/treatments of interest}
-
-\item{time_pts}{list of time points along your developmental path of interest for which you have at least one measurement}
+\item{weights_models}{optional if createWeights has just run or will read in weights models from local storage}
 
 \item{balance_thresh}{correlation value between covariate and exposure over which it is not considered balanced}
 
@@ -38,10 +28,12 @@ list of unbalanced_covariates_for_models for each exposure
 and returns a list of unbalanced covariates for each exposure to add to future models
 }
 \examples{
-assessBalance(home_dir, weights_models=list(), m, exposures, time_pts, balance_thresh=0.12, just_made_weights="no")
+assessBalance(object, weights_models=list(), balance_thresh=0.12, just_made_weights="no")
 }
 \seealso{
 \code{\link[CBPS:balance]{CBPS::balance()}} for more on the balance function
+
+\code{\link[=msmObject]{msmObject()}} for more on the weights_models param
 
 \code{\link[=createWeights]{createWeights()}} for more on the weights_models param
 }

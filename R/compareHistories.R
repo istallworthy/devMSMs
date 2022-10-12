@@ -1,12 +1,9 @@
 
 #' Compare exposure histories
 #' This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome u sing linear hypothesis testing
-#' @param home_dir path to home directory for the project
-#' @param exposure_epochs data frame containing epochs and correponding time points for exposure histories
+#' @param object msm object that contains all relevant user inputs
 #' @param hi_cutoff integer for percentile considered "high" for exposure
 #' @param lo_cutoff integer for percentile considered "low" for exposure
-#' @param outcomes list of variables that represent your outcomes of interest
-#' @param outcome_time_pts list of time points for outcomes
 #' @param best_models best-fitting models outcome from assessModel
 #' @param comparisons list of histories to compare to the reference history
 #' @param reference reference history to compare comparison histories
@@ -14,8 +11,17 @@
 #' @importFrom car linearHypothesis
 #' @seealso [assessModel()]
 #' @return history_comparisons lists of linear hypothesis tests
-#' @examples compareHistories(home_dir, exposures, exposure_epochs, hi_cutoff=.75, lo_cutoff=.25, outcome, outcome_time_pts, best_models, comparisons, reference)
-compareHistories <-function(home_dir, exposures, exposure_epochs, hi_cutoff=.75, lo_cutoff=.25, outcome, outcome_time_pts, best_models, comparisons="", reference=""){
+#' @examples compareHistories(object, hi_cutoff=.75, lo_cutoff=.25, best_models, comparisons, reference)
+compareHistories <-function(object, hi_cutoff=.75, lo_cutoff=.25, best_models, comparisons="", reference=""){
+
+  home_dir=object$home_dir
+  exposures=object$exposures
+  exposure_epochs=object$exposure_epochs
+  outcomes=object$outcomes
+  outcome_time_pts=object$outcome_time_pts
+
+  if (length(outcome_time_pts>1)){
+    stop('This function is designed only for single time point outcomes')}
 
   epochs=exposure_epochs$epochs
   data=read.csv(paste0(home_dir, 'msms/data_for_msms.csv'))
@@ -200,10 +206,10 @@ compareHistories <-function(home_dir, exposures, exposure_epochs, hi_cutoff=.75,
     }
   }
 
-  saveRDS(history_comparisons, file = paste(paste0(home_dir, "msms/all_linear_hypothesis_tests.rds", sep="")))
-  saveRDS(parameter_beta_info, file = paste(paste0(home_dir, "msms/all_linear_hypothesis_betas_parameters.rds", sep="")))
+  saveRDS(history_comparisons, file = paste(paste0(home_dir, "msms/linear hypothesis testing/all_linear_hypothesis_tests.rds", sep="")))
+  saveRDS(parameter_beta_info, file = paste(paste0(home_dir, "msms/linear hypothesis testing/all_linear_hypothesis_betas_parameters.rds", sep="")))
 
-  print("Please see the 'msms' folder for csv files detailing the hi/lo beta values for each comparison")
+  print("Please see the 'msms/linear hypothesis testing/' folder for csv files detailing the hi/lo beta values for each comparison")
 
   return(history_comparisons)
 

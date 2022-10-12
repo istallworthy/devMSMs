@@ -5,27 +5,20 @@
 \title{Creates data structure for imputation}
 \usage{
 dataToImpute(
-  ID,
-  data,
-  exposures,
-  outcomes,
+  object,
   covariates_to_include,
   exclude_covariates = NULL,
   keep_covariates = NULL
 )
 }
 \arguments{
-\item{ID}{person-level identifier in your dataset}
-
-\item{data}{output from formatDataStruct}
-
-\item{exposures}{list of variables that represent your exposures/treatments of interest}
-
-\item{outcomes}{list of variables that represent your outcomes of interest}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{covariates_to_include}{output from identifyPotentialConfounds}
 
 \item{exclude_covariates}{list of variables to exclude based on theoretical or practical reasons}
+
+\item{keep_covariates}{list of covariates to keep}
 }
 \value{
 data_to_impute

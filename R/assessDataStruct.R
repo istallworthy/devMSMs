@@ -3,16 +3,19 @@
 #'Creates the required directories, assesses the data structure and makes it uniform for future functions and returns data
 #'This function requires a clean dataset in long format that contain columns for ID, time, exposure, outcome, and potential covariate confounds
 #'
-#' @param data_path path to cleaned dataset
-#' @param home_dir path to home directory for the project
-#' @param missing missing data marker in your dataset
+#' @param object msm object that contains all relevant user inputs
 #' @param factor_covariates list of covariates that are factors
 #' @return data formatted dataset
 #' @export
 #' @importFrom readr read_csv
-#' @examples formatDataStruct(data_path, home_dir, missing, factor_covariates)
+#' @examples formatDataStruct(object, factor_covariates)
 #'
-formatDataStruct <-function(data_path, home_dir, missing, factor_covariates=NULL) {
+formatDataStruct <-function(object, factor_covariates=NULL) {
+
+  data_path=object$data_path
+  home_dir=object$home_dir
+  missing=object$missing
+  time_var=object$time_var
 
   options(readr.num_columns = 0)
 
@@ -28,14 +31,27 @@ formatDataStruct <-function(data_path, home_dir, missing, factor_covariates=NULL
 
   #creating all necessary directories within the home directory
   if(dir.exists(paste0(home_dir, "imputations/"))==F){dir.create(paste0(home_dir, "imputations/"))}
-  if(dir.exists(paste0(home_dir, "weight fits/"))==F){dir.create(paste0(home_dir, "weight fits/"))}
-  if(dir.exists(paste0(home_dir, "weights/"))==F){dir.create(paste0(home_dir, "weights/"))}
+  if(dir.exists(paste0(home_dir, "original weights/"))==F){dir.create(paste0(home_dir, "original weights/"))}
+  if(dir.exists(paste0(home_dir, "original weights/values/"))==F){dir.create(paste0(home_dir, "original weights/values/"))}
+  if(dir.exists(paste0(home_dir, "original weights/histograms/"))==F){dir.create(paste0(home_dir, "original weights/histograms/"))}
+
   if(dir.exists(paste0(home_dir, "combined weights/"))==F){dir.create(paste0(home_dir, "combined weights/"))}
+  if(dir.exists(paste0(home_dir, "combined weights/values/"))==F){dir.create(paste0(home_dir, "combined weights/values/"))}
+  if(dir.exists(paste0(home_dir, "combined weights/histograms/"))==F){dir.create(paste0(home_dir, "combined weights/histograms/"))}
+
   if(dir.exists(paste0(home_dir, "final weights/"))==F){dir.create(paste0(home_dir, "final weights/"))}
-  if(dir.exists(paste0(home_dir, "plots/"))==F){dir.create(paste0(home_dir, "plots/"))}
+  # if(dir.exists(paste0(home_dir, "plots/"))==F){dir.create(paste0(home_dir, "plots/"))}
   if(dir.exists(paste0(home_dir, "forms/"))==F){dir.create(paste0(home_dir, "forms/"))}
   if(dir.exists(paste0(home_dir, "balance/"))==F){dir.create(paste0(home_dir, "balance/"))}
+  if(dir.exists(paste0(home_dir, "balance/post-balance correlation plots/"))==F){dir.create(paste0(home_dir, "balance/post-balance correlation plots/"))}
+  if(dir.exists(paste0(home_dir, "balance/post-balance correlation values/"))==F){dir.create(paste0(home_dir, "balance/post-balance correlation values/"))}
+  if(dir.exists(paste0(home_dir, "balance/unbalanced covariates/"))==F){dir.create(paste0(home_dir, "balance/unbalanced covariates/"))}
+
+  if(dir.exists(paste0(home_dir, "balance/potential confounds/"))==F){dir.create(paste0(home_dir, "balance/potential confounds"))}
+
   if(dir.exists(paste0(home_dir, "msms/"))==F){dir.create(paste0(home_dir, "msms/"))}
+  if(dir.exists(paste0(home_dir, "msms/linear hypothesis testing/"))==F){dir.create(paste0(home_dir, "msms/linear hypothesis testing/"))}
+
   if(dir.exists(paste0(home_dir, "results figures/"))==F){dir.create(paste0(home_dir, "results figures/"))}
 
   #reading and formatting LONG dataset
@@ -58,15 +74,16 @@ formatDataStruct <-function(data_path, home_dir, missing, factor_covariates=NULL
 #' Creates datasets unique to each time point for future use and returns a list of time point datasets
 #'
 #' @param data output from formatDataStruct
-#' @param ID person-level identifier in your dataset
-#' @param time_pts list of time points along your developmental path of interest for which you have at least one measurement
-#' @return time_pt_datasets datasets split by time point
+#' @param object msm object that contains all relevant user inputs
 #' @export
 #' @importFrom dplyr filter
 #' @importFrom dplyr %>%
 #' @seealso [fomatDataStruct()]
-#' @examples makeTimePtDatasets(data, ID, time_pts)
-makeTimePtDatasets <-function(data, ID, time_pts){
+#' @examples makeTimePtDatasets(object, data)
+makeTimePtDatasets <-function(object, data){
+
+  ID=object$ID
+  time_pts=object$time_pts
 
   #creating dataset for each time point and store in a list
   data_list={}

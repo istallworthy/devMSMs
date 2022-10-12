@@ -4,20 +4,12 @@
 \alias{condenseWeights}
 \title{Condense weights across time points and imputed datasets}
 \usage{
-condenseWeights(ID, home_dir, m, weights_models, exposures, outcomes, time_pts)
+condenseWeights(object, weights_models)
 }
 \arguments{
-\item{ID}{person-level identifier in your dataset}
-
-\item{home_dir}{path to home directory for the project}
-
-\item{m}{number of imputed datasets from Amelia}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{weights_models}{output from createWeights}
-
-\item{exposures}{list of variables that represent your exposures/treatments of interest}
-
-\item{time_pts}{list of time points along your developmental path of interest for which you have at least one measurement}
 }
 \value{
 data_for_model_with_weights
@@ -26,7 +18,7 @@ data_for_model_with_weights
 Condenses weights by multiplying across time point and averaging across imputed dataset to return a single weight per exposure per person in data_for_model_with_weights
 }
 \examples{
-condenseWeights(ID, home_dir, m, weights_models, exposures, time_pts)
+condenseWeights(object, weights_models)
 
 }
 \seealso{

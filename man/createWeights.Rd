@@ -5,12 +5,9 @@
 \title{Creates balancing weights for potential confounding covariates in relation to exposures at each time point}
 \usage{
 createWeights(
+  object,
   wide_long_datasets,
   forms,
-  exposures,
-  outcomes,
-  time_pts,
-  m,
   balance_thresh = 0.12,
   ATT = 0,
   iterations = 1000,
@@ -23,15 +20,11 @@ createWeights(
 )
 }
 \arguments{
+\item{object}{msm object that contains all relevant user inputs}
+
 \item{wide_long_datasets}{from formatForWeights}
 
 \item{forms}{from createForms}
-
-\item{exposures}{list of exposures}
-
-\item{time_pts}{list of time points}
-
-\item{m}{number of imputations from Amelia}
 
 \item{balance_thresh}{correlation value above which covariates are not considered balanced with respect to expsure}
 
@@ -59,7 +52,7 @@ Creates balancing weights using the CBPS package (See CBPS documentation for mor
 returns a list of weights_models for each exposure-outcome pair
 }
 \examples{
-createWeights(wide_long_datasets,forms, exposures, time_pts, m,  ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
+createWeights(object, wide_long_datasets,forms,ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
 
 }
 \seealso{

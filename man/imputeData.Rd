@@ -5,11 +5,7 @@
 \title{Imputes dataset so there is no missing at each time point}
 \usage{
 imputeData(
-  home_dir,
-  ID,
-  data_to_impute,
-  continuous_variables,
-  m = 5,
+  object,
   max.resample = 100,
   cs = NULL,
   priors = NULL,
@@ -25,13 +21,7 @@ imputeData(
 )
 }
 \arguments{
-\item{home_dir}{path to home directory for the project}
-
-\item{ID}{person-level identifier in your dataset}
-
-\item{data_to_impute}{output from dataToImpute}
-
-\item{m}{Amelia input for how many imputed datsets to create}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{max.resample}{Amelia input for how many times amelia should redraw imputed values when trying to meet logical constraints of obounds}
 
@@ -57,7 +47,7 @@ imputeData(
 
 \item{bounds}{Amelia input for 3-col matrix for logical bounds on imputations}
 
-\item{continous_variables}{variables from the dataset identified as continuous}
+\item{data_to_impute}{output from dataToImpute}
 }
 \value{
 imputed_datasets imputation results
@@ -66,7 +56,7 @@ imputed_datasets imputation results
 Creates m imputed datasets from original dataset using the Aeelia package. See Amelia documentation for more detail: https://cran.r-project.org/web/packages/Amelia/Amelia.pdf
 }
 \examples{
-imputeData(home_dir, ID, data_to_impute, continuous_variables, m, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+imputeData(object, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
 }
 \seealso{

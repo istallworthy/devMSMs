@@ -1,16 +1,18 @@
 #' Plot results from history comparisons
 #' Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure
-#' @param home_dir path to home directory for the project
-#' @param exposures list of variables that represent your exposures/treatments of interest
-#' @param outcomes list of variables that represent your outcomes of interest
+#' @param object msm object that contains all relevant user inputs
 #' @param best_models outcome from assessModels
 #' @param exposure_labels optional list of labels for exposure variables for plotting purposes
 #' @param outcome_labels optional list of labels for outcome variables for plotting purposes
 #' @seealso [assessModels()]
 #' @return plots
 #' @importFrom ggplot2 ggplot
-#' @examples plotResults(home_dir, exposures, outcomes, best_models, exposure_labels="", outcome_labels="")
-plotResults <- function(home_dir, exposures, outcomes, best_models, exposure_labels="", outcome_labels=""){
+#' @examples plotResults(object, best_models, exposure_labels="", outcome_labels="")
+plotResults <- function(object, exposure_labels="", outcome_labels=""){
+
+  home_dir=object$home_dir
+  exposures=object$exposures
+  outcomes=object$outcomes
 
   if (exposure_labels==""){
     exposure_labels=exposures #default is to use

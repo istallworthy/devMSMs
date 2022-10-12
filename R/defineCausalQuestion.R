@@ -2,14 +2,16 @@
 #'
 #' This code helps the individual delineate core aspects of their causal questions
 #'
-#' @param exposures string of the core exposure/treatment of interest variable
-#' @param exposure_time_pts sequence of integer time points of exposure
-#' @param outcomes string of core outcome of interest variable
-#' @param outcome_time_pts sequence of integer time points of outcome
+#' @param object msm object that contains all relevant user inputs
 #' @export
-#' @examples defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
+#' @examples defineCausalQuestion(object)
 #'
-defineCausalQuestion<- function(exposures, exposure_time_pts, outcomes, outcome_time_pts){
+defineCausalQuestion<- function(object){
+
+  exposures=object$exposures
+  exposure_time_pts=object$exposure_time_pts
+  outcomes=object$outcomes
+  outcome_time_pts=object$outcome_time_pts
 
   for (i in 1:length(exposures)){
     for (x in 1:length(outcomes)){

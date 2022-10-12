@@ -2,11 +2,8 @@
 #'
 #' Creates m imputed datasets from original dataset using the Aeelia package. See Amelia documentation for more detail: https://cran.r-project.org/web/packages/Amelia/Amelia.pdf
 
-#' @param home_dir path to home directory for the project
-#' @param ID person-level identifier in your dataset
+#' @param object msm object that contains all relevant user inputs
 #' @param data_to_impute output from dataToImpute
-#' @param continous_variables variables from the dataset identified as continuous
-#' @param m Amelia input for how many imputed datsets to create
 #' @param max.resample Amelia input for how many times amelia should redraw imputed values when trying to meet logical constraints of obounds
 #' @param cs Amelia input for col num or var indicating cross section variable
 #' @param priors Amelia input col matrix indicateing priors for indiv missing obs or variable-wide missing
@@ -23,9 +20,14 @@
 #' @export
 #' @importFrom Amelia amelia
 #' @seealso [dataToImput()], [Amelia::amelia()]
-#' @examples imputeData(home_dir, ID, data_to_impute, continuous_variables, m, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+#' @examples imputeData(object, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 #'
-imputeData <- function(home_dir, ID, data_to_impute, continuous_variables, m=5, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL){
+imputeData <- function(object, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL){
+
+  home_dir=object$home_dir
+  ID=object$ID
+  continuous_variables=object$continuous_variables
+  m=object$m
 
   data_to_impute=as.data.frame(data_to_impute)
   to_remove=c(ID, "WAVE")

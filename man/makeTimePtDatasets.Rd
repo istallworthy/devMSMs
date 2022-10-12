@@ -4,23 +4,18 @@
 \alias{makeTimePtDatasets}
 \title{Makes timepoint datasets}
 \usage{
-makeTimePtDatasets(data, ID, time_pts)
+makeTimePtDatasets(object, data)
 }
 \arguments{
+\item{object}{msm object that contains all relevant user inputs}
+
 \item{data}{output from formatDataStruct}
-
-\item{ID}{person-level identifier in your dataset}
-
-\item{time_pts}{list of time points along your developmental path of interest for which you have at least one measurement}
-}
-\value{
-time_pt_datasets datasets split by time point
 }
 \description{
 Creates datasets unique to each time point for future use and returns a list of time point datasets
 }
 \examples{
-makeTimePtDatasets(data, ID, time_pts)
+makeTimePtDatasets(object, data)
 }
 \seealso{
 \code{\link[=fomatDataStruct]{fomatDataStruct()}}

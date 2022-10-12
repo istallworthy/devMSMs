@@ -1,12 +1,7 @@
 
 #' Fit weighted model
 #' This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcomes
-#' @param home_dir path to home directory for the project
-#' @param ID person-level identifier in your dataset
-#' @param exposures list of variables that represent your exposures/treatments of interest
-#' @param exposure_epochs data frame containing epochs and correponding time points for exposure histories
-#' @param outcomes list of variables that represent your outcomes of interest
-#' @param outcome_time_pts list of time points for outcomes
+#' @param object msm object that contains all relevant user inputs
 #' @param data_for_model_with_weights_cutoff dataset with truncated weights see truncateWeights
 #' @param unbalanced_covariates_for_models unbalanced covariates see assessBalance
 #' @importFrom survey svydesign
@@ -14,9 +9,19 @@
 #' @return marginal structural models
 #' @export
 #' @seealso [truncateWeights()], [asesssBalance()]
-#' @examples fitModel(ID, exposures, exposure_epochs, outcomes, outcome_time_pts, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models, hi_cutoff=75, lo_cutoff=25)
+#' @examples fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models, hi_cutoff=75, lo_cutoff=25)
 
-fitModel <- function(home_dir, ID, exposures, exposure_epochs, outcomes, outcome_time_pts, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models){
+fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models){
+
+  home_dir=object$home_dir
+  ID=object$ID
+  exposures=object$exposures
+  exposure_epochs=object$exposure_epochs
+  outcomes=object$outcomes
+  outcome_time_pts=object$outcome_time_pts
+
+  if (length(outcome_time_pts>1)){
+    stop('This function is designed only for single time point outcomes')}
 
   names(data_for_model_with_weights_cutoff) <- gsub(".", "_", names(data_for_model_with_weights_cutoff), fixed=TRUE)
 
@@ -166,7 +171,11 @@ fitModel <- function(home_dir, ID, exposures, exposure_epochs, outcomes, outcome
   }
 
   saveRDS(all_models, file = paste(paste0(home_dir, "msms/all_exposure-outcome_models.rds", sep="")))
+  print("All models have been saved as a .rds object in the 'msms' folder")
+
   write.csv(data_for_model_with_weights_cutoff, paste0(home_dir, "msms/data_for_msms.csv"))
+  print("A new data file has been saved as a .csv file in the in the 'msms' folder")
+
 
   return(all_models)
 
