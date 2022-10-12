@@ -2,14 +2,9 @@
 #'
 #' This code formats the imputed datasets for calculating balancing weights using CBPS and reutrns a list of wide/long datasets and creates dataset for future modeling
 #'
-#' @param ID person-level identifier in your dataset
-#' @param home_dir path to home directory for project
-#' @param m number of imputed datasets from Amelia
-#' @param data output from formatDataStruct
+#' @param object msm object that contains all relevant user inputs
 #' @param imputed_datasets output from imputeData
 #' @param time_varying_covariates covariates in your dataset that are time-varying
-#' @param time_pts list of time points along your developmental path of interest for which you have at least one measurement
-#' @param time_var_exclude list any time-varying variables that should not be present because of planned missingness design
 #' @param just_imputed "yes"= you have imputed datasets in global environment or "no" but they are saved locally from previous run
 #' @return wide_long_datasets
 #' @export
@@ -21,9 +16,16 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom plyr join
 #' @seealso [formatDataStruct()], [imputeData()]
-#' @examples formatForWeights(ID, home_dir, m, data, imputed_datasets, time_varying_covariates, time_pts, time_var_exclude, just_imputed="no")
+#' @examples formatForWeights(object, data, imputed_datasets=list(), time_varying_covariates, just_imputed="yes")
 #'
-formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), time_varying_covariates, time_pts, time_var_exclude=NULL, just_imputed="yes"){
+formatForWeights <- function(object, data, imputed_datasets=list(), time_varying_covariates, just_imputed="yes"){
+
+  ID=object$ID
+  home_dir=object$home_dir
+  m=object$m
+  time_pts=object$time_pts
+  time_var_exclude=object$time_var_exclude
+
   options(readr.num_columns = 0)
 
   #if the user has not just imputed datasets (and imputations are instead saved locally from a prior run), read in imputed data
@@ -81,7 +83,7 @@ formatForWeights <- function(ID, home_dir, m, data, imputed_datasets=list(), tim
 
   }
 
-  print("USER ALERT: Inspect the list above of time-varying covariates and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' and re-running")
+  print("USER ALERT: Inspect the list above of time-varying covariates and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running")
 
 
   #create dataset for future modeling

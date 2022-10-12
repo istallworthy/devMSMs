@@ -15,40 +15,54 @@ Steps marked with * indicate an optional step if you have already run that code 
 
 These functions require a clean dataset (as a .csv file) in long format that contains columns for ID, time, exposure(s), outcome(s), and all potential covariate confounds as columns. Column names can include only an underscores as special characters. The user will need to specify a home directory within which all other directories will be created automatically.  
 
+The most updated version of this package can be found at: https://github.com/istallworthy/MSMs 
+
+Please reach out to Isabella Stallworthy (stallworthyisabella@gmail.com) with any questions. 
+
 ### User inputs
-Please provide user input for the following fields
+Please provide user input for the following fields to create an msm object
 ```{r}
 #location of the downloaded package from github: https://github.com/istallworthy/MSMs 
-source("") #string
+# source("") #string
 
-# directories to long dataset with all exposures, outcomes, and covariates in long format and project directory 
-data_path="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/MSM_ALL_LONG_8.25.20.csv" #string
-home_dir="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/" #string
-
-#individual identifier 
-ID="s_id" #string
-
-#time points of interest and name of time variable in long dataset
-time_pts=c(6, 15, 24, 35, 58, 90, 154) #list of integers
-time_var="TAge" #string
-
-#marker for missing data
-missing=-9999 #string or integer(s)
-
-#number of imputations
-m=5 #integer
-
-#exposures of interest that potentially have causal effects on outcomes and exposure time point(s) (corresponding to values in time_var)
-exposures=c("HOMEETA1", "CTSETA1", "ESETA1") #list of strings
-exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154) #list of integers
-
-#developmental time periods and their corresponding time points that constitute regime/history units --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects exposure histories (e.g, chronically high exposure vs. exposure only in infancy)
-exposure_epochs=data.frame(epochs=c("early", "middle", "late"), #names of epochs as a list of strings
-                           values=I(list(c(6,15), c(24,35), c(58, 90, 154)))) #time point(s) encompassed in each epoch that correspond to data as a list of numeric lists
-
-#outcomes of interest and outcome time point(s)
-outcomes=c("CORTBASE", "sAABASE") #list of strings
-outcome_time_pts=c(6, 15, 24, 35, 58, 90, 154) #list of integers
+#create msm object 
+object = msmObject(
+  # directories to long dataset with all exposures, outcomes, and covariates in long format and project directory 
+  data_path = "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/MSM_ALL_LONG_8.25.20.csv", #string
+  home_dir = "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/", #string
+  
+  #individual identifier 
+  ID = "s_id", #string
+  
+  #time points of interest and name of time variable in long dataset
+  time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
+  time_var="TAge", #string
+  
+  #marker for missing data
+  missing=-9999, #string or integer(s)
+  
+  #number of imputations
+  m=5, #integer
+  
+  #exposures of interest that potentially have causal effects on outcomes and exposure time point(s) (corresponding to values in time_var)
+  exposures=c("HOMEETA1", "CTSETA1", "ESETA1"), #list of strings
+  exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
+  
+  #developmental time periods and their corresponding time points that constitute regime/history units --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects exposure histories (e.g, chronically high exposure vs. exposure only in infancy)
+  exposure_epochs=data.frame(epochs=c("early", "middle", "late"), #names of epochs as a list of strings
+                             values=I(list(c(6,15), c(24,35), c(58, 90, 154)))), #time point(s) encompassed in each epoch that correspond to data as a list of numeric lists
+  
+  #outcomes of interest and outcome time point(s)
+  outcomes=c("CORTBASE", "sAABASE"), #list of strings
+  outcome_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
+  
+  #list all continous variables here; all others assumed ordinal for imputation 
+ continuous_variables=c("GrosPay1", "RMomAgeU", "RMAge1st", "SwghtLB","RWghtLb", "IBQDnovm", "MDI", "AGE", "INR", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1"),
+ 
+ #list any time-varying variables that may get imputed but should NOT be present in the datasets because of planned missingness design with ".time" format
+ time_var_exclude=c("PCX_POS.58", "PCX_NEG.58", "PCX_POS.90", "PCX_NEG.90", "PCX_POS.154", "PCX_NEG.154", "CORTBASE.58", "CORTBASE.90", "sAABASE.58","sAABASE.90", "TIMEofDAY.6", "TIMEofDAY.15", "TIMEofDAY.24", "TIMEofDAY.35", "TIMEofDAY.58", "TIMEofDAY.90","TIMEofDAY.15", "WIND.15", "WIND.24", "WIND.154", "BSI.35","BSI.90", "BSI.154")
+  
+)
 
 ```
 
@@ -57,7 +71,7 @@ outcome_time_pts=c(6, 15, 24, 35, 58, 90, 154) #list of integers
 Prints the causal questions you wish to answer using MSMs.
 ```{r}
 
-defineCausalQuestion(exposures, exposure_time_pts, outcomes, outcome_time_pts)
+defineCausalQuestion(object)
 
 ```
 
@@ -70,12 +84,11 @@ Reads in data and formats for analysis. The user has the option to specify any c
 factor_covariates=c("NC","TcSex2", "TcBlac2") #list of characters
 ###
 
-
 #Creates the necessary directories in your home directory and formats your dataset
-data=formatDataStruct(data_path, home_dir, missing, factor_covariates)
+data=formatDataStruct(object, factor_covariates)
 
 #Makes separate datasets for each time point 
-time_pt_datasets= makeTimePtDatasets(data, ID, time_pts)
+time_pt_datasets= makeTimePtDatasets(object, data)
 
 ```
 
@@ -95,7 +108,7 @@ keep_covariates=c("AGE") #list of characters
 
 
 #identifies the total number covariates available in the dataset and prints them for user inspection
-potential_covariates=identifyCovariates(data, ID, exposures, outcomes, exclude_covariates)
+potential_covariates=identifyCovariates(object, data, exclude_covariates)
 
 
 ### USER INPUTS
@@ -105,24 +118,20 @@ time_varying_covariates= c("AGE", "INR", "WIND", "PCX_POS", "PCX_NEG", "BSI", "T
 
 
 #of those covariates, identify those that correlate with each exposure or outcome at each time point at >0.1 and thus could be potential confounders
-covariates_to_include= identifyPotentialConfounds(home_dir, data, exposures,outcomes, time_pt_datasets, time_pts, time_varying_covariates, exclude_covariates)
+covariates_to_include= identifyPotentialConfounds(object, time_pt_datasets, time_varying_covariates, exclude_covariates)
 
 #create final dataset for imputations with only the necessary variables
-data_to_impute=dataToImpute(ID, data, exposures, outcomes, covariates_to_include, exclude_covariates, keep_covariates)
+data_to_impute=dataToImpute(object, covariates_to_include, exclude_covariates, keep_covariates)
 
 ```
 
 
 ### 4. Impute dataset so that each time point has complete data*
-ONlY run this code when needed! Creates 'm' imputed datasets using the Amelia package (Honaker, King, & Blackwell, 2011) and functions to eventually generate weights for each imputed dataset (that will be combined at the end). This code takes a few minutes to run per imputation. In the next step of code, the parameter 'just_imputed="no"' will allow you to read imputed data in from local storage so as not to have to re-run this imputation code. 
+ONlY run this code when needed! Creates 'm' imputed datasets using the Amelia package (Honaker, King, & Blackwell, 2011) and functions to eventually generate weights for each imputed dataset (that will be combined at the end). This code takes a few minutes to run per imputation. In the next step of code, the parameter 'just_imputed="no"' will allow you to read imputed data in from local storage so as not to have to re-run this imputation code. --why did we use amelia? should we add mice as an option?
 ```{r}
-### USER INPUT
-#list continous variables here; all others assumed ordinal for imputation 
-continuous_variables=c("GrosPay1", "RMomAgeU", "RMAge1st", "SwghtLB","RWghtLb", "IBQDnovm", "MDI", "AGE", "INR", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1")
-###
 
 #creates imputed datasets and saves them out
-imputed_datasets= imputeData(home_dir, ID, data_to_impute, continuous_variables, m, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+imputed_datasets= imputeData(object, data_to_impute, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
 ```
 
@@ -130,14 +139,9 @@ imputed_datasets= imputeData(home_dir, ID, data_to_impute, continuous_variables,
 ### 5. Format each imputed dataset for calculating balancing weights 
 Making sure imputed datasets have the appropriate variables and are formatted in the "wide/long" format needed to create the balancing weights. This code also saves out a dataset structured for future modeling. The parameter 'just_imputed' allows you to specify whether you just ran the imputed code ("yes") or you'd rather read in the imputations saved locally from a previous run ("no"). 
 ```{r}
-### USER INPUT
-#list any time-varying variables that may have been imputed but should NOT be present in the datasets because of planned missingness design with ".time" format
-time_var_exclude=c("PCX_POS.58", "PCX_NEG.58", "PCX_POS.90", "PCX_NEG.90", "PCX_POS.154", "PCX_NEG.154", "CORTBASE.58", "CORTBASE.90", "sAABASE.58","sAABASE.90", "TIMEofDAY.6", "TIMEofDAY.15", "TIMEofDAY.24", "TIMEofDAY.35", "TIMEofDAY.58", "TIMEofDAY.90","TIMEofDAY.15", "WIND.15", "WIND.24", "WIND.154", "BSI.35","BSI.90", "BSI.154")
-###
-                   
-
+       
 #creates wide/long datasets for each imputation. if you have just created imputations in the global environment, select just_imputed="yes", otherwise "no" will indicate to read them in from local storage
-wide_long_datasets=formatForWeights(ID, home_dir, m, data, imputed_datasets, time_varying_covariates, time_pts, time_var_exclude, just_imputed="no")
+wide_long_datasets=formatForWeights(object, data, imputed_datasets=list(), time_varying_covariates, just_imputed="no")
 
 ```
 
@@ -145,16 +149,19 @@ wide_long_datasets=formatForWeights(ID, home_dir, m, data, imputed_datasets, tim
 ### 6. Create formulas for calculating balancing weights for each exposure-outcome pair at each time point 
 Balancing weights focus on the relationship between potential confounding variables and each exposure. The following code creates formulas relating all appropriate concurrent and lagged covariates to each exposure at each time point. These will be used to create balancing weights in subsequent steps. 
 
+Collider resources? see david's stuff or ask dan 
+
 This step is crucial --the user is advised to thoroughly inspect each formula and consider excluding potential collider variables!
 ```{r}
 ### USER INPUT
-#when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure as balancing on colliders can lead to problematic outcomes; default is none
-potential_colliders=c()
+#when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure and outcome as balancing on colliders can lead to problematic outcomes; default is none
+potential_colliders=data.frame(exp_out_pair=c("HOMEETA1-CORTBASE", "ESETA1-CORTBASE"), #names of exposure-outcome pair separated by "-", no spaces
+                              colliders=I(list(c("INR"), c("HOMEETA1")))) #list of colliders (to be removed at outcome time points)
 ###
 
 
 #creates formulas for each exposure-outcome pairing at each time point and saves and prints them for user inspection
-forms=createForms(wide_long_datasets, covariates_to_include, exposures, outcomes, time_pts, potential_colliders, keep_covariates, time_var_exclude)
+forms=createForms(object, wide_long_datasets, covariates_to_include, potential_colliders, keep_covariates)
 
 ```
 
@@ -164,20 +171,24 @@ Only run this code when needed! This step creates balancing weights using the Co
 ```{r}
 
 #creates balancing weights
-weights_models=createWeights(wide_long_datasets,forms, exposures, outcomes, time_pts, m,  ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
+weights_models=createWeights(object, wide_long_datasets,forms, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
 
 
 ```
 
 
 ### 8. Assess balance and determine variables for which balance could not be achieved for use as covariates in final model
-This code evaluates which covariates are still correlated with exposures (i.e., for which balancing was not successful) above the designated threshold which the user has the option to define ('balance_thresh'), after averaging across imputed datasets and time points, and saves out a list of those covariates to include in your final model. Use the parameter 'just_made_weights' to designate whether you just made the weights and they are in the global environment ('yes') or you'd rather read them in from an earlier run ('no'). 
+This code evaluates which covariates are still correlated with exposures (i.e., for which balancing was not successful) above the designated threshold which the user has the option to define ('balance_thresh'), after averaging across imputed datasets, and saves out a list of those covariates to include in your final model. 
+
+Use the parameter 'just_made_weights' to designate whether you just made the weights and they are in the global environment ('yes') or you'd rather read them in from an earlier run ('no'). Do we care about balance with outcome? add stuart ref
+
+balance assessment should be after averaging across imputed datasets --avg corr>threshold?
 ```{r}
 #assesses covariate balance and produces figures for user inspection
-unbalanced_covariates_for_models=assessBalance(home_dir, weights_models=list(), m, exposures, outcomes, time_pts, balance_thresh=0.12, just_made_weights="no")
+unbalanced_covariates_for_models=assessBalance(object, weights_models=list(), balance_thresh=0.12, just_made_weights="no")
 
 #reads in weights models to global environment
-weights_models=getWeights(home_dir, just_made_weights="no")
+weights_models=getWeights(object, just_made_weights="no")
 
 ```
 
@@ -186,7 +197,7 @@ weights_models=getWeights(home_dir, just_made_weights="no")
 This code multiplies weights across time points and averages across imputed datasets to condense down to final individual weights per exposure-outcome pair for modeling.
 ```{r}
 #condenses weights across imputed dataset and time point 
-data_for_model_with_weights=condenseWeights(ID, home_dir, m, weights_models, exposures, outcomes, time_pts)
+data_for_model_with_weights=condenseWeights(object, weights_models)
 
 ```
 
@@ -194,10 +205,10 @@ data_for_model_with_weights=condenseWeights(ID, home_dir, m, weights_models, exp
 ### 10. Truncate final weights to avoid heavy tails
 Given that weights with heavy tails can be problematic, this code caps weight weight values at a designated percentile (that the user has the option to specify with 'percentile_cutoff'), populating all weights larger than that value with that percentile value. These weights can now be used in the formal marginal structural model, or weighted model. 
 
-You can stop here if you have specific MSM models you want to fit or you can continue on to fit a standard single-outcome model. 
+You can stop here if you have specific MSM models you want to fit or you can continue on to fit a standard single-outcome model.  May want to do robustness/sensitivity checks for 95th and 99th? 
 ```{r}
 #truncate weights 
-data_for_model_with_weights_cutoff=truncateWeights(data_for_model_with_weights, home_dir, exposures, outcomes, percentile_cutoff=0.90)
+data_for_model_with_weights_cutoff=truncateWeights(object, data_for_model_with_weights, percentile_cutoff=0.90)
 
 ```
 
@@ -218,10 +229,10 @@ Model dictionary:
 ```{r}
 
 #code to fit a series of baseline, covariates, and interaction weighted models to determine which is best fitting
-all_models=fitModel(home_dir, ID, exposures, exposure_epochs, outcomes, outcome_time_pts, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
+all_models=fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
 
 #determine best fitting model
-best_models=assessModel(home_dir, all_models)
+best_models=assessModel(object, all_models)
 
 ```
 
@@ -230,7 +241,7 @@ best_models=assessModel(home_dir, all_models)
 This code fits a series of linear hypothesis tests using the 'car' package (Fox & Weisberg, 2019) to examine the effects of different combinations of exposures, or histories, on each outcome using the best-fitting model from the previous step. Because we use a continuous approach to modeling exposures, the user has the option to specify cutoffs for values of the exposures that will be considered high ("hi_cutoff") and low ("lo_cutoff"). The user also has the option to specify a reference history ("reference") and an optional comparison history ("comparisons") on which to base comparisons, and which multiple comparison correction method ('method') to implement. 
 ```{r}
 #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
-apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
+apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
 
 ###USER INPUT
 #select one of the above histories as your reference event, or the history/sequence to which you would like to compare the other histories  
@@ -240,7 +251,7 @@ comparisons="" #optional: set a comparison history from list above; the default 
 
 
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
-history_comparisons=compareHistories(home_dir, exposures, exposure_epochs, hi_cutoff=.75, lo_cutoff=.25, outcome, outcome_time_pts, best_models, comparisons, reference)
+history_comparisons=compareHistories(object, hi_cutoff=.75, lo_cutoff=.25, best_models, comparisons, reference)
 
 #adjust p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
 signifcant_comparisons=mcCorrection(history_comparisons, method="BH")
@@ -256,28 +267,35 @@ plotResults(home_dir, exposures, outcomes, best_models, exposure_labels=c("Home 
 
 ```
 
-### 14. Optional: fit multi-level model in MPlus for time-varying outcomes
+### 14. Optional: create a template for fitting weighted more complex growth models of time-varying outcomes in MPlus
+This code creates a template for fitting weighted more complex growth models in MPlus in the form of a .inp file. The code defaults to estimating slope (s) and quadratic (qd) growth --the user is advised to apply the appropriate transformations before establishing the appropriate functional form of the outcomes separately, and then modify these input files accordingly. 
+
 [Meriah to add more info about what these models do]
+
+assumes same missing indicator as original data
+abridge dataset --only include necessary variables?
+data must have outcomes in long form but exposures in wide form --check to see if there's a wide/long version of data saved out somewhere?
+IS needs to more thoroughly automate interaction terms
 ```{r}
-#location of your data file in long format including final truncated weights
-data_file=paste0(home_dir, "for Mplus/TSST_allTxseq_LONG3.csv")
+#location of your data file in long format including final truncated weights (labeed exposure-outcome)
+data_file=paste0(object$home_dir, "for Mplus/TSST_allTxseq_LONG3.csv")
 
 #list your outcomes and (optionally) any corresponding covariates you want included in each respective model
 covariates=data.frame(outcomes=c("lnCORTR", "sqrtSAAR"), #names of outcomes
-                      covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c"))))
+                      covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c")))) #like methods covariates that don't need balancing
 
 #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
-apply(gtools::permutations(2, nrow(exposure_epochs), c("L", "H"), repeats.allowed=TRUE), 1, paste, sep="", collapse="")
+apply(gtools::permutations(2, nrow(object$exposure_epochs), c("L", "H"), repeats.allowed=TRUE), 1, paste, sep="", collapse="")
 
 #from the list above, choose a reference event (default is low at all time points)
 reference="LLL"
 
 #create .imp files for each exposure-outcome pairing. This code adapts content from Gottfredson et al., 2019 via the aMNLFA package. 
-makeMplusInputs(ID, home_dir, data_file, missing, exposures, exposure_epochs, covariates, reference, hi_cutoff=.75, lo_cutoff=.25)
+makeMplusInputs(object, covariates, reference, hi_cutoff=.75, lo_cutoff=.25)
 
 
 
-#automatically run all inputs in the Mplus folder
+#automatically run all inputs in the Mplus folder after you have manually checked them
 MplusAutomation::runModels(replaceOutfile = "never",  target = paste0(home_dir, 'for MPlus/'))
 
 ```

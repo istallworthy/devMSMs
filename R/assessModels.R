@@ -2,14 +2,16 @@
 #' Assess marginal structural models
 #' Code to assess the various models and decide which fits the best
 #'
-#' @param home_dir path to home directory for the project
+#' @param object msm object that contains all relevant user inputs
 #' @param all_models output from fitModel
 #' @importFrom sjPlot tab_model
 #' @importFrom jtools export_summs
 #' @return best_models list of best-fitting models for each exposure=outcome pairing
 #' @seealso [fitModel()]
-#' @examples assessModel(home_dir, all_models)
-assessModel <-function(home_dir, all_models){
+#' @examples assessModel(object, all_models)
+assessModel <-function(object, all_models){
+
+  home_dir=object$home_dir
 
   best_models=list()
 

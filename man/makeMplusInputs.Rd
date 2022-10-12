@@ -6,40 +6,25 @@
 Code for assessing effects of exposure histories with repeated outcomes}
 \usage{
 makeMplusInputs(
-  ID,
-  home_dir,
-  data_file,
-  missing,
-  time_var,
-  exposures,
-  exposure_epochs,
-  covariates = NULL,
+  object,
+  covariates,
   reference = "LLL",
-  outcomes,
   hi_cutoff = 0.75,
   lo_cutoff = 0.25
 )
 }
 \arguments{
-\item{ID}{person-level identifier in your dataset}
-
-\item{home_dir}{path to home directory for the project}
-
-\item{missing}{missing data marker in your dataset}
-
-\item{exposures}{list of variables that represent your exposures/treatments of interest}
-
-\item{exposure_epochs}{data frame containing epochs and correponding time points for exposure histories}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{covariates}{any covariates you wish to include in the model}
 
 \item{reference}{reference history to compare comparison histories}
 
-\item{outcomes}{list of variables that represent your outcomes of interest}
-
 \item{hi_cutoff}{integer for percentile considered "high" for exposure}
 
 \item{lo_cutoff}{integer for percentile considered "low" for exposure}
+
+\item{outcomes}{list of variables that represent your outcomes of interest}
 }
 \value{
 none
@@ -49,5 +34,5 @@ Create MPlus inputs for running weighted growth curve models
 Code for assessing effects of exposure histories with repeated outcomes
 }
 \examples{
-makeMplusInputs(ID, home_dir, missing, exposures, exposure_epochs, covariates, reference, outcomes, hi_cutoff=.75, lo_cutoff=.25)
+makeMplusInputs(objectcovariates, reference, outcomes, hi_cutoff=.75, lo_cutoff=.25)
 }

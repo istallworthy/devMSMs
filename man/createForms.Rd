@@ -5,26 +5,17 @@
 \title{Creates formulae for generating weights}
 \usage{
 createForms(
+  object,
   wide_long_datasets,
   covariates_to_include,
-  exposures,
-  outcomes,
-  time_pts,
   potential_colliders = NULL,
-  keep_covariates = NULL,
-  time_var_exclude
+  keep_covariates = NULL
 )
 }
 \arguments{
-\item{wide_long_datasets}{from formatForWeights}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{covariates_to_include}{from identifyPotentialConfounds}
-
-\item{exposures}{list of exposures of interest}
-
-\item{outcomes}{list of outcomes of interest}
-
-\item{time_pts}{list of time points}
 
 \item{potential_colliders}{optional list of variables to be excluded from balancing at time point of exposure}
 }
@@ -35,7 +26,7 @@ forms
 Creates formulae for each exposure at each time point for the CBPS function that will make weights returning a list of forms
 }
 \examples{
-createForms(wide_long_datasets,covariates_to_include, exposures, outcomes, time_pts, potential_colliders)
+createForms(object, wide_long_datasets,covariates_to_include, potential_colliders)
 
 }
 \seealso{

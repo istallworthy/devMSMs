@@ -4,16 +4,12 @@
 \alias{identifyCovariates}
 \title{Identifies the available covariates}
 \usage{
-identifyCovariates(data, ID, exposures, outcomes, exclude_covariates = NULL)
+identifyCovariates(object, data, exclude_covariates = NULL)
 }
 \arguments{
-\item{data}{output from formatDataStruct}
+\item{object}{msm object that contains all relevant user inputs}
 
-\item{ID}{person-level identifier in your dataset}
-
-\item{exposures}{list of variables that represent your exposures/treatments of interest}
-
-\item{outcomes}{list of variables that represent your outcomes of interest}
+\item{data}{data from formatDataStruct}
 
 \item{exclude_covariates}{list of variables to exclude based on theoretical or practical reasons}
 }
@@ -27,7 +23,7 @@ Identifies the covariates in in the dataset that will be candidates for confound
 identifyCovariates
 }
 \examples{
-identifyCovariates(data, ID, exposures, outcomes, exclude_covariates)
+identifyCovariates(object,data, exclude_covariates)
 
 }
 \seealso{

@@ -5,10 +5,10 @@
 \title{Assess marginal structural models
 Code to assess the various models and decide which fits the best}
 \usage{
-assessModel(home_dir, all_models)
+assessModel(object, all_models)
 }
 \arguments{
-\item{home_dir}{path to home directory for the project}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{all_models}{output from fitModel}
 }
@@ -20,7 +20,7 @@ Assess marginal structural models
 Code to assess the various models and decide which fits the best
 }
 \examples{
-assessModel(home_dir, all_models)
+assessModel(object, all_models)
 }
 \seealso{
 \code{\link[=fitModel]{fitModel()}}

@@ -2,12 +2,9 @@
 #'
 #' Creates balancing weights using the CBPS package (See CBPS documentation for more detail: https://cran.r-project.org/web/packages/CBPS/CBPS.pdf) for more
 #' returns a list of weights_models for each exposure-outcome pair
-
+#' @param object msm object that contains all relevant user inputs
 #' @param wide_long_datasets from formatForWeights
 #' @param forms from createForms
-#' @param exposures list of exposures
-#' @param time_pts list of time points
-#' @param m number of imputations from Amelia
 #' @param balance_thresh correlation value above which covariates are not considered balanced with respect to expsure
 #' @param ATT CBPS parameter 1= average treatment effect on the treated, 0=average treatment effect
 #' @param iterations CBPS parameter for maximum number of number of iterations for optimization
@@ -26,9 +23,14 @@
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 ggsave
 #' @seealso [CBPS::CBPS()], [formatForWeights()], [createForms()]
-#' @examples createWeights(wide_long_datasets,forms, exposures, time_pts, m,  ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
+#' @examples createWeights(object, wide_long_datasets,forms,ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
 #'
-createWeights <-function(wide_long_datasets, forms, exposures, outcomes, time_pts, m, balance_thresh=0.12, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL){
+createWeights <-function(object, wide_long_datasets, forms, balance_thresh=0.12, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL){
+
+  exposures=object$exposures
+  outcomes=object$outcomes
+  exposure_time_pts=object$exposure_time_pts
+  m=object$m
 
   weights_models=list()
   #Cycles through imputed datasets
@@ -46,11 +48,11 @@ createWeights <-function(wide_long_datasets, forms, exposures, outcomes, time_pt
         exposure=exposures[y]
 
         #Cycles through all time points
-        for (x in 1:length(time_pts)){
-          time=time_pts[x]
+        for (x in 1:length(exposure_time_pts)){
+          time=exposure_time_pts[x]
 
-          #references newly ordered time variable (1:n(time_pts))
-          new_time=as.numeric(c(1:length(time_pts))[x])
+          #references newly ordered time variable (1:n(exposure_time_pts))
+          new_time=as.numeric(c(1:length(exposure_time_pts))[x])
 
           form=forms[[paste("form_", exposure, "-", outcome, "_", time, sep="")]]
 
@@ -78,33 +80,33 @@ createWeights <-function(wide_long_datasets, forms, exposures, outcomes, time_pt
           weights=as.data.frame(cbind(MSMDATA_temp[,colnames(MSMDATA_temp)==ID], fit$weights))
 
           #Save weights
-          write.csv(x=as.data.frame(fit$weights), file=paste(home_dir, "weights/weights_exp=", exposure, "-", outcome, "_t=", time, "_imp=", k, ".csv", sep=""))
+          # write.csv(x=as.data.frame(fit$weights), file=paste(home_dir, "weights/weights_exp=", exposure, "-", outcome, "_t=", time, "_imp=", k, ".csv", sep=""))
           #Save weights merged with ID variable
-          write.csv(x=as.data.frame(weights), file=paste(home_dir, "weights/weights_id_exp=", exposure, "-", outcome, "_t=", time,"_imp=",k, ".csv", sep=""))
+          write.csv(x=as.data.frame(weights), file=paste(home_dir, "original weights/values/weights_id_exp=", exposure, "-", outcome, "_t=", time,"_imp=",k, ".csv", sep=""))
 
-          print(paste0("Weights for exposure ", exposure, "-", outcome," at time ", time, " for imputation ", k,  " have now been saved into the 'weights' folder"))
+          print(paste0("Weights for exposure ", exposure, "-", outcome," at time ", time, " for imputation ", k,  " have now been saved into the 'original weights/values/' folder"))
 
           # #Writes image of histogram of weights to assess heavy tails
           ggplot2::ggplot(data=as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
             ggplot2::geom_histogram(color = 'black', bins = 15)
-          ggplot2::ggsave(paste("Hist_exp=", exposure, "-", outcome, "_t=", time, "_imp=", k, ".png", sep=""), path=paste0(home_dir, "weights/"), height=8, width=14)
+          ggplot2::ggsave(paste("Hist_exp=", exposure, "-", outcome, "_t=", time, "_imp=", k, ".png", sep=""), path=paste0(home_dir, "original weights/histograms"), height=8, width=14)
 
-          print(paste0("A weights histogram for exposure ", exposure,  "-", outcome," at time ", time, " for imputation ", k,  " has now been saved in the 'weights' folder --likely has heavy tails"))
+          print(paste0("A weights histogram for exposure ", exposure,  "-", outcome," at time ", time, " for imputation ", k,  " has now been saved in the 'original weights/histograms/' folder --likely has heavy tails"))
 
           #Writes image to balance check
-          jpeg(filename=paste(home_dir, "balance/Balance_exp=", exposure, "-", outcome, "_t=", time, "_imp=",k, ".jpg", sep=""), width=480,height=480)
+          jpeg(filename=paste(home_dir, "balance/post-balance correlation plots/Balance_exp=", exposure, "-", outcome, "_t=", time, "_imp=",k, ".jpg", sep=""), width=480,height=480)
           plot(fit, covars = NULL, silent = FALSE, boxplot = TRUE)
           dev.off()
 
-          print(paste0("USER ALERT: Balancing figures for exposure ", exposure,  "-", outcome," at time ", time, " for imputation ", k,  " have now been saved into the 'balance' folder for future inspection"))
+          print(paste0("USER ALERT: Balancing figures for exposure ", exposure,  "-", outcome," at time ", time, " for imputation ", k,  " have now been saved into the 'balance/post-balance correlation plots/' folder for future inspection"))
 
         }
       }
     }
   }
 
-  saveRDS(weights_models, file = paste(paste0(home_dir, "weight fits/weights_models.rds", sep="")))
-  print("Weights models have been saved in the 'weight fits' folder")
+  saveRDS(weights_models, file = paste(paste0(home_dir, "original weights/weights_models.rds", sep="")))
+  print("Weights models have been saved as an .rds object in the 'original weights' folder")
 
   return(weights_models)
 }

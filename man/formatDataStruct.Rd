@@ -4,14 +4,10 @@
 \alias{formatDataStruct}
 \title{Formats dataset and creates required directory}
 \usage{
-formatDataStruct(data_path, home_dir, missing, factor_covariates)
+formatDataStruct(object, factor_covariates = NULL)
 }
 \arguments{
-\item{data_path}{path to cleaned dataset}
-
-\item{home_dir}{path to home directory for the project}
-
-\item{missing}{missing data marker in your dataset}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{factor_covariates}{list of covariates that are factors}
 }
@@ -23,6 +19,6 @@ Creates the required directories, assesses the data structure and makes it unifo
 This function requires a clean dataset in long format that contain columns for ID, time, exposure, outcome, and potential covariate confounds
 }
 \examples{
-formatDataStruct(data_path, home_dir, missing, factor_covariates)
+formatDataStruct(object, factor_covariates)
 
 }

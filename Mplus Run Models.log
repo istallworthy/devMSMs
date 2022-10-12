@@ -1,0 +1,14 @@
+------Begin Mplus Model Run: 12Oct2022 19:01:15------
+Run options:
+	Recursive (run models in subdirectories): FALSE
+	Show output on console: FALSE
+	Replace existing outfile: never
+------
+Skipping model because output file already exists for: /Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/for Mplus/CTSETA1_lnCORTR.inp
+Skipping model because output file already exists for: /Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/for Mplus/CTSETA1_sqrtSAAR.inp
+Currently running model: ESETA1_lnCORTR.inp
+Currently running model: ESETA1_sqrtSAAR.inp
+Currently running model: HOMEETA1_lnCORTR.inp
+Currently running model: HOMEETA1_sqrtSAAR.inp
+
+------End Mplus Model Run: 12Oct2022 19:01:26------

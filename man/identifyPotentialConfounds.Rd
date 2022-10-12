@@ -5,24 +5,18 @@
 \title{Identify potential confounds}
 \usage{
 identifyPotentialConfounds(
-  home_dir,
-  data,
-  exposures,
-  outcomes,
+  object,
   time_pt_datasets,
-  time_pts,
-  time_varying_covariates,
+  time_varying_covariates = NULL,
   exclude_covariates = NULL
 )
 }
 \arguments{
-\item{home_dir}{path to home directory for the project}
-
-\item{data}{output from formatDataStruct}
+\item{object}{msm object that contains all relevant user inputs}
 
 \item{time_pt_datasets}{output from makeTimePtDatasets}
 
-\item{time_pts}{list of time points along your developmental path of interest for which you have at least one measurement}
+\item{time_varying_covariates}{list of covariates that are time-varying}
 
 \item{exclude_covariates}{list of variables to exclude based on theoretical or practical reasons}
 }
