@@ -17,7 +17,6 @@ These functions require a clean dataset (as a .csv file) in long format that con
 
 The most updated version of this package can be found at: https://github.com/istallworthy/MSMs 
 
-Please reach out to Isabella Stallworthy (stallworthyisabella@gmail.com) with any questions. 
 
 ### User inputs
 Please provide user input for the following fields to create an msm object
@@ -149,7 +148,12 @@ wide_long_datasets=formatForWeights(object, data, imputed_datasets=list(), time_
 ### 6. Create formulas for calculating balancing weights for each exposure-outcome pair at each time point 
 Balancing weights focus on the relationship between potential confounding variables and each exposure. The following code creates formulas relating all appropriate concurrent and lagged covariates to each exposure at each time point. These will be used to create balancing weights in subsequent steps. 
 
-Collider resources? see david's stuff or ask dan 
+It is important to consider all possible confounding variables when creating balancing weights but it is also important not to balance on colliders. Colliders are variables that cause both an exposure and an outcome, and balancing on them can cause problematic distortions in inferences. Please see the following resources for more information on colliders. 
+
+https://catalogofbias.org/biases/collider-bias/ 
+https://blogs.cdc.gov/genomics/2022/05/09/colliding-with-collider/ 
+
+[more collider resources? see david's stuff or ask dan] 
 
 This step is crucial --the user is advised to thoroughly inspect each formula and consider excluding potential collider variables!
 ```{r}
@@ -172,7 +176,6 @@ Only run this code when needed! This step creates balancing weights using the Co
 
 #creates balancing weights
 weights_models=createWeights(object, wide_long_datasets,forms, ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
-
 
 ```
 
@@ -267,16 +270,26 @@ plotResults(home_dir, exposures, outcomes, best_models, exposure_labels=c("Home 
 
 ```
 
-### 14. Optional: create a template for fitting weighted more complex growth models of time-varying outcomes in MPlus
-This code creates a template for fitting weighted more complex growth models in MPlus in the form of a .inp file. The code defaults to estimating slope (s) and quadratic (qd) growth --the user is advised to apply the appropriate transformations before establishing the appropriate functional form of the outcomes separately, and then modify these input files accordingly. 
+
+If you have multiple outcome time points:
+
+
+### 14. Optional: create a template for fitting weighted, more complex growth models of time-varying outcomes in MPlus
+This code creates a template for fitting weighted more complex growth models in MPlus in the form of a .inp file. The code defaults to estimating slope (s) and quadratic (qd) growth and estimates contrasts examining the differences between different exposure histories. 
+
+The user is advised to independently apply the appropriate transformations to their outcomes and establish the appropriate functional forms of their outcomes. They can then provide a .csv file to this function to create a template of an MPlus .inp file for fitting a growth model. The user can then modify the template .inp file as needed prior to running. 
 
 [Meriah to add more info about what these models do]
 
 assumes same missing indicator as original data
-abridge dataset --only include necessary variables?
-data must have outcomes in long form but exposures in wide form --check to see if there's a wide/long version of data saved out somewhere?
-IS needs to more thoroughly automate interaction terms
+abridged dataset --only include necessary variables?
+data must have outcomes in long form but exposures in wide form --check to see if there's a wide/long version of data saved out somewhere to guide the user?
+
+IS needs to more thoroughly automate interaction terms --right now assumes 3 epochs and all corresponding 2- and 3-way interactions.  
+
+Note for Meriah: any other variables/input fields that the user should specify? anything else to save out along the way?
 ```{r}
+#can make these user inputs a separate new mplus object
 #location of your data file in long format including final truncated weights (labeed exposure-outcome)
 data_file=paste0(object$home_dir, "for Mplus/TSST_allTxseq_LONG3.csv")
 
@@ -284,18 +297,20 @@ data_file=paste0(object$home_dir, "for Mplus/TSST_allTxseq_LONG3.csv")
 covariates=data.frame(outcomes=c("lnCORTR", "sqrtSAAR"), #names of outcomes
                       covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c")))) #like methods covariates that don't need balancing
 
+
 #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
 apply(gtools::permutations(2, nrow(object$exposure_epochs), c("L", "H"), repeats.allowed=TRUE), 1, paste, sep="", collapse="")
 
-#from the list above, choose a reference event (default is low at all time points)
+#from the list above, choose a reference event (default is low at all time points) to be compared to all other histories
 reference="LLL"
+###
+
 
 #create .imp files for each exposure-outcome pairing. This code adapts content from Gottfredson et al., 2019 via the aMNLFA package. 
 makeMplusInputs(object, covariates, reference, hi_cutoff=.75, lo_cutoff=.25)
 
 
-
-#automatically run all inputs in the Mplus folder after you have manually checked them
+#automatically run all inputs in the Mplus folder after you have manually modified/checked them
 MplusAutomation::runModels(replaceOutfile = "never",  target = paste0(home_dir, 'for MPlus/'))
 
 ```
