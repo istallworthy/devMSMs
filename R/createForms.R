@@ -4,13 +4,15 @@
 #'
 #' @param object msm object that contains all relevant user inputs
 #' @param covariates_to_include from identifyPotentialConfounds
+#' @param exclude_covariates any covariates the user wishes to exclude
+#' @param keep_covariates ay covariates the user wishes to keep
 #' @param potential_colliders optional list of variables to be excluded from balancing at time point of exposure
 #' @return forms
 #' @export
 #' @seealso [formatForWeights()], [identifyPotentialConfounds] for more on inputs
 #' @examples createForms(object, wide_long_datasets,covariates_to_include, potential_colliders)
 #'
-createForms <- function(object, wide_long_datasets, covariates_to_include, potential_colliders=NULL, keep_covariates=NULL){
+createForms <- function(object, wide_long_datasets, covariates_to_include, potential_colliders=NULL, keep_covariates=NULL, exclude_covariates=NULL){
 
   exposures=object$exposures
   outcomes=object$outcomes
@@ -97,6 +99,7 @@ createForms <- function(object, wide_long_datasets, covariates_to_include, poten
                                                                 time_varying_covariates, #exclude time-varying covariates in long form (already in wide)
                                                                 paste(exposure, time, sep="."), #exclude exposure at that time point
                                                                 apply(expand.grid(outcome, as.character(time_pts)), 1, paste, sep="", collapse="."), #exclude outcome at any time point
+                                                                exclude_covariates, #exclude any covariates specified by the user
                                                                 time_var_exclude, #exclude any time points that should not be there bc of planned missingness
                                                                 apply(expand.grid(colliders, as.character(time)), 1, paste, sep="", collapse="."), #exclude colliders at exposure time pt
                                                                 apply(expand.grid(colliders, as.character(outcome_time_pts)), 1, paste, sep="", collapse=".") #exclude colliders at outcome time points

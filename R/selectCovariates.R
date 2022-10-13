@@ -257,7 +257,11 @@ dataToImpute <-function(object, covariates_to_include, exclude_covariates=NULL, 
 
   variables_to_include=unique(c(ID, "WAVE", exposures, outcomes, covariates_to_include, keep_covariates))
   data2=as.data.frame(data[names(data)[names(data) %in% variables_to_include] ])
-  data2=data2[,!colnames(data2) %in% c(exclude_covariates, exposures, outcomes)]
+  data2=data2[,!colnames(data2) %in% c(exclude_covariates)]
+
+  data_to_impute=data2
+
+  data2=data2[,!colnames(data2) %in% c(exposures, outcomes)]
 
   #inspect correlations among covariates to check for redundancy and opportunities to simplify the model
   hi_corr_covars <- suppressWarnings(Hmisc::rcorr(as.matrix(data2[,3:ncol(data2)])))
@@ -269,7 +273,6 @@ dataToImpute <-function(object, covariates_to_include, exclude_covariates=NULL, 
   print("USER ALERT: To simplify the balancing models consider removing any highly correlated, redundant covariates by listing them in the 'exclude_covariates' field above and re-running this function:")
   print(knitr::kable(View_hi_corr_covars))
 
-  data_to_impute=data2
   write.csv(data_to_impute, paste0(home_dir, "imputations/data_to_impute.csv"))
   print("See the 'imputations' folder for a csv file of the data to be imputed")
 

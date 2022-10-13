@@ -27,8 +27,8 @@ Please provide user input for the following fields to create an msm object
 #create msm object 
 object = msmObject(
   # directories to long dataset with all exposures, outcomes, and covariates in long format and project directory 
-  data_path = "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/MSM_ALL_LONG_8.25.20.csv", #string
-  home_dir = "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah/", #string
+  data_path = "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah test/MSM_ALL_LONG_8.25.20.csv", #string
+  home_dir = "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah test/", #string
   
   #individual identifier 
   ID = "s_id", #string
@@ -41,7 +41,7 @@ object = msmObject(
   missing=-9999, #string or integer(s)
   
   #number of imputations
-  m=5, #integer
+  m=2, #integer
   
   #exposures of interest that potentially have causal effects on outcomes and exposure time point(s) (corresponding to values in time_var)
   exposures=c("HOMEETA1", "CTSETA1", "ESETA1"), #list of strings
@@ -112,7 +112,7 @@ potential_covariates=identifyCovariates(object, data, exclude_covariates)
 
 ### USER INPUTS
 #list out covariates that are time-varying
-time_varying_covariates= c("AGE", "INR", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1")
+time_varying_covariates= c("INR", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1")
 ### 
 
 
@@ -165,7 +165,7 @@ potential_colliders=data.frame(exp_out_pair=c("HOMEETA1-CORTBASE", "ESETA1-CORTB
 
 
 #creates formulas for each exposure-outcome pairing at each time point and saves and prints them for user inspection
-forms=createForms(object, wide_long_datasets, covariates_to_include, potential_colliders, keep_covariates)
+forms=createForms(object, wide_long_datasets, covariates_to_include, potential_colliders, keep_covariates, exclude_covariates)
 
 ```
 
