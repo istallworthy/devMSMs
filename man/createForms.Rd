@@ -9,7 +9,8 @@ createForms(
   wide_long_datasets,
   covariates_to_include,
   potential_colliders = NULL,
-  keep_covariates = NULL
+  keep_covariates = NULL,
+  exclude_covariates = NULL
 )
 }
 \arguments{
@@ -18,6 +19,10 @@ createForms(
 \item{covariates_to_include}{from identifyPotentialConfounds}
 
 \item{potential_colliders}{optional list of variables to be excluded from balancing at time point of exposure}
+
+\item{keep_covariates}{ay covariates the user wishes to keep}
+
+\item{exclude_covariates}{any covariates the user wishes to exclude}
 }
 \value{
 forms

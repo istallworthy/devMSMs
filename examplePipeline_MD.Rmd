@@ -208,7 +208,7 @@ data_for_model_with_weights=condenseWeights(object, weights_models)
 ### 10. Truncate final weights to avoid heavy tails
 Given that weights with heavy tails can be problematic, this code caps weight weight values at a designated percentile (that the user has the option to specify with 'percentile_cutoff'), populating all weights larger than that value with that percentile value. These weights can now be used in the formal marginal structural model, or weighted model. 
 
-You can stop here if you have specific MSM models you want to fit or you can continue on to fit a standard single-outcome model.  May want to do robustness/sensitivity checks for 95th and 99th? 
+You can stop here if you have specific MSM models you want to fit or you can continue on to fit a standard single-outcome model. We also suggest conducting sensitivity/robustness tests by creating weights using several percentile cutoff values and ensuring your subsequent models produce similar results regardless of which percentile cutoff you used. 
 ```{r}
 #truncate weights 
 data_for_model_with_weights_cutoff=truncateWeights(object, data_for_model_with_weights, percentile_cutoff=0.90)
@@ -289,25 +289,31 @@ IS needs to more thoroughly automate interaction terms --right now assumes 3 epo
 
 Note for Meriah: any other variables/input fields that the user should specify? anything else to save out along the way?
 ```{r}
-#can make these user inputs a separate new mplus object
-#location of your data file in long format including final truncated weights (labeed exposure-outcome)
-data_file=paste0(object$home_dir, "for Mplus/TSST_allTxseq_LONG3.csv")
-
-#list your outcomes and (optionally) any corresponding covariates you want included in each respective model
-covariates=data.frame(outcomes=c("lnCORTR", "sqrtSAAR"), #names of outcomes
-                      covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c")))) #like methods covariates that don't need balancing
+ #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
+  apply(gtools::permutations(2, nrow(object$exposure_epochs), c("L", "H"), repeats.allowed=TRUE), 1, paste, sep="", collapse="")
 
 
-#inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
-apply(gtools::permutations(2, nrow(object$exposure_epochs), c("L", "H"), repeats.allowed=TRUE), 1, paste, sep="", collapse="")
+mplusObject = mplusObject(
+  #location of your data file in long format including final truncated weights (labeed exposure-outcome)
+  data_file=paste0(object$home_dir, "for Mplus/TSST_allTxseq_LONG3.csv"),
+  
+  #list your outcomes and (optionally) any corresponding covariates you want included in each respective model
+  covariates=data.frame(outcomes=c("lnCORTR", "sqrtSAAR"), #names of outcomes
+                        covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c")))), #like methods covariates that don't need balancing
+  
+  #from the list above, choose a reference event (default is low at all time points) to be compared to all other histories
+  reference="LLL",
+  
+  #optional cutoff values for determining high and low values of each exosure, respectively, for examining effects of exposure histories; default set to 0.75 and 0.25
+  hi_cutoff=.75, 
+  
+  lo_cutoff=.25
+)
 
-#from the list above, choose a reference event (default is low at all time points) to be compared to all other histories
-reference="LLL"
-###
 
 
 #create .imp files for each exposure-outcome pairing. This code adapts content from Gottfredson et al., 2019 via the aMNLFA package. 
-makeMplusInputs(object, covariates, reference, hi_cutoff=.75, lo_cutoff=.25)
+makeMplusInputs(object, mplusObject)
 
 
 #automatically run all inputs in the Mplus folder after you have manually modified/checked them

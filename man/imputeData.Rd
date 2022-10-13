@@ -6,6 +6,7 @@
 \usage{
 imputeData(
   object,
+  data_to_impute,
   max.resample = 100,
   cs = NULL,
   priors = NULL,
@@ -22,6 +23,8 @@ imputeData(
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
+
+\item{data_to_impute}{output from dataToImpute}
 
 \item{max.resample}{Amelia input for how many times amelia should redraw imputed values when trying to meet logical constraints of obounds}
 
@@ -46,8 +49,6 @@ imputeData(
 \item{noms}{Amelia input for cols that are nominal}
 
 \item{bounds}{Amelia input for 3-col matrix for logical bounds on imputations}
-
-\item{data_to_impute}{output from dataToImpute}
 }
 \value{
 imputed_datasets imputation results
@@ -56,7 +57,7 @@ imputed_datasets imputation results
 Creates m imputed datasets from original dataset using the Aeelia package. See Amelia documentation for more detail: https://cran.r-project.org/web/packages/Amelia/Amelia.pdf
 }
 \examples{
-imputeData(object, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+imputeData(object, data_to_impute, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
 }
 \seealso{

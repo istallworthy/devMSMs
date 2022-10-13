@@ -57,6 +57,9 @@ formatDataStruct <-function(object, factor_covariates=NULL) {
 
   if(dir.exists(paste0(home_dir, "results figures/"))==F){dir.create(paste0(home_dir, "results figures/"))}
 
+  if(dir.exists(paste0(home_dir, "for Mplus/"))==F){dir.create(paste0(home_dir, "for Mplus/"))}
+
+
   #reading and formatting LONG dataset
   data=as.data.frame(readr::read_csv(data_path), col_types=cols(), show_col_types=FALSE)
   colnames(data)[colnames(data)==time_var] <- "WAVE"

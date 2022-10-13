@@ -10,11 +10,10 @@
 #' @importFrom dplyr %>%
 #' @return none
 #'
-#' @examples makeMplusInputs(objectcovariates, reference, outcomes, hi_cutoff=.75, lo_cutoff=.25)
+#' @examples makeMplusInputs(object, mplusObject)
 
-makeMplusInputs <- function(object, covariates, reference="LLL", hi_cutoff=.75, lo_cutoff=.25) {
+makeMplusInputs <- function(object, mplusObject) {
 
-# browser()
 
   ID=object$ID
   home_dir=object$home_dir
@@ -23,6 +22,12 @@ makeMplusInputs <- function(object, covariates, reference="LLL", hi_cutoff=.75, 
   exposure_epochs=object$exposure_epochs
   outcomes=covariates$outcomes #gets outcomes from covariate data frame
   covars=covariates$covariates
+
+  data_file=mplusObject$data_file
+  reference=mplusObject$reference
+  covariates=mplusObject$covariates
+  hi_cutoff=mplusObject$hi_cutoff
+  lo_cutoff=mplusObject$lo_cutoff
 
 
   #makes MPlus dir if necessary
