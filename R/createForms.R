@@ -14,6 +14,8 @@
 #'
 createForms <- function(object, wide_long_datasets, covariates_to_include, potential_colliders=NULL, keep_covariates=NULL, exclude_covariates=NULL){
 
+  ID=object$ID
+  home_dir=object$home_dir
   exposures=object$exposures
   outcomes=object$outcomes
   outcome_time_pts=object$outcome_time_pts
