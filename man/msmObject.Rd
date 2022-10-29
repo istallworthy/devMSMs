@@ -17,7 +17,7 @@ msmObject(
   exposure_time_pts,
   exposure_epochs,
   outcomes,
-  outcome_time_pts,
+  outcome_time_pt,
   continuous_variables = NULL,
   time_var_exclude = NULL
 )
@@ -45,16 +45,16 @@ msmObject(
 
 \item{outcomes}{list of variables that represent your outcomes of interest}
 
-\item{outcome_time_pts}{list of time points for outcomes}
-
 \item{continuous_variables}{list of continuous variables in your dataset}
 
 \item{time_var_exclude}{time-varying variables that should not be present because of planned missingness}
+
+\item{outcome_time_pts}{list of time points for outcomes}
 }
 \description{
 Create msm object
 Gathers all information needed for the functions
 }
 \examples{
-msmObject(data_path, home_dir, ID, time_pts, time_var, missing, m, exposures, exposure_time_pts, exposure_epochs, outcomes, outcome_time_pts, continuous_variables, time_var_exclude)
+msmObject(data_path, home_dir, ID, time_pts, time_var, missing, m, exposures, exposure_time_pts, exposure_epochs, outcomes, outcome_time_pt, continuous_variables, time_var_exclude)
 }

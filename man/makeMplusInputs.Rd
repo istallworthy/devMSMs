@@ -5,13 +5,7 @@
 \title{Create MPlus inputs for running weighted growth curve models
 Code for assessing effects of exposure histories with repeated outcomes}
 \usage{
-makeMplusInputs(
-  object,
-  covariates,
-  reference = "LLL",
-  hi_cutoff = 0.75,
-  lo_cutoff = 0.25
-)
+makeMplusInputs(object, mplusObject)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
@@ -20,11 +14,11 @@ makeMplusInputs(
 
 \item{reference}{reference history to compare comparison histories}
 
+\item{outcomes}{list of variables that represent your outcomes of interest}
+
 \item{hi_cutoff}{integer for percentile considered "high" for exposure}
 
 \item{lo_cutoff}{integer for percentile considered "low" for exposure}
-
-\item{outcomes}{list of variables that represent your outcomes of interest}
 }
 \value{
 none
@@ -34,5 +28,5 @@ Create MPlus inputs for running weighted growth curve models
 Code for assessing effects of exposure histories with repeated outcomes
 }
 \examples{
-makeMplusInputs(objectcovariates, reference, outcomes, hi_cutoff=.75, lo_cutoff=.25)
+makeMplusInputs(object, mplusObject)
 }

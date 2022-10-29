@@ -4,27 +4,27 @@
 #'This function requires a clean dataset in long format that contain columns for ID, time, exposure, outcome, and potential covariate confounds
 #'
 #' @param object msm object that contains all relevant user inputs
-#' @param factor_covariates list of covariates that are factors
 #' @return data formatted dataset
 #' @export
 #' @importFrom readr read_csv
 #' @examples formatDataStruct(object, factor_covariates)
 #'
-formatDataStruct <-function(object, factor_covariates=NULL) {
+formatDataStruct <-function(object) {
 
   data_path=object$data_path
   home_dir=object$home_dir
   missing=object$missing
   time_var=object$time_var
+  factor_covariates=object$factor_covariates
 
   options(readr.num_columns = 0)
 
   #error checking
   if (!file.exists(data_path)){
-    stop('Please provide a valid directory for your data in data_path')
+    stop('Please provide a valid directory for your data in data_path when creating the msm object')
   }
   if (!dir.exists(home_dir)){
-    stop('Please provide a valid home directory in home_dir')
+    stop('Please provide a valid home directory in home_dir when creating the msm object')
   }
 
 
@@ -66,7 +66,7 @@ formatDataStruct <-function(object, factor_covariates=NULL) {
   data[data == missing] <- NA
 
   if (sum(factor_covariates %in% colnames(data))<length(factor_covariates)){
-    stop('Please provide factor covariates that correspond to columns in your data')
+    stop('Please provide factor covariates that correspond to columns in your data when creating the msm object')
   }
 
   data[,factor_covariates] <- lapply(data[,factor_covariates] , factor)

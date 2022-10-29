@@ -9,7 +9,7 @@
 #' @return marginal structural models
 #' @export
 #' @seealso [truncateWeights()], [asesssBalance()]
-#' @examples fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models, hi_cutoff=75, lo_cutoff=25)
+#' @examples fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
 
 fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models){
 
@@ -18,9 +18,9 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
   exposures=object$exposures
   exposure_epochs=object$exposure_epochs
   outcomes=object$outcomes
-  outcome_time_pts=object$outcome_time_pts
+  outcome_time_pt=object$outcome_time_pt
 
-  if (length(outcome_time_pts>1)){
+  if (length(outcome_time_pt)>1){
     stop('This function is designed only for single time point outcomes')}
 
   names(data_for_model_with_weights_cutoff) <- gsub(".", "_", names(data_for_model_with_weights_cutoff), fixed=TRUE)
@@ -73,19 +73,20 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
       outcome=outcomes[y]
 
       #creates form for baseline model including averaged exposure at each epoch as a predictor
-      f0=paste(paste0(outcome, "_", outcome_time_pts), "~", paste0(exp_epochs, sep="", collapse=" + "))
+      f0=paste(paste0(outcome, "_", outcome_time_pt), "~", paste0(exp_epochs, sep="", collapse=" + "))
 
       #fits initial baseline model
       m0=svyglm(noquote(f0), design=s)
-      print(paste0("Baseline model results for effects of ", exposure, " on ", outcome))
+      cat(paste0("Baseline model results for effects of ", exposure, " on ", outcome),"\n")
       summary(m0)
       models[["m0"]]<-m0
 
+
       #adding in covariates that did not fully balance when creating the weights
-      covariate_list= unbalanced_covariates_for_models[[exposure, "-", outcome,]]
+      covariate_list= unbalanced_covariates_for_models[[paste0(exposure, "-", outcome)]]
 
       if (covariate_list[1]==""){
-        print(paste0("There are no unbalanced covariates to include in the model of effects of ", exposure, " on ", outcome))
+        cat(paste0("There are no unbalanced covariates to include in the model of effects of ", exposure, " on ", outcome),"\n")
 
         #f1 and f2 are same as f0
         f1=paste(f0) #no covars
@@ -98,28 +99,29 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
         f1=paste(f0, "+", covariate_list)
 
         m1=svyglm(noquote(f1), design=s)
-        print(paste0("Covariate model results for effects of ", exposure, " on ", outcome))
+        cat(paste0("Covariate model results for effects of ", exposure, " on ", outcome),"\n")
         summary(m1)
         models[["m1"]]<-m1
 
-        #determining which covariates are signfiicant
+        #determining which covariates are significant
         sig_covars=as.data.frame(summary(m1)$coefficients)
         sig_covars=sig_covars[sig_covars$`Pr(>|t|)`<0.05,]
         sig_covars=rownames(sig_covars)
         sig_covars=sig_covars[!grepl(c("Intercept"), sig_covars)]
         sig_covars=sig_covars[!grepl(c(exposure), sig_covars)]
         sig_covars=c(as.character(sig_covars))
-        print(paste0("The only significant covariate(s) for this model are: ", paste(sig_covars, sep="", collapse=" , ")))
 
-        #in the case of no signfiicant covariates
+        #in the case of no significant covariates
         if (length(sig_covars)!=0){
         f2=paste(f0, "+", paste(sig_covars, sep="", collapse=" + "))
+        cat(paste0("The only significant covariate(s) for this model are: ", paste(sig_covars, sep="", collapse=" , ")),"\n")
+
         }else{
           f2=f0
         }
 
         m2=svyglm(noquote(f2), design=s)
-        print(paste0("Final covariate model results for effects of ", exposure, " on ", outcome))
+        cat(paste0("Final covariate model results for effects of ", exposure, " on ", outcome),"\n")
         summary(m2)
         models[["m2"]]<-m2
         # anova(m0, m2)
@@ -141,12 +143,12 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
       sig_ints=sig_ints[sig_ints$`Pr(>|t|)`<0.05,]
       sig_ints=rownames(sig_ints)
       sig_ints=sig_ints[grepl(c(":"), sig_ints)]
-      print(paste0("The only significant covariate(s) for this model are: ", paste(sig_ints, sep="", collapse=" , ")))
 
       #creating FINAL model
       if (is.na(sig_ints[1])){
         f4=f2 #equal to model with any covariates
       }else{
+        cat(paste0("The only significant interactions(s) for this model are: ", paste(sig_ints, sep="", collapse=" , ")), "\n")
 
         f4=paste(f2, "+", paste(sig_ints, sep="", collapse=" + "))
 
@@ -171,10 +173,10 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
   }
 
   saveRDS(all_models, file = paste(paste0(home_dir, "msms/all_exposure-outcome_models.rds", sep="")))
-  print("All models have been saved as a .rds object in the 'msms' folder")
+  cat("All models have been saved as a .rds object in the 'msms' folder","\n")
 
   write.csv(data_for_model_with_weights_cutoff, paste0(home_dir, "msms/data_for_msms.csv"))
-  print("A new data file has been saved as a .csv file in the in the 'msms' folder")
+  cat("A new data file has been saved as a .csv file in the in the 'msms' folder","\n")
 
 
   return(all_models)

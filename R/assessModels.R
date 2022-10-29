@@ -36,7 +36,7 @@ assessModel <-function(object, all_models){
     best_models[[exp_out]]<-best_fit_model[[1]]
 
 
-    print(paste0("The best-fitting model for ", exp_out, " is ", best_fit))
+    cat(paste0("The best-fitting model for ", exp_out, " is ", best_fit),"\n")
 
     jtools::export_summs(all_models[[exp_out]], to.file="docx", file.name =paste0(home_dir, "msms/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_table_mod_ev.docx", sep=""))
 
@@ -47,7 +47,7 @@ assessModel <-function(object, all_models){
     #                   p.style = "numeric_stars",
     #                   file=paste0(home_dir, "msms/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_table_mod_ev.html", sep="")
     # ))
-    print(paste0("See the 'msms' folder for tables of model evidence for ", exp_out))
+    cat(paste0("See the 'msms' folder for tables of model evidence for ", exp_out), "\n")
 
 
   }

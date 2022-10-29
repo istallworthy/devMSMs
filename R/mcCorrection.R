@@ -1,14 +1,17 @@
 
 #' Multiple comparison correction
 #' Adjusts p-values for multiple comparisons by exposure-outcome pairing
+#' @param object msm object that contains all relevant user inputs
 #' @param history_comparisons output from compareHistories
-#' @param method abbreviation for multiple comparison correction method (see p.adjust)
 #' @importFrom stats p.adjust
 #' @importFrom stargazer stargazer
 #' @seealso [stats::p.adjust()] [comparisonHistories()]
 #' @return significant_comparisons
-#' @examples mcCorrection(history_comparisons, method="BH")
-mcCorrection <- function(history_comparisons, method="BH"){
+#' @examples mcCorrection(object, history_comparisons)
+mcCorrection <- function(object, history_comparisons){
+
+  home_dir=object$home_dir
+  method=object$mc_method
 
   significant_comparisons=list()
 
@@ -29,10 +32,10 @@ mcCorrection <- function(history_comparisons, method="BH"){
     significant_comparisons[[exp_out]] <- sig_comparisons
     #save out table for all contrasts with old and corrected p-values
     stargazer::stargazer(comparisons, type="html", digits=2, column.labels = colnames(comparisons),summary=FALSE, rownames = FALSE, header=FALSE,
-                         out=paste0(home_dir, "msms/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
+                         out=paste0(home_dir, "msms/linear hypothesis testing/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
 
   }
 
-  print("See 'msms' folder for tables of likelihood ratio tests")
+  cat("See 'msms/linear hypothesis testing/' folder for tables of likelihood ratio tests","\n")
   return(significant_comparisons)
 }
