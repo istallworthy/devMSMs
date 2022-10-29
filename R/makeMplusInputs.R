@@ -3,10 +3,6 @@
 #' Code for assessing effects of exposure histories with repeated outcomes
 #' @param object msm object that contains all relevant user inputs
 #' @param covariates any covariates you wish to include in the model
-#' @param reference reference history to compare comparison histories
-#' @param outcomes list of variables that represent your outcomes of interest
-#' @param hi_cutoff integer for percentile considered "high" for exposure
-#' @param lo_cutoff integer for percentile considered "low" for exposure
 #' @importFrom dplyr %>%
 #' @return none
 #'
@@ -20,18 +16,20 @@ makeMplusInputs <- function(object, mplusObject) {
   missing=object$missing
   exposures=object$exposures
   exposure_epochs=object$exposure_epochs
-  outcomes=covariates$outcomes #gets outcomes from covariate data frame
-  covars=covariates$covariates
+  outcomes=mplusObject$covariates$outcomes #gets outcomes from covariate data frame
+  covars=mplusObject$covariates$additional_covariates
 
   data_file=mplusObject$data_file
   reference=mplusObject$reference
   covariates=mplusObject$covariates
-  hi_cutoff=mplusObject$hi_cutoff
-  lo_cutoff=mplusObject$lo_cutoff
+  hi_cutoff=object$hi_cutoff
+  lo_cutoff=object$lo_cutoff
 
 
   #makes MPlus dir if necessary
   if(dir.exists(paste0(home_dir, "for Mplus/"))==F){dir.create(paste0(home_dir, "for Mplus/"))}
+  if(dir.exists(paste0(home_dir, "for Mplus/input values/"))==F){dir.create(paste0(home_dir, "for Mplus/input values/"))}
+
 
   data=read.csv(data_file)
   data=as.data.frame(data)
@@ -53,7 +51,7 @@ makeMplusInputs <- function(object, mplusObject) {
 
       exposure=exposures[h]
 
-      #calculates the mean value for each exposure for each exposure epoch and apends to data
+      #calculates the mean value for each exposure for each exposure epoch and appends to data
       for (e in 1:nrow(exposure_epochs)){
         epoch=exposure_epochs[e,1]
         temp=data.frame(row.names=1:nrow(data))
@@ -87,6 +85,8 @@ makeMplusInputs <- function(object, mplusObject) {
         epoch_info$low[t]=as.numeric(quantile(data[,var_name],probs= lo_cutoff, na.rm=T))
         epoch_info$high[t]=as.numeric(quantile(data[,var_name],probs= hi_cutoff, na.rm=T))
       }
+      write.csv(epoch_info, paste0(home_dir, 'for Mplus/input values/', exposure, "epoch_hi_lo_values.csv"))
+      cat("See 'for Mplus/input values/' folder for epoch high and low values saved as a csv file for exposure", exposure,"\n")
 
 
       #df parameterizing mean values for each epoch (main effects) --i technically calculated these already and appended to dataset
@@ -102,9 +102,6 @@ makeMplusInputs <- function(object, mplusObject) {
       main_effects_terms=test$names
 
       #gathering all variables --ID, time-varying exposures, wave, covariates, outcomes --should these just be all variables in dataset?
-      # variables=c(apply(expand.grid(exposures, as.character(as.numeric(unlist(exposure_epochs$values)))), 1, paste0, sep="", collapse=""), outcomes)
-      # variables=as.data.frame(c(ID, variables[order(variables)], covariates, "WAVE")) #add others here?
-      # variables[nrow(variables),1]=paste0(variables[nrow(variables),1], ";")
       variables=as.data.frame(colnames(data))
       variables=rbind(variables, ";")
       colnames(variables)= "V1"
@@ -165,6 +162,8 @@ makeMplusInputs <- function(object, mplusObject) {
                                                       , 1, paste0, sep="", collapse="_")[order(apply(expand.grid(c("d","sd", "qd"), histories[! histories %in% reference]),
                                                                                                      1, paste0, sep="", collapse="_"))]), sep="", collapse=" "),
                                  ");", sep=" ", collapse=" "))
+      write.csv(constraints, paste0(home_dir, 'for Mplus/input values/all_constraints.csv'))
+      cat("See 'for Mplus/input values/' folder for a list of constraints saved as a csv file for exposure", exposure,"\n")
 
 
 
@@ -218,6 +217,9 @@ makeMplusInputs <- function(object, mplusObject) {
           }
         }
       }
+      write.csv(ref_parameters, paste0(home_dir, 'for Mplus/input values/parameter_values_', exposure, '.csv'))
+      cat("See 'for Mplus/input values/' folder for a list of parameter values as a csv file for exposure", exposure,"\n")
+
 
       #creating forms of parameters and beta weights for each history
       forms=setNames(data.frame(matrix(ncol = 6, nrow = length(histories))), c("history", "form"))
@@ -249,6 +251,8 @@ makeMplusInputs <- function(object, mplusObject) {
       colnames(s_forms)="V1"
       q_forms=as.data.frame(forms[,6])
       colnames(q_forms)="V1"
+      write.csv(forms, paste0(home_dir, 'for Mplus/input values/equations_', exposure, '.csv'))
+      cat("See 'for Mplus/input values/' folder for a list of equations as a csv file for exposure", exposure,"\n")
 
 
       #contrasts using ref event
@@ -379,14 +383,13 @@ makeMplusInputs <- function(object, mplusObject) {
 
       #write out mplus input file
       write.inp.file(model_input,fixPath(file.path(paste0(home_dir, "for Mplus/", exposure, "_", outcome, ".inp",sep=""))))
-
-      # write.inp.file(round2input,fixPath(file.path(dir,"round2calibration.inp",sep="")))
+      cat("MPus input file for", exposure, "_", outcome, "has been saved in the 'for Mplus' folder","\n")
 
     }
   }
 
 
 
-  print("Please carefully inspect all input files in the 'for Mplus' folder prior to running them")
+  cat("Please carefully inspect all input files in the 'for Mplus' folder prior to running them","\n")
 
 }

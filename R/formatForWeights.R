@@ -4,7 +4,6 @@
 #'
 #' @param object msm object that contains all relevant user inputs
 #' @param imputed_datasets output from imputeData
-#' @param time_varying_covariates covariates in your dataset that are time-varying
 #' @param just_imputed "yes"= you have imputed datasets in global environment or "no" but they are saved locally from previous run
 #' @return wide_long_datasets
 #' @export
@@ -16,25 +15,26 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom plyr join
 #' @seealso [formatDataStruct()], [imputeData()]
-#' @examples formatForWeights(object, data, imputed_datasets=list(), time_varying_covariates, just_imputed="yes")
+#' @examples formatForWeights(object, data, imputed_datasets=list(), just_imputed="yes")
 #'
-formatForWeights <- function(object, data, imputed_datasets=list(), time_varying_covariates, just_imputed="yes"){
+formatForWeights <- function(object, data, imputed_datasets=list(), just_imputed="yes"){
 
   ID=object$ID
   home_dir=object$home_dir
   m=object$m
   time_pts=object$time_pts
   time_var_exclude=object$time_var_exclude
+  time_varying_covariates=object$time_varying_covariates
 
   options(readr.num_columns = 0)
 
-  #if the user has not just imputed datasets (and imputations are instead saved locally from a prior run), read in imputed data
+    #if the user has not just imputed datasets (and imputations are instead saved locally from a prior run), read in imputed data
   if (just_imputed=="no"){
     imputed_datasets=list()
     for (x in 1:m){
       file_name=(paste("imp", x, '.csv', sep=""))
       name=paste("imp", x, sep="")
-      imp=as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep="")))
+      imp=suppressWarnings(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""))))
       imputed_datasets[[paste0("imp", x)]]<-imp
     }
   }
@@ -83,7 +83,7 @@ formatForWeights <- function(object, data, imputed_datasets=list(), time_varying
 
   }
 
-  print("USER ALERT: Inspect the list above of time-varying covariates and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running")
+  cat("USER ALERT: Inspect the list of time-varying covariates above and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running","\n")
 
 
   #create dataset for future modeling
@@ -99,28 +99,14 @@ formatForWeights <- function(object, data, imputed_datasets=list(), time_varying
                                            direction="wide"))
   imp_wide=imp_wide[,!colnames(imp_wide) %in% time_var_exclude]
 
-  # test=tidyr::pivot_wider(imp,
-  #                  id_cols=ID,
-  #                  names_from=WAVE,
-  #                  values_from=c(time_varying_covariates))
-  #
-  # invar=colnames(imp)[colnames(imp) %in% time_varying_covariates==FALSE]
-  # invar=invar[!grepl("WAVE", invar)]
-  # invars=imp[invar] #pulls only invariant vars
-  # invars[] <- suppressWarnings(lapply(invars, as.numeric))
-  #
-  # ID_temp=sym(ID)
-  #
-  # t=invars%>%
-  #   dplyr::group_by(!!ID_temp)%>%
-  #   dplyr::summarise(across(everything(), mean, na.rm=T))
+
   #
   # imp_wide=plyr::join(test,t, by=ID)
   #Create long/wide hybrid: merge this newly created wide dataset with long dataset
   write.csv(imp_wide, paste0(home_dir, "data_for_final_model.csv"))
   write.csv(wide_long_datasets[[1]], paste0(home_dir, "data_for_final_Mplus_model.csv"))
 
-  print("Saved out dataset for final modeling as a csv file in home directory")
+  cat("Saved out dataset for later modeling as a csv file in home directory")
 
 
   return(wide_long_datasets)

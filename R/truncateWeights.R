@@ -5,20 +5,20 @@
 #' @return data_for_model_with_weights_cutoff
 #' @param data_for_model_with_weights output from condenseWeights
 #' @param object msm object that contains all relevant user inputs
-#' @param percentile_cutoff percentile value for cutting off and replacing heavy tails of weights
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 ggsave
 #' @seealso [condenseWeights()]
-#' @examples truncateWeights(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90)
+#' @examples truncateWeights(data_for_model_with_weights, home_dir, exposures)
 #'
-truncateWeights <-function(object, data_for_model_with_weights, percentile_cutoff=0.90){
+truncateWeights <-function(object, data_for_model_with_weights){
 
   home_dir=object$home_dir
   exposures=object$exposures
   outcomes=object$outcomes
+  weights_percentile_cutoff=object$weights_percentile_cutoff
 
-  if (percentile_cutoff>1 | percentile_cutoff<0){
+  if (weights_percentile_cutoff>1 | weights_percentile_cutoff<0){
     stop('Please select a percentile cutoff between 0 and 1')}
 
 
@@ -35,9 +35,9 @@ truncateWeights <-function(object, data_for_model_with_weights, percentile_cutof
     new_var=paste0(exposure, "-", outcome, "_weight_cutoff")
     cutoff_weights=data_for_model_with_weights%>%
       dplyr::mutate(!!new_var := ifelse(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "-", outcome, "_weight")]<
-                                          quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "-", outcome, "_weight")], probs=percentile_cutoff),
+                                          quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "-", outcome, "_weight")], probs=weights_percentile_cutoff),
                                         data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure,"-", outcome,"_weight")],
-                                        quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "-", outcome, "_weight")], probs=percentile_cutoff)
+                                        quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "-", outcome, "_weight")], probs=weights_percentile_cutoff)
       ) )%>%dplyr::select(all_of(new_var))
 
     data_for_model_with_weights_cutoff=cbind(data_for_model_with_weights_cutoff, cutoff_weights)
@@ -46,15 +46,15 @@ truncateWeights <-function(object, data_for_model_with_weights, percentile_cutof
     #print histogram of new weights
     ggplot2::ggplot(data=as.data.frame(data_for_model_with_weights_cutoff), aes(x = as.numeric(data_for_model_with_weights_cutoff[,colnames(data_for_model_with_weights_cutoff)==paste0(exposure, "-", outcome,"_weight_cutoff")]))) +
       geom_histogram(color = 'black', bins = 15)
-    ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_weights_cutoff_", percentile_cutoff, ".png", sep=""), path=paste0(home_dir, "final weights/histograms/"), height=8, width=14)
+    ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_weights_cutoff_", weights_percentile_cutoff, ".png", sep=""), path=paste0(home_dir, "final weights/histograms/"), height=8, width=14)
 
-    print(paste0("Histogram of weights cut off at ", percentile_cutoff, " for exposure ", exposure, " on ", outcome, " has been saved to the 'final weights/histograms/' folder"))
+    cat(paste0("Histogram of weights cut off at ", weights_percentile_cutoff, " for exposure ", exposure, " on ", outcome, " has been saved to the 'final weights/histograms/' folder"))
 
   }
 }
 
-  write.csv(data_for_model_with_weights_cutoff,paste0(home_dir, "final weights/data_for_model_with_weights_cutoff_", percentile_cutoff, ".csv") )
-  print("USER ALERT: final cutoff weights have now been saved merged into datast in 'final weights' folder")
+  write.csv(data_for_model_with_weights_cutoff,paste0(home_dir, "final weights/data_for_model_with_weights_cutoff_", weights_percentile_cutoff, ".csv") )
+  cat("USER ALERT: final cutoff weights have now been saved merged into datast in 'final weights' folder")
   return(data_for_model_with_weights_cutoff)
 
 }

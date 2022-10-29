@@ -2,25 +2,25 @@
 #' Compare exposure histories
 #' This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome u sing linear hypothesis testing
 #' @param object msm object that contains all relevant user inputs
-#' @param hi_cutoff integer for percentile considered "high" for exposure
-#' @param lo_cutoff integer for percentile considered "low" for exposure
 #' @param best_models best-fitting models outcome from assessModel
-#' @param comparisons list of histories to compare to the reference history
-#' @param reference reference history to compare comparison histories
 #' @importFrom gtools permutations
 #' @importFrom car linearHypothesis
 #' @seealso [assessModel()]
 #' @return history_comparisons lists of linear hypothesis tests
-#' @examples compareHistories(object, hi_cutoff=.75, lo_cutoff=.25, best_models, comparisons, reference)
-compareHistories <-function(object, hi_cutoff=.75, lo_cutoff=.25, best_models, comparisons="", reference=""){
+#' @examples compareHistories(object, best_models)
+compareHistories <-function(object, best_models){
 
   home_dir=object$home_dir
   exposures=object$exposures
   exposure_epochs=object$exposure_epochs
   outcomes=object$outcomes
-  outcome_time_pts=object$outcome_time_pts
+  outcome_time_pt=object$outcome_time_pt
+  hi_cutoff=object$hi_cutoff
+  lo_cutoff=object$lo_cutoff
+  reference=object$reference
+  comparisons=object$comparisons
 
-  if (length(outcome_time_pts>1)){
+  if (length(outcome_time_pt)>1){
     stop('This function is designed only for single time point outcomes')}
 
   epochs=exposure_epochs$epochs
@@ -32,11 +32,11 @@ compareHistories <-function(object, hi_cutoff=.75, lo_cutoff=.25, best_models, c
 
   #error checking
   if (hi_cutoff>1 | hi_cutoff<0){
-    stop('Please select hi_cutoff between 0 and 1')}
+    stop('Please select hi_cutoff between 0 and 1 in the msm object')}
   if (lo_cutoff>1 | lo_cutoff<0){
-    stop('Please select lo_cutoff between 0 and 1')}
+    stop('Please select lo_cutoff between 0 and 1 in the msm object')}
   if (sum(exposure_levels %in% reference)==0){
-    stop('Please select a valid reference history from the list')}
+    stop(paste0('Please select a valid reference history in the msm object from the following list ', paste0(apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-"), sep=" ", collapse=" ")))}
 
 
   #if no comparison is specified by the user, compare to all histories aside from the reference
@@ -44,7 +44,7 @@ compareHistories <-function(object, hi_cutoff=.75, lo_cutoff=.25, best_models, c
     comp_histories=exposure_levels[!exposure_levels %in% reference]
   }else {
     if (sum(exposure_levels %in% comparisons)==0){
-      stop('Please select a valid comparison history from the list')}
+      stop(paste0('Please select a valid comparison history in the msm object from the following list ', paste0(apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-"), sep=" ", collapse=" ")))}
     comp_histories=exposure_levels[exposure_levels %in% comparisons]
   }
 
@@ -192,7 +192,7 @@ compareHistories <-function(object, hi_cutoff=.75, lo_cutoff=.25, best_models, c
 
         #linear hypothesis test to compare the comparison and reference values
         linear_hypothesis=car::linearHypothesis(final_model, paste(ref_form, comp_form, sep=" = "), test="F")
-        print(paste0("The difference between the effects of ", exposure, " at ", comparison, " compared to ", reference, " on ", outcome, " has a p-value of ", linear_hypothesis$`Pr(>F)`)[2])
+        cat(paste0("The difference between the effects of ", exposure, " at ", comparison, " compared to ", reference, " on ", outcome, " has a p-value of ", linear_hypothesis$`Pr(>F)`)[2], "\n")
 
         comparisons[[paste0(reference, " vs. ", comparison)]] <-linear_hypothesis
         param_info[[paste0(reference, " vs. ", comparison)]] <-list(ref=ref_parameters_betas,
@@ -209,7 +209,7 @@ compareHistories <-function(object, hi_cutoff=.75, lo_cutoff=.25, best_models, c
   saveRDS(history_comparisons, file = paste(paste0(home_dir, "msms/linear hypothesis testing/all_linear_hypothesis_tests.rds", sep="")))
   saveRDS(parameter_beta_info, file = paste(paste0(home_dir, "msms/linear hypothesis testing/all_linear_hypothesis_betas_parameters.rds", sep="")))
 
-  print("Please see the 'msms/linear hypothesis testing/' folder for csv files detailing the hi/lo beta values for each comparison")
+  cat("Please see the 'msms/linear hypothesis testing/' folder for csv files detailing the hi/lo beta values for each comparison","\n")
 
   return(history_comparisons)
 

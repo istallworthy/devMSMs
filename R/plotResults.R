@@ -2,23 +2,23 @@
 #' Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure
 #' @param object msm object that contains all relevant user inputs
 #' @param best_models outcome from assessModels
-#' @param exposure_labels optional list of labels for exposure variables for plotting purposes
-#' @param outcome_labels optional list of labels for outcome variables for plotting purposes
 #' @seealso [assessModels()]
 #' @return plots
 #' @importFrom ggplot2 ggplot
-#' @examples plotResults(object, best_models, exposure_labels="", outcome_labels="")
-plotResults <- function(object, exposure_labels="", outcome_labels=""){
+#' @examples plotResults(object, best_models)
+plotResults <- function(object, best_models){
 
   home_dir=object$home_dir
   exposures=object$exposures
   outcomes=object$outcomes
+  exposure_labels=object$exposure_labels
+  outcome_labels=object$outcome_labels
 
   if (exposure_labels==""){
     exposure_labels=exposures #default is to use
   }else {
     if (length(exposure_labels) != length(exposures)){
-      stop('Please provide labels for all exposures (in the same order as listed in the exposures field)')
+      stop('Please provide labels for all exposures (in the same order as listed in the exposures field) in the msm object')
     }
   }
 
@@ -26,7 +26,7 @@ plotResults <- function(object, exposure_labels="", outcome_labels=""){
     outcome_labels=outcomes #default is to use
   }else {
     if (length(outcome_labels) != length(outcomes)){
-      stop('Please provide labels for all outcomes (in the same order as listed in the outcome field)')
+      stop('Please provide labels for all outcomes (in the same order as listed in the outcome field) in the msm object')
     }
   }
 
@@ -38,7 +38,7 @@ plotResults <- function(object, exposure_labels="", outcome_labels=""){
 
     final_model=best_models[[exp_out]]
 
-    parameter_beta_info=readRDS(paste0(home_dir, "msms/all_linear_hypothesis_betas_parameters.rds"))
+    parameter_beta_info=readRDS(paste0(home_dir, "msms/linear hypothesis testing/all_linear_hypothesis_betas_parameters.rds"))
 
     parameters=parameter_beta_info[[exp_out]][[1]]$ref$parameter
 
@@ -90,5 +90,5 @@ plotResults <- function(object, exposure_labels="", outcome_labels=""){
     ggplot2::ggsave(paste0(home_dir, "results figures/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
 
   }
-  print("See the 'results figures' folder for graphical representations of results")
+  cat("See the 'results figures' folder for graphical representations of results","\n")
 }

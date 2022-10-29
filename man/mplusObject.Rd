@@ -19,6 +19,10 @@ mplusObject(
 \item{covariates}{data frame specifying the names of outputs as well as any technical covariates for modeling}
 
 \item{reference}{reference history for comparison to all other histories}
+
+\item{hi_cutoff}{integer value specifying high values of exposures}
+
+\item{lo_cutoff}{integer value specifying low values of exposures}
 }
 \value{
 object
