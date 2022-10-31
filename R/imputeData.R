@@ -20,40 +20,54 @@
 #' @export
 #' @importFrom Amelia amelia
 #' @seealso [dataToImput()], [Amelia::amelia()]
-#' @examples imputeData(object, data_to_impute, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+#' @examples imputeData(object, data_to_impute, read_imps_from_file="no", max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 #'
-imputeData <- function(object, data_to_impute, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL){
+imputeData <- function(object, data_to_impute, read_imps_from_file="no", max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL){
 
   home_dir=object$home_dir
   ID=object$ID
   continuous_variables=object$continuous_variables
   m=object$m
 
-  data_to_impute=as.data.frame(data_to_impute)
-  to_remove=c(ID, "WAVE")
+  if (read_imps_from_file=="yes"){
+    imputed_datasets=list()
+    for (x in 1:m){
+      file_name=(paste("imp", x, '.csv', sep=""))
+      name=paste("imp", x, sep="")
+      imp=suppressWarnings(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""))))
+      imputed_datasets[[paste0("imp", x)]]<-imp
+    }
+    return(imputed_datasets)
 
-  #finds ordinal variables --all others assumed continuou
-  ordinal_vars=colnames(data_to_impute)[!colnames(data_to_impute) %in% c(to_remove, continuous_variables)]
+  }else{
 
-  #creates 5 imputed datasets --add more detail here
-  imputed=Amelia::amelia(x = data_to_impute, m = m, idvars = ID, #m=5 for final
-                 ts = "WAVE", cs =cs, priors = priors, lags = lags, intercs = intercs, leads = leads, splinetime = splinetime,
-                 logs = logs, sqrts = sqrts, lgstc = lgstc, noms = noms,
-                 ords=ordinal_vars,
-                 empri=0.01*nrow(data_to_impute),
-                 bounds=bounds,  max.resample = max.resample, #100 seems to be the default
-                 tolerance = 1e-04
-  )
 
-  #this contains each of the imputed datasets
-  imputed_datasets<- imputed$imputations
+    data_to_impute=as.data.frame(data_to_impute)
+    to_remove=c(ID, "WAVE")
 
-  #save out imputed datasets
-  for (k in 1:m){
-    write.csv(imputed_datasets[[paste0("imp", k)]], file=paste0(home_dir,"imputations/imp", k,".csv"))
+    #finds ordinal variables --all others assumed continuou
+    ordinal_vars=colnames(data_to_impute)[!colnames(data_to_impute) %in% c(to_remove, continuous_variables)]
+
+    #creates 5 imputed datasets --add more detail here
+    imputed=Amelia::amelia(x = data_to_impute, m = m, idvars = ID, #m=5 for final
+                           ts = "WAVE", cs =cs, priors = priors, lags = lags, intercs = intercs, leads = leads, splinetime = splinetime,
+                           logs = logs, sqrts = sqrts, lgstc = lgstc, noms = noms,
+                           ords=ordinal_vars,
+                           empri=0.01*nrow(data_to_impute),
+                           bounds=bounds,  max.resample = max.resample, #100 seems to be the default
+                           tolerance = 1e-04
+    )
+
+    #this contains each of the imputed datasets
+    imputed_datasets<- imputed$imputations
+
+    #save out imputed datasets
+    for (k in 1:m){
+      write.csv(imputed_datasets[[paste0("imp", k)]], file=paste0(home_dir,"imputations/imp", k,".csv"))
+    }
+    cat("See the 'imputations' folder for a csv file of each imputed dataset","\n")
+
+    return(imputed_datasets)
   }
-  cat("See the 'imputations' folder for a csv file of each imputed dataset","\n")
-
-  return(imputed_datasets)
 
 }

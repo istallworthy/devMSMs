@@ -15,9 +15,9 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom plyr join
 #' @seealso [formatDataStruct()], [imputeData()]
-#' @examples formatForWeights(object, data, imputed_datasets=list(), just_imputed="yes")
+#' @examples formatForWeights(object, data, imputed_datasets)
 #'
-formatForWeights <- function(object, data, imputed_datasets=list(), just_imputed="yes"){
+formatForWeights <- function(object, data, imputed_datasets){
 
   ID=object$ID
   home_dir=object$home_dir
@@ -28,16 +28,16 @@ formatForWeights <- function(object, data, imputed_datasets=list(), just_imputed
 
   options(readr.num_columns = 0)
 
-    #if the user has not just imputed datasets (and imputations are instead saved locally from a prior run), read in imputed data
-  if (just_imputed=="no"){
-    imputed_datasets=list()
-    for (x in 1:m){
-      file_name=(paste("imp", x, '.csv', sep=""))
-      name=paste("imp", x, sep="")
-      imp=suppressWarnings(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""))))
-      imputed_datasets[[paste0("imp", x)]]<-imp
-    }
-  }
+  #   #if the user has not just imputed datasets (and imputations are instead saved locally from a prior run), read in imputed data
+  # if (just_imputed=="no"){
+  #   imputed_datasets=list()
+  #   for (x in 1:m){
+  #     file_name=(paste("imp", x, '.csv', sep=""))
+  #     name=paste("imp", x, sep="")
+  #     imp=suppressWarnings(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""))))
+  #     imputed_datasets[[paste0("imp", x)]]<-imp
+  #   }
+  # }
 
   #makes hybrid "wide/long" dataset for each impute dataset: all time-varying covariates listed as long and wide
 

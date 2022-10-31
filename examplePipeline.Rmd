@@ -29,8 +29,7 @@ This code provides a framework for testing the putative causal effects of a seri
 
 The most updated version of this package can be found at: https://github.com/istallworthy/MSMs 
 
-Example pipeline running the MSM functions in sequence based on causal questions centered on the Family Life Project (FLP). Steps marked with * indicate an optional step if you have already run that code in the past (and thus have the outputs saved locally). 
-
+Example pipeline running the MSM functions in sequence based on causal questions centered on the Family Life Project (FLP). 
 
 *How to set up data
 These functions require a clean dataset (as a .csv file) in long format that contains columns for ID, time, exposure(s), outcome(s), and all potential covariate confounds as separate columns. Column names can include only an underscores special character. The user will need to specify a home directory within which all other directories will be created automatically.  
@@ -199,14 +198,14 @@ data_to_impute=dataToImpute(object, covariates_to_include)
 ```
 
 
-### 4. Impute dataset so that each time point has complete data*
-ONlY run this code when needed! Creates 'm' imputed datasets using the Amelia package (Honaker, King, & Blackwell, 2011) and functions to eventually generate weights for each imputed dataset (that will be combined at the end). This code takes a few minutes to run per imputation. In the next step of code, the parameter 'just_imputed="no"' will allow you to read imputed data in from local storage so as not to have to re-run this imputation code.
+### 4. Impute dataset so that each time point has complete data
+ONlY run this code when needed! Creates 'm' imputed datasets using the Amelia package (Honaker, King, & Blackwell, 2011) and functions to eventually generate weights for each imputed dataset (that will be combined at the end). This code takes a few minutes to run per imputation. 
 
-The number of imputed datasets is specified as 'm' in the msm object. 
+The parameter 'read_imps_from_file' will allow you to read imputed data in from local storage (="yes") so as not to have to re-run this imputation code or impute data (="no"; default). The number of imputed datasets is specified as 'm' in the msm object. 
 ```{r}
 
 #creates imputed datasets and saves them out
-imputed_datasets= imputeData(object, data_to_impute,
+imputed_datasets= imputeData(object, data_to_impute, read_imps_from_file="no", 
                              max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
 ```
@@ -215,11 +214,10 @@ imputed_datasets= imputeData(object, data_to_impute,
 ### 5. Format each imputed dataset for calculating balancing weights 
 Making sure imputed datasets have the appropriate variables and are formatted in the "wide/long" format needed to create the balancing weights. This code also saves out a dataset structured for future modeling. 
 
-The optional user parameter 'just_imputed' allows you to specify whether you just ran the imputed code ("yes"; default) or you'd rather read in the imputations saved locally from a previous run ("no"). 
 ```{r}
 
-#creates wide/long datasets for each imputation. if you have just created imputations in the global environment, select just_imputed="yes", otherwise "no" will indicate to read them in from local storage
-wide_long_datasets=formatForWeights(object, data, imputed_datasets, just_imputed="no")
+#creates wide/long datasets for each imputation
+wide_long_datasets=formatForWeights(object, data, imputed_datasets)
 
 ```
 
@@ -306,7 +304,9 @@ best_models=assessModel(object, all_models)
 
 
 ### 12. Compare exposure histories and correct for multiple comparisons
-This code fits a series of linear hypothesis tests using the 'car' package (Fox & Weisberg, 2019) to examine the effects of different combinations of exposures, or histories, on each outcome using the best-fitting model from the previous step. Because we use a continuous approach to modeling exposures, the user has the option to specify cutoffs for values of the exposures that will be considered high ("hi_cutoff") and low ("lo_cutoff"). The user also has the option to specify a reference history ("reference") and an optional comparison history ("comparisons") on which to base comparisons, and which multiple comparison correction method ('method') to implement. 
+This code fits a series of linear hypothesis tests using the 'car' package (Fox & Weisberg, 2019) to examine the effects of different combinations of exposures, or histories, on each outcome using the best-fitting model from the previous step. 
+
+Because we use a continuous approach to modeling exposures, the user has the option to specify cutoffs for values of the exposures that will be considered high ("hi_cutoff") and low ("lo_cutoff") in the msm object. The user also has the option to specify a reference history ("reference") and an optional comparison history ("comparisons") on which to base comparisons, and which multiple comparison correction method ('method') to implement. 
 ```{r}
 
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
@@ -321,7 +321,7 @@ signifcant_comparisons=mcCorrection(object, history_comparisons) #maybe try to s
 ### 13. Plot results by exposure history and dose
 This code uses predicted values to plot the effects of the different exposure histories and resulting comparisons for each exposure-outcome pairing. Use the results from the above step to determine which exposure histories are significantly different from one another. Plots display outcome on the x-axis and exposure history on the y-axis, colored by dose (0-n(length of epochs)).
 
-The user has the option to provide more formal labels for the exposure(s) ('exposure_labels') and outcome ('outcome_labels') to be used for plotting.  
+The user has the option to provide more formal labels for the exposure(s) ('exposure_labels') and outcome ('outcome_labels') in the msm object to be used for plotting.  
 ```{r}
 #saves out plots of exposure histories for each out exposure-outcome pairing, colored by dosage of exposure 
 plotResults(object, best_models)
@@ -342,7 +342,7 @@ abridged dataset --only include necessary variables?
 does up to 3-way interactions only
 data must have outcomes in long form but exposures in wide form --check to see if there's a wide/long version of data saved out somewhere to guide the user?
 
-IS needs to more thoroughly automate interaction terms --right now assumes 3 epochs and all corresponding 2- and 3-way interactions.  
+IS needs to more thoroughly automate interaction terms --right now assumes  2- and 3-way interactions.  
 
 Note for Meriah: any other variables/input fields that the user should specify? anything else to save out along the way?
 
