@@ -5,13 +5,7 @@
 \title{Creates mplus object
 Gather information for creating Mplus input template files}
 \usage{
-mplusObject(
-  data_file,
-  covariates,
-  reference,
-  hi_cutoff = 0.75,
-  lo_cutoff = 0.25
-)
+mplusObject(data_file, covariates, reference)
 }
 \arguments{
 \item{data_file}{location of wide/long .csv file with outcomes, exposures, covariates, and weights for modeling}
@@ -19,10 +13,6 @@ mplusObject(
 \item{covariates}{data frame specifying the names of outputs as well as any technical covariates for modeling}
 
 \item{reference}{reference history for comparison to all other histories}
-
-\item{hi_cutoff}{integer value specifying high values of exposures}
-
-\item{lo_cutoff}{integer value specifying low values of exposures}
 }
 \value{
 object

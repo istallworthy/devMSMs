@@ -1,9 +1,12 @@
 ---
 title: "examplePipeline"
-author: "Isa Stallworthy"
+author: "Isa Stallworthy", "Meriah DeJospeh", "Daniel Berry"
 date: 10/27/2022"
 output: html_document
 ---
+
+**NOTE: now wondering if this text content should just go in the tutorial paper instead? 
+
 *Introduction to MSMs
 [insert brief intro to MSMs here and why they are important for developmental science]
 
@@ -15,7 +18,10 @@ It is important to consider all possible confounding variables when creating bal
 https://catalogofbias.org/biases/collider-bias/ 
 https://blogs.cdc.gov/genomics/2022/05/09/colliding-with-collider/ 
 
-[more collider resources? see david's stuff or ask dan] 
+[more collider resources? see david's stuff & ask dan] 
+
+
+*Weight truncation/sensitivity analyses
 
 
 *Introduction to this package
@@ -38,11 +44,11 @@ load_all()
 
 devtools::document()
 
-traceback()
+# traceback()
 ```
 
 ### User inputs
-Please provide user input for the following fields to create an msm object
+Please provide user input for the following fields to create an msm object that will be used in all future functions
 ```{r}
 # source("") #string
 
@@ -91,57 +97,61 @@ object = msmObject(
   
   
   #### Balancing Information (optional) ###
-  balance_thresh=0.12, #correlation value above which covariates are not considered balanced with respect to exposure/outcome; default set to 0.12 from Stuart et al.
+  balance_thresh=0.12, #correlation value above which covariates are not considered balanced with respect to exposure/outcome;used for finding potential confounds and asessing balance; default set to 0.12 from Stuart et al.
   
   weights_percentile_cutoff=0.90, #percentile cutoff value for truncating weights to avoid heavy tails; default is 0.90; we recommend sensitivity analyses with several values
   
-  #### History Comparison Information (required) ####
-   #developmental time periods and their corresponding time points that constitute regime/history units --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects exposure histories (e.g, chronically high exposure vs. exposure only in infancy)
-  exposure_epochs=data.frame(epochs=c("early", "middle", "late"), #names of epochs as a list of strings
+  
+  #### History Comparison Information (required & optional) ####
+   #developmental time periods (and their corresponding time points) that constitute regime/history units of interest --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects of exposure histories (e.g, chronically high exposure vs. exposure only in infancy) on outcomes
+  exposure_epochs=data.frame(epochs=c("early", "middle", "late"), #user-created names of epochs as a list of strings
                              values=I(list(c(6,15), c(24,35), c(58, 90, 154)))), #time point(s) encompassed in each epoch that correspond to data as a list of numeric lists
-  #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
+  
+    #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
   # apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
+  #select one of the above histories, or permutations of high ("h") and low ("l") levels of exposure (one leve for each of the exposure epochs) as your reference event, or the history/sequence to which you would like to compare the other histories  
+  reference="l-l-l", #optional: set a reference history of high ("h") and low ("l") levels of exposure separate by a "-"; the default is set to the history denoting low ("l") exposure at all time points; character string of "h" and "l" separated by a "-" 
+  comparisons="", #optional: set a comparison history from list above; the default is to include all non-reference histories as comparisons; character string of "h" and "l" separated by a "-" 
   
-  #select one of the above histories as your reference event, or the history/sequence to which you would like to compare the other histories  
-  reference="l-l-l", #optional: set a reference history from the list above; the default is set to the history denoting low exposure at all time points 
-  comparisons="", #optional: set a comparison history from list above; the default is to include all non-reference histories as comparisons
-  
-  hi_cutoff=.75, #optional integer value for quantile value constituting "high" levels of an exposure; default set to 0.75
-  lo_cutoff=.25, #optional integer value for quantile value constituting "low" levels of an exposure; default set to 0.25
+  hi_cutoff=.75, #optional integer value for quantile value constituting the threshold for "high" levels of an exposure; default set to 0.75
+  lo_cutoff=.25, #optional integer value for quantile value constituting the threshold for "low" levels of an exposure; default set to 0.25
 
   mc_method="BH", #optional method for multiple comparison correction for linear hypothesis tests; default is Benjamini-Hochburg, options are "holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
   
   
   #### Outcome Information (required) ####
   #outcomes of interest and outcome time point
-  outcomes=c("CORTBASE", "sAABASE"), #list of strings
+  outcomes=c("CORTBASE", "sAABASE"), #list of strings 
   outcome_time_pt=154, #integer value
   
   
  #### Inclusion Information (optional) ####
-  #list any variables for mandatory inclusion in balancing forms for theoretical or other reasons; if it is a time-varying covariate the code will include it in the forms for all time points; default set to none
-  mandatory_keep_covariates=c("AGE"),
+  #list any variables for mandatory inclusion in balancing for theoretical or other reasons (regardless of their correlations with exposure/outcome); if it is a time-varying covariate the code will include it in the forms for all time points; default set to none
+  mandatory_keep_covariates=c("INR"),
   
   
   #### Exclusion Information (optional) ####
   #list out any variables that should be excluded from consideration as confounds via balancing based on practical or theoretical reasons; default set to none
   exclude_covariates=c("Index1", "WAVE2", "WAVE3", "LIVEVID", "SUBSTRESS", "TANNERALL"), #list of characters
   
-  #list any time-varying variables that may get imputed but should NOT be present in the datasets because of planned missingness design with ".time_pt" format
+  #list any time-varying variables that may get imputed but should NOT be present in the dataset because of planned missingness design with ".time_pt" format
   time_var_exclude=c("PCX_POS.58", "PCX_NEG.58", "PCX_POS.90", "PCX_NEG.90", "PCX_POS.154", "PCX_NEG.154", "CORTBASE.58", "CORTBASE.90", "sAABASE.58","sAABASE.90", "TIMEofDAY.6", "TIMEofDAY.15", "TIMEofDAY.24", "TIMEofDAY.35", "TIMEofDAY.58", "TIMEofDAY.90","TIMEofDAY.15", "WIND.15", "WIND.24", "WIND.154", "BSI.35","BSI.90", "BSI.154"), #default set to none
   
-  #when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure and outcome as balancing on colliders can lead to problematic outcomes; default is none
-  potential_colliders=data.frame(exp_out_pair=c("HOMEETA1-CORTBASE", "ESETA1-CORTBASE"), #names of exposure-outcome pair separated by "-", no spaces
-                                 colliders=I(list(c("INR"), c("HOMEETA1", "AGE"))), #list of colliders for each exposure-outcome pair (to be removed at outcome time points)
-                                 exclude_lags=c("T", "F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair
+  #when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure and outcome, and at lagged values if specified by the user, as balancing on colliders can lead to problematic outcomes; default is none
+  potential_colliders=data.frame(exp_out_pair=c("HOMEETA1-CORTBASE", "ESETA1-CORTBASE"), #names of exposure-outcome pair separated by "-", no spaces; list of strings
+                                 colliders=I(list(c("INR"), c("HOMEETA1", "AGE"))), #list of colliders for each exposure-outcome pair; list of lists of strings
+                                 exclude_lags=c("T", "F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair; list of strings
                                  
  
  ### Plotting Information (optional) ###
- #optional list of alternative labels for plotting that correspond to exposures
+ #optional list of alternative labels for exposures that will be used only for plotting
    exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"), 
    
-  #optional list of alternative labels for plotting that correspond to outcome
-   outcome_labels=c("Cortisol","Salivary Alpha Amalayse")
+  #optional list of alternative labels for outcomes that will be used only for plotting
+   outcome_labels=c("Cortisol","Salivary Alpha Amalayse"),
+ 
+ #the plots color data by dose (i.e., number of epochs) of high exposure; optional list of colors (equal to number of epochs +1) or brewer palette (see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) 
+   colors=(c("Dark2")) #list of string(s); default is 'Dark2'); c("blue4", "darkgreen", "darkgoldenrod", "red2")
 )
 
 ```
@@ -172,9 +182,9 @@ time_pt_datasets= makeTimePtDatasets(object, data)
 ### 3. Identify which covariates could potentially confound the relationship(s) between exposure(s) and outcome(s) that will be used to create balancing weights
 MSMs focus on the covariates that are associated with both exposure(s) and outcome(s) and thus could act as a confounding variable. More specifically, potential confounds for a given exposure-outcome pair at a given time point include any covariate: correlated with the exposure at that time point, lagged values of the exposure, or correlated with the outcome. The method assumes that you have included all possible confounding variables as columns in your dataset.
 
-When creating the msm objec, the user must specify which covariates are time-varying ('time_varying covariates'). This code identifies all possible confounding variables and creates a simplified dataset for imputation. This is primarily a data-driven approach to identifying potential confounds. However, the user has the option to specify any covariates to be sure to exclude ('exclude_covariates') as well as those to include ('keep_covariates'), for theoretical or other reasons. The user can include time-invariant or time-varying covariates in these fields. Append ".x" (e.g., "INR.6) to the covariate to indicate a time-varying variable at a specific time point only, otherwise the condition will be assumed to all time points of any time-varying variables. 
+When creating the msm object, the user must specify which covariates are time-varying ('time_varying covariates'). This code identifies all possible confounding variables and creates a simplified dataset for imputation. This is primarily a data-driven approach to identifying potential confounds. However, the user has the option to specify any covariates to be sure to exclude ('exclude_covariates') as well as those to include ('keep_covariates'), for theoretical or other reasons. The user can include time-invariant or time-varying covariates in these fields. Append ".x" (e.g., "INR.6) to the covariate to indicate a time-varying variable at a specific time point only, otherwise the condition will be assumed to all time points of any time-varying variables. 
 
-*note to IS: see if we can suppress output into console 
+*note from IS: not sure how to suppress the html code from console (i.e., to only save it out and not print when running)
 ```{r}
 
 #identifies the total number covariates available in the dataset and prints them for user inspection
@@ -190,7 +200,9 @@ data_to_impute=dataToImpute(object, covariates_to_include)
 
 
 ### 4. Impute dataset so that each time point has complete data*
-ONlY run this code when needed! Creates 'm' imputed datasets using the Amelia package (Honaker, King, & Blackwell, 2011) and functions to eventually generate weights for each imputed dataset (that will be combined at the end). This code takes a few minutes to run per imputation. In the next step of code, the parameter 'just_imputed="no"' will allow you to read imputed data in from local storage so as not to have to re-run this imputation code. The number of imputed datasets is specified as 'm' in the msm object. 
+ONlY run this code when needed! Creates 'm' imputed datasets using the Amelia package (Honaker, King, & Blackwell, 2011) and functions to eventually generate weights for each imputed dataset (that will be combined at the end). This code takes a few minutes to run per imputation. In the next step of code, the parameter 'just_imputed="no"' will allow you to read imputed data in from local storage so as not to have to re-run this imputation code.
+
+The number of imputed datasets is specified as 'm' in the msm object. 
 ```{r}
 
 #creates imputed datasets and saves them out
@@ -201,7 +213,9 @@ imputed_datasets= imputeData(object, data_to_impute,
 
 
 ### 5. Format each imputed dataset for calculating balancing weights 
-Making sure imputed datasets have the appropriate variables and are formatted in the "wide/long" format needed to create the balancing weights. This code also saves out a dataset structured for future modeling. The optional user parameter 'just_imputed' allows you to specify whether you just ran the imputed code ("yes"; default) or you'd rather read in the imputations saved locally from a previous run ("no"). 
+Making sure imputed datasets have the appropriate variables and are formatted in the "wide/long" format needed to create the balancing weights. This code also saves out a dataset structured for future modeling. 
+
+The optional user parameter 'just_imputed' allows you to specify whether you just ran the imputed code ("yes"; default) or you'd rather read in the imputations saved locally from a previous run ("no"). 
 ```{r}
 
 #creates wide/long datasets for each imputation. if you have just created imputations in the global environment, select just_imputed="yes", otherwise "no" will indicate to read them in from local storage
@@ -222,13 +236,15 @@ forms=createForms(object, wide_long_datasets, covariates_to_include)
 ```
 
 
-### 7. Create balancing weights for each exposure-outcome pair at each time point for each imputed dataset*
-Only run this code when needed! This step creates balancing weights using the Covariate Balancing Propensity Score (CBPS) package and approach (Imai & Ratkovic, 2014; Fong, 2022). This code takes a little while to run and the parameter 'just_made_weights="no"' in the next step allows you to instead read in weights that have already been saved locally. Please see the CBPS package documentation (https://cran.r-project.org/web/packages/CBPS/CBPS.pdf) for more information about the other optional user parameters.
+### 7. Create balancing weights for each exposure-outcome pair at each time point for each imputed dataset
+This step creates balancing weights using the Covariate Balancing Propensity Score (CBPS) package and approach (Imai & Ratkovic, 2014; Fong, 2022). Please see the CBPS package documentation (https://cran.r-project.org/web/packages/CBPS/CBPS.pdf) for more information about the other optional user parameters.
+
+This code takes a little while to run. The parameter, 'read_in_from_file', allows you to instead read in weights that have already been saved locally (="yes") or to create weights (="no"; default).
 ```{r}
 
-#creates balancing weights 
-weights_models=createWeights(object, wide_long_datasets,forms, 
-                             ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
+#creates balancing weights or reads them in from local file
+weights_models=createWeights(object, wide_long_datasets, forms, read_in_from_file="no",
+                             ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL) #optional weights parameters (see CBPS documentation for more)
 
 ```
 
@@ -236,15 +252,10 @@ weights_models=createWeights(object, wide_long_datasets,forms,
 ### 8. Assess balance and determine variables for which balance could not be achieved for use as covariates in final model
 This code evaluates which covariates are still correlated with exposures (i.e., for which balancing was not successful) above the designated threshold which the user specified in the msm object, after averaging across imputed datasets, and saves out a list of those covariates to include in your final model. 
 
-Use the parameter 'just_made_weights' to designate whether you just made the weights and they are in the global environment ('yes') or you'd rather read them in from an earlier run ('no'). 
-
 ```{r}
 
 #assesses covariate balance and produces figures for user inspection
-unbalanced_covariates_for_models=assessBalance(object, weights_models, just_made_weights="no")
-
-#reads in weights models to global environment
-weights_models=getWeights(object, just_made_weights="no")
+unbalanced_covariates_for_models=assessBalance(object, weights_models)
 
 ```
 
@@ -268,7 +279,9 @@ data_for_model_with_weights_cutoff=truncateWeights(object, data_for_model_with_w
 
 ```
 
+
 Please choose either steps 11-13 if you have a single value outcome at a single time point or step 14 if you have a growth process for your outcome at a single time point. 
+
 
 ### 11. Fit a series of marginal structural models to determine best fit
 This code fits a series of weighted generalized linear models using the 'survey' package (Lumley, 2021) using the final truncated weights to separately examine the putative causal effects of each exposure on each (single time point) outcome, testing for the need for any covariates that were not successfully balanced. Fit is assessed using AIC. 
@@ -299,14 +312,16 @@ This code fits a series of linear hypothesis tests using the 'car' package (Fox 
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
 history_comparisons=compareHistories(object, best_models)
 
-#adjust p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
+#adjusts p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
 signifcant_comparisons=mcCorrection(object, history_comparisons) #maybe try to suppress output?
 
 ```
 
 
 ### 13. Plot results by exposure history and dose
-This code uses predicted values to plot the effects of the different exposure histories and resulting comparisons for each exposure-outcome pairing. Use the results from the above step to determine which exposure histories are significantly different from one another. The user has the option to provide more formal labels for the exposure(s) ('exposure_labels') and outcome ('outcome_labels') to be used for plotting.  
+This code uses predicted values to plot the effects of the different exposure histories and resulting comparisons for each exposure-outcome pairing. Use the results from the above step to determine which exposure histories are significantly different from one another. Plots display outcome on the x-axis and exposure history on the y-axis, colored by dose (0-n(length of epochs)).
+
+The user has the option to provide more formal labels for the exposure(s) ('exposure_labels') and outcome ('outcome_labels') to be used for plotting.  
 ```{r}
 #saves out plots of exposure histories for each out exposure-outcome pairing, colored by dosage of exposure 
 plotResults(object, best_models)
@@ -344,11 +359,8 @@ mplusObject = mplusObject(
   data_file=paste0(object$home_dir, "for Mplus/TSST_allTxseq_LONG3.csv"),
   
   #list your outcomes and (optionally) any corresponding covariates you want included in each respective model
-  covariates=data.frame(outcomes=c("lnCORTR", "sqrtSAAR"), #names of outcomes that are in long form (MLD)
-                        additional_covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c")))), #like methods covariates that don't need balancing
-  
-  #from the list above, choose a reference event (default is low at all time points) to be compared to all other histories
-  reference="LLL"
+  additional_covariates=data.frame(outcomes=c("lnCORTR", "sqrtSAAR"), #names of outcomes that are in long form (MLD)
+                        additional_covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c")))) #like methods covariates that don't need balancing
 )
 
 
@@ -357,7 +369,7 @@ makeMplusInputs(object, mplusObject)
 
 
 #automatically run all inputs in the Mplus folder after you have manually modified/checked them
-MplusAutomation::runModels(replaceOutfile = "never",  target = paste0(home_dir, 'for MPlus/'))
+MplusAutomation::runModels(replaceOutfile = "never",  target = paste0(object$home_dir, 'for MPlus/'))
 
 ```
 

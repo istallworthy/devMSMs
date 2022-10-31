@@ -20,8 +20,8 @@ makeMplusInputs <- function(object, mplusObject) {
   covars=mplusObject$covariates$additional_covariates
 
   data_file=mplusObject$data_file
-  reference=mplusObject$reference
-  covariates=mplusObject$covariates
+  reference=gsub("-", "", toupper(object$reference))
+  covariates=mplusObject$additional_covariates
   hi_cutoff=object$hi_cutoff
   lo_cutoff=object$lo_cutoff
 
@@ -383,7 +383,7 @@ makeMplusInputs <- function(object, mplusObject) {
 
       #write out mplus input file
       write.inp.file(model_input,fixPath(file.path(paste0(home_dir, "for Mplus/", exposure, "_", outcome, ".inp",sep=""))))
-      cat("MPus input file for", exposure, "_", outcome, "has been saved in the 'for Mplus' folder","\n")
+      cat("MPlus input file for", exposure, "_", outcome, "has been saved in the 'for Mplus' folder","\n")
 
     }
   }

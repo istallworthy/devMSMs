@@ -4,21 +4,12 @@
 \alias{identifyPotentialConfounds}
 \title{Identify potential confounds}
 \usage{
-identifyPotentialConfounds(
-  object,
-  time_pt_datasets,
-  time_varying_covariates = NULL,
-  exclude_covariates = NULL
-)
+identifyPotentialConfounds(object, time_pt_datasets)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{time_pt_datasets}{output from makeTimePtDatasets}
-
-\item{time_varying_covariates}{list of covariates that are time-varying}
-
-\item{exclude_covariates}{list of variables to exclude based on theoretical or practical reasons}
 }
 \value{
 covariates_to_include

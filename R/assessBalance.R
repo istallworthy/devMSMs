@@ -13,7 +13,7 @@
 #' @export
 #' @importFrom CBPS balance
 #' @examples assessBalance(object, weights_models=list(), just_made_weights="no")
-assessBalance <- function (object, weights_models=list(), just_made_weights="no"){
+assessBalance <- function (object, weights_models){
 
   home_dir=object$home_dir
   m=object$m
@@ -22,10 +22,10 @@ assessBalance <- function (object, weights_models=list(), just_made_weights="no"
   exposure_time_pts=object$exposure_time_pts
   balance_thresh=object$balance_thresh
 
-  #read in weights saved locally if user has not just made them and they are not yet in global environment
-  if (just_made_weights=="no"){
-    weights_models=readRDS(paste0(home_dir, "original weights/weights_models.rds"))
-  }
+  # #read in weights saved locally if user has not just made them and they are not yet in global environment
+  # if (just_made_weights=="no"){
+  #   weights_models=readRDS(paste0(home_dir, "original weights/weights_models.rds"))
+  # }
 
   #assessing balance and determining unbalanced covariates (i.e., those still correlated above 0.12)
   unbalanced_variables=list()
@@ -112,24 +112,4 @@ assessBalance <- function (object, weights_models=list(), just_made_weights="no"
 
 }
 
-#' Get weights
-#' Code to get and assign weights output if code has already been run to save weights locally
-#' @param object msm object that contains all relevant user inputs
-#' @param just_made_weights="no" no=weights are not assigned in global environment and are instead saved locally
-#' @return weights_models
-#' @export
-#' @examples getWeights(home_dir, just_made_weights="no")
-#' @seealso [assessBalance()] for more on the weights_models param
-#' @seealso [msmObject()] for more on the weights_models param
-
-getWeights <- function(object, just_made_weights="no"){
-
-  home_dir=object$home_dir
-
-  if  (just_made_weights=="no"){
-    weights_models=readRDS(paste0(home_dir, "original weights/weights_models.rds"))
-
-    return(weights_models)
-  }
-}
 

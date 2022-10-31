@@ -1,4 +1,4 @@
-------Begin Mplus Model Run: 28Oct2022 19:18:45------
+------Begin Mplus Model Run: 31Oct2022 15:14:42------
 Run options:
 	Recursive (run models in subdirectories): FALSE
 	Show output on console: FALSE
@@ -11,4 +11,4 @@ Currently running model: ESETA1_sqrtSAAR.inp
 Currently running model: HOMEETA1_lnCORTR.inp
 Currently running model: HOMEETA1_sqrtSAAR.inp
 
-------End Mplus Model Run: 28Oct2022 19:19:05------
+------End Mplus Model Run: 31Oct2022 15:15:09------

@@ -2,33 +2,20 @@
 % Please edit documentation in R/createForms.R
 \name{createForms}
 \alias{createForms}
-\title{Creates formulae for generating weights}
+\title{Creates formulas for generating weights}
 \usage{
-createForms(
-  object,
-  wide_long_datasets,
-  covariates_to_include,
-  potential_colliders = NULL,
-  keep_covariates = NULL,
-  exclude_covariates = NULL
-)
+createForms(object, wide_long_datasets, covariates_to_include)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{covariates_to_include}{from identifyPotentialConfounds}
-
-\item{potential_colliders}{optional list of variables to be excluded from balancing at time point of exposure}
-
-\item{keep_covariates}{ay covariates the user wishes to keep}
-
-\item{exclude_covariates}{any covariates the user wishes to exclude}
 }
 \value{
 forms
 }
 \description{
-Creates formulae for each exposure at each time point for the CBPS function that will make weights returning a list of forms
+Creates formulas for each exposure at each time point for the CBPS function that will make weights returning a list of forms
 }
 \examples{
 createForms(object, wide_long_datasets,covariates_to_include, potential_colliders)

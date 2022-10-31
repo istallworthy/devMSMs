@@ -4,14 +4,12 @@
 \alias{identifyCovariates}
 \title{Identifies the available covariates}
 \usage{
-identifyCovariates(object, data, exclude_covariates = NULL)
+identifyCovariates(object, data)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{data}{data from formatDataStruct}
-
-\item{exclude_covariates}{list of variables to exclude based on theoretical or practical reasons}
 }
 \value{
 potential_covariates

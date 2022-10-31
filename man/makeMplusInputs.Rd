@@ -11,14 +11,6 @@ makeMplusInputs(object, mplusObject)
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{covariates}{any covariates you wish to include in the model}
-
-\item{reference}{reference history to compare comparison histories}
-
-\item{outcomes}{list of variables that represent your outcomes of interest}
-
-\item{hi_cutoff}{integer for percentile considered "high" for exposure}
-
-\item{lo_cutoff}{integer for percentile considered "low" for exposure}
 }
 \value{
 none
