@@ -78,7 +78,7 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
       #fits initial baseline model
       m0=svyglm(noquote(f0), design=s)
       cat(paste0("Baseline model results for effects of ", exposure, " on ", outcome),"\n")
-      summary(m0)
+      print(summary(m0))
       models[["m0"]]<-m0
 
 
@@ -100,7 +100,7 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
 
         m1=svyglm(noquote(f1), design=s)
         cat(paste0("Covariate model results for effects of ", exposure, " on ", outcome),"\n")
-        summary(m1)
+        print(summary(m1))
         models[["m1"]]<-m1
 
         #determining which covariates are significant
@@ -122,9 +122,8 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
 
         m2=svyglm(noquote(f2), design=s)
         cat(paste0("Final covariate model results for effects of ", exposure, " on ", outcome),"\n")
-        summary(m2)
+        print(summary(m2))
         models[["m2"]]<-m2
-        # anova(m0, m2)
       }
 
       #getting interactions
@@ -154,8 +153,9 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
 
       }
 
+      # cat("The final model is:", "/n")
       m4=svyglm(noquote(f4), design=s)
-      summary(m4)
+      print(summary(m4))
       models[["m4"]]<-m4
 
 

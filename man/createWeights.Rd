@@ -8,7 +8,7 @@ createWeights(
   object,
   wide_long_datasets,
   forms,
-  balance_thresh = 0.12,
+  read_in_from_file = "no",
   ATT = 0,
   iterations = 1000,
   standardize = FALSE,
@@ -25,8 +25,6 @@ createWeights(
 \item{wide_long_datasets}{from formatForWeights}
 
 \item{forms}{from createForms}
-
-\item{balance_thresh}{correlation value above which covariates are not considered balanced with respect to expsure}
 
 \item{ATT}{CBPS parameter 1= average treatment effect on the treated, 0=average treatment effect}
 
@@ -52,7 +50,7 @@ Creates balancing weights using the CBPS package (See CBPS documentation for mor
 returns a list of weights_models for each exposure-outcome pair
 }
 \examples{
-createWeights(object, wide_long_datasets,forms,ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
+createWeights(object, wide_long_datasets,forms,read_in_from_file="no", ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
 
 }
 \seealso{

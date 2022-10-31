@@ -4,14 +4,12 @@
 \alias{truncateWeights}
 \title{Truncates weights}
 \usage{
-truncateWeights(object, data_for_model_with_weights, percentile_cutoff = 0.9)
+truncateWeights(object, data_for_model_with_weights)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{data_for_model_with_weights}{output from condenseWeights}
-
-\item{percentile_cutoff}{percentile value for cutting off and replacing heavy tails of weights}
 }
 \value{
 data_for_model_with_weights_cutoff
@@ -20,7 +18,7 @@ data_for_model_with_weights_cutoff
 Code to 'cut off' weights at 90th percentile and populate all of those above at 90th percentile value to avoid heavy tails that can bias results
 }
 \examples{
-truncateWeights(data_for_model_with_weights, home_dir, exposures, percentile_cutoff=0.90)
+truncateWeights(data_for_model_with_weights, home_dir, exposures)
 
 }
 \seealso{

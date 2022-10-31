@@ -5,12 +5,12 @@
 \title{Multiple comparison correction
 Adjusts p-values for multiple comparisons by exposure-outcome pairing}
 \usage{
-mcCorrection(history_comparisons, method = "BH")
+mcCorrection(object, history_comparisons)
 }
 \arguments{
-\item{history_comparisons}{output from compareHistories}
+\item{object}{msm object that contains all relevant user inputs}
 
-\item{method}{abbreviation for multiple comparison correction method (see p.adjust)}
+\item{history_comparisons}{output from compareHistories}
 }
 \value{
 significant_comparisons
@@ -20,7 +20,7 @@ Multiple comparison correction
 Adjusts p-values for multiple comparisons by exposure-outcome pairing
 }
 \examples{
-mcCorrection(history_comparisons, method="BH")
+mcCorrection(object, history_comparisons)
 }
 \seealso{
 \code{\link[stats:p.adjust]{stats::p.adjust()}} \code{\link[=comparisonHistories]{comparisonHistories()}}

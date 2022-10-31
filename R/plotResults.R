@@ -13,8 +13,12 @@ plotResults <- function(object, best_models){
   outcomes=object$outcomes
   exposure_labels=object$exposure_labels
   outcome_labels=object$outcome_labels
+  colors=object$colors
 
-  if (exposure_labels==""){
+  # browser()
+
+  #error checking
+  if (length(exposure_labels)==0){
     exposure_labels=exposures #default is to use
   }else {
     if (length(exposure_labels) != length(exposures)){
@@ -22,13 +26,16 @@ plotResults <- function(object, best_models){
     }
   }
 
-  if (outcome_labels==""){
+  if (length(outcome_labels)==0){
     outcome_labels=outcomes #default is to use
   }else {
     if (length(outcome_labels) != length(outcomes)){
       stop('Please provide labels for all outcomes (in the same order as listed in the outcome field) in the msm object')
     }
   }
+
+  if (length(colors)>1 & length(colors)!=nrow(object$exposure_epochs)+1){
+    stop(paste0('Please provide either: ',nrow(object$exposure_epochs)+1, ' different colors, a color palette, or leave this entry blank in the msm object'))}
 
 
   for (x in 1:length(best_models)){
@@ -37,6 +44,8 @@ plotResults <- function(object, best_models){
     outcome=sapply(strsplit(exp_out, "-"), "[",2)
 
     final_model=best_models[[exp_out]]
+
+    # browser()
 
     parameter_beta_info=readRDS(paste0(home_dir, "msms/linear hypothesis testing/all_linear_hypothesis_betas_parameters.rds"))
 
@@ -62,7 +71,7 @@ plotResults <- function(object, best_models){
     all_param_betas$upp_ci=all_param_betas$link+(1.96*all_param_betas$SE) #finds CIs
 
     all_param_betas=as.data.frame(cbind(sapply(strsplit(exp_out, "-"), "[",1), sapply(strsplit(exp_out, "-"), "[",2),
-                          all_param_betas))
+                                        all_param_betas))
 
     colnames(all_param_betas)=c("exposure", "outcome", "seq", parameters, "fit", "se", "lwr", "upr")
 
@@ -77,18 +86,38 @@ plotResults <- function(object, best_models){
     plot_data$seq=as.factor(plot_data$seq)
     plot_data=plot_data[order(plot_data$dose),]
 
-    ggplot2::ggplot(aes(x=fit, y=seq, color=dose), data=plot_data)+
-      ggplot2::geom_point()+
-      ggplot2::scale_color_manual(values=c("blue4", "darkgreen", "darkgoldenrod", "red2"))+
-      ggplot2::geom_errorbarh(xmin = plot_data$fit-plot_data$se, xmax = plot_data$fit+plot_data$se, height=0.6)+
-      ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcomes)], " Value"))+
-      ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposures)], " Exposure History"))+
-      ggplot2::xlim(min(plot_data$fit-plot_data$se)-2*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+2*sd(plot_data$fit+plot_data$se))+
-      ggplot2::theme(text = ggplot2::element_text(size=18))+
-      ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
-            panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
-    ggplot2::ggsave(paste0(home_dir, "results figures/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
+    # browser()
 
+    if (length(colors)>1){ #user input a list of colors
+      ggplot2::ggplot(aes(x=fit, y=seq, color=dose), data=plot_data)+
+        ggplot2::geom_point()+
+        ggplot2::scale_color_manual(values=colors)+
+        # ggplot2::scale_color_brewer(palette=NULL)+
+        ggplot2::geom_errorbarh(xmin = plot_data$fit-plot_data$se, xmax = plot_data$fit+plot_data$se, height=0.6)+
+        ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcomes)], " Value"))+
+        ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposures)], " Exposure History"))+
+        ggplot2::xlim(min(plot_data$fit-plot_data$se)-2*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+2*sd(plot_data$fit+plot_data$se))+
+        ggplot2::theme(text = ggplot2::element_text(size=18))+
+        ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
+                       panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
+      ggplot2::ggsave(paste0(home_dir, "results figures/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
+
+    }else{ #user lists a palette
+
+      ggplot2::ggplot(aes(x=fit, y=seq, color=dose), data=plot_data)+
+        ggplot2::geom_point()+
+        # ggplot2::scale_color_manual(values=colors)+
+        ggplot2::scale_color_brewer(palette=colors)+
+        ggplot2::geom_errorbarh(xmin = plot_data$fit-plot_data$se, xmax = plot_data$fit+plot_data$se, height=0.6)+
+        ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcomes)], " Value"))+
+        ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposures)], " Exposure History"))+
+        ggplot2::xlim(min(plot_data$fit-plot_data$se)-2*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+2*sd(plot_data$fit+plot_data$se))+
+        ggplot2::theme(text = ggplot2::element_text(size=18))+
+        ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
+                       panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
+      ggplot2::ggsave(paste0(home_dir, "results figures/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
+
+    }
   }
   cat("See the 'results figures' folder for graphical representations of results","\n")
 }

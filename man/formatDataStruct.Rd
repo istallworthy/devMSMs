@@ -4,12 +4,10 @@
 \alias{formatDataStruct}
 \title{Formats dataset and creates required directory}
 \usage{
-formatDataStruct(object, factor_covariates = NULL)
+formatDataStruct(object)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
-
-\item{factor_covariates}{list of covariates that are factors}
 }
 \value{
 data formatted dataset

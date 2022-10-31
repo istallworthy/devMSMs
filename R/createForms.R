@@ -41,6 +41,7 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
 
   cat("USER ALERT: Please inspect the weights formula below. Balancing weights will attempt to balance on all of these potential confounding variables. If there are any time-varying variables you wish to omit at this time point, please list it in the 'potential_colliders' field of the msm object and re-run")
   cat("They are also saved out in the 'forms' folder as csv files", "\n")
+  cat("\n")
 
   #cycles through outcomes
   for (z in seq(length(outcomes))){
@@ -130,7 +131,7 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
 
         #prints form for user inspection
         cat(paste0("Formula for exposure ", exposure, "-", outcome, " at time point ", as.character(time),
-                     ":"))
+                     ":"), "\n")
         print(f)
         cat("\n")
 

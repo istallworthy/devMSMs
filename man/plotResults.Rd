@@ -5,14 +5,10 @@
 \title{Plot results from history comparisons
 Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure}
 \usage{
-plotResults(object, exposure_labels = "", outcome_labels = "")
+plotResults(object, best_models)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
-
-\item{exposure_labels}{optional list of labels for exposure variables for plotting purposes}
-
-\item{outcome_labels}{optional list of labels for outcome variables for plotting purposes}
 
 \item{best_models}{outcome from assessModels}
 }
@@ -24,7 +20,7 @@ Plot results from history comparisons
 Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure
 }
 \examples{
-plotResults(object, best_models, exposure_labels="", outcome_labels="")
+plotResults(object, best_models)
 }
 \seealso{
 \code{\link[=assessModels]{assessModels()}}

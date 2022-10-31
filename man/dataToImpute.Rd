@@ -4,21 +4,12 @@
 \alias{dataToImpute}
 \title{Creates data structure for imputation}
 \usage{
-dataToImpute(
-  object,
-  covariates_to_include,
-  exclude_covariates = NULL,
-  keep_covariates = NULL
-)
+dataToImpute(object, covariates_to_include)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{covariates_to_include}{output from identifyPotentialConfounds}
-
-\item{exclude_covariates}{list of variables to exclude based on theoretical or practical reasons}
-
-\item{keep_covariates}{list of covariates to keep}
 }
 \value{
 data_to_impute

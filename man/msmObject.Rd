@@ -12,14 +12,29 @@ msmObject(
   time_pts,
   time_var,
   missing,
-  m,
+  time_varying_covariates = NULL,
+  continuous_variables = NULL,
+  factor_covariates = NULL,
+  m = 5,
   exposures,
   exposure_time_pts,
+  balance_thresh = 0.12,
+  weights_percentile_cutoff = 0.9,
   exposure_epochs,
+  reference = "",
+  comparisons = "",
+  hi_cutoff = 0.75,
+  lo_cutoff = 0.25,
+  mc_method = "BH",
   outcomes,
   outcome_time_pt,
-  continuous_variables = NULL,
-  time_var_exclude = NULL
+  mandatory_keep_covariates = NULL,
+  exclude_covariates = NULL,
+  time_var_exclude = NULL,
+  potential_colliders = NULL,
+  exposure_labels = NULL,
+  outcome_labels = NULL,
+  colors = "Dark2"
 )
 }
 \arguments{
@@ -35,19 +50,25 @@ msmObject(
 
 \item{missing}{missing data marker in your dataset}
 
+\item{continuous_variables}{list of continuous variables in your dataset}
+
 \item{m}{number of imputations}
 
 \item{exposures}{list of variables that represent your exposures/treatments of interest}
 
 \item{exposure_time_pts}{times when exposures occurred}
 
+\item{balance_thresh}{correlation value above which covariates are not considered balanced with respect to exposure}
+
+\item{weights_percentile_cutoff}{percentile value for cutting off and replacing heavy tails of weights}
+
 \item{exposure_epochs}{data frame containing epochs and correponding time points for exposure histories}
 
 \item{outcomes}{list of variables that represent your outcomes of interest}
 
-\item{continuous_variables}{list of continuous variables in your dataset}
-
 \item{time_var_exclude}{time-varying variables that should not be present because of planned missingness}
+
+\item{colors}{colors for plotting dose}
 
 \item{outcome_time_pts}{list of time points for outcomes}
 }

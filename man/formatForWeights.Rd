@@ -4,20 +4,12 @@
 \alias{formatForWeights}
 \title{Format data for creating balancing weights}
 \usage{
-formatForWeights(
-  object,
-  data,
-  imputed_datasets = list(),
-  time_varying_covariates,
-  just_imputed = "yes"
-)
+formatForWeights(object, data, imputed_datasets = list(), just_imputed = "yes")
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{imputed_datasets}{output from imputeData}
-
-\item{time_varying_covariates}{covariates in your dataset that are time-varying}
 
 \item{just_imputed}{"yes"= you have imputed datasets in global environment or "no" but they are saved locally from previous run}
 }
@@ -28,7 +20,7 @@ wide_long_datasets
 This code formats the imputed datasets for calculating balancing weights using CBPS and reutrns a list of wide/long datasets and creates dataset for future modeling
 }
 \examples{
-formatForWeights(object, data, imputed_datasets=list(), time_varying_covariates, just_imputed="yes")
+formatForWeights(object, data, imputed_datasets=list(), just_imputed="yes")
 
 }
 \seealso{

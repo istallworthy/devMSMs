@@ -26,7 +26,7 @@ Fit weighted model
 This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcomes
 }
 \examples{
-fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models, hi_cutoff=75, lo_cutoff=25)
+fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
 }
 \seealso{
 \code{\link[=truncateWeights]{truncateWeights()}}, \code{\link[=asesssBalance]{asesssBalance()}}

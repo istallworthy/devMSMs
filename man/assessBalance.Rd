@@ -4,19 +4,12 @@
 \alias{assessBalance}
 \title{Assess success of covariate balancing}
 \usage{
-assessBalance(
-  object,
-  weights_models = list(),
-  balance_thresh = 0.12,
-  just_made_weights = "no"
-)
+assessBalance(object, weights_models)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{weights_models}{optional if createWeights has just run or will read in weights models from local storage}
-
-\item{balance_thresh}{correlation value between covariate and exposure over which it is not considered balanced}
 
 \item{just_made_weights="no"}{no=weights are not assigned in global environment and are instead saved locally}
 }
@@ -28,7 +21,7 @@ list of unbalanced_covariates_for_models for each exposure
 and returns a list of unbalanced covariates for each exposure to add to future models
 }
 \examples{
-assessBalance(object, weights_models=list(), balance_thresh=0.12, just_made_weights="no")
+assessBalance(object, weights_models=list(), just_made_weights="no")
 }
 \seealso{
 \code{\link[CBPS:balance]{CBPS::balance()}} for more on the balance function

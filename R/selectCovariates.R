@@ -54,6 +54,7 @@ identifyPotentialConfounds <- function(object, time_pt_datasets){
   outcome_time_pt=object$outcome_time_pt
   time_varying_covariates=object$time_varying_covariates
   exclude_covariates=object$exclude_covariates
+  balance_thresh=object$balance_thresh
 
   #formatting any covariates to exclude
   user_input_exclude_covariates=exclude_covariates
@@ -110,7 +111,7 @@ identifyPotentialConfounds <- function(object, time_pt_datasets){
         c <- suppressWarnings(Hmisc::rcorr(as.matrix(d))) #makes corr table of all vars; cannot have dates or non-factored characters
         c=flattenCorrMatrix(c$r, c$P)
         filtered=c%>%
-          filter(abs(c$cor)>0.1) #accounts for d=0.2 see Stuart paper for rationale
+          filter(abs(c$cor)>balance_thresh) #accounts for d=0.2 see Stuart paper for rationale
         filtered$exp_time=time_pt
         filtered=filtered[filtered$row %in% exposure | filtered$column %in% exposure,] #gets only those associated with exposure at given time pt
         covariate_correlations=rbind(covariate_correlations, filtered)
@@ -124,7 +125,7 @@ identifyPotentialConfounds <- function(object, time_pt_datasets){
         o <- suppressWarnings(Hmisc::rcorr(as.matrix(o))) #makes corr table of all vars; cannot have dates or non-factored characters
         o=flattenCorrMatrix(o$r, o$P)
         filtered=o%>%
-          filter(abs(o$cor)>0.1) #accounts for d=0.2 see Stuart paper for rationale
+          filter(abs(o$cor)>balance_thresh) #accounts for d=0.2 see Stuart paper for rationale
         filtered$exp_time=time_pt
         filtered=filtered[filtered$row %in% outcome | filtered$column %in% outcome,] #gets only those associated with exposure at given time pt
         filtered=filtered[!filtered$row %in% exclude_covariates | !filtered$column %in% exclude_covariates,] #rejects those the user wants to exclude
@@ -136,6 +137,8 @@ identifyPotentialConfounds <- function(object, time_pt_datasets){
       #save out correlations
       stargazer::stargazer(covariate_correlations,type="html", digits=2, column.labels = colnames(covariate_correlations),summary=FALSE, rownames = FALSE, header=FALSE,
                            out=paste0(home_dir, "balance/potential confounds/", exposure, "-", outcome, "_potential_counfound_correlations.html"))
+
+
       # write.csv(covariate_correlations, paste0(home_dir, "balance/covariate_correlations.csv"))
       cat(paste0("Check the 'balance/potential confounds/' folder to view an html file of a table of the correlations for the potential confounds for ", exposure, "-", outcome),"\n")
 

@@ -15,7 +15,7 @@ defineCausalQuestion<- function(object){
 
   for (i in 1:length(exposures)){
     for (x in 1:length(outcomes)){
-      cat(paste0("Goal: examine causal effects of different histories of exposure to ", exposures[i], " across times ", paste0(exposure_time_pts,sep=",", collapse=""), " on ", outcomes[x], " at time ", paste(c(outcome_time_pt), sep=",", collapse=",")))
+      cat(paste0("Goal: examine causal effects of different histories of exposure to ", exposures[i], ", across times ", paste0(exposure_time_pts,sep=",", collapse=""), " on ", outcomes[x], " at time ", paste(c(outcome_time_pt), sep=",", collapse=",")), "\n")
     }}
 
 }
