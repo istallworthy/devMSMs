@@ -303,7 +303,7 @@ best_models=assessModel(object, all_models)
 ```
 
 
-### 12. Compare exposure histories and correct for multiple comparisons
+### 12. Compare effects of exposure histories on outcomes and correct for multiple comparisons
 This code fits a series of linear hypothesis tests using the 'car' package (Fox & Weisberg, 2019) to examine the effects of different combinations of exposures, or histories, on each outcome using the best-fitting model from the previous step. 
 
 Because we use a continuous approach to modeling exposures, the user has the option to specify cutoffs for values of the exposures that will be considered high ("hi_cutoff") and low ("lo_cutoff") in the msm object. The user also has the option to specify a reference history ("reference") and an optional comparison history ("comparisons") on which to base comparisons, and which multiple comparison correction method ('method') to implement. 
