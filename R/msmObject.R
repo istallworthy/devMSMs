@@ -7,6 +7,9 @@
 #' @param time_pts list of time points along your developmental path of interest for which you have at least one measurement
 #' @param time_var variable in your long dataset that designates developmental time
 #' @param missing missing data marker in your dataset
+#' @param time_varying_variables all variables in dataset that are time-varying
+#' @param continuous_variables all continous variables
+#' @param factor_covariates all variables that are factors
 #' @param m number of imputations
 #' @param exposures list of variables that represent your exposures/treatments of interest
 #' @param exposure_time_pts times when exposures occurred
@@ -20,7 +23,7 @@
 #' @param colors colors for plotting dose
 #' @examples msmObject(data_path, home_dir, ID, time_pts, time_var, missing, m, exposures, exposure_time_pts, exposure_epochs, outcomes, outcome_time_pt, continuous_variables, time_var_exclude)
 
-msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time_varying_covariates=NULL, continuous_variables=NULL, factor_covariates=NULL, m=5, exposures, exposure_time_pts,  balance_thresh=0.12, weights_percentile_cutoff=0.90, exposure_epochs, reference="", comparisons="", hi_cutoff=.75,lo_cutoff=.25, mc_method="BH", outcomes, outcome_time_pt, mandatory_keep_covariates=NULL, exclude_covariates=NULL, time_var_exclude=NULL, potential_colliders=NULL, exposure_labels=NULL, outcome_labels=NULL, colors="Dark2"){
+msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time_varying_variables=NULL, continuous_variables=NULL, factor_covariates=NULL, m=5, exposures, exposure_time_pts,  balance_thresh=0.12, weights_percentile_cutoff=0.90, exposure_epochs, reference="", comparisons="", hi_cutoff=.75,lo_cutoff=.25, mc_method="BH", outcomes, outcome_time_pt, mandatory_keep_covariates=NULL, exclude_covariates=NULL, time_var_exclude=NULL, potential_colliders=NULL, exposure_labels=NULL, outcome_labels=NULL, colors="Dark2"){
 
   charOrNull <- function(x) {
     is.character(x) || is.null(x)

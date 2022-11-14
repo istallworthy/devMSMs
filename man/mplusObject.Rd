@@ -5,14 +5,12 @@
 \title{Creates mplus object
 Gather information for creating Mplus input template files}
 \usage{
-mplusObject(data_file, covariates, reference)
+mplusObject(data_file, additional_covariates)
 }
 \arguments{
 \item{data_file}{location of wide/long .csv file with outcomes, exposures, covariates, and weights for modeling}
 
 \item{covariates}{data frame specifying the names of outputs as well as any technical covariates for modeling}
-
-\item{reference}{reference history for comparison to all other histories}
 }
 \value{
 object

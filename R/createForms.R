@@ -22,7 +22,7 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
   potential_colliders=object$potential_colliders
   mandatory_keep_covariates=object$mandatory_keep_covariates
   exclude_covariates=object$exclude_covariates
-  time_varying_covariates=object$time_varying_covariates
+  time_varying_covariates=object$time_varying_variables
 
 
   #error checking

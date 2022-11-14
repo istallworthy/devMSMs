@@ -22,11 +22,6 @@ assessBalance <- function (object, weights_models){
   exposure_time_pts=object$exposure_time_pts
   balance_thresh=object$balance_thresh
 
-  # #read in weights saved locally if user has not just made them and they are not yet in global environment
-  # if (just_made_weights=="no"){
-  #   weights_models=readRDS(paste0(home_dir, "original weights/weights_models.rds"))
-  # }
-
   #assessing balance and determining unbalanced covariates (i.e., those still correlated above 0.12)
   unbalanced_variables=list()
   all_post_balance_corrs=list()

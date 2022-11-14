@@ -14,7 +14,6 @@ mplusObject <- function(data_file, additional_covariates){
 
 
   stopifnot(charOrNull(data_file))
-  # stopifnot(charOrNull(reference))
 
   object<-list(data_file=data_file, additional_covariates=additional_covariates)
 

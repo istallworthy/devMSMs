@@ -12,7 +12,7 @@ msmObject(
   time_pts,
   time_var,
   missing,
-  time_varying_covariates = NULL,
+  time_varying_variables = NULL,
   continuous_variables = NULL,
   factor_covariates = NULL,
   m = 5,
@@ -50,7 +50,11 @@ msmObject(
 
 \item{missing}{missing data marker in your dataset}
 
+\item{time_varying_variables}{all variables in dataset that are time-varying}
+
 \item{continuous_variables}{list of continuous variables in your dataset}
+
+\item{factor_covariates}{all variables that are factors}
 
 \item{m}{number of imputations}
 
