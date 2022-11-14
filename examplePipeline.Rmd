@@ -1,38 +1,16 @@
 ---
-title: "examplePipeline"
-author: "Isa Stallworthy", "Meriah DeJospeh", "Daniel Berry"
-date: 10/27/2022"
+title: "examplePipeline for the devMSMs package"
+author: "Isa Stallworthy", "Meriah DeJospeh", "Emily Padrutt", "Daniel Berry"
+date: 10/27/2022
 output: html_document
 ---
 
-**NOTE: now wondering if this text content should just go in the tutorial paper instead? 
-
-*Introduction to MSMs
-[insert brief intro to MSMs here and why they are important for developmental science]
-
-
-
-*Colliders
-It is important to consider all possible confounding variables when creating balancing weights but it is also important not to balance on colliders. Colliders are variables that cause both an exposure and an outcome, and balancing on them can cause problematic distortions in inferences. Please see the following resources for more information on colliders. 
-
-https://catalogofbias.org/biases/collider-bias/ 
-https://blogs.cdc.gov/genomics/2022/05/09/colliding-with-collider/ 
-
-[more collider resources? see david's stuff & ask dan] 
-
-
-*Weight truncation/sensitivity analyses
-
-
-*Introduction to this package
-This code provides a framework for testing the putative causal effects of a series of exposures, that can be time-varying over development, on a series of outcomes measured at a single final time point in development. 
+This code provides a framework for testing the putative causal effects of exposure histories on outcome(s) that measured at a single final time point. 
 
 The most updated version of this package can be found at: https://github.com/istallworthy/MSMs 
 
 Example pipeline running the MSM functions in sequence based on causal questions centered on the Family Life Project (FLP). 
 
-*How to set up data
-These functions require a clean dataset (as a .csv file) in long format that contains columns for ID, time, exposure(s), outcome(s), and all potential covariate confounds as separate columns. Column names can include only an underscores special character. The user will need to specify a home directory within which all other directories will be created automatically.  
 
 ### Load package
 ```{r}
@@ -46,16 +24,16 @@ devtools::document()
 # traceback()
 ```
 
-### User inputs
-Please provide user input for the following fields to create an msm object that will be used in all future functions
+### 1. Provide user inputs to create the msm object
+Please provide user input for the following fields to create an msm object that will be used in all future functions. 
+
 ```{r}
 # source("") #string
 
-#create msm object 
-object = msmObject(
+object <- msmObject(
   
   ##### Directories Information (required) ####
-  # directories to long dataset with all exposures, outcomes, and covariates in long format and project directory 
+  # directories to long dataset 
   # data_path = "~/Library/CloudStorage/Box-Box/BSL General/Meriah/TSST MSM PAPER/MSMs/!MSM package test_10.17.22/MSMs-main/MSM_ALL_LONG_8.25.20.csv", #string
   data_path ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah test/MSM_ALL_LONG_8.25.20.csv",
   
@@ -74,8 +52,8 @@ object = msmObject(
   #marker for missing data
   missing=-9999, #string or integer(s)
   
-  #list out covariates that are time-varying; default is none
-  time_varying_covariates= c("AGE", "INR", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1"),
+  #list out all variables that are time-varying; default is none
+  time_varying_variables= c("AGE", "INR", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1"),
   
   #list all continuous variables here; all others assumed ordinal for imputation; default is none 
   continuous_variables=c("GrosPay1", "RMomAgeU", "RMAge1st", "SwghtLB","RWghtLb", "IBQDnovm", "MDI", "AGE", "INR", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1"),
@@ -156,24 +134,15 @@ object = msmObject(
 ```
 
 
-### 1. Define your causal question 
-Prints the causal questions you wish to answer using MSMs.
-```{r}
-
-defineCausalQuestion(object)
-
-```
-
-
-### 2. Format data & identify potential covariate confounding variables within the data provided
+### 2. Format data & identify covariates
 Reads in data and formats for analysis. The user has the option to specify any covariates that are factors. 
 ```{r}
 
 #Creates the necessary directories in your home directory and formats your dataset
-data=formatDataStruct(object)
+data <- formatDataStruct(object)
 
 #Makes separate datasets for each time point 
-time_pt_datasets= makeTimePtDatasets(object, data)
+time_pt_datasets <- makeTimePtDatasets(object, data)
 
 ```
 
@@ -187,13 +156,13 @@ When creating the msm object, the user must specify which covariates are time-va
 ```{r}
 
 #identifies the total number covariates available in the dataset and prints them for user inspection
-potential_covariates=identifyCovariates(object, data)
+potential_covariates <- identifyCovariates(object, data)
 
 #of those covariates, identify those that correlate with each exposure or outcome at each time point at >0.1 and thus could be potential confounders
-covariates_to_include= identifyPotentialConfounds(object, time_pt_datasets)
+covariates_to_include <- identifyPotentialConfounds(object, time_pt_datasets)
 
 #create final dataset for imputations with only the necessary variables
-data_to_impute=dataToImpute(object, covariates_to_include)
+data_to_impute <- dataToImpute(object, covariates_to_include)
 
 ```
 
@@ -205,8 +174,9 @@ The parameter 'read_imps_from_file' will allow you to read imputed data in from 
 ```{r}
 
 #creates imputed datasets and saves them out
-imputed_datasets= imputeData(object, data_to_impute, read_imps_from_file="no", 
-                             max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no", 
+                             max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, 
+                             sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
 ```
 
@@ -217,7 +187,7 @@ Making sure imputed datasets have the appropriate variables and are formatted in
 ```{r}
 
 #creates wide/long datasets for each imputation
-wide_long_datasets=formatForWeights(object, data, imputed_datasets)
+wide_long_datasets <- formatForWeights(object, data, imputed_datasets)
 
 ```
 
@@ -229,7 +199,7 @@ This step is crucial --the user is advised to thoroughly inspect each formula an
 ```{r}
 
 #creates formulas for each exposure-outcome pairing at each time point and saves and prints them for user inspection
-forms=createForms(object, wide_long_datasets, covariates_to_include)
+forms <- createForms(object, wide_long_datasets, covariates_to_include)
 
 ```
 
@@ -241,8 +211,9 @@ This code takes a little while to run. The parameter, 'read_in_from_file', allow
 ```{r}
 
 #creates balancing weights or reads them in from local file
-weights_models=createWeights(object, wide_long_datasets, forms, read_in_from_file="no",
-                             ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL) #optional weights parameters (see CBPS documentation for more)
+weights_models <- createWeights(object, wide_long_datasets, forms, read_in_from_file="no",
+                             ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, 
+                             baseline.formula=NULL, diff.formula=NULL) #optional weights parameters (see CBPS documentation for more)
 
 ```
 
@@ -253,7 +224,7 @@ This code evaluates which covariates are still correlated with exposures (i.e., 
 ```{r}
 
 #assesses covariate balance and produces figures for user inspection
-unbalanced_covariates_for_models=assessBalance(object, weights_models)
+unbalanced_covariates_for_models <- assessBalance(object, weights_models)
 
 ```
 
@@ -262,7 +233,7 @@ unbalanced_covariates_for_models=assessBalance(object, weights_models)
 This code multiplies weights across time points and averages across imputed datasets to condense down to final individual weights per exposure-outcome pair for modeling.
 ```{r}
 #condenses weights across imputed dataset and time point 
-data_for_model_with_weights=condenseWeights(object, weights_models)
+data_for_model_with_weights <- condenseWeights(object, weights_models)
 
 ```
 
@@ -273,7 +244,7 @@ Given that weights with heavy tails can be problematic, this code caps weight va
 You can stop here if you have specific MSM models you want to fit or you can continue on to fit a standard single-outcome model. We also suggest conducting sensitivity/robustness tests by creating weights using several percentile cutoff values and ensuring your subsequent models produce similar results regardless of which percentile cutoff you used. 
 ```{r}
 #truncate weights 
-data_for_model_with_weights_cutoff=truncateWeights(object, data_for_model_with_weights)
+data_for_model_with_weights_cutoff <- truncateWeights(object, data_for_model_with_weights)
 
 ```
 
@@ -295,10 +266,10 @@ Model dictionary:
 ```{r}
 
 #code to fit a series of baseline, covariates, and interaction weighted models to determine which is best fitting
-all_models=fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
+all_models <- fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
 
 #determine best-fitting model  --ignore orange warnings here, could suppress them?
-best_models=assessModel(object, all_models)
+best_models <- assessModel(object, all_models)
 
 ```
 
@@ -310,10 +281,10 @@ Because we use a continuous approach to modeling exposures, the user has the opt
 ```{r}
 
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
-history_comparisons=compareHistories(object, best_models)
+history_comparisons <- compareHistories(object, best_models)
 
 #adjusts p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
-signifcant_comparisons=mcCorrection(object, history_comparisons) #maybe try to suppress output?
+signifcant_comparisons <- mcCorrection(object, history_comparisons) #maybe try to suppress output?
 
 ```
 
@@ -330,7 +301,7 @@ plotResults(object, best_models)
 
 
 
-### 14. Optional: create an MPlus template for fitting weighted, more complex growth models for your single time point outcome
+### 14. Create an MPlus template for fitting weighted, more complex growth models for your single time point outcome
 This code creates a template for fitting weighted more complex growth models in MPlus in the form of a .inp file. The code defaults to estimating slope (s) and quadratic (qd) growth and estimates contrasts examining the differences between different exposure histories. 
 
 The user is advised to independently apply the appropriate transformations to their outcome measure and establish its appropriate functional form. They can then provide a .csv file to this function to create a template of an MPlus .inp file for fitting a growth model. The user can then modify the template .inp file as needed prior to running. 
@@ -342,8 +313,6 @@ abridged dataset --only include necessary variables?
 does up to 3-way interactions only
 data must have outcomes in long form but exposures in wide form --check to see if there's a wide/long version of data saved out somewhere to guide the user?
 
-IS needs to more thoroughly automate interaction terms --right now assumes  2- and 3-way interactions.  
-
 Note for Meriah: any other variables/input fields that the user should specify? anything else to save out along the way?
 
 Data should be modeled after the csv: TSST_allTxseq_LONG3.csv (which i manually put in the 'for Mplus' folder) which the user should create independently
@@ -354,7 +323,7 @@ The user can also view unbalanced covariates by time and averaged across time in
 # apply(gtools::permutations(2, nrow(object$exposure_epochs), c("L", "H"), repeats.allowed=TRUE), 1, paste, sep="", collapse="")
 
 
-mplusObject = mplusObject(
+mplusObject <- mplusObject(
   #location of your data file in long format including final truncated weights (labeed exposure-outcome)
   data_file=paste0(object$home_dir, "for Mplus/TSST_allTxseq_LONG3.csv"),
   

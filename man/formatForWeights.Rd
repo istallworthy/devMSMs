@@ -4,7 +4,7 @@
 \alias{formatForWeights}
 \title{Format data for creating balancing weights}
 \usage{
-formatForWeights(object, data, imputed_datasets = list(), just_imputed = "yes")
+formatForWeights(object, data, imputed_datasets)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
@@ -20,7 +20,7 @@ wide_long_datasets
 This code formats the imputed datasets for calculating balancing weights using CBPS and reutrns a list of wide/long datasets and creates dataset for future modeling
 }
 \examples{
-formatForWeights(object, data, imputed_datasets=list(), just_imputed="yes")
+formatForWeights(object, data, imputed_datasets)
 
 }
 \seealso{

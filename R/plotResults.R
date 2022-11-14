@@ -15,8 +15,6 @@ plotResults <- function(object, best_models){
   outcome_labels=object$outcome_labels
   colors=object$colors
 
-  # browser()
-
   #error checking
   if (length(exposure_labels)==0){
     exposure_labels=exposures #default is to use

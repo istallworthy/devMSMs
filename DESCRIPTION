@@ -1,4 +1,4 @@
-Package: MSMs
+Package: devMSMs
 Type: Package
 Title: Tools for Conducting Marginal Structural Models with Developmental Data
 Version: 0.0.0.9000

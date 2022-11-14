@@ -24,7 +24,7 @@ formatForWeights <- function(object, data, imputed_datasets){
   m=object$m
   time_pts=object$time_pts
   time_var_exclude=object$time_var_exclude
-  time_varying_covariates=object$time_varying_covariates
+  time_varying_covariates=object$time_varying_variables
 
   options(readr.num_columns = 0)
 

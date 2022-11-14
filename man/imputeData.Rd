@@ -7,6 +7,7 @@
 imputeData(
   object,
   data_to_impute,
+  read_imps_from_file = "no",
   max.resample = 100,
   cs = NULL,
   priors = NULL,
@@ -57,7 +58,7 @@ imputed_datasets imputation results
 Creates m imputed datasets from original dataset using the Aeelia package. See Amelia documentation for more detail: https://cran.r-project.org/web/packages/Amelia/Amelia.pdf
 }
 \examples{
-imputeData(object, data_to_impute, max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+imputeData(object, data_to_impute, read_imps_from_file="no", max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
 }
 \seealso{
