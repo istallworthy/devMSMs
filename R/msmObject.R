@@ -45,7 +45,7 @@ msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time
   stopifnot(is.numeric(outcome_time_pt))
 
 #optional
-  stopifnot(charOrNull(time_varying_covariates))
+  stopifnot(charOrNull(time_varying_variables))
   stopifnot(charOrNull(continuous_variables))
   stopifnot(charOrNull(factor_covariates))
   stopifnot(charOrNull(time_var_exclude))
@@ -61,7 +61,7 @@ msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time
   stopifnot(numOrNull(weights_percentile_cutoff))
 
 
-  object<-list(data_path=data_path, home_dir=home_dir, ID=ID, time_pts=time_pts, time_var=time_var, missing=missing, time_varying_covariates=time_varying_covariates,
+  object<-list(data_path=data_path, home_dir=home_dir, ID=ID, time_pts=time_pts, time_var=time_var, missing=missing, time_varying_variables=time_varying_variables,
                continuous_variables=continuous_variables,factor_covariates=factor_covariates, m=m, exposures=exposures,exposure_time_pts=exposure_time_pts, balance_thresh=balance_thresh, weights_percentile_cutoff=weights_percentile_cutoff, exposure_epochs=exposure_epochs, reference=reference, comparisons=comparisons, hi_cutoff=hi_cutoff, lo_cutoff=lo_cutoff, mc_method=mc_method,
                outcomes=outcomes, outcome_time_pt=outcome_time_pt,mandatory_keep_covariates=mandatory_keep_covariates, exclude_covariates=exclude_covariates, time_var_exclude=time_var_exclude, potential_colliders=potential_colliders, exposure_labels=exposure_labels, outcome_labels=outcome_labels, colors=colors)
 
