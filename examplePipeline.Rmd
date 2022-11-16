@@ -174,7 +174,7 @@ The parameter 'read_imps_from_file' will allow you to read imputed data in from 
 ```{r}
 
 #creates imputed datasets and saves them out
-imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no", 
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="yes", 
                              max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, 
                              sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
@@ -211,7 +211,7 @@ This code takes a little while to run. The parameter, 'read_in_from_file', allow
 ```{r}
 
 #creates balancing weights or reads them in from local file
-weights_models <- createWeights(object, wide_long_datasets, forms, read_in_from_file="no",
+weights_models <- createWeights(object, wide_long_datasets, forms, read_in_from_file="yes",
                              ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, 
                              baseline.formula=NULL, diff.formula=NULL) #optional weights parameters (see CBPS documentation for more)
 
