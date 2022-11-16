@@ -12,6 +12,7 @@ mcCorrection <- function(object, history_comparisons){
 
   home_dir=object$home_dir
   method=object$mc_method
+  exposure_epochs=object$exposure_epochs
 
   significant_comparisons=list()
 
@@ -30,11 +31,32 @@ mcCorrection <- function(object, history_comparisons){
     sig_comparisons=comparisons[comparisons$p_vals_corr<0.05,]
 
     significant_comparisons[[exp_out]] <- sig_comparisons
+
     #save out table for all contrasts with old and corrected p-values
     stargazer::stargazer(comparisons, type="html", digits=2, column.labels = colnames(comparisons),summary=FALSE, rownames = FALSE, header=FALSE,
                          out=paste0(home_dir, "msms/linear hypothesis testing/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
 
+    #make fancy table
+   histories={}
+   ref=data.frame(matrix(nrow=1, ncol=nrow(exposure_epochs)+1))
+   ref[1,1:(ncol(ref)-1)]=as.data.frame(t(rep("l", nrow(exposure_epochs))))
+   colnames(ref)=c(exposure_epochs$epochs, "Comparison to Reference After MC Correction")
+   #adding in levels (h v l) at each exposure epoch
+   for (e in 1:nrow(exposure_epochs)){
+       histories[[as.symbol(exposure_epochs$epochs[e])]] <-sapply(strsplit(sapply(strsplit(comparisons$contrast, "vs."), "[", 2), "-"), "[", e)
+       histories[[as.symbol(exposure_epochs$epochs[e])]]=gsub(" ", "", histories[[as.symbol(exposure_epochs$epochs[e])]])
+   }
+   histories$`Comparison to Reference After MC Correction`=comparisons$p_vals_corr
+   histories=rbind(ref, histories)
+   exposure_history=data.frame(`Exposure History`=LETTERS[seq(from=1, to=nrow(comparisons)+1)])
+   exposure_dose=data.frame(`Exposure Dose`= rowSums(histories[1:nrow(exposure_epochs)]=="h"))
+   tab=cbind(exposure_history, exposure_dose, histories)
+
+   stargazer::stargazer(tab, type="html", digits=2, column.labels = colnames(tab),summary=FALSE, rownames = FALSE, header=FALSE,
+                        out=paste0(home_dir, "msms/linear hypothesis testing/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_presentation_table.doc", sep=""))
+
   }
+
 
   cat("See 'msms/linear hypothesis testing/' folder for tables of likelihood ratio tests","\n")
   return(significant_comparisons)

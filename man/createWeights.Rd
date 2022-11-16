@@ -15,7 +15,7 @@ createWeights(
   method = "exact",
   twostep = TRUE,
   sample.weights = NULL,
-  baseline.forumula = NULL,
+  baseline.formula = NULL,
   diff.formula = NULL
 )
 }
@@ -38,9 +38,9 @@ createWeights(
 
 \item{sample.weights}{CBPS parameter for survey sampling weights for obs, NULL defaults to sampling weight of 1 for each observation}
 
-\item{diff.formula}{CBPS parameter for iCBPS, only works with binary treatments}
-
 \item{baseline.formula}{CBPS parameter for iCBPS, only works with binary treatments}
+
+\item{diff.formula}{CBPS parameter for iCBPS, only works with binary treatments}
 }
 \value{
 weights_models

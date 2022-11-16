@@ -203,7 +203,11 @@ compareHistories <-function(object, best_models){
 
       history_comparisons[[paste0(exposure, "-", outcome)]]<- comparisons
       parameter_beta_info[[paste0(exposure, "-", outcome)]] <- param_info
+      cat("\n")
+
     }
+    cat("\n")
+
   }
 
   saveRDS(history_comparisons, file = paste(paste0(home_dir, "msms/linear hypothesis testing/all_linear_hypothesis_tests.rds", sep="")))
