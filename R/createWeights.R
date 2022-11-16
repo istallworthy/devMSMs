@@ -24,7 +24,7 @@
 #' @seealso [CBPS::CBPS()], [formatForWeights()], [createForms()]
 #' @examples createWeights(object, wide_long_datasets,forms,read_in_from_file="no", ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
 #'
-createWeights <-function(object, wide_long_datasets, forms, read_in_from_file="no", ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL){
+createWeights <-function(object, wide_long_datasets, forms, read_in_from_file="no", ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.formula=NULL, diff.formula=NULL){
 
   ID=object$ID
   home_dir=object$home_dir
