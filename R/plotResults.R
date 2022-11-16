@@ -88,13 +88,14 @@ plotResults <- function(object, best_models){
 
     if (length(colors)>1){ #user input a list of colors
       ggplot2::ggplot(aes(x=fit, y=seq, color=dose), data=plot_data)+
-        ggplot2::geom_point()+
+        ggplot2::geom_point(size=5)+
         ggplot2::scale_color_manual(values=colors)+
+        ggplot2::scale_y_discrete(limits=c(as.character(plot_data$seq)), expand=c(0, 0.2))+
         # ggplot2::scale_color_brewer(palette=NULL)+
         ggplot2::geom_errorbarh(xmin = plot_data$fit-plot_data$se, xmax = plot_data$fit+plot_data$se, height=0.6)+
         ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcomes)], " Value"))+
         ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposures)], " Exposure History"))+
-        ggplot2::xlim(min(plot_data$fit-plot_data$se)-2*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+2*sd(plot_data$fit+plot_data$se))+
+        ggplot2::xlim(min(plot_data$fit-plot_data$se)-1*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+1*sd(plot_data$fit+plot_data$se))+
         ggplot2::theme(text = ggplot2::element_text(size=18))+
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
                        panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
@@ -103,13 +104,14 @@ plotResults <- function(object, best_models){
     }else{ #user lists a palette
 
       ggplot2::ggplot(aes(x=fit, y=seq, color=dose), data=plot_data)+
-        ggplot2::geom_point()+
+        ggplot2::geom_point(size=5)+
         # ggplot2::scale_color_manual(values=colors)+
         ggplot2::scale_color_brewer(palette=colors)+
+        ggplot2::scale_y_discrete(limits=c(as.character(plot_data$seq)), expand=c(0, 0.2))+
         ggplot2::geom_errorbarh(xmin = plot_data$fit-plot_data$se, xmax = plot_data$fit+plot_data$se, height=0.6)+
         ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcomes)], " Value"))+
         ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposures)], " Exposure History"))+
-        ggplot2::xlim(min(plot_data$fit-plot_data$se)-2*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+2*sd(plot_data$fit+plot_data$se))+
+        ggplot2::xlim(min(plot_data$fit-plot_data$se)-1*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+1*sd(plot_data$fit+plot_data$se))+
         ggplot2::theme(text = ggplot2::element_text(size=18))+
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
                        panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))

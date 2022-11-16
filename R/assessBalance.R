@@ -12,6 +12,7 @@
 #' @seealso [createWeights()] for more on the weights_models param
 #' @export
 #' @importFrom CBPS balance
+#' @importFrom knitr kable
 #' @examples assessBalance(object, weights_models=list(), just_made_weights="no")
 assessBalance <- function (object, weights_models){
 
@@ -38,11 +39,15 @@ assessBalance <- function (object, weights_models){
 
     unbalanced_vars=balance[abs(balance$`Pearson Correlation`)>balance_thresh,] #0.12 corr default threshold
 
+
     write.csv(x=as.data.frame(unbalanced_vars), file=paste(home_dir, "balance/unbalanced covariates/unbalanced_vars_", names(weights_models)[f], ".csv", sep=""))
-    cat(paste0("USER ALERT: A list of any unbalanced variables for ", names(weights_models)[f] ," has now been added to the 'balance/unbalanced covariates/' folder as a .csv file"),"\n")
 
     unbalanced_variables[[paste("unbalanced_vars_", names(weights_models)[f], sep="")]] <- unbalanced_vars
   }
+
+  cat(paste0("USER ALERT: Lists of any unbalanced variables for all models, for each imputed dataset have now been added to the 'balance/unbalanced covariates/' folder as a .csv file"),"\n")
+  cat("\n")
+
 
   #averages across imputed datasets to determine final variables that remain correlated with exposure at r>0.12
   sig_unbalanced_averaged_k=list()
@@ -71,7 +76,7 @@ assessBalance <- function (object, weights_models){
 
         #saves out all correlations
         write.csv(exposure_time_corrs, file=paste(home_dir, "balance/post-balance correlation values/all_post_balance_cors_", exposures[x],"_", exposure_time_pts[y], "-", outcomes[z],  ".csv", sep=""))
-        cat(paste0("Check 'balance/post-balance correlation values/' folder for a csv file for ",exposures[x], "_", exposure_time_pts[y], "-", outcomes[z]," of all correlations post-balancing and averages"),"\n")
+        # cat(paste0("Check 'balance/post-balance correlation values/' folder for a csv file for ",exposures[x], "_", exposure_time_pts[y], "-", outcomes[z]," of all correlations post-balancing and averages"),"\n")
 
         #writes out only remaining mean correlations over 0.12--the ones left unbalanced
         sig=exposure_time_corrs[abs(exposure_time_corrs$mean_cor)>balance_thresh,]
@@ -79,18 +84,39 @@ assessBalance <- function (object, weights_models){
         sig_unbalanced_averaged_k[[paste("sig_unbalanced_vars_",  exposures[x], exposure_time_pts[y], "-", outcomes[z],"_", sep="")]] <- sig
 
         write.csv(sig, file=paste(home_dir, "balance/post-balance correlation values/all_sig_post_balance_cors_", exposures[x],"_", exposure_time_pts[y],"-", outcomes[z],".csv", sep=""))
-        cat(paste0("USER ALERT: Check 'balance/post-balance correlation values/' folder for a csv file of all SIGNIFICANT correlations above ", as.character(balance_thresh), " for ",  exposures[x], "_", exposure_time_pts[y], "-", outcomes[z]," post-balancing and averages"),"\n")
+        # cat(paste0("USER ALERT: Check 'balance/post-balance correlation values/' folder for a csv file of all SIGNIFICANT correlations above ", as.character(balance_thresh), " for ",  exposures[x], "_", exposure_time_pts[y], "-", outcomes[z]," post-balancing and averages"),"\n")
 
         significant_corrs_remaining=rbind(significant_corrs_remaining, sig)
 
       }
 
+      cat(paste0("Check 'balance/post-balance correlation values/' folder for csv files for ",exposures[x],"-", outcomes[z]," of all correlations post-balancing and averages"),"\n")
+      cat("\n")
+
+      cat(paste0("USER ALERT: Check 'balance/post-balance correlation values/' folder for csv files of all SIGNIFICANT correlations above ", as.character(balance_thresh), " for ",  exposures[x], "-", outcomes[z]," post-balancing and averages"),"\n")
+      cat("\n")
+
+
       #compiles all remaining correlations over 0.12 for each treatment (including all time points)
+      # browser()
+      if (nrow(significant_corrs_remaining)>0){
       cat(paste0("USER ALERT: Inspect the following list of unbalanced covariates for exposure ", exposures[x], "-", outcomes[z], " :"),"\n")
-      print(significant_corrs_remaining)
+        # browser()
+      cat(knitr::kable(significant_corrs_remaining), sep="\n")
+      cat("\n")
 
       write.csv(significant_corrs_remaining, file=paste(home_dir, "balance/post-balance correlation values/all_sig_post_balance_cors_", exposures[x], "-", outcomes[z],".csv", sep=""))
-      cat(paste0("All covariates still significantly correlated with ", exposures[x], " have been saved as a csv file in 'balance/post-balance correlation values/'"),"\n")
+      cat(paste0("All covariates still significantly correlated with ", exposures[x],  "-", outcomes[z]," have been saved as a csv file in 'balance/post-balance correlation values/'"),"\n")
+      cat("\n")
+
+      }else {
+        cat(paste0("USER ALERT: There are no unbalanced covariates for exposure ", exposures[x], "-", outcomes[z]),"\n")
+        write.csv(significant_corrs_remaining, file=paste(home_dir, "balance/post-balance correlation values/all_sig_post_balance_cors_", exposures[x], "-", outcomes[z],".csv", sep=""))
+        cat("\n")
+
+      }
+
+
 
       covariates_for_model=unique(c(as.character(unlist(significant_corrs_remaining[,1]))))
       covariates_for_model=covariates_for_model[!grepl(exposures[x], covariates_for_model)] #removing exposure (as this will be modeled explicitly)

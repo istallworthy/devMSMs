@@ -48,13 +48,13 @@ truncateWeights <-function(object, data_for_model_with_weights){
       geom_histogram(color = 'black', bins = 15)
     ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_weights_cutoff_", weights_percentile_cutoff, ".png", sep=""), path=paste0(home_dir, "final weights/histograms/"), height=8, width=14)
 
-    cat(paste0("Histogram of weights cut off at ", weights_percentile_cutoff, " for exposure ", exposure, " on ", outcome, " has been saved to the 'final weights/histograms/' folder"))
+    cat(paste0("Histogram of weights cut off at ", weights_percentile_cutoff, " for exposure ", exposure, " on ", outcome, " has been saved to the 'final weights/histograms/' folder"),"\n")
 
   }
 }
 
   write.csv(data_for_model_with_weights_cutoff,paste0(home_dir, "final weights/data_for_model_with_weights_cutoff_", weights_percentile_cutoff, ".csv") )
-  cat("USER ALERT: final cutoff weights have now been saved merged into datast in 'final weights' folder")
+  cat("USER ALERT: final cutoff weights have now been saved merged into datast in 'final weights' folder","\n")
   return(data_for_model_with_weights_cutoff)
 
 }
