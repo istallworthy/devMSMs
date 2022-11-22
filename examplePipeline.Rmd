@@ -134,7 +134,7 @@ object <- msmObject(
 ```
 
 
-### 2. Format data & identify covariates
+### 2. Format data 
 Reads in data and formats for analysis. The user has the option to specify any covariates that are factors. 
 ```{r}
 
