@@ -38,7 +38,8 @@ assessModel <-function(object, all_models){
 
     # browser()
 
-    suppressWarnings(jtools::export_summs(all_models[[exp_out]], to.file="docx", file.name =paste0(home_dir, "msms/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_table_mod_ev.docx", sep="")))
+    suppressWarnings(jtools::export_summs(all_models[[exp_out]], to.file="docx", statistics= c(N="nobs", AIC="AIC", R2="r.squared"),
+                                          file.name =paste0(home_dir, "msms/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_table_mod_ev.docx", sep="")))
 
     #saves out table of model evidence
     # # library(sjPlot)

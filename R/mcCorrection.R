@@ -40,7 +40,7 @@ mcCorrection <- function(object, history_comparisons){
    histories={}
    ref=data.frame(matrix(nrow=1, ncol=nrow(exposure_epochs)+1))
    ref[1,1:(ncol(ref)-1)]=as.data.frame(t(rep("l", nrow(exposure_epochs))))
-   colnames(ref)=c(exposure_epochs$epochs, "Comparison to Reference After MC Correction")
+   colnames(ref)=c(exposure_epochs$epochs, "p-value of Comparison to Reference After MC Correction")
    #adding in levels (h v l) at each exposure epoch
    for (e in 1:nrow(exposure_epochs)){
        histories[[as.symbol(exposure_epochs$epochs[e])]] <-sapply(strsplit(sapply(strsplit(comparisons$contrast, "vs."), "[", 2), "-"), "[", e)
