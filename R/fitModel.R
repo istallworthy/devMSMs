@@ -19,6 +19,7 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
   exposure_epochs=object$exposure_epochs
   outcomes=object$outcomes
   outcome_time_pt=object$outcome_time_pt
+  factor_covariates=object$factor_covariates
 
   if (length(outcome_time_pt)>1){
     stop('This function is designed only for single time point outcomes')}
@@ -84,6 +85,7 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
 
       #adding in covariates that did not fully balance when creating the weights
       covariate_list= unbalanced_covariates_for_models[[paste0(exposure, "-", outcome)]]
+      grepl(factor_covariates, paste0(unlist(strsplit(noquote(covariate_list), "\\+")))
 
       if (covariate_list[1]==""){
         cat(paste0("There are no unbalanced covariates to include in the model of effects of ", exposure, " on ", outcome),"\n")

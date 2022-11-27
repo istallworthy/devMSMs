@@ -81,7 +81,7 @@ object <- msmObject(
   
   #### History Comparison Information (required & optional) ####
    #developmental time periods (and their corresponding time points) that constitute regime/history units of interest --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects of exposure histories (e.g, chronically high exposure vs. exposure only in infancy) on outcomes
-  exposure_epochs=data.frame(epochs=c("early", "middle", "late"), #user-created names of epochs as a list of strings
+  exposure_epochs=data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), #user-created names of epochs as a list of strings
                              values=I(list(c(6,15), c(24,35), c(58, 90, 154)))), #time point(s) encompassed in each epoch that correspond to data as a list of numeric lists
   
     #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
@@ -103,20 +103,20 @@ object <- msmObject(
   
   
  #### Inclusion Information (optional) ####
-  #list any variables for mandatory inclusion in balancing for theoretical or other reasons (regardless of their correlations with exposure/outcome); if it is a time-varying covariate the code will include it in the forms for all time points; default set to none
+  #list any variables for mandatory inclusion in balancing for theoretical or other reasons (regardless of their correlations with exposure/outcome); if it is a time-varying covariate the code will include it in the forms for all time points;  can specify time after "."; default set to none
   mandatory_keep_covariates=c("INR"),
   
   
   #### Exclusion Information (optional) ####
-  #list out any variables that should be excluded from consideration as confounds via balancing based on practical or theoretical reasons; default set to none
-  exclude_covariates=c("Index1", "WAVE2", "WAVE3", "LIVEVID", "SUBSTRESS", "TANNERALL"), #list of characters
+  #list out any variables that should be excluded from consideration as confounds via balancing based on practical or theoretical reasons; if it is a time-varying covariate the code will include it in the forms for all time points with the exception of in its own forms if it is an exposure; can specify time after "."; default set to none
+  exclude_covariates=c("Index1", "WAVE2", "WAVE3", "LIVEVID", "SUBSTRESS", "TANNERALL", "AGE.6", "ESETA1"), #list of characters
   
   #list any time-varying variables that may get imputed but should NOT be present in the dataset because of planned missingness design with ".time_pt" format
   time_var_exclude=c("PCX_POS.58", "PCX_NEG.58", "PCX_POS.90", "PCX_NEG.90", "PCX_POS.154", "PCX_NEG.154", "CORTBASE.58", "CORTBASE.90", "sAABASE.58","sAABASE.90", "TIMEofDAY.6", "TIMEofDAY.15", "TIMEofDAY.24", "TIMEofDAY.35", "TIMEofDAY.58", "TIMEofDAY.90","TIMEofDAY.15", "WIND.15", "WIND.24", "WIND.154", "BSI.35","BSI.90", "BSI.154"), #default set to none
   
   #when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure and outcome, and at lagged values if specified by the user, as balancing on colliders can lead to problematic outcomes; default is none
   potential_colliders=data.frame(exp_out_pair=c("HOMEETA1-CORTBASE", "ESETA1-CORTBASE"), #names of exposure-outcome pair separated by "-", no spaces; list of strings
-                                 colliders=I(list(c("INR"), c("HOMEETA1", "AGE"))), #list of colliders for each exposure-outcome pair; list of lists of strings
+                                 colliders=I(list(c("INR"), c("HOMEETA1.154", "AGE"))), #list of colliders for each exposure-outcome pair; list of lists of strings
                                  exclude_lags=c("T", "F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair; list of strings
                                  
  
@@ -158,8 +158,8 @@ When creating the msm object, the user must specify which covariates are time-va
 #identifies the total number covariates available in the dataset and prints them for user inspection
 potential_covariates <- identifyCovariates(object, data)
 
-#of those covariates, identify those that correlate with each exposure or outcome at each time point at >0.1 and thus could be potential confounders
-covariates_to_include <- identifyPotentialConfounds(object, time_pt_datasets)
+#of those covariates, variables at the exposure time point or prior that correlate with either the exposure at that time point or the outcome at the outcomem time point at at >0.1 and thus could be potential confounders
+covariates_to_include <- identifyPotentialConfounds(object)
 
 #create final dataset for imputations with only the necessary variables
 data_to_impute <- dataToImpute(object, covariates_to_include)
@@ -174,7 +174,7 @@ The parameter 'read_imps_from_file' will allow you to read imputed data in from 
 ```{r}
 
 #creates imputed datasets and saves them out
-imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="yes", 
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no", 
                              max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, 
                              sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 
@@ -211,7 +211,7 @@ This code takes a little while to run. The parameter, 'read_in_from_file', allow
 ```{r}
 
 #creates balancing weights or reads them in from local file
-weights_models <- createWeights(object, wide_long_datasets, forms, read_in_from_file="yes",
+weights_models <- createWeights(object, wide_long_datasets, forms, read_in_from_file="no",
                              ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, 
                              baseline.formula=NULL, diff.formula=NULL) #optional weights parameters (see CBPS documentation for more)
 
@@ -220,7 +220,7 @@ weights_models <- createWeights(object, wide_long_datasets, forms, read_in_from_
 
 ### 8. Assess balance and determine variables for which balance could not be achieved for use as covariates in final model
 This code evaluates which covariates are still correlated with exposures (i.e., for which balancing was not successful) above the designated threshold which the user specified in the msm object, after averaging across imputed datasets, and saves out a list of those covariates to include in your final model. 
-
+IS not sure how to suppress console output....
 ```{r}
 
 #assesses covariate balance and produces figures for user inspection

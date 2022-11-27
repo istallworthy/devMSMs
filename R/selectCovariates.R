@@ -35,15 +35,15 @@ identifyCovariates <- function(object, data){
 #' Identifies potential confounds from the covariates based on those that are correlated with either exposures or outcomes above 0.1
 #'
 #' @param object msm object that contains all relevant user inputs
-#' @param time_pt_datasets output from makeTimePtDatasets
 #' @return covariates_to_include
 #' @export
 #' @importFrom Hmisc rcorr
+#' @importFrom dplyr filter
 #' @importFrom stargazer stargazer
 #' @seealso [formatDataStruct()], [makeTimePtDatasets()]
 #' @examples identifyPotentialConfounds(home_dir, data, time_pt_datasets, time_pts, exclude_covariates=NULL)
 #'
-identifyPotentialConfounds <- function(object, time_pt_datasets){
+identifyPotentialConfounds <- function(object){
 
   ID=object$ID
   home_dir=object$home_dir
@@ -52,24 +52,47 @@ identifyPotentialConfounds <- function(object, time_pt_datasets){
   time_pts=object$time_pts
   exposure_time_pts=object$exposure_time_pts
   outcome_time_pt=object$outcome_time_pt
-  time_varying_covariates=object$time_varying_covariates
+  time_varying_covariates=object$time_varying_variables
   exclude_covariates=object$exclude_covariates
   balance_thresh=object$balance_thresh
+  mandatory_keep_covariates=object$mandatory_keep_covariates
 
-  #formatting any covariates to exclude
+
+
+  #formatting any covariates to EXCLUDE
   user_input_exclude_covariates=exclude_covariates
   exclude_covariates=NULL
   if (length(user_input_exclude_covariates)>0){
     for (c in 1:length(user_input_exclude_covariates)){
-      if (grepl("\\.",user_input_exclude_covariates[c])){ #period indicates user specified something time-varying
+      if (grepl("\\.",user_input_exclude_covariates[c])){ #period indicates user specified something time-varying at specific time point
         exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c]) #can just be added as is
       }else{
-        if (sum(grepl(user_input_exclude_covariates[c], time_varying_covariates))>0){ #if it is time-varying but no time specified
+        if (sum(grepl(user_input_exclude_covariates[c], time_varying_covariates))>0){ #if it is time-varying but no time specified, add times
 
           temp=apply(expand.grid(user_input_exclude_covariates[c], as.character(as.numeric(time_pts))), 1, paste0, sep="", collapse=".") #appends all time points
           exclude_covariates=c(exclude_covariates,temp)
         }else{ #otherwise it is time invariant
           exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c])
+        }
+      }
+    }
+  }
+
+
+  #formatting any covariates to INCLUDE
+  user_input_include_covariates=mandatory_keep_covariates
+  include_covariates=NULL
+  if (length(user_input_include_covariates)>0){
+    for (c in 1:length(user_input_include_covariates)){
+      if (grepl("\\.",user_input_include_covariates[c])){ #period indicates user specified something time-varying at specific time point
+        include_covariates=c(include_covariates, user_input_include_covariates[c]) #can just be added as is
+      }else{
+        if (sum(grepl(user_input_include_covariates[c], time_varying_covariates))>0){ #if it is time-varying but no time specified, add times
+
+          temp=apply(expand.grid(user_input_include_covariates[c], as.character(as.numeric(time_pts))), 1, paste0, sep="", collapse=".") #appends all time points
+          include_covariates=c(include_covariates,temp)
+        }else{ #otherwise it is time invariant
+          include_covariates=c(include_covariates, user_input_include_covariates[c])
         }
       }
     }
@@ -91,6 +114,15 @@ identifyPotentialConfounds <- function(object, time_pt_datasets){
 
   covariates_to_include=list()
 
+
+  #makes wide dataset
+  data_wide=suppressWarnings(stats::reshape(data=data,
+                                           idvar=ID,
+                                           v.names= time_varying_covariates, #list ALL time-varying covariates
+                                           timevar="WAVE",
+                                           times=c(time_pts),
+                                           direction="wide"))
+
   #cycles through outcomes
   for (z in seq(length(outcomes))){
     outcome=outcomes[z]
@@ -99,40 +131,83 @@ identifyPotentialConfounds <- function(object, time_pt_datasets){
     for (y in 1:length(exposures)){
       exposure=exposures[y]
 
+
       #Gathers all confounds relevant to an exposure at a given time point (note: lagged values of exposure are added later in the forms function)
 
       #gathers correlations with exposure at given exposure time point
       covariate_correlations={}
       for (x in 1:length(exposure_time_pts)){
+
+        temp_corr={}
+
+        #gathers correlations with exposure from variables at exposure time point or below
         time_pt=exposure_time_pts[x]
-        d=time_pt_datasets[[x]]
-        d=d[,3:ncol(d)]
+        data_long=data%>%dplyr::filter(WAVE<time_pt+1) #filters to current time point or prior
+        d=suppressWarnings(stats::reshape(data=data_long,
+                                          idvar=ID,
+                                          v.names= time_varying_covariates, #list ALL time-varying covariates
+                                          timevar="WAVE",
+                                          times=c(time_pts),
+                                          direction="wide"))
+        d=d[,2:ncol(d)]
         d=as.data.frame(lapply(d, as.numeric))
         c <- suppressWarnings(Hmisc::rcorr(as.matrix(d))) #makes corr table of all vars; cannot have dates or non-factored characters
         c=flattenCorrMatrix(c$r, c$P)
+        #denotes time varying variables
+        # c$row[c$row %in% time_varying_covariates]=paste0(c$row[c$row %in% time_varying_covariates], ".", time_pt)
+        # c$column[c$column %in% time_varying_covariates]=paste0(c$column[c$column %in% time_varying_covariates], ".", time_pt)
+        keep=c[c$row %in% include_covariates | c$column %in% include_covariates, ]
+        keep=keep[grepl(paste0(exposure, ".", time_pt),keep$row) | grepl(paste0(exposure, ".", time_pt),keep$column),]
+        keep$exp_time=time_pt
         filtered=c%>%
           filter(abs(c$cor)>balance_thresh) #accounts for d=0.2 see Stuart paper for rationale
         filtered$exp_time=time_pt
-        filtered=filtered[filtered$row %in% exposure | filtered$column %in% exposure,] #gets only those associated with exposure at given time pt
-        covariate_correlations=rbind(covariate_correlations, filtered)
+        filtered=filtered[filtered$row %in% paste0(exposure, ".", time_pt) | filtered$column %in% paste0(exposure, ".", time_pt),] #finds those that include exposure
+                          # | filtered$column %in% paste0(outcome, ".", outcome_time_pt) | filtered$row %in% paste0(outcome, ".", outcome_time_pt),] #gets only those associated with exposure at given time pt OR outcome at outcome time pt
+        filtered=filtered[!filtered$row %in% exclude_covariates[grepl(exposure, exclude_covariates)==F] & !filtered$column %in% exclude_covariates[grepl(exposure, exclude_covariates)==F],] #rejects those the user wants to exclude (as long as it's not the exposure itself)
+        temp_corr=rbind(temp_corr, filtered)
         filtered=NULL
         c=NULL
+        data_long=NULL
 
-        #gathers correlations with outcome at any outcome time point
-        o=data[data$WAVE %in% outcome_time_pt,]
-        o=o[,3:ncol(o)]
+        #makes sure keep_covars are included in table so that table contents match forms
+        if (sum(temp_corr$row %in% include_covariates | temp_corr$row %in% include_covariates)< nrow(keep)){
+          temp_corr=rbind(temp_corr, keep)
+        }
+
+        #gathers correlations between variables at time pt or prior with outcome at outcome time point
+        data_long=data%>%dplyr::filter(WAVE<time_pt+1 |WAVE==outcome_time_pt) #filters to current time point or prior
+        o=suppressWarnings(stats::reshape(data=data_long,
+                                         idvar=ID,
+                                         v.names= time_varying_covariates, #list ALL time-varying covariates
+                                         timevar="WAVE",
+                                         times=c(time_pts),
+                                         direction="wide"))
+        o=o[,2:ncol(o)]
         o=as.data.frame(lapply(o, as.numeric))
         o <- suppressWarnings(Hmisc::rcorr(as.matrix(o))) #makes corr table of all vars; cannot have dates or non-factored characters
         o=flattenCorrMatrix(o$r, o$P)
         filtered=o%>%
           filter(abs(o$cor)>balance_thresh) #accounts for d=0.2 see Stuart paper for rationale
         filtered$exp_time=time_pt
-        filtered=filtered[filtered$row %in% outcome | filtered$column %in% outcome,] #gets only those associated with exposure at given time pt
-        filtered=filtered[!filtered$row %in% exclude_covariates | !filtered$column %in% exclude_covariates,] #rejects those the user wants to exclude
-        covariate_correlations=rbind(covariate_correlations, filtered)
+        filtered=filtered[filtered$row %in% paste0(outcome, ".", outcome_time_pt) | filtered$column %in% paste0(outcome, ".", outcome_time_pt),] #gets only those associated with exposure at given time pt
+        filtered=filtered[as.numeric(sapply(strsplit(filtered$row, "\\."), "[", 2))<time_pt+1 | as.numeric(sapply(strsplit(filtered$column, "\\."), "[", 2))<time_pt+1,] #making sure it includes a variable from exposure time pt or prior
+        filtered=filtered[!filtered$row %in% exclude_covariates[grepl(exposure, exclude_covariates)==F] & !filtered$column %in% exclude_covariates[grepl(exposure, exclude_covariates)==F],] #rejects those the user wants to exclude
+        temp_corr=rbind(temp_corr, filtered)
         filtered=NULL
         c=NULL
+        data_long=NULL
+
+
+
+        temp_corr=temp_corr[order(temp_corr$row, temp_corr$column),] #orders by covariate
+
+        covariate_correlations=rbind(covariate_correlations, temp_corr)
+
+
       }
+
+
 
       #save out correlations
       stargazer::stargazer(covariate_correlations,type="html", digits=2, column.labels = colnames(covariate_correlations),summary=FALSE, rownames = FALSE, header=FALSE,
@@ -147,6 +222,7 @@ identifyPotentialConfounds <- function(object, time_pt_datasets){
     }
   }
 
+  cat("\n")
   cat(paste0("A total of ", as.character(length(unique(unlist(lapply(covariates_to_include, function(x) c(x$row, x$column)))))), " potential confounds will be considered for balancing."),"\n")
 
   return(covariates_to_include)
@@ -162,6 +238,7 @@ identifyPotentialConfounds <- function(object, time_pt_datasets){
 #' @param covariates_to_include output from identifyPotentialConfounds
 #' @importFrom Hmisc rcorr
 #' @importFrom knitr kable
+#' @importFrom dplyr filter
 #' @return data_to_impute
 #' @export
 #' @seealso [formatDataStruct()], [identifyPotenialConfounds()]
@@ -176,7 +253,7 @@ dataToImpute <-function(object, covariates_to_include){
   time_pts=object$time_pts
   exclude_covariates=object$exclude_covariates
   mandatory_keep_covariates=object$mandatory_keep_covariates
-  time_varying_covariates=object$time_varying_covariates
+  time_varying_covariates=object$time_varying_variables
 
   flattenCorrMatrix <- function(cormat, pmat) {
     ut <- upper.tri(cormat)
@@ -233,9 +310,9 @@ dataToImpute <-function(object, covariates_to_include){
   covariates_to_include=unique(unlist(lapply(covariates_to_include, function(x) c(x$row, x$column))))
   covariates_to_include=covariates_to_include[order(covariates_to_include)]
 
-  variables_to_include=unique(c(ID, "WAVE", exposures, outcomes, covariates_to_include, mandatory_keep_covariates))
+  variables_to_include=unique(c(ID, "WAVE", exposures, outcomes, covariates_to_include, mandatory_keep_covariates, time_varying_covariates))
   data2=as.data.frame(data[names(data)[names(data) %in% variables_to_include] ])
-  data2=data2[,!colnames(data2) %in% c(exclude_covariates)]
+  # data2=data2[,!colnames(data2) %in% c(exclude_covariates)]
 
   data_to_impute=data2
 
@@ -246,7 +323,7 @@ dataToImpute <-function(object, covariates_to_include){
 
   hi_corr_covars=flattenCorrMatrix(hi_corr_covars$r, hi_corr_covars$P)
   View_hi_corr_covars=hi_corr_covars%>%
-    filter(abs(hi_corr_covars$cor)>0.6)
+    dplyr::filter(abs(hi_corr_covars$cor)>0.6)
 
   cat("USER ALERT: To simplify the balancing models, consider removing any highly correlated, redundant covariates by listing them in the 'exclude_covariates' field in the msm object and re-running:")
   print(knitr::kable(View_hi_corr_covars))

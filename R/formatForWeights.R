@@ -28,17 +28,6 @@ formatForWeights <- function(object, data, imputed_datasets){
 
   options(readr.num_columns = 0)
 
-  #   #if the user has not just imputed datasets (and imputations are instead saved locally from a prior run), read in imputed data
-  # if (just_imputed=="no"){
-  #   imputed_datasets=list()
-  #   for (x in 1:m){
-  #     file_name=(paste("imp", x, '.csv', sep=""))
-  #     name=paste("imp", x, sep="")
-  #     imp=suppressWarnings(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""))))
-  #     imputed_datasets[[paste0("imp", x)]]<-imp
-  #   }
-  # }
-
   #makes hybrid "wide/long" dataset for each impute dataset: all time-varying covariates listed as long and wide
 
   #Cyles through imputed datasets and puts them in hybrid wide/long dataset
@@ -62,7 +51,12 @@ formatForWeights <- function(object, data, imputed_datasets){
                      timevar="WAVE",
                      times=c(time_pts),
                      direction="wide"))%>%
-      dplyr::select(dput(as.character(time_varying_wide)))
+                    dplyr::select(dput(as.character(time_varying_wide)))
+
+      # dplyr::select(cat(paste0("c(", unlist(paste0('"',time_varying_wide, '"', collapse=", ")), ")"))))
+
+
+
 
     imp_wide=imp_wide[,!colnames(imp_wide) %in% time_var_exclude]
 
@@ -83,7 +77,8 @@ formatForWeights <- function(object, data, imputed_datasets){
 
   }
 
-  cat("USER ALERT: Inspect the list of time-varying covariates above and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running","\n")
+  cat("\n")
+  cat("USER ALERT: Inspect the list of time-varying covariates following the ID variable and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running","\n")
 
 
   #create dataset for future modeling

@@ -49,6 +49,7 @@ formatDataStruct <-function(object) {
   if(dir.exists(paste0(home_dir, "balance/post-balance correlation plots/"))==F){dir.create(paste0(home_dir, "balance/post-balance correlation plots/"))}
   if(dir.exists(paste0(home_dir, "balance/post-balance correlation values/"))==F){dir.create(paste0(home_dir, "balance/post-balance correlation values/"))}
   if(dir.exists(paste0(home_dir, "balance/unbalanced covariates/"))==F){dir.create(paste0(home_dir, "balance/unbalanced covariates/"))}
+  if(dir.exists(paste0(home_dir, "balance/unbalanced covariates/"))==F){dir.create(paste0(home_dir, "balance/unbalanced covariates/"))}
 
   if(dir.exists(paste0(home_dir, "balance/potential confounds/"))==F){dir.create(paste0(home_dir, "balance/potential confounds"))}
 
@@ -75,31 +76,4 @@ formatDataStruct <-function(object) {
 }
 
 
-#' Makes timepoint datasets
-#'
-#' Creates datasets unique to each time point for future use and returns a list of time point datasets
-#'
-#' @param data output from formatDataStruct
-#' @param object msm object that contains all relevant user inputs
-#' @export
-#' @importFrom dplyr filter
-#' @importFrom dplyr %>%
-#' @seealso [fomatDataStruct()]
-#' @examples makeTimePtDatasets(object, data)
-makeTimePtDatasets <-function(object, data){
 
-  ID=object$ID
-  time_pts=object$time_pts
-
-  #creating dataset for each time point and store in a list
-  data_list={}
-  time_pt_datasets=list()
-  for (t in 1:length(time_pts)){
-    time_pt_datasets[[paste0("Data_", time_pts[t])]] <-data %>%
-      dplyr::filter(WAVE==time_pts[t])
-    data_list=c(data_list, paste0("Data_", time_pts[t]))
-  }
-
-  return(time_pt_datasets)
-
-}
