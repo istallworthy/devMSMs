@@ -22,6 +22,7 @@ assessBalance <- function (object, weights_models){
   outcomes=object$outcomes
   exposure_time_pts=object$exposure_time_pts
   balance_thresh=object$balance_thresh
+  factor_covariates=object$factor_covariates
 
   #assessing balance and determining unbalanced covariates (i.e., those still correlated above 0.12)
   unbalanced_variables=list()
@@ -110,7 +111,9 @@ assessBalance <- function (object, weights_models){
 
 
       covariates_for_model=unique(c(as.character(unlist(significant_corrs_remaining[,1]))))
-      sapply(covariates_for_model, function(x) grepl(x, factor_covariates))
+      #renaming any factors (CBPS added a '1') to original names
+      covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))]=
+        substring(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))], 1, nchar(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))])-1)
       covariates_for_model=covariates_for_model[!grepl(exposures[x], covariates_for_model)] #removing exposure (as this will be modeled explicitly)
       covariates_for_model=covariates_for_model[! covariates_for_model %in% exposures[x]]
       covariates_for_model=paste0(covariates_for_model, sep="", collapse=" + ")

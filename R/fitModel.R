@@ -69,6 +69,8 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
 
     #cycles through each outcome
     models=list()
+    cat("USER ALERT: please inspect the following series of models for each exposure-outcome pair:", "\n")
+    cat("\n")
 
     for (y in 1:length(outcomes)){
       outcome=outcomes[y]
@@ -85,7 +87,7 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
 
       #adding in covariates that did not fully balance when creating the weights
       covariate_list= unbalanced_covariates_for_models[[paste0(exposure, "-", outcome)]]
-      grepl(factor_covariates, paste0(unlist(strsplit(noquote(covariate_list), "\\+")))
+      # grepl(paste(factor_covariates, collapse="|"), paste0(unlist(strsplit(noquote(covariate_list), "\\+"))))
 
       if (covariate_list[1]==""){
         cat(paste0("There are no unbalanced covariates to include in the model of effects of ", exposure, " on ", outcome),"\n")
@@ -135,7 +137,7 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
       #testing for interactions
       # f3=paste(paste0(outcome, "_", outcome_time_pts), "~", paste0(exp_epochs, sep="", collapse=" + "), "+", sig_covars, "+", interactions)
       m3=svyglm(noquote(f3), design=s)
-      summary(m3)
+      print(summary(m3))
       models[["m3"]]<-m3
 
 
@@ -160,6 +162,8 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
       print(summary(m4))
       models[["m4"]]<-m4
 
+      cat("\n")
+      cat("\n")
 
       all_models[[paste0(exposure, "-", outcome)]]<-models
 
@@ -173,6 +177,8 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
     }
 
   }
+
+  cat("\n")
 
   saveRDS(all_models, file = paste(paste0(home_dir, "msms/all_exposure-outcome_models.rds", sep="")))
   cat("All models have been saved as a .rds object in the 'msms' folder","\n")

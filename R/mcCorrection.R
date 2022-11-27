@@ -46,7 +46,7 @@ mcCorrection <- function(object, history_comparisons){
        histories[[as.symbol(exposure_epochs$epochs[e])]] <-sapply(strsplit(sapply(strsplit(comparisons$contrast, "vs."), "[", 2), "-"), "[", e)
        histories[[as.symbol(exposure_epochs$epochs[e])]]=gsub(" ", "", histories[[as.symbol(exposure_epochs$epochs[e])]])
    }
-   histories$`Comparison to Reference After MC Correction`=comparisons$p_vals_corr
+   histories$`p-value of Comparison to Reference After MC Correction`=comparisons$p_vals_corr
    histories=rbind(ref, histories)
    exposure_history=data.frame(`Exposure History`=LETTERS[seq(from=1, to=nrow(comparisons)+1)])
    exposure_dose=data.frame(`Exposure Dose`= rowSums(histories[1:nrow(exposure_epochs)]=="h"))
