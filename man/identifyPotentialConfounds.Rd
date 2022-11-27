@@ -4,12 +4,10 @@
 \alias{identifyPotentialConfounds}
 \title{Identify potential confounds}
 \usage{
-identifyPotentialConfounds(object, time_pt_datasets)
+identifyPotentialConfounds(object)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
-
-\item{time_pt_datasets}{output from makeTimePtDatasets}
 }
 \value{
 covariates_to_include
