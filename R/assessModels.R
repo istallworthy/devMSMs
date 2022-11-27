@@ -14,6 +14,8 @@ assessModel <-function(object, all_models){
   home_dir=object$home_dir
 
   best_models=list()
+  cat("USER ALERT: please inspect the following best-fitting models for each exposure-outcome pair:", "\n")
+  cat("\n")
 
   for (x in 1:length(all_models)){
 

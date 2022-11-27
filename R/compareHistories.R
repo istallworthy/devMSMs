@@ -63,6 +63,8 @@ compareHistories <-function(object, best_models){
   #final list of all betas and parameters for all comparisons
   parameter_beta_info=list()
 
+  cat("USER ALERT: please inspect the following exposure history (uncorrected) comparisons for each exposure-outcome pair:", "\n")
+  cat("\n")
 
 
   #cycles through outcomes
