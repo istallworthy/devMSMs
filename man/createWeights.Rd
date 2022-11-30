@@ -11,9 +11,9 @@ createWeights(
   read_in_from_file = "no",
   ATT = 0,
   iterations = 1000,
-  standardize = FALSE,
+  standardize = TRUE,
   method = "exact",
-  twostep = TRUE,
+  twostep = FALSE,
   sample.weights = NULL,
   baseline.formula = NULL,
   diff.formula = NULL

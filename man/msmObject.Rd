@@ -19,7 +19,7 @@ msmObject(
   exposures,
   exposure_time_pts,
   balance_thresh = 0.12,
-  weights_percentile_cutoff = 0.9,
+  weights_percentile_cutoff = 0.95,
   exposure_epochs,
   reference = "",
   comparisons = "",

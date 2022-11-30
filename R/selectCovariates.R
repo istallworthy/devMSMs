@@ -20,7 +20,7 @@ identifyCovariates <- function(object, data){
   #identifying potential covariates (time-varying and time invariant)
   potential_covariates=colnames(data)[colnames(data) %in% (c(ID, "WAVE", exposures, outcomes, exclude_covariates))==FALSE]
 
-  cat(paste0("Below are the ", as.character(length(potential_covariates)), " covariates that will be considered as potential confounding variables. If you would like to exclude any variables, please add them to 'exclude_covariates' when creating the msms object and re-run. "))
+  cat(paste0("Below are the ", as.character(length(potential_covariates)), " covariates that will be considered as potential confounding variables. If you would like to exclude any variables, please add them to 'exclude_covariates' when creating the msms object and re-run."),"\n")
   print(potential_covariates)
 
   return(potential_covariates)
@@ -190,7 +190,7 @@ identifyPotentialConfounds <- function(object){
         filtered=o%>%
           filter(abs(o$cor)>balance_thresh) #accounts for d=0.2 see Stuart paper for rationale
         filtered$exp_time=time_pt
-        filtered=filtered[filtered$row %in% paste0(outcome, ".", outcome_time_pt) | filtered$column %in% paste0(outcome, ".", outcome_time_pt),] #gets only those associated with exposure at given time pt
+        filtered=filtered[filtered$row %in% paste0(outcome, ".", outcome_time_pt) | filtered$column %in% paste0(outcome, ".", outcome_time_pt),] #gets only those associated with outcome at outcome time point
         filtered=filtered[as.numeric(sapply(strsplit(filtered$row, "\\."), "[", 2))<time_pt+1 | as.numeric(sapply(strsplit(filtered$column, "\\."), "[", 2))<time_pt+1,] #making sure it includes a variable from exposure time pt or prior
         filtered=filtered[!filtered$row %in% exclude_covariates[grepl(exposure, exclude_covariates)==F] & !filtered$column %in% exclude_covariates[grepl(exposure, exclude_covariates)==F],] #rejects those the user wants to exclude
         temp_corr=rbind(temp_corr, filtered)
@@ -214,6 +214,7 @@ identifyPotentialConfounds <- function(object){
                            out=paste0(home_dir, "balance/potential confounds/", exposure, "-", outcome, "_potential_counfound_correlations.html"))
 
 
+      cat("\n")
       # write.csv(covariate_correlations, paste0(home_dir, "balance/covariate_correlations.csv"))
       cat(paste0("Check the 'balance/potential confounds/' folder to view an html file of a table of the correlations for the potential confounds for ", exposure, "-", outcome),"\n")
 

@@ -81,12 +81,12 @@ condenseWeights <-function(object, weights_models){
 
     for (y in 1:length(exposures)){
       exposure=exposures[y]
-      temp=(rep(1, nrow(data_for_model)))
+      temp=(rep(NA, nrow(data_for_model)))
 
       for (k in 1:m){
         temp=cbind(temp, weights_exposure_k[[paste(exposure, "-", outcome, "_", k, "_mean_weight", sep="")]]) #col binds all imputed datasets
       }
-      treat_mean=rowMeans(temp) #finds mean across rows
+      treat_mean=rowMeans(temp[,2:ncol(temp)]) #finds mean across rows
 
       weights_exposure[[paste(exposure,  "-", outcome,"_", "mean_weight_all_imp", sep="")]] <- treat_mean
       mean_weight=as.data.frame(cbind(data_for_model[,colnames(data_for_model)==ID], treat_mean)) #adds IDs to mean weights

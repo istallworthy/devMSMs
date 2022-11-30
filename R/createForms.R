@@ -51,6 +51,7 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
     for (y in 1:length(exposures)){
       exposure=exposures[y]
 
+      #gathers all confounders for exposure-outcome pair at all time points
       exposure_covariates=covariates_to_include[[paste0(exposure, "-", outcome, sep="")]]
 
       # browser()
@@ -74,20 +75,27 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
       }
 
 
+      # browser()
       #gathers potential colliders
+      #checking to see if there are colliders listed for exposure-outcome pair
       if (nrow(potential_colliders)>0 && sum(potential_colliders$exp_out_pair== paste0(exposure, "-", outcome))>0){
+        #gathers all colliders
       colliders=c(as.character(unlist(potential_colliders$colliders[potential_colliders$exp_out_pair== paste0(exposure, "-", outcome)])))
+      #finds if user wants to included lags of colliders
       colliders_lagged=potential_colliders$exclude_lags[potential_colliders$exp_out_pair== paste0(exposure, "-", outcome)]
-
-      # if (sum(grepl("\\.", colliders))>0){
-      time_spec=colliders[grepl("\\.", colliders)]
+      #finds out if user specified time pts for any colliders
+      time_spec_colliders=colliders[grepl("\\.", colliders)]
+      #finds any time-varying colliders with not time point specified
       all_time_colliders=colliders[colliders %in% time_varying_covariates]
-      time_invariant_colliders=colliders[!colliders %in% all_time_colliders & !colliders %in% time_spec]
+      #finds any time invariant colliders
+      time_invariant_colliders=colliders[!colliders %in% all_time_colliders & !colliders %in% time_spec_colliders]
 
       }else{
         colliders=NULL
+        all_time_colliders=NULL
         colliders_lagged=F
         time_varying_colliders=NULL
+        time_spec_colliders=NULL
       }
 
 
@@ -96,25 +104,21 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
       for (x in 1:length(exposure_time_pts)){
         time=exposure_time_pts[x]
 
+        # browser()
+
         #finds concurrent time-varying and time-invariant potential confounds
         concurrent_covariates=na.omit(exposure_covariates[exposure_covariates$exp_time==time,])
         concurrent_covariates=c(concurrent_covariates$row, concurrent_covariates$column)
         concurrent_covariates=unique(concurrent_covariates)
 
-        #splits covariates by time
-        # time_varying_concurrent_covariates=paste0(concurrent_covariates[grepl(time_varying_covariates,concurrent_covariates)], paste0(".", time))
-        time_varying_concurrent_covariates=concurrent_covariates[grepl(paste0(".",time), concurrent_covariates)]
-        time_invariant_concurrent_covariates=concurrent_covariates[!concurrent_covariates %in% time_varying_concurrent_covariates]
-
-        # #any mandatory covariates that are time-invariant
-        # keep_time_invar_covars=mandatory_keep_covariates[!mandatory_keep_covariates %in% time_varying_covariates]
 
 
         #Finds relevant lagged time points
         lags=c(exposure_time_pts[exposure_time_pts<time])
         lagged_vars={} #variable for lagged variables
         if (length(lags)==0){ #no lags
-          vars_to_include=c(time_varying_concurrent_covariates, time_invariant_concurrent_covariates) #retains only concurrent variables
+          # vars_to_include=c(time_varying_concurrent_covariates, time_invariant_concurrent_covariates) #retains only concurrent variables
+          vars_to_include=c(concurrent_covariates) #retains only concurrent variables
 
         }else{ #lags present
           past_exposures=apply(expand.grid(exposure, as.character(lags)), 1, paste, sep="", collapse=".") #finds past exposure variables
@@ -123,27 +127,50 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
 
           #populates data frames
           lagged_covariates=past_exposures
-          vars_to_include=c(time_varying_concurrent_covariates, time_invariant_concurrent_covariates, lagged_covariates)
+          # vars_to_include=c(time_varying_concurrent_covariates, time_invariant_concurrent_covariates, lagged_covariates)
+          vars_to_include=c(concurrent_covariates, lagged_covariates)
+
         }
 
 
-        #EXCLUSION STAGE
+
+        # #EXCLUSION STAGE
 
 
-        #gathering lagged colliders for exclusion if applicable
-        if (colliders_lagged=="T" & length(all_time_colliders)>0){
-          lagged_colliders=apply(expand.grid(all_time_colliders, as.character(lags)), 1, paste, sep="", collapse=".")
-        }else{
-          lagged_colliders=NULL
+        #gathering all concurrent colliders
+        concurrent_colliders={}
+        lagged_colliders={}
+        #finding all concurrent and lagged time-specified colliders
+        if (length(time_spec_colliders>0)){
+          if (sum(as.numeric(sapply(strsplit(time_spec_colliders, "\\."), "[", 2))==time)>0){ #add any time-speciic colliders to concurrent if time matches
+            concurrent_colliders=c(concurrent_colliders, time_spec_colliders[as.numeric(sapply(strsplit(time_spec_colliders, "\\."), "[", 2))==time])
+          }
+          if(sum(sapply(strsplit(time_spec_colliders, "\\."), "[", 2) %in% lags)>0){ #add time-specific colliders to lagged list if time is lagged
+              lagged_colliders=c(lagged_colliders, time_spec[sapply(strsplit(time_spec_colliders, "\\."), "[", 2) %in% lags])
+            }
         }
 
-        concurrent_colliders=c(time_spec[as.numeric(sapply(strsplit(time_spec, "\\."), "[", 2))==time], time_invariant_colliders)
+        if (length(time_invariant_colliders)>0){ #adds any time invariant colliders to concurrent colliders
+          concurrent_colliders=c(concurrent_colliders, time_invariant_colliders)
+        }
+
+        if (length(all_time_colliders)>0){ #adds all_time colliders to concurrent colldiers
+          concurrent_colliders=c(concurrent_colliders, paste(all_time_colliders, time, sep="."))
+          lagged_colliders=c(lagged_colliders)
+          if (colliders_lagged=="T"){ #applies lags to all_time_colliders if indicated by user
+            lagged_colliders=c(lagged_colliders, apply(expand.grid(all_time_colliders, as.character(lags)), 1, paste, sep="", collapse="."))
+          }
+        }
+
+
 
         #USER: Place where you can manually delete variables that should not be included in forms such as index variables and possible colliders (e.g., outcomes that could also cause a given tx )
         vars_to_include=vars_to_include[!vars_to_include %in% c(ID, "WAVE",
                                                                 time_varying_covariates, #exclude time-varying covariates in long form (already in wide form)
                                                                 paste(exposure, time, sep="."), #exclude exposure at current time point
-                                                                apply(expand.grid(outcome, as.character(time_pts)), 1, paste, sep="", collapse="."), #exclude outcome at any time point
+                                                                # apply(expand.grid(outcome, as.character(time_pts)), 1, paste, sep="", collapse="."), #exclude outcome at current time point
+                                                                paste(outcome, time, sep="."), #exclude outcome at current time point
+                                                                apply(expand.grid(outcome, as.character(time_pts[time_pts>time])), 1, paste, sep="", collapse="."),#excludes future outcomes
                                                                 exclude_covariates[grepl(exposure, exclude_covariates)==F], #exclude any covariates specified by the user
                                                                 time_var_exclude, #exclude any time points that should not be there bc of planned missingness
                                                                 concurrent_colliders, #exclude colliders specified at exposure time pt
@@ -151,11 +178,13 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
                                                                 lagged_colliders #any lagged colliders as indicated
                                                                 )]
 
+        vars_to_include=vars_to_include[!duplicated(vars_to_include)]
+
         #Creates form for the given exposure time point
         f=paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep="", collapse=" + "))
 
         #prints form for user inspection
-        cat(paste0("Formula for exposure ", exposure, "-", outcome, " at time point ", as.character(time),
+        cat(paste0("Formula for exposure ", exposure, "-", outcome, " at exposure time point ", as.character(time),
                      ":"), "\n")
         print(f)
         cat("\n")

@@ -13,6 +13,8 @@ mcCorrection <- function(object, history_comparisons){
   home_dir=object$home_dir
   method=object$mc_method
   exposure_epochs=object$exposure_epochs
+  weights_percentile_cutoff=object$weights_percentile_cutoff
+
 
   significant_comparisons=list()
 
@@ -32,9 +34,17 @@ mcCorrection <- function(object, history_comparisons){
 
     significant_comparisons[[exp_out]] <- sig_comparisons
 
+
+    folder_label=ifelse(as.numeric(sapply(strsplit(exp_out, "_"), "[", 3))==weights_percentile_cutoff, "original/", "sensitivity checks/")
+
+
     #save out table for all contrasts with old and corrected p-values
     stargazer::stargazer(comparisons, type="html", digits=2, column.labels = colnames(comparisons),summary=FALSE, rownames = FALSE, header=FALSE,
-                         out=paste0(home_dir, "msms/linear hypothesis testing/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
+                         out=paste0(home_dir, "msms/linear hypothesis testing/", folder_label, sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
+
+    # print(stargazer::stargazer(comparisons, type="html", digits=2, column.labels = colnames(comparisons),summary=FALSE, rownames = FALSE, header=FALSE,
+    #                            out=paste0(home_dir, "msms/linear hypothesis testing/", folder_label, sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
+    # )
 
     #make fancy table
    histories={}
@@ -53,11 +63,13 @@ mcCorrection <- function(object, history_comparisons){
    tab=cbind(exposure_history, exposure_dose, histories)
 
    stargazer::stargazer(tab, type="html", digits=2, column.labels = colnames(tab),summary=FALSE, rownames = FALSE, header=FALSE,
-                        out=paste0(home_dir, "msms/linear hypothesis testing/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_presentation_table.doc", sep=""))
+                        out=paste0(home_dir, "msms/linear hypothesis testing/", folder_label, sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_presentation_table.doc", sep=""))
 
   }
 
 
-  cat("See 'msms/linear hypothesis testing/' folder for tables of likelihood ratio tests","\n")
+  cat("See 'msms/linear hypothesis testing/original/' folder for tables of likelihood ratio tests","\n")
+  cat("See 'msms/linear hypothesis testing/sensitivity checks/' folder for sensitivity checks","\n")
+
   return(significant_comparisons)
 }

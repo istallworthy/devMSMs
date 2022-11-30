@@ -14,6 +14,8 @@ plotResults <- function(object, best_models){
   exposure_labels=object$exposure_labels
   outcome_labels=object$outcome_labels
   colors=object$colors
+  weights_percentile_cutoff=object$weights_percentile_cutoff
+
 
   #error checking
   if (length(exposure_labels)==0){
@@ -39,13 +41,16 @@ plotResults <- function(object, best_models){
   for (x in 1:length(best_models)){
     exp_out=names(best_models)[x]
     exposure=sapply(strsplit(exp_out, "-"), "[",1)
-    outcome=sapply(strsplit(exp_out, "-"), "[",2)
+    outcome=sapply(strsplit(sapply(strsplit(exp_out, "-"), "[",2), "_"), "[", 1)
+    cutoff=sapply(strsplit(exp_out, "_"), "[",3)
 
     final_model=best_models[[exp_out]]
 
     # browser()
 
-    parameter_beta_info=readRDS(paste0(home_dir, "msms/linear hypothesis testing/all_linear_hypothesis_betas_parameters.rds"))
+    folder_label=ifelse(as.numeric(cutoff)==weights_percentile_cutoff, "original", "sensitivity checks")
+
+    parameter_beta_info=readRDS(paste0(home_dir, "msms/linear hypothesis testing/",  folder_label, "/all_linear_hypothesis_betas_parameters_cutoff_", cutoff,".rds"))
 
     parameters=parameter_beta_info[[exp_out]][[1]]$ref$parameter
 
@@ -99,13 +104,12 @@ plotResults <- function(object, best_models){
         ggplot2::theme(text = ggplot2::element_text(size=18))+
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
                        panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
-      ggplot2::ggsave(paste0(home_dir, "results figures/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
+      ggplot2::ggsave(paste0(home_dir, "results figures/", folder_label, "/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
 
     }else{ #user lists a palette
 
       ggplot2::ggplot(aes(x=fit, y=seq, color=dose), data=plot_data)+
         ggplot2::geom_point(size=5)+
-        # ggplot2::scale_color_manual(values=colors)+
         ggplot2::scale_color_brewer(palette=colors)+
         ggplot2::scale_y_discrete(limits=c(as.character(plot_data$seq)), expand=c(0, 0.2))+
         ggplot2::geom_errorbarh(xmin = plot_data$fit-plot_data$se, xmax = plot_data$fit+plot_data$se, height=0.6)+
@@ -115,9 +119,11 @@ plotResults <- function(object, best_models){
         ggplot2::theme(text = ggplot2::element_text(size=18))+
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
                        panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
-      ggplot2::ggsave(paste0(home_dir, "results figures/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
+      ggplot2::ggsave(paste0(home_dir, "results figures/", folder_label, "/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
 
     }
   }
-  cat("See the 'results figures' folder for graphical representations of results","\n")
+  cat("See the 'results figures/original' folder for graphical representations of results","\n")
+  cat("See the 'results figures/sensitivity checks' folder for sensitivity checks","\n")
+
 }

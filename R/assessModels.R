@@ -12,9 +12,10 @@
 assessModel <-function(object, all_models){
 
   home_dir=object$home_dir
+  weights_percentile_cutoff=object$weights_percentile_cutoff
 
   best_models=list()
-  cat("USER ALERT: please inspect the following best-fitting models for each exposure-outcome pair:", "\n")
+  cat("USER ALERT: please inspect the following best-fitting models for each exposure-outcome pair for original and sensitivity check weight cutoff values:", "\n")
   cat("\n")
 
   for (x in 1:length(all_models)){
@@ -39,19 +40,17 @@ assessModel <-function(object, all_models){
     print(summary(best_fit_model[[1]]))
 
     # browser()
+    folder_label=ifelse(as.numeric(sapply(strsplit(exp_out, "_"), "[", 3))==weights_percentile_cutoff, "original/", "sensitivity checks/")
 
     suppressWarnings(jtools::export_summs(all_models[[exp_out]], to.file="docx", statistics= c(N="nobs", AIC="AIC", R2="r.squared"),
-                                          file.name =paste0(home_dir, "msms/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_table_mod_ev.docx", sep="")))
+                                          file.name =paste0(home_dir, "msms/",folder_label, sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_table_mod_ev.docx", sep="")))
 
-    #saves out table of model evidence
-    # # library(sjPlot)
-    # suppressWarnings(sjPlot::tab_model(all_models[[exp_out]], show.p=T, show.aicc=T, show.loglik=T,
-    #                   dv.labels = model_list,
-    #                   p.style = "numeric_stars",
-    #                   file=paste0(home_dir, "msms/", sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_table_mod_ev.html", sep="")
-    # ))
-    cat(paste0("See the 'msms' folder for tables of model evidence for ", exp_out), "\n")
+
+    cat(paste0("See the 'msms/original/' folder for tables of model evidence for ", exp_out, " with original weight cutoffs"), "\n")
     cat("\n")
+    cat(paste0("See the 'msms/sensitivity checks/' folder for tables of model evidence for ", exp_out, " with sensitivity check weight cutoffs"), "\n")
+    cat("\n")
+
     cat("\n")
 
 
