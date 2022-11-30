@@ -25,6 +25,14 @@
 
 msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time_varying_variables=NULL, continuous_variables=NULL, factor_covariates=NULL, m=5, exposures, exposure_time_pts,  balance_thresh=0.12, weights_percentile_cutoff=0.95, exposure_epochs, reference="", comparisons="", hi_cutoff=.75,lo_cutoff=.25, mc_method="BH", outcomes, outcome_time_pt, mandatory_keep_covariates=NULL, exclude_covariates=NULL, time_var_exclude=NULL, potential_colliders=NULL, exposure_labels=NULL, outcome_labels=NULL, colors="Dark2"){
 
+
+  if (!file.exists(home_dir)){
+    stop('Please enter a valid home directory')}
+
+  if (!file.exists(data_path)){
+    stop('Please enter a valid data path')}
+
+
   charOrNull <- function(x) {
     is.character(x) || is.null(x)
   }
