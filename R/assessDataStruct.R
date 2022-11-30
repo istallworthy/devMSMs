@@ -54,9 +54,15 @@ formatDataStruct <-function(object) {
   if(dir.exists(paste0(home_dir, "balance/potential confounds/"))==F){dir.create(paste0(home_dir, "balance/potential confounds"))}
 
   if(dir.exists(paste0(home_dir, "msms/"))==F){dir.create(paste0(home_dir, "msms/"))}
+  if(dir.exists(paste0(home_dir, "msms/original/"))==F){dir.create(paste0(home_dir, "msms/original/"))}
+  if(dir.exists(paste0(home_dir, "msms/sensitivity checks/"))==F){dir.create(paste0(home_dir, "msms/sensitivity checks/"))}
   if(dir.exists(paste0(home_dir, "msms/linear hypothesis testing/"))==F){dir.create(paste0(home_dir, "msms/linear hypothesis testing/"))}
+  if(dir.exists(paste0(home_dir, "msms/linear hypothesis testing/original/"))==F){dir.create(paste0(home_dir, "msms/linear hypothesis testing/original/"))}
+  if(dir.exists(paste0(home_dir, "msms/linear hypothesis testing/sensitivity checks/"))==F){dir.create(paste0(home_dir, "msms/linear hypothesis testing/sensitivity checks/"))}
 
   if(dir.exists(paste0(home_dir, "results figures/"))==F){dir.create(paste0(home_dir, "results figures/"))}
+  if(dir.exists(paste0(home_dir, "results figures/original/"))==F){dir.create(paste0(home_dir, "results figures/original/"))}
+  if(dir.exists(paste0(home_dir, "results figures/sensitivity checks/"))==F){dir.create(paste0(home_dir, "results figures/sensitivity checks/"))}
 
   if(dir.exists(paste0(home_dir, "for Mplus/"))==F){dir.create(paste0(home_dir, "for Mplus/"))}
 

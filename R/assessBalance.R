@@ -16,6 +16,8 @@
 #' @examples assessBalance(object, weights_models=list(), just_made_weights="no")
 assessBalance <- function (object, weights_models){
 
+  # browser()
+
   home_dir=object$home_dir
   m=object$m
   exposures=object$exposures
@@ -93,7 +95,7 @@ assessBalance <- function (object, weights_models){
       # browser()
       if (nrow(significant_corrs_remaining)>0){
       cat(paste0("USER ALERT: Inspect the following list of unbalanced covariates for exposure ", exposures[x], "-", outcomes[z], " :"),"\n")
-        # browser()
+      cat("\n")
       cat(knitr::kable(significant_corrs_remaining), sep="\n")
       cat("\n")
 
@@ -112,8 +114,8 @@ assessBalance <- function (object, weights_models){
 
       covariates_for_model=unique(c(as.character(unlist(significant_corrs_remaining[,1]))))
       #renaming any factors (CBPS added a '1') to original names
-      covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))]=
-        substring(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))], 1, nchar(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))])-1)
+      # covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))]=
+      #   substring(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))], 1, nchar(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))])-1)
       covariates_for_model=covariates_for_model[!grepl(exposures[x], covariates_for_model)] #removing exposure (as this will be modeled explicitly)
       covariates_for_model=covariates_for_model[! covariates_for_model %in% exposures[x]]
       covariates_for_model=paste0(covariates_for_model, sep="", collapse=" + ")

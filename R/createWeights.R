@@ -24,7 +24,7 @@
 #' @seealso [CBPS::CBPS()], [formatForWeights()], [createForms()]
 #' @examples createWeights(object, wide_long_datasets,forms,read_in_from_file="no", ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
 #'
-createWeights <-function(object, wide_long_datasets, forms, read_in_from_file="no", ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.formula=NULL, diff.formula=NULL){
+createWeights <-function(object, wide_long_datasets, forms, read_in_from_file="no", ATT=0, iterations=1000, standardize=TRUE, method="exact", twostep=FALSE, sample.weights=NULL, baseline.formula=NULL, diff.formula=NULL){
 
   ID=object$ID
   home_dir=object$home_dir
@@ -69,6 +69,8 @@ createWeights <-function(object, wide_long_datasets, forms, read_in_from_file="n
             #select only data at the appropriate time point
             MSMDATA_temp<- MSMDATA %>%
               dplyr::filter(WAVE==as.numeric(new_time))
+
+            # browser()
 
             #Use the CBPS continuous version of this function to generate weights
             fit <- CBPS::CBPS(form, data=MSMDATA_temp, ATT=ATT, iterations = iterations,
