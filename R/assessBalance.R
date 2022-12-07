@@ -14,7 +14,7 @@
 #' @importFrom CBPS balance
 #' @importFrom knitr kable
 #' @examples assessBalance(object, weights_models=list(), just_made_weights="no")
-assessBalance <- function (object, weights_models){
+assessBalance <- function (object, data, weights_models){
 
   # browser()
 
@@ -58,14 +58,17 @@ assessBalance <- function (object, weights_models){
     for (x in 1:length(exposures)){
 
       significant_corrs_remaining={}
-      for (y in 1:length(exposure_time_pts)){
 
+      #determining exposure type
+      exposure_type=ifelse(length(unique(data[,colnames(data)[colnames(data)==exposure]]))<3, "binary", "continuous")
+
+
+      #finding all significant residual correlations with exposure
+      if (exposure_type=="binary"){
         #gathering all imputed data set lists for a given exposure, outcome, and time point
-        exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "-", outcomes[z], "_", exposure_time_pts[y]),
+        exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "-", outcomes[z]),
                                                                                  names(all_post_balance_corrs))]]
-        exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[sapply(strsplit(names(all_post_balance_corrs), "_"),"[",6)==exposure_time_pts[y] &
-                                                                             sapply(strsplit(names(all_post_balance_corrs), "_"),"[",5)==paste0(exposures[x], "-", outcomes[z])]]
-        # exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "_", time_pts[time_pts!=time_pts[y]]), names(all_post_balance_corrs))==F]] #making sure other time pts not included for nested cases (e.g., 15 and 154)
+        exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[sapply(strsplit(names(all_post_balance_corrs), "_"),"[",5)==paste0(exposures[x], "-", outcomes[z])]]
 
         exposure_time_corrs=do.call(cbind, exposure_list) #cbinds them
         names=exposure_time_corrs[,1] #extracts variable names
@@ -76,32 +79,62 @@ assessBalance <- function (object, weights_models){
 
 
         #compiles all post-balance correlations
-        all_post_balance_correlations[[paste0(exposures[x],"_", exposure_time_pts[y], "-", outcomes[z])]] <- exposure_time_corrs
+        all_post_balance_correlations[[paste0(exposures[x], "-", outcomes[z])]] <- exposure_time_corrs
 
         #gathers only remaining mean correlations over 0.12--the ones left unbalanced
         sig=exposure_time_corrs[abs(exposure_time_corrs$mean_cor)>balance_thresh,]
         colnames(sig)= c("covariate", apply(expand.grid("corr_imp", 1:m), 1, paste, sep="", collapse="_"), "mean_corr")
-        sig_unbalanced_averaged_k[[paste("sig_unbalanced_vars_",  exposures[x], exposure_time_pts[y], "-", outcomes[z],"_", sep="")]] <- sig
-
-        # write.csv(sig, file=paste(home_dir, "balance/post-balance correlation values/all_sig_post_balance_cors_", exposures[x],"_", exposure_time_pts[y],"-", outcomes[z],".csv", sep=""))
-        # cat(paste0("USER ALERT: Check 'balance/post-balance correlation values/' folder for a csv file of all SIGNIFICANT correlations above ", as.character(balance_thresh), " for ",  exposures[x], "_", exposure_time_pts[y], "-", outcomes[z]," post-balancing and averages"),"\n")
+        sig_unbalanced_averaged_k[[paste("sig_unbalanced_vars_",  exposures[x], "-", outcomes[z],"_", sep="")]] <- sig
 
         significant_corrs_remaining=rbind(significant_corrs_remaining, sig)
 
+      } else if (expsure_type=="continuous"){
+
+        for (y in 1:length(exposure_time_pts)){
+
+          #gathering all imputed data set lists for a given exposure, outcome, and time point
+          exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "-", outcomes[z], "_", exposure_time_pts[y]),
+                                                                                   names(all_post_balance_corrs))]]
+          exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[sapply(strsplit(names(all_post_balance_corrs), "_"),"[",6)==exposure_time_pts[y] &
+                                                                               sapply(strsplit(names(all_post_balance_corrs), "_"),"[",5)==paste0(exposures[x], "-", outcomes[z])]]
+          # exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "_", time_pts[time_pts!=time_pts[y]]), names(all_post_balance_corrs))==F]] #making sure other time pts not included for nested cases (e.g., 15 and 154)
+
+          exposure_time_corrs=do.call(cbind, exposure_list) #cbinds them
+          names=exposure_time_corrs[,1] #extracts variable names
+          exposure_time_corrs=as.data.frame((exposure_time_corrs))
+          exposure_time_corrs=exposure_time_corrs[,unlist(lapply(exposure_time_corrs, is.numeric), use.names = FALSE)] #extracts numeric columns (i.e., correlations)
+          exposure_time_corrs$mean_cor=rowMeans(exposure_time_corrs) #takes row means to find average correlation
+          exposure_time_corrs=cbind(names, exposure_time_corrs) #adds names back
+
+
+          #compiles all post-balance correlations
+          all_post_balance_correlations[[paste0(exposures[x],"_", exposure_time_pts[y], "-", outcomes[z])]] <- exposure_time_corrs
+
+          #gathers only remaining mean correlations over 0.12--the ones left unbalanced
+          sig=exposure_time_corrs[abs(exposure_time_corrs$mean_cor)>balance_thresh,]
+          colnames(sig)= c("covariate", apply(expand.grid("corr_imp", 1:m), 1, paste, sep="", collapse="_"), "mean_corr")
+          sig_unbalanced_averaged_k[[paste("sig_unbalanced_vars_",  exposures[x], exposure_time_pts[y], "-", outcomes[z],"_", sep="")]] <- sig
+
+          # write.csv(sig, file=paste(home_dir, "balance/post-balance correlation values/all_sig_post_balance_cors_", exposures[x],"_", exposure_time_pts[y],"-", outcomes[z],".csv", sep=""))
+          # cat(paste0("USER ALERT: Check 'balance/post-balance correlation values/' folder for a csv file of all SIGNIFICANT correlations above ", as.character(balance_thresh), " for ",  exposures[x], "_", exposure_time_pts[y], "-", outcomes[z]," post-balancing and averages"),"\n")
+
+          significant_corrs_remaining=rbind(significant_corrs_remaining, sig)
+
+        }
       }
 
 
       #compiles all remaining correlations over 0.12 for each treatment (including all time points) to print and save
       # browser()
       if (nrow(significant_corrs_remaining)>0){
-      cat(paste0("USER ALERT: Inspect the following list of unbalanced covariates for exposure ", exposures[x], "-", outcomes[z], " :"),"\n")
-      cat("\n")
-      cat(knitr::kable(significant_corrs_remaining), sep="\n")
-      cat("\n")
+        cat(paste0("USER ALERT: Inspect the following list of unbalanced covariates for exposure ", exposures[x], "-", outcomes[z], " :"),"\n")
+        cat("\n")
+        cat(knitr::kable(significant_corrs_remaining), sep="\n")
+        cat("\n")
 
-      # write.csv(significant_corrs_remaining, file=paste(home_dir, "balance/post-balance correlation values/all_sig_post_balance_cors_", exposures[x], "-", outcomes[z],".csv", sep=""))
-      # cat(paste0("All covariates still significantly correlated with ", exposures[x],  "-", outcomes[z]," have been saved as a csv file in 'balance/post-balance correlation values/'"),"\n")
-      # cat("\n")
+        # write.csv(significant_corrs_remaining, file=paste(home_dir, "balance/post-balance correlation values/all_sig_post_balance_cors_", exposures[x], "-", outcomes[z],".csv", sep=""))
+        # cat(paste0("All covariates still significantly correlated with ", exposures[x],  "-", outcomes[z]," have been saved as a csv file in 'balance/post-balance correlation values/'"),"\n")
+        # cat("\n")
 
       }else {
         cat(paste0("USER ALERT: There are no unbalanced covariates for exposure ", exposures[x], "-", outcomes[z]),"\n")

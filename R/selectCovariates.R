@@ -136,6 +136,7 @@ identifyPotentialConfounds <- function(object){
 
       #gathers correlations with exposure at given exposure time point
       covariate_correlations={}
+      # keep=NA
       for (x in 1:length(exposure_time_pts)){
 
         temp_corr={}
@@ -149,7 +150,8 @@ identifyPotentialConfounds <- function(object){
                                           timevar="WAVE",
                                           times=c(time_pts),
                                           direction="wide"))
-        d=d[,2:ncol(d)]
+        d=d[,colnames(d)!=ID]
+        # d=d[,2:ncol(d)]
         d=as.data.frame(lapply(d, as.numeric))
         c <- suppressWarnings(Hmisc::rcorr(as.matrix(d))) #makes corr table of all vars; cannot have dates or non-factored characters
         c=flattenCorrMatrix(c$r, c$P)
@@ -158,7 +160,7 @@ identifyPotentialConfounds <- function(object){
         # c$column[c$column %in% time_varying_covariates]=paste0(c$column[c$column %in% time_varying_covariates], ".", time_pt)
         keep=c[c$row %in% include_covariates | c$column %in% include_covariates, ]
         keep=keep[grepl(paste0(exposure, ".", time_pt),keep$row) | grepl(paste0(exposure, ".", time_pt),keep$column),]
-        keep$exp_time=time_pt
+        if (nrow(keep)>0){keep$exp_time=time_pt}
         filtered=c%>%
           filter(abs(c$cor)>balance_thresh) #accounts for d=0.2 see Stuart paper for rationale
         filtered$exp_time=time_pt
@@ -183,7 +185,8 @@ identifyPotentialConfounds <- function(object){
                                          timevar="WAVE",
                                          times=c(time_pts),
                                          direction="wide"))
-        o=o[,2:ncol(o)]
+        # o=o[,2:ncol(o)]
+        o=o[,colnames(o)!=ID]
         o=as.data.frame(lapply(o, as.numeric))
         o <- suppressWarnings(Hmisc::rcorr(as.matrix(o))) #makes corr table of all vars; cannot have dates or non-factored characters
         o=flattenCorrMatrix(o$r, o$P)
@@ -210,8 +213,8 @@ identifyPotentialConfounds <- function(object){
 
 
       #save out correlations
-      suppressMessages(stargazer::stargazer(covariate_correlations,type="html", digits=2, column.labels = colnames(covariate_correlations),summary=FALSE, rownames = FALSE, header=FALSE,
-                           out=paste0(home_dir, "balance/potential confounds/", exposure, "-", outcome, "_potential_counfound_correlations.html"), show))
+      stargazer::stargazer(covariate_correlations,type="html", digits=2, column.labels = colnames(covariate_correlations),summary=FALSE, rownames = FALSE, header=FALSE,
+                           out=paste0(home_dir, "balance/potential confounds/", exposure, "-", outcome, "_potential_counfound_correlations.html"))
 
 
       cat("\n")

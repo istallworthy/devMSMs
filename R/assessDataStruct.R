@@ -72,6 +72,7 @@ formatDataStruct <-function(object) {
   colnames(data)[colnames(data)==time_var] <- "WAVE"
   data[data == missing] <- NA
 
+
   if (sum(factor_covariates %in% colnames(data))<length(factor_covariates)){
     stop('Please provide factor covariates that correspond to columns in your data when creating the msm object')
   }

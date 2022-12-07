@@ -1,14 +1,19 @@
-------Begin Mplus Model Run: 31Oct2022 15:14:42------
+------Begin Mplus Model Run: 01Dec2022 15:48:35------
 Run options:
 	Recursive (run models in subdirectories): FALSE
 	Show output on console: FALSE
 	Replace existing outfile: never
 ------
-Currently running model: CTSETA1_lnCORTR.inp
-Currently running model: CTSETA1_sqrtSAAR.inp
-Currently running model: ESETA1_lnCORTR.inp
-Currently running model: ESETA1_sqrtSAAR.inp
-Currently running model: HOMEETA1_lnCORTR.inp
-Currently running model: HOMEETA1_sqrtSAAR.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/meanimpactscript.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/measinvarscript_MCDIP.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/measinvarscript_MDCIU.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/measinvarscript_MSELE.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/measinvarscript_MSELR.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/measinvarscript_VABSE.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/measinvarscript_VABSR.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/round2calibration.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/round3calibration.inp
+Currently running model: scoring.inp
+Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/Language_Sex/mnlfa_results/varimpactscript.inp
 
-------End Mplus Model Run: 31Oct2022 15:15:09------
+------End Mplus Model Run: 01Dec2022 15:48:46------
