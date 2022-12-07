@@ -4,7 +4,7 @@
 \alias{assessBalance}
 \title{Assess success of covariate balancing}
 \usage{
-assessBalance(object, weights_models)
+assessBalance(object, data, weights_models)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}

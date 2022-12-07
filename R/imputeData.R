@@ -45,7 +45,7 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no", max.res
     data_to_impute=as.data.frame(data_to_impute)
     to_remove=c(ID, "WAVE")
 
-    #finds ordinal variables --all others assumed continuou
+    #finds ordinal variables --all others assumed continuous
     ordinal_vars=colnames(data_to_impute)[!colnames(data_to_impute) %in% c(to_remove, continuous_variables)]
 
     #creates 5 imputed datasets --add more detail here
