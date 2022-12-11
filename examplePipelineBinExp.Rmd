@@ -74,9 +74,9 @@ object <- msmObject(
   
   #### Exposure Information (required) ####
   #exposures of interest that potentially have causal effects on outcomes and exposure time point(s) (corresponding to values in time_var)
-  exposures=c("INR_bin"), #list of strings
+  exposures=c("INR"), #list of strings
   # exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
-  exposure_time_pts=c(6, 15, 24), #list of integers
+  exposure_time_pts=c(6, 15), #list of integers
 
   
   #### Balancing Information (optional) ###
@@ -104,7 +104,8 @@ object <- msmObject(
   
   #### Outcome Information (required) ####
   #outcomes of interest and outcome time point
-  outcomes=c("CORTBASE", "sAABASE"), #list of strings 
+  # outcomes=c("CORTBASE", "sAABASE"), #list of strings 
+  outcomes=c("CORTBASE"), #list of strings 
   outcome_time_pt=154, #integer value
   
   
@@ -115,7 +116,7 @@ object <- msmObject(
   
   #### Exclusion Information (optional) ####
   #list out any variables that should be excluded from consideration as confounds via balancing based on practical or theoretical reasons; if it is a time-varying covariate the code will include it in the forms for all time points with the exception of in its own forms if it is an exposure; can specify time after "."; default set to none; will over ride mandatory_keep_covariates
-  exclude_covariates=c("Index1", "WAVE2", "WAVE3", "LIVEVID", "SUBSTRESS", "TANNERALL", "AGE.6", "INR"), #list of characters
+  exclude_covariates=c("Index1", "WAVE2", "WAVE3", "LIVEVID", "SUBSTRESS", "TANNERALL", "AGE.6", "INR_bin"), #list of characters
   
   #list any time-varying variables that may get imputed but should NOT be present in the dataset because of planned missingness design with ".time_pt" format
   time_var_exclude=c("PCX_POS.58", "PCX_NEG.58", "PCX_POS.90", "PCX_NEG.90", "PCX_POS.154", "PCX_NEG.154", "CORTBASE.58", "CORTBASE.90", "sAABASE.58","sAABASE.90", "TIMEofDAY.6", "TIMEofDAY.15", "TIMEofDAY.24", "TIMEofDAY.35", "TIMEofDAY.58", "TIMEofDAY.90","TIMEofDAY.15", "WIND.15", "WIND.24", "WIND.154", "BSI.35","BSI.90", "BSI.154"), #default set to none
@@ -128,10 +129,16 @@ object <- msmObject(
  
  ### Plotting Information (optional) ###
  #optional list of alternative labels for exposures that will be used only for plotting
-   exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"), 
+   # exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"), 
+    exposure_labels=c("Income-to-needs-ratio"), 
+
    
   #optional list of alternative labels for outcomes that will be used only for plotting
-   outcome_labels=c("Cortisol","Salivary Alpha Amalayse"),
+   # outcome_labels=c("Cortisol","Salivary Alpha Amalayse"),
+    outcome_labels=c("Cortisol"),
+
+ #optional string ("h" or "l") denoting which level of exposure at each exposure epoch to use when calculating dose (default is "h")
+   dose_level="l",
  
  #the plots color data by dose (i.e., number of epochs) of high exposure; optional list of colors (equal to number of epochs +1) or brewer palette (see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) 
    colors=(c("Dark2")) #list of string(s); default is 'Dark2'); c("blue4", "darkgreen", "darkgoldenrod", "red2")
@@ -172,7 +179,7 @@ The parameter 'read_imps_from_file' will allow you to read imputed data in from 
 data_to_impute <- dataToImpute(object, covariates_to_include)
 
 #creates imputed datasets and saves them out
-imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="yes")
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no")
 
 ```
 
@@ -192,7 +199,7 @@ wide_long_datasets <- formatForWeights(object, data, imputed_datasets)
 forms <- createForms(object, wide_long_datasets, covariates_to_include)
 
 #creates balancing weights for each exposure-outcome pair at each exposure time point 
-weights_models <- createWeights(object, wide_long_datasets, forms, read_in_from_file="no", twostep="TRUE") 
+weights_models <- createWeights(object, wide_long_datasets, forms, read_in_from_file="no") 
 
 ```
 

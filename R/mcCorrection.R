@@ -14,6 +14,7 @@ mcCorrection <- function(object, history_comparisons){
   method=object$mc_method
   exposure_epochs=object$exposure_epochs
   weights_percentile_cutoff=object$weights_percentile_cutoff
+  dose_level=object$dose_level
 
 
   significant_comparisons=list()
@@ -37,10 +38,16 @@ mcCorrection <- function(object, history_comparisons){
 
     folder_label=ifelse(as.numeric(sapply(strsplit(exp_out, "_"), "[", 3))==weights_percentile_cutoff, "original/", "sensitivity checks/")
 
+    # browser()
+    cat(paste0("USER ALERT: please inspect the followig contrast comparisons for ", exp_out, " :"), "\n")
+    cat(knitr::kable(comparisons), sep="\n")
+    cat("\n")
 
     #save out table for all contrasts with old and corrected p-values
+    sink(paste0(home_dir, "msms/linear hypothesis testing/", folder_label, sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
     stargazer::stargazer(comparisons, type="html", digits=2, column.labels = colnames(comparisons),summary=FALSE, rownames = FALSE, header=FALSE,
                          out=paste0(home_dir, "msms/linear hypothesis testing/", folder_label, sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
+    sink()
 
     # print(stargazer::stargazer(comparisons, type="html", digits=2, column.labels = colnames(comparisons),summary=FALSE, rownames = FALSE, header=FALSE,
     #                            out=paste0(home_dir, "msms/linear hypothesis testing/", folder_label, sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_table.doc", sep=""))
@@ -59,12 +66,13 @@ mcCorrection <- function(object, history_comparisons){
    histories$`p-value of Comparison to Reference After MC Correction`=comparisons$p_vals_corr
    histories=rbind(ref, histories)
    exposure_history=data.frame(`Exposure History`=LETTERS[seq(from=1, to=nrow(comparisons)+1)])
-   exposure_dose=data.frame(`Exposure Dose`= rowSums(histories[1:nrow(exposure_epochs)]=="h"))
+   exposure_dose=data.frame(`Exposure Dose`= rowSums(histories[1:nrow(exposure_epochs)]==dose_level))
    tab=cbind(exposure_history, exposure_dose, histories)
 
+   sink(paste0(home_dir, "msms/linear hypothesis testing/", folder_label, sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_presentation_table.doc", sep=""))
    stargazer::stargazer(tab, type="html", digits=2, column.labels = colnames(tab),summary=FALSE, rownames = FALSE, header=FALSE,
                         out=paste0(home_dir, "msms/linear hypothesis testing/", folder_label, sapply(strsplit(exp_out, "-"), "[",1), "_", sapply(strsplit(exp_out, "-"), "[",2), "_lht_presentation_table.doc", sep=""))
-
+   sink()
   }
 
 

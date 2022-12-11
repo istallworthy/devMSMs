@@ -34,6 +34,7 @@ msmObject(
   potential_colliders = NULL,
   exposure_labels = NULL,
   outcome_labels = NULL,
+  dose_level = "h",
   colors = "Dark2"
 )
 }

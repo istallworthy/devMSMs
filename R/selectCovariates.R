@@ -44,6 +44,8 @@ identifyCovariates <- function(object, data){
 #' @examples identifyPotentialConfounds(home_dir, data, time_pt_datasets, time_pts, exclude_covariates=NULL)
 #'
 identifyPotentialConfounds <- function(object){
+  # knitr::opts_chunk$set(include=FALSE, results="hide")
+
 
   ID=object$ID
   home_dir=object$home_dir
@@ -212,14 +214,16 @@ identifyPotentialConfounds <- function(object){
 
 
 
+
       #save out correlations
+      sink(paste0(home_dir, "balance/potential confounds/", exposure, "-", outcome, "_potential_counfound_correlations.html"))
       stargazer::stargazer(covariate_correlations,type="html", digits=2, column.labels = colnames(covariate_correlations),summary=FALSE, rownames = FALSE, header=FALSE,
                            out=paste0(home_dir, "balance/potential confounds/", exposure, "-", outcome, "_potential_counfound_correlations.html"))
-
+      sink()
 
       cat("\n")
       # write.csv(covariate_correlations, paste0(home_dir, "balance/covariate_correlations.csv"))
-      cat(paste0("Check the 'balance/potential confounds/' folder to view an html file of a table of the correlations for the potential confounds for ", exposure, "-", outcome),"\n")
+      cat(paste0("USER ALERT: Check the 'balance/potential confounds/' folder to view an html file of a table of the correlations for the potential confounds for ", exposure, "-", outcome),"\n")
 
       covariates_to_include[[paste0(exposure, "-", outcome, sep="")]] <-covariate_correlations
 
@@ -227,7 +231,7 @@ identifyPotentialConfounds <- function(object){
   }
 
   cat("\n")
-  cat(paste0("A total of ", as.character(length(unique(unlist(lapply(covariates_to_include, function(x) c(x$row, x$column)))))), " potential confounds will be considered for balancing."),"\n")
+  cat(paste0("A total of ", as.character(length(unique(unlist(lapply(covariates_to_include, function(x) c(x$row, x$column)))))), " covariate confounders will be considered for balancing."),"\n")
 
   return(covariates_to_include)
 }

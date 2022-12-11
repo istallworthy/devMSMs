@@ -27,6 +27,10 @@ formatForWeights <- function(object, data, imputed_datasets){
   time_varying_covariates=object$time_varying_variables
 
   options(readr.num_columns = 0)
+  cat("\n")
+  cat("USER ALERT: Inspect the list of time-varying covariates following the ID variable and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running","\n")
+  cat("\n")
+
 
   #makes hybrid "wide/long" dataset for each impute dataset: all time-varying covariates listed as long and wide
 
@@ -77,8 +81,6 @@ formatForWeights <- function(object, data, imputed_datasets){
 
   }
 
-  cat("\n")
-  cat("USER ALERT: Inspect the list of time-varying covariates following the ID variable and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running","\n")
 
 
   #create dataset for future modeling
@@ -101,7 +103,8 @@ formatForWeights <- function(object, data, imputed_datasets){
   write.csv(imp_wide, paste0(home_dir, "data_for_final_model.csv"))
   write.csv(wide_long_datasets[[1]], paste0(home_dir, "data_for_final_Mplus_model.csv"))
 
-  cat("Saved out dataset for later modeling as a csv file in home directory")
+  cat("\n")
+  cat("A dataset has been saved out as a csv file in home directory for later modeling ")
 
 
   return(wide_long_datasets)

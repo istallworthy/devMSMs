@@ -15,6 +15,7 @@ plotResults <- function(object, best_models){
   outcome_labels=object$outcome_labels
   colors=object$colors
   weights_percentile_cutoff=object$weights_percentile_cutoff
+  dose_level=object$dose_level
 
 
   #error checking
@@ -83,8 +84,8 @@ plotResults <- function(object, best_models){
     plot_data$seq=gsub(".", "", as.character(plot_data$seq), fixed = T)
     plot_data$seq=gsub("-", "", as.character(plot_data$seq), fixed = T)
 
-    #finds doses of "h"
-    plot_data$dose=as.numeric(lapply(regmatches(plot_data$seq, gregexpr("h", plot_data$seq)), function(x) length(x)))
+    #finds doses of level specified by user
+    plot_data$dose=as.numeric(lapply(regmatches(plot_data$seq, gregexpr(dose_level, plot_data$seq)), function(x) length(x)))
     plot_data$dose=as.factor(plot_data$dose)
     plot_data$seq=as.factor(plot_data$seq)
     plot_data=plot_data[order(plot_data$dose),]
@@ -104,7 +105,7 @@ plotResults <- function(object, best_models){
         ggplot2::theme(text = ggplot2::element_text(size=18))+
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
                        panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
-      ggplot2::ggsave(paste0(home_dir, "results figures/", folder_label, "/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
+      suppressMessages(ggplot2::ggsave(paste0(home_dir, "results figures/", folder_label, "/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot()))
 
     }else{ #user lists a palette
 
@@ -119,11 +120,12 @@ plotResults <- function(object, best_models){
         ggplot2::theme(text = ggplot2::element_text(size=18))+
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
                        panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
-      ggplot2::ggsave(paste0(home_dir, "results figures/", folder_label, "/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot())
+      suppressMessages(ggplot2::ggsave(paste0(home_dir, "results figures/", folder_label, "/", sapply(strsplit(exp_out, "-"), "[",1), "-",sapply(strsplit(exp_out, "-"), "[",2), ".jpeg"), plot=ggplot2::last_plot()))
 
     }
   }
-  cat("See the 'results figures/original' folder for graphical representations of results","\n")
-  cat("See the 'results figures/sensitivity checks' folder for sensitivity checks","\n")
+  cat("\n")
+  cat("See the 'results figures/original/' folder for graphical representations of results","\n")
+  cat("See the 'results figures/sensitivity checks/' folder for sensitivity checks","\n")
 
 }

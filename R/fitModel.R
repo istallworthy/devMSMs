@@ -47,7 +47,8 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
   #cycles through each exposure to fit the marginal structural model relating exposure histories to each outcome
   all_models=list()
 
-  cat("USER ALERT: please inspect the following series of models for each exposure-outcome pair weights cutoff at the original user-specified percentile value:", "\n")
+  cat("USER ALERT: please inspect the following series of models for each exposure-outcome pair (using weights cutoff at the original user-specified percentile value):", "\n")
+  cat("\n")
   cat("\n")
 
   for (c in 1:length(all_cutoffs)){
@@ -209,8 +210,6 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
         }
         models[["m4"]]<-m4
 
-        cat("\n")
-        cat("\n")
 
         all_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]<-models
 
@@ -234,9 +233,11 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, unbalanced_cova
 
   }
   # cat(paste0("All models with ", file_label, " cutoff weights have been saved as an .rds object in the 'msms/", file_label, "/' folder"),"\n")
+  cat("\n")
+  cat("\n")
 
   write.csv(data_for_model_with_weights_cutoff, paste0(home_dir, "msms/data_for_msms.csv"))
-  cat("Sensitivity check models using alternate weight truncation values have been saved in the 'msms/sensitivity checks/' folder")
+  cat("USER ALERT: Sensitivity check models using two alternate weight truncation values have been saved in the 'msms/sensitivity checks/' folder")
   cat("\n")
   cat("A new data file has been saved as a .csv file in the in the 'msms' folder","\n")
 
