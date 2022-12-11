@@ -174,7 +174,8 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
                                                                 # apply(expand.grid(outcome, as.character(time_pts)), 1, paste, sep="", collapse="."), #exclude outcome at current time point
                                                                 paste(outcome, time, sep="."), #exclude outcome at current time point
                                                                 apply(expand.grid(outcome, as.character(time_pts[time_pts>time])), 1, paste, sep="", collapse="."),#excludes future outcomes
-                                                                exclude_covariates[grepl(exposure, exclude_covariates)==F], #exclude any covariates specified by the user
+                                                                exclude_covariates[grepl(paste(exposure, time, sep="."), exclude_covariates)==F], #exclude any covariates specified by the user
+                                                                exclude_covariates[!exclude_covariates %in% exposure], #exclude any covariates specified by the user (not counting exposure)
                                                                 time_var_exclude, #exclude any time points that should not be there bc of planned missingness
                                                                 concurrent_colliders, #exclude colliders specified at exposure time pt
                                                                 # apply(expand.grid(colliders, as.character(outcome_time_pt)), 1, paste, sep="", collapse="."), #exclude colliders at outcome time points
@@ -184,19 +185,19 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
         vars_to_include=vars_to_include[!duplicated(vars_to_include)]
 
         #Creates form for the given exposure time point
-        f=paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep="", collapse=" + "))
+        f=as.formula(paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep="", collapse=" + ")))
 
         #prints form for user inspection
-        cat(paste0("Formula for exposure ", exposure, "-", outcome, " at exposure time point ", as.character(time),
+        cat(paste0("Formula for ", exposure, "-", outcome, " at exposure time point ", as.character(time),
                    ":"), "\n")
         print(f)
         cat("\n")
 
         #saves out form to global workspace and local directory
         # return(assign(paste("form_", exposure, "_", time, sep=""), f))
-        forms[[paste("form_", exposure,"-", outcome, "_", time, sep="")]] <- f
+        forms[[paste("form_", exposure,"-", outcome, "-", time, sep="")]] <- f
 
-        write.csv(f, paste0(home_dir, "forms/form_", exposure, "-", outcome, "_", time, ".csv", sep=""))
+        write.csv(as.character(f), paste0(home_dir, "forms/form_", exposure, "-", outcome, "-", time, ".csv", sep=""))
 
       }
     }

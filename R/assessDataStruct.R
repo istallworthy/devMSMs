@@ -45,9 +45,10 @@ formatDataStruct <-function(object) {
 
   # if(dir.exists(paste0(home_dir, "plots/"))==F){dir.create(paste0(home_dir, "plots/"))}
   if(dir.exists(paste0(home_dir, "forms/"))==F){dir.create(paste0(home_dir, "forms/"))}
+
   if(dir.exists(paste0(home_dir, "balance/"))==F){dir.create(paste0(home_dir, "balance/"))}
-  if(dir.exists(paste0(home_dir, "balance/post-balance correlation plots/"))==F){dir.create(paste0(home_dir, "balance/post-balance correlation plots/"))}
-  if(dir.exists(paste0(home_dir, "balance/post-balance correlation values/"))==F){dir.create(paste0(home_dir, "balance/post-balance correlation values/"))}
+  if(dir.exists(paste0(home_dir, "balance/plots/"))==F){dir.create(paste0(home_dir, "balance/plots/"))}
+  if(dir.exists(paste0(home_dir, "balance/comparison values/"))==F){dir.create(paste0(home_dir, "balance/comparison values/"))}
   if(dir.exists(paste0(home_dir, "balance/unbalanced covariates/"))==F){dir.create(paste0(home_dir, "balance/unbalanced covariates/"))}
   if(dir.exists(paste0(home_dir, "balance/unbalanced covariates/"))==F){dir.create(paste0(home_dir, "balance/unbalanced covariates/"))}
 
@@ -68,7 +69,9 @@ formatDataStruct <-function(object) {
 
 
   #reading and formatting LONG dataset
-  data=as.data.frame(readr::read_csv(data_path), col_types=cols(), show_col_types=FALSE)
+  # data=as.data.frame(readr::read_csv(data_path), col_types=cols(), show_col_types=FALSE)
+  data=suppressWarnings(as.data.frame(readr::read_csv(data_path, show_col_types=FALSE)))
+
   colnames(data)[colnames(data)==time_var] <- "WAVE"
   data[data == missing] <- NA
 

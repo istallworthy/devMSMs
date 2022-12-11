@@ -65,7 +65,8 @@ truncateWeights <-function(object, data_for_model_with_weights){
   # browser()
 
   write.csv(data_for_model_with_weights_cutoff,paste0(home_dir, "final weights/data_for_model_with_weights_cutoff_", paste(all_cutoffs, sep=",", collapse=" "), ".csv") )
-  cat("USER ALERT: final cutoff weights using the user-specified cutoff values and 2 other values for sensiivity analyses have now been saved merged into datast in 'final weights' folder","\n")
+  cat("\n")
+  cat("USER ALERT: final cutoff weights using the user-specified cutoff values and 2 other values for subsequent sensiivity analyses have now been saved merged into datast in 'final weights' folder","\n")
   return(data_for_model_with_weights_cutoff)
 
 

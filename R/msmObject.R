@@ -23,7 +23,7 @@
 #' @param colors colors for plotting dose
 #' @examples msmObject(data_path, home_dir, ID, time_pts, time_var, missing, m, exposures, exposure_time_pts, exposure_epochs, outcomes, outcome_time_pt, continuous_variables, time_var_exclude)
 
-msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time_varying_variables=NULL, continuous_variables=NULL, factor_covariates=NULL, m=5, exposures, exposure_time_pts,  balance_thresh=0.12, weights_percentile_cutoff=0.95, exposure_epochs, reference="", comparisons="", hi_cutoff=.75,lo_cutoff=.25, mc_method="BH", outcomes, outcome_time_pt, mandatory_keep_covariates=NULL, exclude_covariates=NULL, time_var_exclude=NULL, potential_colliders=NULL, exposure_labels=NULL, outcome_labels=NULL, colors="Dark2"){
+msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time_varying_variables=NULL, continuous_variables=NULL, factor_covariates=NULL, m=5, exposures, exposure_time_pts,  balance_thresh=0.12, weights_percentile_cutoff=0.95, exposure_epochs, reference="", comparisons="", hi_cutoff=.75,lo_cutoff=.25, mc_method="BH", outcomes, outcome_time_pt, mandatory_keep_covariates=NULL, exclude_covariates=NULL, time_var_exclude=NULL, potential_colliders=NULL, exposure_labels=NULL, outcome_labels=NULL, dose_level="h", colors="Dark2"){
 
 
   if (!file.exists(home_dir)){
@@ -62,6 +62,7 @@ msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time
   stopifnot(charOrNull(exclude_covariates))
   stopifnot(charOrNull(mc_method))
   stopifnot(charOrNull(colors))
+  stopifnot(charOrNull(dose_level))
 
 
   stopifnot(numOrNull(m))
@@ -80,7 +81,8 @@ msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time
                continuous_variables=continuous_variables,factor_covariates=factor_covariates, m=m, exposures=exposures,exposure_time_pts=exposure_time_pts, balance_thresh=balance_thresh, weights_percentile_cutoff=weights_percentile_cutoff,
                weights_percentile_cutoffs_sensitivity=weights_percentile_cutoffs_sensitivity,
                exposure_epochs=exposure_epochs, reference=reference, comparisons=comparisons, hi_cutoff=hi_cutoff, lo_cutoff=lo_cutoff, mc_method=mc_method,
-               outcomes=outcomes, outcome_time_pt=outcome_time_pt,mandatory_keep_covariates=mandatory_keep_covariates, exclude_covariates=exclude_covariates, time_var_exclude=time_var_exclude, potential_colliders=potential_colliders, exposure_labels=exposure_labels, outcome_labels=outcome_labels, colors=colors)
+               outcomes=outcomes, outcome_time_pt=outcome_time_pt,mandatory_keep_covariates=mandatory_keep_covariates, exclude_covariates=exclude_covariates, time_var_exclude=time_var_exclude, potential_colliders=potential_colliders, exposure_labels=exposure_labels, outcome_labels=outcome_labels,
+               dose_level=dose_level, colors=colors)
 
   class(object)<-c("list","msmobject")
 

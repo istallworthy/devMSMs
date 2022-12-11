@@ -11,6 +11,10 @@
 #' @examples assessModel(object, all_models)
 assessModel <-function(object, all_models){
 
+  require(huxtable) #not sure if this is the best way to load these? not associated w/ particular function but needed for jtools
+  require(officer)
+  require(flextable)
+
   home_dir=object$home_dir
   weights_percentile_cutoff=object$weights_percentile_cutoff
 
