@@ -7,6 +7,8 @@
 #' @return data formatted dataset
 #' @export
 #' @importFrom readr read_csv
+#' @importFrom knitr kable
+#' @importFrom kableExtra kable_styling
 #' @examples formatDataStruct(object, factor_covariates)
 #'
 formatDataStruct <-function(object) {
@@ -16,6 +18,12 @@ formatDataStruct <-function(object) {
   missing=object$missing
   time_var=object$time_var
   factor_covariates=object$factor_covariates
+  id=object$ID
+  exposures=object$exposures
+  outcomes=object$outcomes
+  exposure_time_pts=object$exposure_time_pts
+  outcome_time_pt=object$outcome_time_pt
+
 
   options(readr.num_columns = 0)
 
@@ -68,12 +76,35 @@ formatDataStruct <-function(object) {
   if(dir.exists(paste0(home_dir, "for Mplus/"))==F){dir.create(paste0(home_dir, "for Mplus/"))}
 
 
+  cat("\n")
   #reading and formatting LONG dataset
   # data=as.data.frame(readr::read_csv(data_path), col_types=cols(), show_col_types=FALSE)
   data=suppressWarnings(as.data.frame(readr::read_csv(data_path, show_col_types=FALSE)))
 
   colnames(data)[colnames(data)==time_var] <- "WAVE"
-  data[data == missing] <- NA
+  data[data == missing] <- NA #makes NA the missingness indicator
+
+
+  #exposure summary
+  exp=as.data.frame(data[,c("WAVE", colnames(data)[colnames(data) %in% exposures])])
+  exp=exp%>%dplyr::filter(WAVE %in% exposure_time_pts)%>%dplyr::group_by(WAVE)%>%dplyr::summarise_all(list(mean=mean, sd=sd, min=min, max=max), na.rm=TRUE)
+  exp=exp[,order(colnames(exp), decreasing=TRUE)]
+  print(knitr::kable(as.data.frame(exp), caption="Summary of Exposure Information")%>%kableExtra::kable_styling())
+  knitr::kable(exp, caption="Summary of Exposure Information")%>%
+    kableExtra::kable_styling()%>%
+    kableExtra::save_kable(file=paste0(home_dir, "exposure_info.html"))
+  cat("Exposure descriptive statistics have now been saved in the home directory", "\n")
+
+  #outcome summary
+  exp=as.data.frame(data[,c("WAVE", colnames(data)[colnames(data) %in% outcomes])])
+  exp=suppressWarnings(exp%>%dplyr::filter(WAVE %in% outcome_time_pt)%>%dplyr::group_by(WAVE)%>%dplyr::summarise_all(list(mean=mean, sd=sd, min=min, max=max), na.rm=TRUE))
+  exp=exp[,order(colnames(exp), decreasing=TRUE)]
+
+  print(knitr::kable(as.data.frame(exp), caption="Summary of Outcome Information")%>%kableExtra::kable_styling())
+  knitr::kable(exp, caption="Summary of Outcome Information")%>%
+    kableExtra::kable_styling()%>%
+    kableExtra::save_kable(file=paste0(home_dir, "outcome_info.html"))
+  cat("Outcome descriptive statistics have now been saved in the home directory", "\n")
 
 
   if (sum(factor_covariates %in% colnames(data))<length(factor_covariates)){

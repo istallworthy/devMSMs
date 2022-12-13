@@ -19,8 +19,10 @@ identifyCovariates <- function(object, data){
 
   #identifying potential covariates (time-varying and time invariant)
   potential_covariates=colnames(data)[colnames(data) %in% (c(ID, "WAVE", exposures, outcomes, exclude_covariates))==FALSE]
+  potential_covariates=potential_covariates[order(potential_covariates)]
 
-  cat(paste0("Below are the ", as.character(length(potential_covariates)), " covariates that will be considered as potential confounding variables. If you would like to exclude any variables, please add them to 'exclude_covariates' when creating the msms object and re-run."),"\n")
+  cat(paste0("Below are the ", as.character(length(potential_covariates)), " covariates that will be considered as potential confounding variables.
+  If you would like to exclude any variables, please add them to 'exclude_covariates' when creating the msm object and re-run."),"\n")
   print(potential_covariates)
 
   return(potential_covariates)
@@ -223,7 +225,7 @@ identifyPotentialConfounds <- function(object){
 
       cat("\n")
       # write.csv(covariate_correlations, paste0(home_dir, "balance/covariate_correlations.csv"))
-      cat(paste0("USER ALERT: Check the 'balance/potential confounds/' folder to view an html file of a table of the correlations for the potential confounds for ", exposure, "-", outcome),"\n")
+      cat(paste0("USER ALERT: Check the 'balance/potential confounds/' folder to view an html file of a table of the correlations for the potential confounders for ", exposure, "-", outcome),"\n")
 
       covariates_to_include[[paste0(exposure, "-", outcome, sep="")]] <-covariate_correlations
 
@@ -231,7 +233,7 @@ identifyPotentialConfounds <- function(object){
   }
 
   cat("\n")
-  cat(paste0("A total of ", as.character(length(unique(unlist(lapply(covariates_to_include, function(x) c(x$row, x$column)))))), " covariate confounders will be considered for balancing."),"\n")
+  cat(paste0("A total of ", as.character(length(unique(unlist(lapply(covariates_to_include, function(x) c(x$row, x$column)))))), " covariate confounders will be considered for balancing across all exposure-outcome pairs and all time points."),"\n")
 
   return(covariates_to_include)
 }
@@ -247,6 +249,7 @@ identifyPotentialConfounds <- function(object){
 #' @importFrom Hmisc rcorr
 #' @importFrom knitr kable
 #' @importFrom dplyr filter
+#' @importFrom corrplot corrplot
 #' @return data_to_impute
 #' @export
 #' @seealso [formatDataStruct()], [identifyPotenialConfounds()]
@@ -312,17 +315,25 @@ dataToImpute <-function(object, covariates_to_include){
   }
 
 
-
-
   #creates final dataset with only relevant variables
   covariates_to_include=unique(unlist(lapply(covariates_to_include, function(x) c(x$row, x$column))))
   covariates_to_include=covariates_to_include[order(covariates_to_include)]
 
   variables_to_include=unique(c(ID, "WAVE", exposures, outcomes, covariates_to_include, mandatory_keep_covariates, time_varying_covariates))
   data2=as.data.frame(data[names(data)[names(data) %in% variables_to_include] ])
-  # data2=data2[,!colnames(data2) %in% c(exclude_covariates)]
+  data2=data2[,!colnames(data2) %in% c(exclude_covariates)]
 
   data_to_impute=data2
+
+  #makes correlation table
+  pdf(file = paste0(home_dir, "all_vars_corr_plot.pdf"))
+  suppressWarnings(corrplot::corrplot(cor(
+    as.data.frame(lapply(data_to_impute[,colnames(data_to_impute)[colnames(data_to_impute)!=ID]], as.numeric)), use="pairwise.complete.obs"
+    ), method="color", order='alphabet', diag=FALSE, type="lower", tl.cex = 0.5, tl.col="black"))
+  dev.off()
+
+  cat("A correlation plot of all variables has been saved in the home directory", "\n")
+
 
   data2=data2[,!colnames(data2) %in% c(exposures, outcomes)]
 
@@ -333,7 +344,7 @@ dataToImpute <-function(object, covariates_to_include){
   View_hi_corr_covars=hi_corr_covars%>%
     dplyr::filter(abs(hi_corr_covars$cor)>0.6)
 
-  cat("USER ALERT: To simplify the balancing models, consider removing any highly correlated, redundant covariates by listing them in the 'exclude_covariates' field in the msm object and re-running:")
+  cat("USER ALERT: To simplify the balancing models, consider removing any highly correlated, redundant covariates by listing them in the 'exclude_covariates' field in the msm object and re-running:", "\n")
   print(knitr::kable(View_hi_corr_covars))
 
   write.csv(data_to_impute, paste0(home_dir, "imputations/data_to_impute.csv"))

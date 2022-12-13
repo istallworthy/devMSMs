@@ -12,8 +12,8 @@
 #' @seealso [createWeights()] for more on the weights_models param
 #' @export
 #' @importFrom CBPS balance
-#' @importFrom ggplot2 scale_x_continuous, theme
 #' @importFrom knitr kable
+#' @importFrom kableExtra kable_styling
 #' @importFrom cobalt love.plot
 #' @importFrom dplyr group_by
 #' @examples assessBalance(object, weights_models=list(), just_made_weights="no")
@@ -124,7 +124,7 @@ assessBalance <- function (object, data, weights_models){
 
     # browser()
     #makes a plot showing std mean differences for all covariates before and after balancing
-    suppressWarnings(cobalt::love.plot(weights_models[f][[1]],
+    suppressMessages(cobalt::love.plot(weights_models[f][[1]],
                       var.order="unadjusted",
                       line=TRUE,
                       thresholds=c(balance_thresh), #save out this one plotting std m diffs for all covariates
@@ -138,7 +138,7 @@ assessBalance <- function (object, data, weights_models){
                      legend.position = "bottom",
                      legend.box.margin = ggplot2::margin(1, 1, 1, 1),
                      axis.text=ggplot2::element_text(size=7))+
-      ggplot2::scale_x_continuous(breaks=c(seq(-1, 1, by=0.1))))
+                    ggplot2::scale_x_continuous(breaks=c(seq(-1, 1, by=0.1))))
     suppressWarnings(ggplot2::ggsave(paste0(home_dir, "balance/plots/", names(weights_models[f]), "_summary_balance_plot.jpeg")))
 
     # cat("\n")
@@ -246,7 +246,8 @@ assessBalance <- function (object, data, weights_models){
       if (nrow(significant_corrs_remaining)>0){
         cat(paste0("USER ALERT: Inspect the following list of unbalanced covariates for exposure ", exposures[x], "-", outcomes[z], " across all exposure time points:"),"\n")
         cat("\n")
-        cat(knitr::kable(significant_corrs_remaining), sep="\n")
+        cat(knitr::kable(significant_corrs_remaining, sep="\n")%>%
+          kableExtra::kable_styling())
         cat("\n")
 
 

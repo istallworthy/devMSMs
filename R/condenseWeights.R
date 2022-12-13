@@ -56,6 +56,12 @@ condenseWeights <-function(object, weights_models){
         #Finds the product of weights across all time pts for a given tx
         treat_temp_prod=as.data.frame(matrixStats::rowProds(as.matrix(treat_temp)))
 
+
+        cat(paste0("For ", "fit_", k, "_", exposure, "-", outcome, " across all time points, the median weight is ",
+                   median(as.numeric(unlist(treat_temp_prod))) , " (SD= ",sd(as.numeric(unlist(treat_temp_prod))),
+                   "; range= ", min(as.numeric(unlist(treat_temp_prod))), " - ", max(as.numeric(unlist(treat_temp_prod))), ")"),"\n")
+
+
         #Plots histogram of weight product for each tx and imputed dataset
         ggplot2::ggplot(data=as.data.frame(treat_temp_prod), aes(x = as.numeric(unlist(treat_temp_prod)))) +
           ggplot2::geom_histogram(color = 'black', bins = 15)
@@ -101,6 +107,11 @@ condenseWeights <-function(object, weights_models){
       }
       treat_mean=rowMeans(temp[,2:ncol(temp)]) #finds mean across rows
 
+
+      cat(paste0("For ", exposure, "-", outcome, " across all imputed datasets, the median weight is ",
+                 median(treat_mean) , " (SD= ",sd(treat_mean), "; range= ", min(treat_mean), " - ", max(treat_mean), ")"),"\n")
+
+
       weights_exposure[[paste(exposure,  "-", outcome,"_", "mean_weight_all_imp", sep="")]] <- treat_mean
       mean_weight=as.data.frame(cbind(data_for_model[,colnames(data_for_model)==ID], treat_mean)) #adds IDs to mean weights
       colnames(mean_weight)=c(ID, paste(exposure,  "-", outcome, "_weight", sep=""))
@@ -115,7 +126,7 @@ condenseWeights <-function(object, weights_models){
   data_for_model_with_weights=merge(data_for_model, all_weights, by=ID, all.x=T)
   write.csv(data_for_model_with_weights, paste0(home_dir, "final weights/data_for_model_with_weights.csv"))
   cat("\n")
-  cat("USER ALERT: Final dataset including weights for each treatment is now saved in the 'final weights' folder as a csv file","\n")
+  cat("USER ALERT:A final dataset including weights for each exposure-outcome pair is now saved in the 'final weights' folder as a csv file","\n")
 
   return(data_for_model_with_weights)
 
