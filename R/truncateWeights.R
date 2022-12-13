@@ -47,6 +47,11 @@ truncateWeights <-function(object, data_for_model_with_weights){
                                             quantile(data_for_model_with_weights[,colnames(data_for_model_with_weights)==paste0(exposure, "-", outcome, "_weight")], probs=cutoff)
           ) )%>%dplyr::select(all_of(new_var))
 
+        if(cutoff==weights_percentile_cutoff){ #prints only values for user-specified cutoff
+          cat(paste0("For ", exposure, "-", outcome, ", using the user-specified cutoff percentile of ", cutoff, ", the median weight is ", median(as.numeric(unlist(cutoff_weights))) ,
+                     " (SD= ",sd(as.numeric(unlist(cutoff_weights))), "; range= ", min(as.numeric(unlist(cutoff_weights))), " - ", max(as.numeric(unlist(cutoff_weights))), ")"), "\n")
+        }
+
         #binding on new cutoff weight
         data_for_model_with_weights_cutoff=cbind(data_for_model_with_weights_cutoff, cutoff_weights)
 
@@ -56,7 +61,8 @@ truncateWeights <-function(object, data_for_model_with_weights){
           geom_histogram(color = 'black', bins = 15)
         ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_weights_cutoff_", cutoff, ".png", sep=""), path=paste0(home_dir, "final weights/histograms/"), height=8, width=14)
 
-        cat(paste0("Histogram of weights cut off at ", cutoff, " for exposure ", exposure, " on ", outcome, " has been saved to the 'final weights/histograms/' folder"),"\n")
+        cat(paste0("A histogram of weights cut off at ", cutoff, " for exposure ", exposure, " on ", outcome, " has been saved to the 'final weights/histograms/' folder"),"\n")
+        cat("\n")
 
       }
     }
@@ -66,7 +72,7 @@ truncateWeights <-function(object, data_for_model_with_weights){
 
   write.csv(data_for_model_with_weights_cutoff,paste0(home_dir, "final weights/data_for_model_with_weights_cutoff_", paste(all_cutoffs, sep=",", collapse=" "), ".csv") )
   cat("\n")
-  cat("USER ALERT: final cutoff weights using the user-specified cutoff values and 2 other values for subsequent sensiivity analyses have now been saved merged into datast in 'final weights' folder","\n")
+  cat("USER ALERT: final cutoff weights using the user-specified cutoff values and 2 other values for subsequent sensiivity analyses have now each been saved as a dataset in 'final weights' folder","\n")
   return(data_for_model_with_weights_cutoff)
 
 

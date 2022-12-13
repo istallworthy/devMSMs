@@ -74,7 +74,7 @@ object <- msmObject(
   
   #### Exposure Information (required) ####
   #exposures of interest that potentially have causal effects on outcomes and exposure time point(s) (corresponding to values in time_var)
-  exposures=c("INR"), #list of strings
+  exposures=c("INR", "HOMEETA1"), #list of strings
   # exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
   exposure_time_pts=c(6, 15), #list of integers
 
@@ -179,7 +179,7 @@ The parameter 'read_imps_from_file' will allow you to read imputed data in from 
 data_to_impute <- dataToImpute(object, covariates_to_include)
 
 #creates imputed datasets and saves them out
-imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no")
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="yes")
 
 ```
 

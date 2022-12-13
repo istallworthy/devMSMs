@@ -34,7 +34,7 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no", max.res
     for (x in 1:m){
       file_name=(paste("imp", x, '.csv', sep=""))
       name=paste("imp", x, sep="")
-      imp=suppressWarnings(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""))))
+      imp=suppressMessages(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""), show_col_types = FALSE)))
       imputed_datasets[[paste0("imp", x)]]<-imp
     }
     return(imputed_datasets)
@@ -49,14 +49,14 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no", max.res
     ordinal_vars=colnames(data_to_impute)[!colnames(data_to_impute) %in% c(to_remove, continuous_variables)]
 
     #creates 5 imputed datasets --add more detail here
-    imputed=Amelia::amelia(x = data_to_impute, m = m, idvars = ID, #m=5 for final
+    imputed=suppressMessages(Amelia::amelia(x = data_to_impute, m = m, idvars = ID, #m=5 for final
                            ts = "WAVE", cs =cs, priors = priors, lags = lags, intercs = intercs, leads = leads, splinetime = splinetime,
                            logs = logs, sqrts = sqrts, lgstc = lgstc, noms = noms,
                            ords=ordinal_vars,
                            empri=0.01*nrow(data_to_impute),
                            bounds=bounds,  max.resample = max.resample, #100 seems to be the default
                            tolerance = 1e-04
-    )
+    ))
 
     #this contains each of the imputed datasets
     imputed_datasets<- imputed$imputations

@@ -133,9 +133,14 @@ createWeights <-function(object, wide_long_datasets, forms, read_in_from_file="n
 
             weights_models[[paste("fit_", k, "_", exposure, "-", outcome, "-", time, sep="")]] <-fit
 
+            cat(paste0("For ", "fit_", k, "_", exposure, "-", outcome, "-", time, " , the median weight is ", median(fit$weights) ,
+                       " (SD= ",sd(fit$weights), "; range= ", min(fit$weights), " - ", max(fit$weights), ")"), "\n")
+
 
             #get weights from output
             weights=as.data.frame(cbind(MSMDATA_temp[,colnames(MSMDATA_temp)==ID], fit$weights))
+
+
 
             #Save weights merged with ID variable
             write.csv(x=as.data.frame(weights), file=paste(home_dir, "original weights/values/weights_id_exp=", exposure, "-", outcome, "_t=", time,"_imp=",k, ".csv", sep=""))
@@ -159,14 +164,13 @@ createWeights <-function(object, wide_long_datasets, forms, read_in_from_file="n
             cat(paste0("USER ALERT: Balancing figures for ", exposure,  "-", outcome," at time ", time, " for imputation ", k,  " have now been saved into the 'balance/plots/' folder for future inspection", "\n"))
             cat("\n")
 
+            fit=NULL
+
           }
-          cat("\n")
 
         }
-        cat("\n")
 
       }
-      cat("\n")
 
     }
 
