@@ -321,7 +321,7 @@ dataToImpute <-function(object, covariates_to_include){
 
   variables_to_include=unique(c(ID, "WAVE", exposures, outcomes, covariates_to_include, mandatory_keep_covariates, time_varying_covariates))
   data2=as.data.frame(data[names(data)[names(data) %in% variables_to_include] ])
-  data2=data2[,!colnames(data2) %in% c(exclude_covariates)]
+  data2=data2[,!colnames(data2) %in% c(exclude_covariates[!exclude_covariates %in% c(exposures, outcomes)])] #makes sure not to exclude exposures or outcomes even if listed to exclude
 
   data_to_impute=data2
 
