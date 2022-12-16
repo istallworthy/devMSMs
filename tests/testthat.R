@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(MSMs)
+library(devMSMs)
 
-test_check("MSMs")
+test_check("devMSMs")

@@ -158,7 +158,6 @@ MSMs focus on the covariates that are associated with both exposure(s) and outco
 
 When creating the msm object, the user must specify which covariates are time-varying ('time_varying covariates'). This code identifies all possible confounding variables and creates a simplified dataset for imputation. This is primarily a data-driven approach to identifying potential confounds. However, the user has the option to specify any covariates to be sure to exclude ('exclude_covariates') as well as those to include ('keep_covariates'), for theoretical or other reasons. The user can include time-invariant or time-varying covariates in these fields. Append ".x" (e.g., "INR.6) to the covariate to indicate a time-varying variable at a specific time point only, otherwise the condition will be assumed to all time points of any time-varying variables. 
 
-*note from IS: not sure how to suppress the html code from console (i.e., to only save it out and not print when running)
 ```{r}
 
 #identifies the total number covariates available in the dataset and prints them for user inspection
@@ -179,7 +178,7 @@ The parameter 'read_imps_from_file' will allow you to read imputed data in from 
 data_to_impute <- dataToImpute(object, covariates_to_include)
 
 #creates imputed datasets and saves them out
-imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="yes")
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no")
 
 ```
 

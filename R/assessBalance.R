@@ -19,7 +19,7 @@
 #' @examples assessBalance(object, weights_models=list(), just_made_weights="no")
 assessBalance <- function (object, data, weights_models){
 
-  # knitr::opts_chunk$set(include= FALSE, warning = FALSE, message = FALSE)
+  knitr::opts_chunk$set(results='asis')
   require(cobalt) #currently does not work to call using 2 colons; Noah is aware and working on it
 
   home_dir=object$home_dir
@@ -49,7 +49,7 @@ assessBalance <- function (object, data, weights_models){
 
     # browser()
 
-    #comparing pre and post correlations for continuous exposures
+    #comparing pre and post correlations for CONTINUOUS exposures
     if (sum(grepl("Correlation", colnames(balance$balanced)))>0){
       temp=reshape(temp, idvar="covariate", timevar="status", direction="wide")
       colnames(temp)=c("Covariate", "Balanced Corr", "Unweighted Corr")
@@ -73,7 +73,7 @@ assessBalance <- function (object, data, weights_models){
       cat("USER ALERT: see the 'balance/comparison values/' folder for a table comparing covariate relations to exposure pre and bost balancing", "\n")
 
 
-      #comparing pre and post weighting standardized mean differences for binary exposure
+      #comparing pre and post weighting standardized mean differences for BINARY exposure
     }else if (sum(grepl("mean",colnames(balance$balanced)))>0){
       temp=do.call(rbind, lapply(balance, as.data.frame))
       temp=temp[,3:ncol(temp)]
@@ -139,15 +139,11 @@ assessBalance <- function (object, data, weights_models){
                      legend.box.margin = ggplot2::margin(1, 1, 1, 1),
                      axis.text=ggplot2::element_text(size=7))+
                     ggplot2::scale_x_continuous(breaks=c(seq(-1, 1, by=0.1))))
-    suppressWarnings(ggplot2::ggsave(paste0(home_dir, "balance/plots/", names(weights_models[f]), "_summary_balance_plot.jpeg")))
+    suppressMessages(ggplot2::ggsave(paste0(home_dir, "balance/plots/", names(weights_models[f]), "_summary_balance_plot.jpeg")))
 
     # cat("\n")
     cat(paste("USER ALERT: see the 'balance/plots/' folder for a summary balance plot for ", names(weights_models[f])), "\n")
     cat("\n")
-
-    # cobalt::bal.plot(fit, "RGotFodS", which="both", mirror=T)
-    # cobalt::bal.plot(fit, "WIND.6", which="both")
-
 
     all_post_balance_corrs[[paste("unbalanced_vars_", names(weights_models)[f], sep="")]] <-balance
 
@@ -176,15 +172,19 @@ assessBalance <- function (object, data, weights_models){
 
       for (y in 1:length(exposure_time_pts)){
 
+        # browser()
+
         #gathering all imputed data set lists for a given exposure, outcome, and time point
         exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "-", outcomes[z], "-", exposure_time_pts[y]),
                                                                                  names(all_post_balance_corrs))]]
         exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[sapply(strsplit(names(all_post_balance_corrs), "-"),"[",3)==exposure_time_pts[y] &
                                                                              grepl(exposures[x], sapply(strsplit(names(all_post_balance_corrs), "-"),"[",1)) &
                                                                              sapply(strsplit(names(all_post_balance_corrs), "-"),"[",2)==outcomes[z]]]
+
+
         # exposure_list=all_post_balance_corrs[names(all_post_balance_corrs)[grepl(paste0(exposures[x], "_", time_pts[time_pts!=time_pts[y]]), names(all_post_balance_corrs))==F]] #making sure other time pts not included for nested cases (e.g., 15 and 154)
 
-        #for binary exposures, evaluate standardized mean differnce between groups (0.1 or user-determined)
+        #for BINARY exposures, evaluate standardized mean difference between groups (0.1 or user-determined)
         if (exposure_type=="binary"){
           exposureA=dplyr::bind_rows(exposure_list, .id = "imp")
           exposureA=exposureA%>%dplyr::select(c(contains("0"), rn, imp))%>%
@@ -206,18 +206,29 @@ assessBalance <- function (object, data, weights_models){
 
           sig=std_mean_diff[abs(std_mean_diff$std_mean_diff)>balance_thresh,]
           colnames(sig)= c("covariate", apply(expand.grid("corr_imp", 1:m), 1, paste, sep="", collapse="_"), "mean_corr")
+          #removes the last character from factor variables (cbps appends a value in modeling)
+          sig$covariate[grepl(paste(factor_covariates, collapse="|"), as.character(unlist(sig$covariate)))]=
+            substring(as.character(unlist(sig$covariate[grepl(paste(factor_covariates, collapse="|"),as.character(unlist(sig$covariate)))])), 1,
+                      nchar(as.character(unlist(sig$covariate[grepl(paste(factor_covariates, collapse="|"), as.character(unlist(sig$covariate)))])))-1)
           sig_unbalanced_averaged_k[[paste("sig_unbalanced_vars_",  exposures[x], exposure_time_pts[y], "-", outcomes[z],"_", sep="")]] <- sig
 
           significant_corrs_remaining=rbind(significant_corrs_remaining, sig)
 
 
         } else if (exposure_type=="continuous"){
-          #for continuous exposures, evaluate correlations
 
+          #for CONTINUOUS exposures, evaluate correlations
+
+          # browser()
           exposure_time_corrs=do.call(cbind, exposure_list) #cbinds them
+          #re-naming any factors (level appended on by CBPS)
           names=exposure_time_corrs[,1] #extracts variable names
+          #removes the last character from factor variables (cbps appends a value in modeling)
+          names[grepl(paste(factor_covariates, collapse="|"), as.character(unlist(names)))]=
+            substring(as.character(unlist(names[grepl(paste(factor_covariates, collapse="|"),as.character(unlist(names)))])), 1,
+                      nchar(as.character(unlist(names[grepl(paste(factor_covariates, collapse="|"), as.character(unlist(names)))])))-1)
           exposure_time_corrs=as.data.frame((exposure_time_corrs))
-          exposure_time_corrs=exposure_time_corrs[,unlist(lapply(exposure_time_corrs, is.numeric), use.names = FALSE)] #extracts numeric columns (i.e., correlations)
+          exposure_time_corrs=as.data.frame(exposure_time_corrs[,unlist(lapply(exposure_time_corrs, is.numeric), use.names = FALSE)]) #extracts numeric columns (i.e., correlations)
           exposure_time_corrs$mean_cor=rowMeans(exposure_time_corrs) #takes row means to find average correlation
           exposure_time_corrs=cbind(names, exposure_time_corrs) #adds names back
 
@@ -243,27 +254,34 @@ assessBalance <- function (object, data, weights_models){
       significant_corrs_remaining=significant_corrs_remaining[order(significant_corrs_remaining$covariate),]
       significant_corrs_remaining=significant_corrs_remaining[!duplicated(significant_corrs_remaining$covariate),] #pulls unique covariates for inspection
 
+      options(kableExtra_view_html = F)
+
+      # browser()
+
       if (nrow(significant_corrs_remaining)>0){
+        write.csv(significant_corrs_remaining, file=paste(home_dir, "balance/comparison values/all_sig_post_balance_cors_", exposures[x], "-", outcomes[z],".csv", sep=""))
+
         cat(paste0("USER ALERT: Inspect the following list of unbalanced covariates for exposure ", exposures[x], "-", outcomes[z], " across all exposure time points:"),"\n")
         cat("\n")
-        cat(knitr::kable(significant_corrs_remaining, sep="\n")%>%
-          kableExtra::kable_styling())
+        cat(knitr::kable(significant_corrs_remaining, format="pipe"), sep="\n") #%>%
+          # kableExtra::kable_styling())
         cat("\n")
+
 
 
       }else { #if there are no significant unbalanced covariates
         cat(paste0("USER ALERT: There are no unbalanced covariates for exposure ", exposures[x], "-", outcomes[z]),"\n")
-        # write.csv(significant_corrs_remaining, file=paste(home_dir, "balance/post-balance correlation values/all_sig_post_balance_cors_", exposures[x], "-", outcomes[z],".csv", sep=""))
         cat("\n")
 
       }
 
+      # browser()
 
 
       covariates_for_model=unique(c(as.character(unlist(significant_corrs_remaining[,1]))))
-      #re-naming any factors (level appended on by CBPS)
-      covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))]=
-        substring(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))], 1, nchar(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))])-1)
+      # #re-naming any factors (level appended on by CBPS)
+      # covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))]=
+      #   substring(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))], 1, nchar(covariates_for_model[grepl(paste(factor_covariates, collapse="|"), paste0(covariates_for_model))])-1)
       covariates_for_model=covariates_for_model[!grepl(exposures[x], covariates_for_model)] #removing exposure (as this will be modeled explicitly)
       covariates_for_model=covariates_for_model[! covariates_for_model %in% exposures[x]]
       covariates_for_model=paste0(covariates_for_model, sep="", collapse=" + ")
@@ -291,9 +309,9 @@ assessBalance <- function (object, data, weights_models){
   }
 
   if(exposure_type=="continuous"){
-    all_corrs_df=all_corrs_df[order(abs(all_corrs_df$`Mean Corr`), all_corrs_df$outcome, decreasing = T),]
+    all_corrs_df=all_corrs_df[order(all_corrs_df$outcome, all_corrs_df$exposure_time, abs(all_corrs_df$`Mean Corr`), decreasing = T),]
   }else{
-    all_corrs_df=all_corrs_df[order(abs(all_corrs_df$`Std Mean Diff`), all_corrs_df$outcome, decreasing = T),]
+    all_corrs_df=all_corrs_df[order(all_corrs_df$outcome, all_corrrs$df$exposure_time, abs(all_corrs_df$`Std Mean Diff`), decreasing = T),]
   }
 
   #save out correlations/std mean differences
