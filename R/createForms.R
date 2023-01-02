@@ -23,7 +23,7 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
   mandatory_keep_covariates=object$mandatory_keep_covariates
   exclude_covariates=object$exclude_covariates
   time_varying_covariates=object$time_varying_variables
-
+  keep_concurrent_tv_vars=object$keep_concurrent_tv_vars
 
   #error checking
   if (length(potential_colliders$colliders)!=length(potential_colliders$exp_out_pair)){
@@ -100,13 +100,6 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
       }
 
 
-
-
-
-
-
-
-
       #Cycles through all exposure time points
       for (x in 1:length(exposure_time_pts)){
         time=exposure_time_pts[x]
@@ -123,7 +116,7 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
           # vars_to_include=c(time_varying_concurrent_covariates, time_invariant_concurrent_covariates) #retains only concurrent variables
           vars_to_include=c(concurrent_covariates) #retains only concurrent variables
 
-        }else{ #lags present
+        }else{ #gets lagged exposures
           past_exposures=apply(expand.grid(exposure, as.character(lags)), 1, paste, sep="", collapse=".") #finds past exposure variables
           # keep_time_var_covars=apply(expand.grid(mandatory_keep_covariates[mandatory_keep_covariates %in% time_varying_covariates], as.character(lags)), 1, paste, sep="", collapse=".") #finds past time-varying mandatory covariates
 
@@ -170,7 +163,8 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
         #USER: Place where you can manually delete variables that should not be included in forms such as index variables and possible colliders (e.g., outcomes that could also cause a given tx )
         vars_to_include=vars_to_include[!vars_to_include %in% c(ID, "WAVE",
                                                                 time_varying_covariates, #exclude time-varying covariates in long form (already in wide form)
-                                                                paste(exposure, time, sep="."), #exclude exposure at current time point
+                                                                paste(exposure, time, sep="."), #excludes exposure from concurrent time (it is the DV of the balancing form)
+                                                                apply(expand.grid(time_varying_covariates[!time_varying_covariates %in% keep_concurrent_tv_vars], as.character(time)), 1, paste, sep="", collapse="."),#exclude any time-varying confounders current time point --cannot distinguish from mediators!
                                                                 # apply(expand.grid(outcome, as.character(time_pts)), 1, paste, sep="", collapse="."), #exclude outcome at current time point
                                                                 paste(outcome, time, sep="."), #exclude outcome at current time point
                                                                 apply(expand.grid(outcome, as.character(time_pts[time_pts>time])), 1, paste, sep="", collapse="."),#excludes future outcomes
@@ -188,7 +182,7 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
         f=as.formula(paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep="", collapse=" + ")))
 
         #prints form for user inspection
-        cat(paste0("Formula for ", exposure, "-", outcome, " at exposure time point ", as.character(time),
+        cat(paste0("Formula for ", exposure, "-", outcome, " at ", exposure," time point ", as.character(time),
                    ":"), "\n")
         print(f)
         cat("\n")

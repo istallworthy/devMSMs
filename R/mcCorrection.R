@@ -39,8 +39,8 @@ mcCorrection <- function(object, history_comparisons){
     folder_label=ifelse(as.numeric(sapply(strsplit(exp_out, "_"), "[", 3))==weights_percentile_cutoff, "original/", "sensitivity checks/")
 
     # browser()
-    cat(paste0("USER ALERT: please inspect the followig contrast comparisons for ", exp_out, " :"), "\n")
-    cat(knitr::kable(comparisons), sep="\n")
+    cat(paste0("USER ALERT: please inspect the followig uncorrected and corrected contrast comparisons for ", exp_out, " :"), "\n")
+    cat(knitr::kable(comparisons, format='pipe'), sep="\n")
     cat("\n")
 
     #save out table for all contrasts with old and corrected p-values

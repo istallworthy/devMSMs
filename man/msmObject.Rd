@@ -29,6 +29,7 @@ msmObject(
   outcomes,
   outcome_time_pt,
   mandatory_keep_covariates = NULL,
+  keep_concurrent_tv_vars = NULL,
   exclude_covariates = NULL,
   time_var_exclude = NULL,
   potential_colliders = NULL,

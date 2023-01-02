@@ -112,6 +112,9 @@ object <- msmObject(
  #### Inclusion Information (optional) ####
   #list any variables for mandatory inclusion in balancing for theoretical or other reasons (regardless of their correlations with exposure/outcome); if it is a time-varying covariate the code will include it in the forms for all time points;  can specify time after "."; default set to none
   mandatory_keep_covariates=c("HOMEETA1"),
+ 
+ #list any time-varying variables that you wish to include concurrently in the balancing forms (over-riding default of excluding concurrent time-varying variables as they cannot be distinguished from colliders)
+  keep_concurrent_tv_vars=c("INR"), 
   
   
   #### Exclusion Information (optional) ####
@@ -130,7 +133,7 @@ object <- msmObject(
  ### Plotting Information (optional) ###
  #optional list of alternative labels for exposures that will be used only for plotting
    # exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"), 
-    exposure_labels=c("Income-to-needs-ratio"), 
+    exposure_labels=c("Income-to-needs-ratio", "Home resources"), 
 
    
   #optional list of alternative labels for outcomes that will be used only for plotting
@@ -248,13 +251,16 @@ Model dictionary:
 *m3 full interaction model adding in all possible epoch main effect interactions
 *m4 final model including all epoch main effects and only the significant covariates and interactions 
 
+The code will automatically choose the model with the loweset AIC but user can over-ride this and manually select a model from the above list to proceed with instead using best_model="m2", for example. If that model does not exist for a given exposure-outcome pair, the code will use AIC to find the best model. 
+
+
 ```{r}
 
 #code to fit a series of baseline, covariates, and interaction weighted models to determine which is best fitting; prints only models with user-specified weight cutoff values (sensitivity checks output into folder)
 all_models <- fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
 
-#determine best-fitting model  --ignore orange warnings here, could suppress them?
-best_models <- assessModel(object, all_models)
+#determine best-fitting model  --should this print all sensitivity analyses or nah? 
+best_models <- assessModel(object, all_models, best_model="m1")
 
 ```
 
@@ -265,13 +271,15 @@ This code fits a series of linear hypothesis tests using the 'car' package (Fox 
 Because we use a continuous approach to modeling exposures, the user has the option to specify cutoffs for values of the exposures that will be considered high ("hi_cutoff") and low ("lo_cutoff") in the msm object. The user also has the option to specify a reference history ("reference") and an optional comparison history ("comparisons") on which to base comparisons, and which multiple comparison correction method ('method') to implement. 
 
 This code uses predicted values to plot the effects of the different exposure histories and resulting comparisons for each exposure-outcome pairing. Use the results from the above step to determine which exposure histories are significantly different from one another. Plots display outcome on the x-axis and exposure history on the y-axis, colored by dose (0-n(length of epochs)).The user has the option to provide more formal labels for the exposure(s) ('exposure_labels') and outcome ('outcome_labels') in the msm object to be used for plotting.  
+
+
 ```{r}
 
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
-history_comparisons <- compareHistories(object, best_models)
+history_comparisons <- compareHistories(object, best_models, all_models)
 
 #adjusts p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
-signifcant_comparisons <- mcCorrection(object, history_comparisons) #maybe try to suppress output?
+signifcant_comparisons <- mcCorrection(object, history_comparisons) 
 
 #saves out plots of exposure histories for each out exposure-outcome pairing, colored by dosage of exposure 
 plotResults(object, best_models)
@@ -328,6 +336,7 @@ print(citation("survey"))
 print(citation("CBPS"))
 print(citation("Amelia"))
 print(citation("car"))
+print(citation("cobalt"))
 
 ```
 
