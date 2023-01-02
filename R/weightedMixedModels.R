@@ -1,4 +1,4 @@
-
+weightedMixedMods <- function(object, wide_long_datasets, covariates_to_include){
 library(lme4)
 library(car)
 library(RCurl)
@@ -13,3 +13,4 @@ temp=data%>%dplyr::select(s_id, WAVE, contains(c("CTSETA1", "CORT")))
 test=lmer(lnCORTR ~ WAVE + I(WAVE^2) +(1| s_id), data=temp, weights=CTSETA1_lnCORTR)
 
 summary(test)
+}

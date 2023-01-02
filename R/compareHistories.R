@@ -8,7 +8,7 @@
 #' @seealso [assessModel()]
 #' @return history_comparisons lists of linear hypothesis tests
 #' @examples compareHistories(object, best_models)
-compareHistories <-function(object, best_models){
+compareHistories <-function(object, best_models, all_models){
 
   home_dir=object$home_dir
   exposures=object$exposures
@@ -90,8 +90,9 @@ compareHistories <-function(object, best_models){
         exposure=exposures[x]
 
         #gets best-fitting model formula
-        formula=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]$formula
-        final_model=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]
+          formula=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]$formula
+          final_model=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]
+
 
 
         #identifying model parameters
@@ -245,6 +246,7 @@ compareHistories <-function(object, best_models){
 
       }
 
+      cat("\n")
     }
 
     folder_label=ifelse(cutoff==weights_percentile_cutoff, "original/", "sensitivity checks/")
