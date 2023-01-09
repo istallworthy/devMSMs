@@ -104,6 +104,9 @@ assessBalance <- function (object, data, weights_models){
       cat("USER ALERT: see the 'balance/comparison values/' folder for a table comparing covariate relations to exposure pre and bost balancing", "\n")
       set.cobalt.options(binary="std")
 
+      # #saving out balance tables from cobalt
+      # bal.tab(weights_models[f][[1]],
+      #         stats=c("mean.diffs", "variance.ratios"), thresholds=c(m=balance_thresh))
       }
 
 
@@ -113,6 +116,8 @@ assessBalance <- function (object, data, weights_models){
 
     #new balancing assessment from cobalt
     # remotes::install_github("ngreifer/cobalt")
+    # a=bal.tab(weights_models[f][[1]],
+    #         stats=c("correlations", "variance.ratios"), thresholds=c(m=0.1))
 
     #ISSUE: not sure how to save this out well
     # bal.tab=cobalt::bal.tab(weights_models[f][[1]])

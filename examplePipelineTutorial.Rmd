@@ -30,22 +30,29 @@ Please provide user input for the following fields to create an msm object that 
 ```{r}
 # source("") #string
 
-# data=read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah test/MSM_ALL_LONG_bin_8.25.20.csv")
-# data[data==-9999]=NA
-# data$INR_bin=ifelse(data$INR>median(data$INR, na.rm=TRUE), 1, 0)
-# write.csv(data, "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah test/MSM_ALL_LONG_bin_8.25.20.csv")
+# data=read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial.csv")
+# data=data%>%dplyr::filter(TAge<60)
+# data=data[data$TAge!=48,]
+# data$EF_avg_perc= rowMeans(data[,54:60], na.rm=T)
+# data$fscore=NULL
+# data=data[,!grepl("pct", colnames(data))]
+# # data$lnINR=log10(data$InRatioCor)
+# # data$InRatioCor=NULL
+# data[data=="NaN"]=NA
+# write.csv(data, "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", row.names = F)
+
+# temp=data%>%dplyr::select(InRatioCor, lnINR)
 
 object <- msmObject(
   
   ##### Directories Information (required) ####
   # directories to long dataset 
-  # data_path = "~/Library/CloudStorage/Box-Box/BSL General/Meriah/TSST MSM PAPER/MSMs/!MSM package test_10.17.22/MSMs-main/MSM_ALL_LONG_8.25.20.csv", #string
-  # data_path ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah test/MSM_ALL_LONG_bin_8.25.20.csv",
-  data_path ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial.csv",
+
+  data_path ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv",
 
   # home_dir = "~/Library/CloudStorage/Box-Box/BSL General/Meriah/TSST MSM PAPER/MSMs/!MSM package test_10.17.22/MSMs-main", #string
   # home_dir = "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah test/", #string
-  data_path ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/",
+  home_dir ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/",
 
   
   #### Dataset Information (required) ####
@@ -54,26 +61,22 @@ object <- msmObject(
   
   #time points of interest and name of time variable in long dataset
   time_pts=c(6, 15, 24, 35, 58), #list of integers
-  time_var="TAGE", #string
+  time_var="TAge", #string
   
   #marker for missing data
   missing="NA", #string or integer(s)
   
-  #list out all variables that are time-varying; default is none
-  # time_varying_variables= c("Age", "WIND", "PCX_POS", "PCX_NEG", "BSI", "INR_bin", "INR", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1"),
-  time_varying_variables= c("TCAge", "pcx_pos", "pcx_neg", "InRatioCor", "ESETA1", "HOMEETA1", "CTSETA1", "B18Raw", "ADHDtcTot", "ALl_Le", "CCTHrs", "SAAmylase", "EARS_TJo",
-                            "Chaos_Unstable", "Chaos_HomEnv", "CORTB", "Cotin_rep1ngmL", "IBRApro", "IBRAfct", "IBRAttn", "IBRIrit", "MDI", "LESMnPos",
-                            "LESMnNeg", "pcx_engaged", "pcx_sensitive", "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "RHasSO",
-                            "QSSOverallMe", "WndNbrhood"),
+  #list out all variables that are time-varying; including ANY variables collected at only a single time point (with missin for other time points )
+  
+  time_varying_variables= c("ADHDtcTot", "ALI_Le","SAAmylase", "EARS_TJo","Chaos_Unstable", "Chaos_HomEnv", "SEmply","MDI",  "LESMnPos","LESMnNeg","pcx_pos", "pcx_neg", "pcx_engaged", "pcx_sensitive", "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "RHasSO","QSSOverallMe", "WndNbrhood", "EF_avg_perc","CCTHrs","TcAge","CORTB","Cotin_rep1ngmL", "PEmply", "IBRApro", "IBRAfct", "IBRAttn", "IBRIrit","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1","InRatioCor"),
 
   #list all continuous variables here; all others assumed ordinal for imputation; default is none 
   # continuous_variables=c("GrosPay1", "RMomAgeU", "RMAge1st", "SwghtLB","RWghtLb", "IBQDnovm", "MDI", "AGE", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1", "INR"),
-  continuous_variables=c("PMAge2", "ADHDtcTot", "All_Le", "CCTHrs", "SAmylase", "EARS_Tjo", "Chaos_Unstable", "Chaos_HomEnv", "CORTB", "Cotin_rep1ngmL", "IBRApro", "IBRAfct", 
-                         "IBRAttn", "IBRIrit","LESMnPos", "LESMnNeg","B18Raw", "ESETA1", "HOMETA1", "CTSETA1", "pcx_pos", "pcx_neg","pcx_engaged", "pcx_sensitive", 
-                         "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "QSSOverallMe", "WndNbrhood", "InRatioCor", "fscore"),
+  continuous_variables=c("PmAge2", "ADHDtcTot", "ALI_Le", "CCTHrs", "SAAmylase", "EARS_Tjo", "Chaos_Unstable", "Chaos_HomEnv", "CORTB", "Cotin_rep1ngmL", "IBRApro", "IBRAfct", "TcAge","IBRReac", "IBRAttn", "IBRIrit","LESMnPos", "LESMnNeg","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1", "pcx_pos", "pcx_neg","pcx_engaged", "pcx_sensitive", 
+                         "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "QSSOverallMe", "WndNbrhood", "InRatioCor", "EF_avg_perc"),
   
   #list any covariates that are factors here; default is none, or that all variables are continuous 
-  factor_covariates=c("State","TcSex2", "TcBlac2", "PmBlac2", "PmMrSt2", "PmEd2", "ScEd2", "KFASTScr", "PEmply", "SEmply", "RHasSO"), #list of characters
+  factor_covariates=c("state","TcSex2", "TcBlac2", "PmBlac2", "PmMrSt2", "PmEd2", "ScEd2", "KFASTScr", "PEmply", "SEmply", "RHasSO"), #list of characters
   
   
   #### Imputation Specification (optional) ####
@@ -83,13 +86,16 @@ object <- msmObject(
   
   #### Exposure Information (required) ####
   #exposures of interest that potentially have causal effects on outcomes and exposure time point(s) (corresponding to values in time_var)
-  exposures=c("INR", "HOMEETA1"), #list of strings
+  exposures=c("InRatioCor", "HOMEETA1"), #list of strings
   # exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
-  exposure_time_pts=c(6, 15), #list of integers
+  exposure_time_pts=c(6, 15, 24, 35, 58), #list of integers
 
   
   #### Balancing Information (optional) ###
   balance_thresh=0.12, #correlation value above which covariates are not considered balanced with respect to exposure/outcome;used for finding potential confounds and asessing balance; default set to 0.12 from Stuart et al.
+  
+  #whether confounder identification and balancing should be conducted only in relation to the exposure (and not the outcome); default set to F
+  bal_only_exp=F,
   
   weights_percentile_cutoff=0.95, #percentile cutoff value for truncating weights to avoid heavy tails; default is 0.95; 
   
@@ -97,7 +103,7 @@ object <- msmObject(
   #### History Comparison Information (required & optional) ####
    #developmental time periods (and their corresponding time points) that constitute regime/history units of interest --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects of exposure histories (e.g, chronically high exposure vs. exposure only in infancy) on outcomes
   exposure_epochs=data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), #user-created names of epochs as a list of strings
-                             values=I(list(c(6,15), c(24,35), c(58, 90, 154)))), #time point(s) encompassed in each epoch that correspond to data as a list of numeric lists
+                             values=I(list(c(6,15), c(24,35), c(58)))), #time point(s) encompassed in each epoch that correspond to data as a list of numeric lists
   
     #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
   # apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
@@ -114,40 +120,48 @@ object <- msmObject(
   #### Outcome Information (required) ####
   #outcomes of interest and outcome time point
   # outcomes=c("CORTBASE", "sAABASE"), #list of strings 
-  outcomes=c("CORTBASE"), #list of strings 
-  outcome_time_pt=154, #integer value
+  outcomes=c("EF_avg_perc"), #list of strings 
+  outcome_time_pt=58, #integer value
   
   
  #### Inclusion Information (optional) ####
   #list any variables for mandatory inclusion in balancing for theoretical or other reasons (regardless of their correlations with exposure/outcome); if it is a time-varying covariate the code will include it in the forms for all time points;  can specify time after "."; default set to none
-  mandatory_keep_covariates=c("HOMEETA1"),
+  mandatory_keep_covariates=NULL,
  
  #list any time-varying variables that you wish to include concurrently in the balancing forms (over-riding default of excluding concurrent time-varying variables as they cannot be distinguished from colliders)
-  keep_concurrent_tv_vars=c("INR"), 
+  keep_concurrent_tv_vars=NULL, 
   
   
   #### Exclusion Information (optional) ####
   #list out any variables that should be excluded from consideration as confounds via balancing based on practical or theoretical reasons; if it is a time-varying covariate the code will include it in the forms for all time points with the exception of in its own forms if it is an exposure; can specify time after "."; default set to none; will over ride mandatory_keep_covariates
-  exclude_covariates=c("Index1", "WAVE2", "WAVE3", "LIVEVID", "SUBSTRESS", "TANNERALL", "AGE.6", "INR_bin"), #list of characters
+  exclude_covariates=NULL, #list of characters
   
   #list any time-varying variables that may get imputed but should NOT be present in the dataset because of planned missingness design with ".time_pt" format
-  time_var_exclude=c("PCX_POS.58", "PCX_NEG.58", "PCX_POS.90", "PCX_NEG.90", "PCX_POS.154", "PCX_NEG.154", "CORTBASE.58", "CORTBASE.90", "sAABASE.58","sAABASE.90", "TIMEofDAY.6", "TIMEofDAY.15", "TIMEofDAY.24", "TIMEofDAY.35", "TIMEofDAY.58", "TIMEofDAY.90","TIMEofDAY.15", "WIND.15", "WIND.24", "WIND.154", "BSI.35","BSI.90", "BSI.154"), #default set to none
+  time_var_exclude=c("ADHDtcTot.6", "ADHDtcTot.15", "ADHDtcTot.24", "ADHDtcTot.35","ALI_Le.6", "ALI_Le.15","ALI_Le.24","ALI_Le.58","SAAmylase.35", "SAAmylase.58",
+                     "EARS_TJo.6","EARS_TJo.15", "EARS_TJo.58",  "Chaos_HomEnv.6", "Chaos_HomEnv.15", "Chaos_HomEnv.24", "Chaos_Unstable.6", "Chaos_Unstable.15", "Chaos_Unstable.24",
+                     "CORTB.35", "CORTB.58", "Cotin_rep1ngmL.35", "Cotin_rep1ngmL.58", "Cotin_rep1ngmL.35", "IBRApro.35", "IBRApro.58", "IBRAfct.35", "IBRAfct.58", 
+                     "IBRAttn.35", "IBRAttn.58", "IBRReac.35", "IBRReac.58", "IBRIrit.35", "IBRIrit.58", "MDI.24", "MDI.35", "MDI.58", "LESMnPos.6", "LESMnPos.15", "LESMnPos.58", 
+                     "LESMnNeg.6", "LESMnNeg.15", "LESMnNeg.58", "B18Raw.35",  "pcx_pos.58", "pcx_neg.58","pcx_engaged.58", "pcx_sensitive.58", "pcx_CompTwo.6", "pcx_CompTwo.15",
+                     "pcx_CompTwo.24", "pcx_CompTwo.35", "StrDif_ES.6", "StrDif_ES.15","StrDif_ES.24", "StrDif_CP.6", "StrDif_CP.15","StrDif_CP.24", "StrDif_HY.6", 
+                     "StrDif_HY.15","StrDif_HY.24", "StrDif_PP.6", "StrDif_PP.15","StrDif_PP.24", "StrDif_PR.6", "StrDif_PR.15","StrDif_PR.24", "StrDif_Tot.6", 
+                     "StrDif_Tot.15","StrDif_Tot.24", "QSSOverallMe.15", "WndNbrhood.15", "EF_avg_perc.6", "EF_avg_perc.15", "EF_avg_perc.24"), #default set to none
   
   #when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure and outcome, and at lagged values if specified by the user, as balancing on colliders can lead to problematic outcomes; default is none; will override mandatory_keep_covariates
-  potential_colliders=data.frame(exp_out_pair=c("HOMEETA1-CORTBASE", "ESETA1-CORTBASE"), #names of exposure-outcome pair separated by "-", no spaces; list of strings
-                                 colliders=I(list(c("AGE"), c("HOMEETA1.154", "AGE"))), #list of colliders for each exposure-outcome pair; list of lists of strings
-                                 exclude_lags=c("T", "F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair; list of strings
+  # potential_colliders=data.frame(exp_out_pair=c("HOMEETA1-CORTBASE", "ESETA1-CORTBASE"), #names of exposure-outcome pair separated by "-", no spaces; list of strings
+  #                                colliders=I(list(c("AGE"), c("HOMEETA1.154", "AGE"))), #list of colliders for each exposure-outcome pair; list of lists of strings
+  #                                exclude_lags=c("T", "F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair; list of strings
+ potential_colliders=NULL,
                                  
  
  ### Plotting Information (optional) ###
  #optional list of alternative labels for exposures that will be used only for plotting
    # exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"), 
-    exposure_labels=c("Income-to-needs-ratio", "Home resources"), 
+    exposure_labels=c("Income-to-needs-ratio"), 
 
    
   #optional list of alternative labels for outcomes that will be used only for plotting
    # outcome_labels=c("Cortisol","Salivary Alpha Amalayse"),
-    outcome_labels=c("Cortisol"),
+    outcome_labels=c("EF"),
 
  #optional string ("h" or "l") denoting which level of exposure at each exposure epoch to use when calculating dose (default is "h")
    dose_level="l",
@@ -176,7 +190,7 @@ When creating the msm object, the user must specify which covariates are time-va
 potential_covariates <- identifyCovariates(object, data)
 
 #of those covariates, variables at the exposure time point or prior that correlate with either the exposure at that time point or the outcome at the outcome time point  and thus could be potential confounders
-covariates_to_include <- identifyPotentialConfounds(object)
+covariates_to_include <- identifyPotentialConfounds(object, potential_covariates)
 
 ```
 
