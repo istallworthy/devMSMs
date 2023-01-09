@@ -32,15 +32,21 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
     stop('Please indicate whether you want to exclude lagged values of colliders for each listed exposure-outcome pair in the msm object')}
 
 
+  # browser()
   ####Creates CBPS forms for each exposure at each time point (e.g., HOMEETA.6) that includes: all identified potential confounds for that treatment (at any time point) and lagged time points of the treatment, excludes other outcomes a the given time point (as potential colliders).
 
   #determining column names
   imp_col_names=colnames(wide_long_datasets[[1]])
 
   forms=list()
+  forms_csv=data.frame()
 
-  cat("USER ALERT: Please inspect the weights formulas below. Balancing weights will attempt to balance on all of these potential confounding variables. If there are any time-varying variables you wish to omit at this time point, please list them in the 'potential_colliders' field of the msm object and re-run")
-  cat("They are also saved out in the 'forms' folder as csv files", "\n")
+  cat("USER ALERT: Please inspect the balancing weights formulas below that contain all confounders that will be used to create weights at each exposure time point.", "\n",
+  "These formula will reflect the associations shown in the potential_confound_correlations.html table excluding any contemporaneous time-varying variables (given that they are difficult to disentangle from mediators).","\n",
+  "If there aare contemporaneous time-varying variables that you wish to include in the balancing formula, please list them in the 'keep_concurrent_tv_vars' field of the msmObject and re-run this function.","\n",
+  "If there are any time-varying variables you wish to omit given their potential to be colliders, please list them in the 'potential_colliders' field of the msmObject and re-run,","\n",
+  "You can also omit or include variables in all balancing forms using the 'exclude_covariates' and 'mandatory_keep_covariates' fields of the msmObject, respectively.", "\n")
+  cat("All forms are saved out in the 'forms' folder as csv files", "\n")
   cat("\n")
 
   #cycles through outcomes
@@ -104,6 +110,8 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
       for (x in 1:length(exposure_time_pts)){
         time=exposure_time_pts[x]
 
+        # browser()
+
         #finds concurrent time-varying and time-invariant potential confounds
         concurrent_covariates=na.omit(exposure_covariates[exposure_covariates$exp_time==time,])
         concurrent_covariates=c(concurrent_covariates$row, concurrent_covariates$column)
@@ -119,7 +127,6 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
         }else{ #gets lagged exposures
           past_exposures=apply(expand.grid(exposure, as.character(lags)), 1, paste, sep="", collapse=".") #finds past exposure variables
           # keep_time_var_covars=apply(expand.grid(mandatory_keep_covariates[mandatory_keep_covariates %in% time_varying_covariates], as.character(lags)), 1, paste, sep="", collapse=".") #finds past time-varying mandatory covariates
-
 
           #populates data frames
           lagged_covariates=past_exposures
@@ -187,15 +194,21 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
         print(f)
         cat("\n")
 
+        forms_csv_temp=data.frame()
+        forms_csv_temp[1,1]=paste0("Formula for ", exposure, "-", outcome, " at ", exposure," time point ", as.character(time),":")
+        forms_csv_temp[1,2]=paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep="", collapse=" + "))
+
+        forms_csv=rbind(forms_csv, forms_csv_temp)
+
         #saves out form to global workspace and local directory
         # return(assign(paste("form_", exposure, "_", time, sep=""), f))
         forms[[paste("form_", exposure,"-", outcome, "-", time, sep="")]] <- f
 
-        write.csv(as.character(f), paste0(home_dir, "forms/form_", exposure, "-", outcome, "-", time, ".csv", sep=""))
 
       }
     }
   }
+  write.csv(forms_csv, paste0(home_dir, "forms/all_balancing_formulas.csv", sep=""), row.names = F)
 
   return(forms)
 }
