@@ -19,6 +19,8 @@ identifyCovariates <- function(object, data){
   time_varying_covariates=object$time_varying_variables
   time_pts=object$time_pts
   time_var_exclude=object$time_var_exclude
+  outcome_time_pt=object$outcome_time_pt
+  home_dir=object$home_dir
 
   #gathering and delineating exclude covariates
   user_input_exclude_covariates=exclude_covariates
@@ -129,6 +131,7 @@ identifyPotentialConfounds <- function(object, all_potential_covariates){
   exposure_time_pts=object$exposure_time_pts
   outcome_time_pt=object$outcome_time_pt
   time_varying_covariates=object$time_varying_variables
+  factor_covariates=object$factor_covariates
   exclude_covariates=object$exclude_covariates
   balance_thresh=object$balance_thresh
   mandatory_keep_covariates=object$mandatory_keep_covariates
@@ -193,6 +196,8 @@ identifyPotentialConfounds <- function(object, all_potential_covariates){
   if (sum(time_varying_covariates %in% colnames(data))!=length(time_varying_covariates)){
     stop("Please make sure all time_varying_covariates entered in the msmObject match column names in your dataset")
   }
+
+  time_invar_covars=all_potential_covariates[grepl("\\.", all_potential_covariates)==F]
 
   #makes wide dataset
   data_wide=suppressWarnings(stats::reshape(data=data,
@@ -286,6 +291,7 @@ identifyPotentialConfounds <- function(object, all_potential_covariates){
             filter(abs(o$cor)>balance_thresh) #accounts for d=0.2 see Stuart paper for rationale
           filtered$exp_time=time_pt
           filtered=filtered[filtered$row %in% paste0(outcome, ".", outcome_time_pt) | filtered$column %in% paste0(outcome, ".", outcome_time_pt),] #gets only those associated with outcome at outcome time point
+          # browser()
           # filtered=filtered[filtered$row %in% outcome | filtered$column %in% outcome,] #gets only those associated with outcome at outcome time point
           filtered=filtered[as.numeric(sapply(strsplit(filtered$row, "\\."), "[", 2))<time_pt+1 | as.numeric(sapply(strsplit(filtered$column, "\\."), "[", 2))<time_pt+1 |
                               filtered$row %in% time_invar_covars | filtered$column %in% time_invar_covars

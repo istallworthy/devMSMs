@@ -68,20 +68,21 @@ object <- msmObject(
   
   #list out all variables that are time-varying; including ANY variables collected at only a single time point (with missin for other time points )
   
-  time_varying_variables= c("ADHDtcTot", "ALI_Le","SAAmylase", "EARS_TJo","Chaos_Unstable", "Chaos_HomEnv", "SEmply","MDI",  "LESMnPos","LESMnNeg","pcx_pos", "pcx_neg", "pcx_engaged", "pcx_sensitive", "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "RHasSO","QSSOverallMe", "WndNbrhood", "EF_avg_perc","CCTHrs","TcAge","CORTB","Cotin_rep1ngmL", "PEmply", "IBRApro", "IBRAfct", "IBRAttn", "IBRIrit","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1","InRatioCor"),
+  time_varying_variables= c("ADHDtcTot", "ALI_Le","SAAmylase", "EARS_TJo","Chaos_Unstable", "Chaos_HomEnv", "SEmply","MDI",  "LESMnPos","LESMnNeg","pcx_pos", "pcx_neg", "pcx_engaged", "pcx_sensitive", "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "RHasSO","QSSOverallMe", "WndNbrhood", "EF_avg_perc","CCTHrs","TcAge","CORTB","Cotin_rep1ngmL", "PEmply", "IBRApro", "IBRAfct", "IBRAttn","IBRReac", "IBRIrit","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1","InRatioCor"),
 
   #list all continuous variables here; all others assumed ordinal for imputation; default is none 
   # continuous_variables=c("GrosPay1", "RMomAgeU", "RMAge1st", "SwghtLB","RWghtLb", "IBQDnovm", "MDI", "AGE", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1", "INR"),
-  continuous_variables=c("PmAge2", "ADHDtcTot", "ALI_Le", "CCTHrs", "SAAmylase", "EARS_Tjo", "Chaos_Unstable", "Chaos_HomEnv", "CORTB", "Cotin_rep1ngmL", "IBRApro", "IBRAfct", "TcAge","IBRReac", "IBRAttn", "IBRIrit","LESMnPos", "LESMnNeg","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1", "pcx_pos", "pcx_neg","pcx_engaged", "pcx_sensitive", 
+  continuous_variables=c("PmAge2", "ADHDtcTot", "ALI_Le", "CCTHrs", "SAAmylase", "EARS_Tjo", "Chaos_Unstable", "Chaos_HomEnv", "CORTB", "Cotin_rep1ngmL", "IBRApro", "IBRAfct", "TcAge","IBRReac", "IBRAttn", "IBRIrit","LESMnPos", "LESMnNeg","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1", "pcx_pos", "pcx_neg","pcx_engaged", "pcx_sensitive", "PmMrSt2",
                          "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "QSSOverallMe", "WndNbrhood", "InRatioCor", "EF_avg_perc"),
   
   #list any covariates that are factors here; default is none, or that all variables are continuous 
-  factor_covariates=c("state","TcSex2", "TcBlac2", "PmBlac2", "PmMrSt2", "PmEd2", "ScEd2", "KFASTScr", "PEmply", "SEmply", "RHasSO"), #list of characters
+  factor_covariates=c("state","TcSex2", "TcBlac2", "PmBlac2",  "PEmply", "SEmply", "RHasSO"), #list of characters
   
   
   #### Imputation Specification (optional) ####
   #number of imputations for step 4; default is 5 --add any other imputation parameters here?
   m=2, #integer
+  imp_method= "pmm", #imputation method; pmm, midastouch, sample, cart (default), rf
   
   
   #### Exposure Information (required) ####
@@ -92,11 +93,11 @@ object <- msmObject(
 
   
   #### Balancing Information (optional) ###
-  balance_thresh=0.12, #correlation value above which covariates are not considered balanced with respect to exposure/outcome;used for finding potential confounds and asessing balance; default set to 0.12 from Stuart et al.
+  weights_method="cbps", #method for calculating weights: cbps, npcbps, bart, ps
+  balance_thresh=0.1, #correlation value above which covariates are not considered balanced with respect to exposure/outcome;used for finding potential confounds and asessing balance; default set to 0.12 from Stuart et al.
   
   #whether confounder identification and balancing should be conducted only in relation to the exposure (and not the outcome); default set to F
   bal_only_exp=F,
-  
   weights_percentile_cutoff=0.95, #percentile cutoff value for truncating weights to avoid heavy tails; default is 0.95; 
   
   
@@ -108,7 +109,7 @@ object <- msmObject(
     #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
   # apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
   #select one of the above histories, or permutations of high ("h") and low ("l") levels of exposure (one leve for each of the exposure epochs) as your reference event, or the history/sequence to which you would like to compare the other histories  
-  reference="l-l-l", #optional: set a reference history of high ("h") and low ("l") levels of exposure separate by a "-"; the default is set to the history denoting low ("l") exposure at all time points; character string of "h" and "l" separated by a "-" 
+  reference="h-h-h", #optional: set a reference history of high ("h") and low ("l") levels of exposure separate by a "-"; the default is set to the history denoting low ("l") exposure at all time points; character string of "h" and "l" separated by a "-" 
   comparisons="", #optional: set a comparison history from list above; the default is to include all non-reference histories as comparisons; character string of "h" and "l" separated by a "-" 
   
   hi_cutoff=.75, #optional integer value for quantile value constituting the threshold for "high" levels of an exposure; default set to 0.75
@@ -204,7 +205,7 @@ The parameter 'read_imps_from_file' will allow you to read imputed data in from 
 data_to_impute <- dataToImpute(object, covariates_to_include)
 
 #creates imputed datasets and saves them out
-imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no")
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="yes")
 
 ```
 
@@ -224,7 +225,7 @@ wide_long_datasets <- formatForWeights(object, data, imputed_datasets)
 forms <- createForms(object, wide_long_datasets, covariates_to_include)
 
 #creates balancing weights for each exposure-outcome pair at each exposure time point 
-weights_models <- createWeights(object, wide_long_datasets, forms, read_in_from_file="no") 
+imp_data_w<- createWeights(object, wide_long_datasets, forms, read_in_from_file="yes") 
 
 ```
 
@@ -241,18 +242,13 @@ unbalanced_covariates_for_models <- assessBalance(object, data, weights_models)
 ```
 
 
-### 6. Condense and truncate weights to create one per person per exposure-outcome pair
-This code multiplies weights across time points and averages across imputed datasets to condense down to final individual weights per exposure-outcome pair for modeling.
-
+### 6. Truncate weights to create one per person per exposure-outcome pair
 Given that weights with heavy tails can be problematic, this code caps weight values at a designated percentile (that the user has the option to specify with 'percentile_cutoff' when creating the msm object), populating all weights larger than that value with that percentile value. These weights can now be used in the formal marginal structural model, or weighted model. This code cycles through 2 additional cutoff values adjacent to the one specified by the user in order to conduct recommended sensitivity analyses with subsequent models. 
 
 You can stop here if you have specific MSM models you want to fit or you can continue on to fit a standard single-outcome model. We also suggest conducting sensitivity/robustness tests by creating weights using several percentile cutoff values and ensuring your subsequent models produce similar results regardless of which percentile cutoff you used. 
 ```{r}
-#condenses weights across imputed dataset and time point 
-data_for_model_with_weights <- condenseWeights(object, weights_models)
-
 #truncate weights 
-data_for_model_with_weights_cutoff <- truncateWeights(object, data_for_model_with_weights)
+data_for_model_with_weights_cutoff <- truncateWeights(object, data_for_model_with_weights, imp_data_w)
 
 ```
 
@@ -280,7 +276,7 @@ The code will automatically choose the model with the lowest AIC but user can ov
 ```{r}
 
 #code to fit a series of baseline, covariates, and interaction weighted models to determine which is best fitting; prints only models with user-specified weight cutoff values (sensitivity checks output into folder)
-all_models <- fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
+all_models <- fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models, model="m4")
 
 #determine best-fitting model  --should this print all sensitivity analyses or nah? 
 best_models <- assessModel(object, all_models, best_model="m1")

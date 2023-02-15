@@ -4,7 +4,7 @@
 \alias{identifyPotentialConfounds}
 \title{Identify potential confounds}
 \usage{
-identifyPotentialConfounds(object)
+identifyPotentialConfounds(object, all_potential_covariates)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}

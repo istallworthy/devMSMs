@@ -186,7 +186,8 @@ createForms <- function(object, wide_long_datasets, covariates_to_include){
         vars_to_include=vars_to_include[!duplicated(vars_to_include)]
 
         #Creates form for the given exposure time point
-        f=as.formula(paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep="", collapse=" + ")))
+        # f=as.formula(paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep="", collapse=" + ")))
+        f=as.formula(paste(paste0(exposure,".", time, " ~ "), paste0(vars_to_include[order(vars_to_include)], sep="", collapse=" + ")))
 
         #prints form for user inspection
         cat(paste0("Formula for ", exposure, "-", outcome, " at ", exposure," time point ", as.character(time),

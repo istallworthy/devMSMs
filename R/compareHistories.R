@@ -8,7 +8,7 @@
 #' @seealso [assessModel()]
 #' @return history_comparisons lists of linear hypothesis tests
 #' @examples compareHistories(object, best_models)
-compareHistories <-function(object, best_models, all_models){
+compareHistories <-function(object, data_for_model_with_weights_cutoff, all_models, imp_data_w_t){
 
   home_dir=object$home_dir
   exposures=object$exposures
@@ -32,7 +32,13 @@ compareHistories <-function(object, best_models, all_models){
     stop('This function is designed only for single time point outcomes')}
 
   epochs=exposure_epochs$epochs
-  data=read.csv(paste0(home_dir, 'msms/data_for_msms.csv'))
+  # data=read.csv(paste0(home_dir, 'msms/data_for_msms.csv'))
+  all_data=readRDS(paste0(home_dir, 'msms/data_for_msms.rds'))
+  all_data=unname(all_data)
+  a=do.call(rbind.data.frame, all_data)
+
+data=complete(imp_data_w_t, 1)
+  test=mice::as.mids(all_data, .imp=".imp")
 
   #creates permutations of high ("h") and low ("l") levels of exposures for each exposure epoch
   exposure_levels=apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
@@ -90,16 +96,20 @@ compareHistories <-function(object, best_models, all_models){
         exposure=exposures[x]
 
         #gets best-fitting model formula
-          formula=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]$formula
-          final_model=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]
+          # formula=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]$formula
+          formula=all_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]
+          formula=formula[[model]]
+          # formula=formula$coef.names
 
-
+          # final_model=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]
+          final_model=as.formula(paste0(paste0(outcome, ".", outcome_time_pt), "~", paste(formula$coef.names[2:length(formula$coef.names)], sep=" ", collapse=" + ")))
+          final_model=all_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]
 
         #identifying model parameters
-        parameters=sapply(strsplit(formula, "~"),  "[", 2)
+        # parameters=sapply(strsplit(formula, "~"),  "[", 2)
+        parameters=formula$coef.names
         parameters=as.data.frame(strsplit(parameters, " +"))
         parameters=parameters[parameters !="+"]
-
 
         #gathering epoch information for each exposure for deriving betas
         epoch_info=as.data.frame(rep(exposure, length(epochs)))
@@ -115,10 +125,7 @@ compareHistories <-function(object, best_models, all_models){
           epoch_info$high[t]=as.numeric(quantile(data[,var_name],probs= hi_cutoff, na.rm=T))
         }
 
-
-
         #DETERMINING REFERENCE HISTORY PARAMETER VALUES
-
         #finds reference betas based on specified reference history
         epoch_info$reference=sapply(strsplit(reference, "-"),"[")
         epoch_info$ref_betas=NA
@@ -140,7 +147,6 @@ compareHistories <-function(object, best_models, all_models){
           #if it contains the exposure, it must be either a main effect or an interaction term
           if(grepl(exposure, ref_parameters_betas[z,1])){
             if(grepl(":", ref_parameters_betas[z,1])){ #if it is an interaction term
-
               int_num=length(unlist(strsplit(ref_parameters_betas[z,1], ":"))) #determine interaction order
               terms=as.data.frame(letters[seq(from=1, to=int_num)])
 
@@ -149,9 +155,6 @@ compareHistories <-function(object, best_models, all_models){
                 # b=sapply(strsplit(ref_parameters_betas[z,1], ":"), "[", 2) #second term
                 terms[i, 3]=epoch_info[which(grepl(terms[i, 2], paste(epoch_info[,1], epoch_info[,2], sep="_"))),"ref_betas"] #find beta value
               }
-
-              # beta=epoch_info[which(grepl(a, paste(epoch_info[,1], epoch_info[,2], sep="_"))),"ref_betas"]* #find product of a*b
-              #   epoch_info[which(grepl(b, paste(epoch_info[,1], epoch_info[,2], sep="_"))),"ref_betas"]
 
               beta=prod(terms[,3]) #get product of all interaction term betas
               ref_parameters_betas$beta[z]=beta
@@ -172,7 +175,6 @@ compareHistories <-function(object, best_models, all_models){
 
 
         #DETERMINING COMPARISON HISTORY/HISTORIES PARAMETER VALUES
-
         #cycles through comparison history list to compare each comparison history to the reference history
         for (c in 1:length(comp_histories)){
           comparison=comp_histories[c]
@@ -206,12 +208,7 @@ compareHistories <-function(object, best_models, all_models){
                   terms[i, 3]=epoch_info[which(grepl(terms[i, 2], paste(epoch_info[,1], epoch_info[,2], sep="_"))),"ref_betas"] #find beta value
                 }
 
-                # a=sapply(strsplit(comp_parameters_betas[z,1], ":"), "[", 1) #first term
-                # b=sapply(strsplit(comp_parameters_betas[z,1], ":"), "[", 2) #second term
-                # beta=epoch_info[which(grepl(a, paste(epoch_info[,1], epoch_info[,2], sep="_"))),"comp_betas"]* #find product of a*b
-                #   epoch_info[which(grepl(b, paste(epoch_info[,1], epoch_info[,2], sep="_"))),"comp_betas"]
                 beta=prod(terms[,3]) #get product of all interaction term betas
-
                 comp_parameters_betas$beta[z]=beta
 
               }else{
@@ -229,7 +226,8 @@ compareHistories <-function(object, best_models, all_models){
 
 
           #linear hypothesis test to compare the comparison and reference values
-          linear_hypothesis=car::linearHypothesis(final_model, paste(ref_form, comp_form, sep=" = "), test="F")
+          linear_hypothesis=car::linearHypothesis(a, paste(ref_form, comp_form, sep=" = "), test="F")
+          # mitml::testConstraints(m0,  constraints=paste(ref_form, comp_form, sep=" = "))
 
           if (cutoff==weights_percentile_cutoff){
             cat(paste0("The uncorrected difference between the effects of ", exposure, " at ", comparison, " compared to ", reference, " on ", outcome, " has a p-value of ", linear_hypothesis$`Pr(>F)`)[2], "\n")

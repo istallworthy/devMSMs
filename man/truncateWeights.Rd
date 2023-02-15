@@ -4,7 +4,7 @@
 \alias{truncateWeights}
 \title{Truncates weights}
 \usage{
-truncateWeights(object, data_for_model_with_weights)
+truncateWeights(object, wide_long_datasets, imp_data_w)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
