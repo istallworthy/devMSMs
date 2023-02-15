@@ -5,7 +5,7 @@
 \title{Assess marginal structural models
 Code to assess the various models and decide which fits the best}
 \usage{
-assessModel(object, all_models)
+assessModel(object, all_models, best_model = NULL)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}

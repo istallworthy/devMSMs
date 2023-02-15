@@ -4,68 +4,155 @@
 
 #' @param object msm object that contains all relevant user inputs
 #' @param data_to_impute output from dataToImpute
-#' @param max.resample Amelia input for how many times amelia should redraw imputed values when trying to meet logical constraints of obounds
-#' @param cs Amelia input for col num or var indicating cross section variable
-#' @param priors Amelia input col matrix indicateing priors for indiv missing obs or variable-wide missing
-#' @param lags Amelia input for cols that should have lags included in imputation model
-#' @param intercs Amelia input logical var indicating if time effects of polytime should vary across cross-section
-#' @param leads Amelia input for cols that should have leads included in imputation model
-#' @param splinetime Amelia input integer of 0+ to control cubic smoothing splines of time
-#' @param logs Amelia input for cols that require log-linear transformation
-#' @param sqrts Amelia input for cols that require sqrt transformation
-#' @param lgstc Amelia input for cols that require lgstc transformation
-#' @param noms Amelia input for cols that are nominal
-#' @param bounds Amelia input for 3-col matrix for logical bounds on imputations
 #' @return imputed_datasets imputation results
 #' @export
 #' @importFrom Amelia amelia
-#' @seealso [dataToImput()], [Amelia::amelia()]
+#' @seealso [dataToImpute()], [mice::mice()]
 #' @examples imputeData(object, data_to_impute, read_imps_from_file="no", max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
 #'
-imputeData <- function(object, data_to_impute, read_imps_from_file="no", max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL){
+imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
 
   home_dir=object$home_dir
   ID=object$ID
   continuous_variables=object$continuous_variables
   m=object$m
+  imp_method=object$imp_method
+  time_varying_covariates=object$time_varying_variables
+  factor_covariates=object$factor_covariates
+
+
 
   if (read_imps_from_file=="yes"){
+
     imputed_datasets=list()
-    for (x in 1:m){
-      file_name=(paste("imp", x, '.csv', sep=""))
-      name=paste("imp", x, sep="")
-      imp=suppressMessages(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""), show_col_types = FALSE)))
-      imputed_datasets[[paste0("imp", x)]]<-imp
-    }
+
+    # for (x in 1:m){ #reads in each imputed dataset locally
+      # file_name=(paste("imp", x, '.csv', sep=""))
+      # name=paste("imp", x, sep="")
+      # imp=suppressMessages(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""), show_col_types = FALSE)))
+      imp=readRDS(paste0(home_dir,"imputations/all_imp.rds"))
+      imputed_datasets<-imp
+    # }
     return(imputed_datasets)
 
   }else{
 
+    library(mice)
+
+    ## Configure parallelization (code from Kazuki Yoshida; https://rpubs.com/kaz_yos/mice-exclude)
+    ## Parallel backend for foreach (also loads foreach and parallel; includes doMC)
+    library(doParallel)
+    ## Reproducible parallelization
+    library(doRNG)
+    ## Detect core count
+    nCores <- min(parallel::detectCores(), 8)
+    ## Used by parallel::mclapply() as default
+    options(mc.cores = nCores)
+    ## Used by doParallel as default
+    options(cores = nCores)
+    ## Register doParallel as the parallel backend with foreach
+    ## http://stackoverflow.com/questions/28989855/the-difference-between-domc-and-doparallel-in-r
+    doParallel::registerDoParallel(cores = nCores)
+    ## Report multicore use
+    cat("### Using", foreach::getDoParWorkers(), "cores\n")
+    cat("### Using", foreach::getDoParName(), "as backend\n")
+
 
     data_to_impute=as.data.frame(data_to_impute)
-    to_remove=c(ID, "WAVE")
+    data_to_impute$S_ID=as.factor(data_to_impute$S_ID)
+
+    # temp=data_to_impute%>%
+    #   dplyr::group_by({{ ID }})%>%
+    #   tidyr::complete(WAVE=c({{ time_pts }}))%>%
+    #   dplyr::ungroup()
+
+    #adding in missing longitudinal time points in long format
+    data_to_impute_full=data_to_impute%>%
+      tidyr::complete(.data[[ID]], WAVE)
+
+    #fills in all person-level variables
+    time_invar=colnames(data_to_impute)[!colnames(data_to_impute) %in% time_varying_covariates]
+    time_invar=time_invar[!time_invar %in% c(ID, "WAVE")]
+    person_info=data_to_impute[!duplicated(data_to_impute$S_ID),]%>%dplyr::select(c(all_of(ID), all_of(time_invar)))
+
+    for (x in 1:nrow(person_info)){
+      id=as.character(person_info[x, ID])
+      data_to_impute_full[data_to_impute_full[colnames(data_to_impute)==ID]==id, colnames(data_to_impute_full) %in% time_invar]=person_info[x,time_invar]
+    }
+
+    #making variable types
+    data_to_impute_full[,colnames(data_to_impute_full) %in% factor_covariates]=lapply(data_to_impute_full[,colnames(data_to_impute_full) %in% factor_covariates], factor)
 
     #finds ordinal variables --all others assumed continuous
-    ordinal_vars=colnames(data_to_impute)[!colnames(data_to_impute) %in% c(to_remove, continuous_variables)]
+    # ordinal_vars=colnames(data_to_impute)[!colnames(data_to_impute) %in% c(to_remove, continuous_variables)]
 
     #creates 5 imputed datasets --add more detail here
-    imputed=suppressMessages(Amelia::amelia(x = data_to_impute, m = m, idvars = ID, #m=5 for final
-                           ts = "WAVE", cs =cs, priors = priors, lags = lags, intercs = intercs, leads = leads, splinetime = splinetime,
-                           logs = logs, sqrts = sqrts, lgstc = lgstc, noms = noms,
-                           ords=ordinal_vars,
-                           empri=0.01*nrow(data_to_impute),
-                           bounds=bounds,  max.resample = max.resample, #100 seems to be the default
-                           tolerance = 1e-04
-    ))
+    # imputed=suppressMessages(Amelia::amelia(x = data_to_impute, m = m, idvars = ID, #m=5 for final
+    #                        ts = "WAVE", cs =cs, priors = priors, lags = lags, intercs = intercs, leads = leads, splinetime = splinetime,
+    #                        logs = logs, sqrts = sqrts, lgstc = lgstc, noms = noms,
+    #                        ords=ordinal_vars,
+    #                        empri=0.01*nrow(data_to_impute),
+    #                        bounds=bounds,  max.resample = max.resample, #100 seems to be the default
+    #                        tolerance = 1e-04
+    # ))
+
+    #patterns of missingness
+    # md.pattern(data_to_impute)
+
+    # predictorMatrix <- matrix(0, ncol = length(data_to_impute_full), nrow = length(data_to_impute_full))
+    # rownames(predictorMatrix) <- colnames(data_to_impute_full)
+    # colnames(predictorMatrix) <- colnames(data_to_impute_full)
+    # impute_vars=c(names(which(colSums(is.na(data_to_impute_full))>0))) #finds cols with missing data
+    # imputerMatrix<- predictorMatrix
+    # imputerMatrix[,impute_vars] <- 1
+    # diag(imputerMatrix) <- 0
+
+
+    #impute data using mice.
+    # imputed=mice::mice(data_to_impute, m=2, method="fastpmm", predictorMatrix = imputerMatrix, maxit = 0, printFlag = T, seed=1234)
+    # complete(imputed, "long") #put them all in a long file
+    #complete(imp, "broad")
+
+
+    ## Set seed for reproducibility
+    set.seed(123)
+
+    M=m
+    ## Parallelized execution
+    miceout <- foreach(i = seq_len(M), .combine = mice::ibind) %dorng% {
+      cat("### Started iteration", i, "\n")
+      miceout <- mice::mice(data_to_impute_full, m=1, method="pmm", maxit = 0,
+                           print = T)
+      # miceout <- mice(data = df_before, m = 1, print = TRUE,
+      #                 predictorMatrix = predictorMatrix, method = dryMice$method,
+      #                 MaxNWts = 2000)
+      cat("### Completed iteration", i, "\n")
+      ## Make sure to return the output
+      miceout
+    }
+    imputed=miceout
+    # a=complete(imputed,2) #extract each imputed dataset
+
+
+    # library(miceadds)
+    saveRDS(imputed, paste0(home_dir,"imputations/all_imp.rds"))
+
+    #print warnings
+    cat("USER ALERT: Please view the logged events from the imputation below:", "\n")
+    print(imputed$loggedEvents)
+
 
     #this contains each of the imputed datasets
-    imputed_datasets<- imputed$imputations
+    # imputed_datasets<- imputed$imputations
+    imputed_datasets<- imputed
 
     #save out imputed datasets
     for (k in 1:m){
-      write.csv(imputed_datasets[[paste0("imp", k)]], file=paste0(home_dir,"imputations/imp", k,".csv"))
+      # write.csv(imputed_datasets[[paste0("imp", k)]], file=paste0(home_dir,"imputations/imp", k,".csv"))
+      write.csv(mice::complete(imputed,k), file=paste0(home_dir,"imputations/imp", k,".csv"))
+
     }
-    cat("See the 'imputations' folder for a csv file of each imputed dataset","\n")
+    cat("See the 'imputations' folder for a .csv file of each imputed dataset","\n")
 
     return(imputed_datasets)
   }

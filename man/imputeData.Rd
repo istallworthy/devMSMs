@@ -4,52 +4,12 @@
 \alias{imputeData}
 \title{Imputes dataset so there is no missing at each time point}
 \usage{
-imputeData(
-  object,
-  data_to_impute,
-  read_imps_from_file = "no",
-  max.resample = 100,
-  cs = NULL,
-  priors = NULL,
-  lags = NULL,
-  intercs = FALSE,
-  leads = NULL,
-  splinetime = NULL,
-  logs = NULL,
-  sqrts = NULL,
-  lgstc = NULL,
-  noms = NULL,
-  bounds = NULL
-)
+imputeData(object, data_to_impute, read_imps_from_file = "no")
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{data_to_impute}{output from dataToImpute}
-
-\item{max.resample}{Amelia input for how many times amelia should redraw imputed values when trying to meet logical constraints of obounds}
-
-\item{cs}{Amelia input for col num or var indicating cross section variable}
-
-\item{priors}{Amelia input col matrix indicateing priors for indiv missing obs or variable-wide missing}
-
-\item{lags}{Amelia input for cols that should have lags included in imputation model}
-
-\item{intercs}{Amelia input logical var indicating if time effects of polytime should vary across cross-section}
-
-\item{leads}{Amelia input for cols that should have leads included in imputation model}
-
-\item{splinetime}{Amelia input integer of 0+ to control cubic smoothing splines of time}
-
-\item{logs}{Amelia input for cols that require log-linear transformation}
-
-\item{sqrts}{Amelia input for cols that require sqrt transformation}
-
-\item{lgstc}{Amelia input for cols that require lgstc transformation}
-
-\item{noms}{Amelia input for cols that are nominal}
-
-\item{bounds}{Amelia input for 3-col matrix for logical bounds on imputations}
 }
 \value{
 imputed_datasets imputation results
@@ -62,5 +22,5 @@ imputeData(object, data_to_impute, read_imps_from_file="no", max.resample = 100,
 
 }
 \seealso{
-\code{\link[=dataToImput]{dataToImput()}}, \code{\link[Amelia:amelia]{Amelia::amelia()}}
+\code{\link[=dataToImpute]{dataToImpute()}}, \code{\link[mice:mice]{mice::mice()}}
 }

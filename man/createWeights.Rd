@@ -4,20 +4,7 @@
 \alias{createWeights}
 \title{Creates balancing weights for potential confounding covariates in relation to exposures at each time point}
 \usage{
-createWeights(
-  object,
-  wide_long_datasets,
-  forms,
-  read_in_from_file = "no",
-  ATT = 0,
-  iterations = 1000,
-  standardize = TRUE,
-  method = "exact",
-  twostep = FALSE,
-  sample.weights = NULL,
-  baseline.formula = NULL,
-  diff.formula = NULL
-)
+createWeights(object, wide_long_datasets, forms, read_in_from_file = "no")
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}

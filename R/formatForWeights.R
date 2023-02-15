@@ -28,7 +28,7 @@ formatForWeights <- function(object, data, imputed_datasets){
 
   options(readr.num_columns = 0)
   cat("\n")
-  cat("USER ALERT: Inspect the list of time-varying covariates following the ID variable and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running","\n")
+  cat("USER ALERT: Inspect the list of time-varying covariates (following the ID variable) and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running","\n")
   cat("\n")
 
 
@@ -38,13 +38,14 @@ formatForWeights <- function(object, data, imputed_datasets){
   wide_long_datasets=list()
   for (k in 1:m){
 
-    imp=imputed_datasets[[paste0("imp", k)]]
+    # imp=imputed_datasets[[paste0("imp", k)]]
+    imp=mice::complete(imputed_datasets,k)
     imp=as.data.frame(imp)
 
     time_varying_wide=apply(expand.grid(time_varying_covariates, as.character(time_pts)), 1, paste, sep="", collapse=".")
     time_varying_wide=sort(time_varying_wide)
     time_varying_wide=c(ID, time_varying_wide)
-    time_varying_wide=time_varying_wide[!time_varying_wide %in% time_var_exclude]
+    time_varying_wide=time_varying_wide[!time_varying_wide %in% time_var_exclude] #removes time-varying time pts that should not be there
 
     #Make wide so that all time-varying now in wide, #Then select all the new wide time varying vars --IS SHOULD AUTOMATE THIS STEP ....
     #MAKE SURE ALL YOUR TX AND OUTCOME VARIABLES AT EACH TIME PT ARE LISTED BELOW IN WIDE FORMAT
@@ -54,25 +55,24 @@ formatForWeights <- function(object, data, imputed_datasets){
                      v.names= time_varying_covariates, #list ALL time-varying covariates
                      timevar="WAVE",
                      times=c(time_pts),
-                     direction="wide"))%>%
-                    dplyr::select(dput(as.character(time_varying_wide)))
+                     direction="wide"))
+                    # dplyr::select(dput(as.character(time_varying_wide)))
 
       # dplyr::select(cat(paste0("c(", unlist(paste0('"',time_varying_wide, '"', collapse=", ")), ")"))))
 
 
+    imp_wide=imp_wide[,!colnames(imp_wide) %in% time_var_exclude] #only include what should be there
 
-
-    imp_wide=imp_wide[,!colnames(imp_wide) %in% time_var_exclude]
-
-    #creates hybrid wide/long dataset
-    msm_data=merge(imp, imp_wide, by=ID, all.x=T) #dont delete rows
+    # #creates hybrid wide/long dataset
+    # msm_data=merge(imp, imp_wide, by=ID, all.x=T) #dont delete rows
 
     #remove time points that should not be there (but may have been added by imputation)
-    msm_data=msm_data[msm_data$WAVE %in% time_pts,]
+    # msm_data=msm_data[msm_data$WAVE %in% time_pts,]
+    msm_data=imp_wide
 
     #re-labels time points
-    for (x in 1:length(time_pts)){
-      msm_data$WAVE[msm_data$WAVE==time_pts[x]]=x}
+    # for (x in 1:length(time_pts)){
+    #   msm_data$WAVE[msm_data$WAVE==time_pts[x]]=x}
 
     msm_data=as.data.frame(msm_data)
 
@@ -81,12 +81,14 @@ formatForWeights <- function(object, data, imputed_datasets){
 
   }
 
+  #as mids object
 
 
   #create dataset for future modeling
   #run this code to make wide dataset for future use in actual msm model (i.e., non-imputed wide data)
   # imp=as.data.frame(data)
-  imp=as.data.frame(imputed_datasets$imp1) #IS changed to ue imputed dataset
+  # imp=as.data.frame(imputed_datasets$imp1) #IS changed to ue imputed dataset
+  imp=as.data.frame(mice::complete(imputed_datasets,1)) #IS changed to use imputed dataset
 
   imp_wide=suppressWarnings(stats::reshape(data=imp,
                                            idvar=ID,

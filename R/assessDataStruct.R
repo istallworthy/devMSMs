@@ -55,6 +55,9 @@ formatDataStruct <-function(object) {
   # if(dir.exists(paste0(home_dir, "plots/"))==F){dir.create(paste0(home_dir, "plots/"))}
   if(dir.exists(paste0(home_dir, "forms/"))==F){dir.create(paste0(home_dir, "forms/"))}
 
+  if(dir.exists(paste0(home_dir, "pre-balance/"))==F){dir.create(paste0(home_dir, "pre-balance/"))}
+
+
   if(dir.exists(paste0(home_dir, "balance/"))==F){dir.create(paste0(home_dir, "balance/"))}
   if(dir.exists(paste0(home_dir, "balance/plots/"))==F){dir.create(paste0(home_dir, "balance/plots/"))}
   if(dir.exists(paste0(home_dir, "balance/comparison values/"))==F){dir.create(paste0(home_dir, "balance/comparison values/"))}
@@ -123,6 +126,7 @@ formatDataStruct <-function(object) {
   }
 
 
+
   # #appends outcome time point to outcomes if it is not already time-varying as later code will look for it in this way
   # if (sum(outcomes %in% time_varying_covariates)!=length(outcomes)){
   #   colnames(data)[colnames(data) %in% outcomes]=paste0(outcomes, ".", outcome_time_pt)
@@ -130,6 +134,12 @@ formatDataStruct <-function(object) {
 
 
   data[,factor_covariates] <- lapply(data[,factor_covariates] , factor)
+
+  data[,id]=factor(data[,id])
+  numeric_vars=colnames(data)[!colnames(data) %in% c(factor_covariates, id)]
+
+  data[,numeric_vars] <- lapply(data[,numeric_vars] , as.numeric)
+
 
   return(data)
 }
