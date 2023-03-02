@@ -4,7 +4,7 @@
 \alias{createForms}
 \title{Creates formulas for generating weights}
 \usage{
-createForms(object, wide_long_datasets, covariates_to_include)
+createForms(object, wide_long_datasets, all_potential_covariates)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}

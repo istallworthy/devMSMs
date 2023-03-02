@@ -4,7 +4,7 @@
 \alias{assessBalance}
 \title{Assess success of covariate balancing}
 \usage{
-assessBalance(object, data, weights_models)
+assessBalance(object, forms, data_for_model_with_weights, weighted)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
@@ -17,7 +17,7 @@ assessBalance(object, data, weights_models)
 list of unbalanced_covariates_for_models for each exposure
 }
 \description{
-#Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposures,
+#Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposure,
 and returns a list of unbalanced covariates for each exposure to add to future models
 }
 \examples{

@@ -17,8 +17,9 @@ msmObject(
   factor_covariates = NULL,
   m = 5,
   imp_method = "cart",
-  exposures,
+  exposure,
   exposure_time_pts,
+  short_form_lag = 1,
   weights_method = "cbps",
   balance_thresh = 0.1,
   bal_only_exp = F,
@@ -29,7 +30,7 @@ msmObject(
   hi_cutoff = 0.75,
   lo_cutoff = 0.25,
   mc_method = "BH",
-  outcomes,
+  outcome,
   outcome_time_pt,
   mandatory_keep_covariates = NULL,
   keep_concurrent_tv_vars = NULL,
@@ -63,8 +64,6 @@ msmObject(
 
 \item{m}{number of imputations}
 
-\item{exposures}{list of variables that represent your exposures/treatments of interest}
-
 \item{exposure_time_pts}{times when exposures occurred}
 
 \item{balance_thresh}{correlation value above which covariates are not considered balanced with respect to exposure}
@@ -73,11 +72,13 @@ msmObject(
 
 \item{exposure_epochs}{data frame containing epochs and correponding time points for exposure histories}
 
-\item{outcomes}{list of variables that represent your outcomes of interest}
-
 \item{time_var_exclude}{time-varying variables that should not be present because of planned missingness}
 
 \item{colors}{colors for plotting dose}
+
+\item{exposures}{list of variables that represent your exposures/treatments of interest}
+
+\item{outcomes}{list of variables that represent your outcomes of interest}
 
 \item{outcome_time_pts}{list of time points for outcomes}
 }

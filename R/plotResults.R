@@ -9,31 +9,31 @@
 plotResults <- function(object, best_models){
 
   home_dir=object$home_dir
-  exposures=object$exposures
-  outcomes=object$outcomes
+  exposure=object$exposure
+  outcome=object$outcome
   exposure_labels=object$exposure_labels
   outcome_labels=object$outcome_labels
   colors=object$colors
   weights_percentile_cutoff=object$weights_percentile_cutoff
   dose_level=object$dose_level
 
-
-  #error checking
-  if (length(exposure_labels)==0){
-    exposure_labels=exposures #default is to use
-  }else {
-    if (length(exposure_labels) != length(exposures)){
-      stop('Please provide labels for all exposures (in the same order as listed in the exposures field) in the msm object')
-    }
-  }
-
-  if (length(outcome_labels)==0){
-    outcome_labels=outcomes #default is to use
-  }else {
-    if (length(outcome_labels) != length(outcomes)){
-      stop('Please provide labels for all outcomes (in the same order as listed in the outcome field) in the msm object')
-    }
-  }
+#
+#   #error checking
+#   if (length(exposure_labels)==0){
+#     exposure_labels=exposure #default is to use
+#   }else {
+#     if (length(exposure_labels) != length(exposure)){
+#       stop('Please provide labels for all exposure (in the same order as listed in the exposure field) in the msm object')
+#     }
+#   }
+#
+#   if (length(outcome_labels)==0){
+#     outcome_labels=outcome #default is to use
+#   }else {
+#     if (length(outcome_labels) != length(outcome)){
+#       stop('Please provide labels for all outcome (in the same order as listed in the outcome field) in the msm object')
+#     }
+#   }
 
   if (length(colors)>1 & length(colors)!=nrow(object$exposure_epochs)+1){
     stop(paste0('Please provide either: ',nrow(object$exposure_epochs)+1, ' different colors, a color palette, or leave this entry blank in the msm object'))}
@@ -99,8 +99,8 @@ plotResults <- function(object, best_models){
         ggplot2::scale_y_discrete(limits=c(as.character(plot_data$seq)), expand=c(0, 0.2))+
         # ggplot2::scale_color_brewer(palette=NULL)+
         ggplot2::geom_errorbarh(xmin = plot_data$fit-plot_data$se, xmax = plot_data$fit+plot_data$se, height=0.6)+
-        ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcomes)], " Value"))+
-        ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposures)], " Exposure History"))+
+        ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcome)], " Value"))+
+        ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposure)], " Exposure History"))+
         ggplot2::xlim(min(plot_data$fit-plot_data$se)-1*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+1*sd(plot_data$fit+plot_data$se))+
         ggplot2::theme(text = ggplot2::element_text(size=18))+
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
@@ -114,8 +114,8 @@ plotResults <- function(object, best_models){
         ggplot2::scale_color_brewer(palette=colors)+
         ggplot2::scale_y_discrete(limits=c(as.character(plot_data$seq)), expand=c(0, 0.2))+
         ggplot2::geom_errorbarh(xmin = plot_data$fit-plot_data$se, xmax = plot_data$fit+plot_data$se, height=0.6)+
-        ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcomes)], " Value"))+
-        ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposures)], " Exposure History"))+
+        ggplot2::xlab(paste0("Predicted ", outcome_labels[which(outcome %in% outcome)], " Value"))+
+        ggplot2::ylab(paste0(exposure_labels[which(exposure %in% exposure)], " Exposure History"))+
         ggplot2::xlim(min(plot_data$fit-plot_data$se)-1*sd(plot_data$fit-plot_data$se), max(plot_data$fit+plot_data$se)+1*sd(plot_data$fit+plot_data$se))+
         ggplot2::theme(text = ggplot2::element_text(size=18))+
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),

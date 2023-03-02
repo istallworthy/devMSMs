@@ -20,8 +20,8 @@ formatDataStruct <-function(object) {
   time_varying_covariates=object$time_varying_variables
   factor_covariates=object$factor_covariates
   id=object$ID
-  exposures=object$exposures
-  outcomes=object$outcomes
+  exposure=object$exposure
+  outcome=object$outcome
   exposure_time_pts=object$exposure_time_pts
   outcome_time_pt=object$outcome_time_pt
 
@@ -52,10 +52,10 @@ formatDataStruct <-function(object) {
   if(dir.exists(paste0(home_dir, "final weights/values/"))==F){dir.create(paste0(home_dir, "final weights/values/"))}
   if(dir.exists(paste0(home_dir, "final weights/histgrams/"))==F){dir.create(paste0(home_dir, "final weights/histograms/"))}
 
-  # if(dir.exists(paste0(home_dir, "plots/"))==F){dir.create(paste0(home_dir, "plots/"))}
   if(dir.exists(paste0(home_dir, "forms/"))==F){dir.create(paste0(home_dir, "forms/"))}
 
   if(dir.exists(paste0(home_dir, "pre-balance/"))==F){dir.create(paste0(home_dir, "pre-balance/"))}
+  if(dir.exists(paste0(home_dir, "pre-balance/plots/"))==F){dir.create(paste0(home_dir, "pre-balance/plots/"))}
 
 
   if(dir.exists(paste0(home_dir, "balance/"))==F){dir.create(paste0(home_dir, "balance/"))}
@@ -82,27 +82,20 @@ formatDataStruct <-function(object) {
 
   cat("\n")
   #reading and formatting LONG dataset
-  # data=as.data.frame(readr::read_csv(data_path), col_types=cols(), show_col_types=FALSE)
   data=suppressWarnings(as.data.frame(readr::read_csv(data_path, show_col_types=FALSE)))
 
   colnames(data)[colnames(data)==time_var] <- "WAVE"
-  # data$WAVE=as.factor(data$WAVE)
   data[data == missing] <- NA #makes NA the missingness indicator
 
 
-  # browser()
-
-  # data=data.frame(data)
 
   #exposure summary
-  exp=as.data.frame(data[,c("WAVE", colnames(data)[colnames(data) %in% exposures])])
+  exp=as.data.frame(data[,c("WAVE", colnames(data)[colnames(data) %in% exposure])])
   exp=exp%>%dplyr::filter(WAVE %in% exposure_time_pts)%>%dplyr::group_by(WAVE)%>%
     dplyr::summarise_all(list(mean=mean, sd=sd, min=min, max=max), na.rm=TRUE)
   exp=exp[,order(colnames(exp), decreasing=TRUE)]
-  # print(knitr::kable(as.data.frame(exp), caption="Summary of Exposure Information")%>%kableExtra::kable_styling())
   cat(knitr::kable(exp, caption="Summary of Exposure Information", format='pipe'),  sep="\n")
-    # kableExtra::kable_styling()%>%
-    # kableExtra::save_kable(file=paste0(home_dir, "exposure_info.html")), sep="\n")
+
   invisible(knitr::kable(exp, caption="Summary of Exposure Information", format='html')%>%
         kableExtra::kable_styling()%>%
         kableExtra::save_kable(file=paste0(home_dir, "exposure_info.html")))
@@ -110,7 +103,7 @@ formatDataStruct <-function(object) {
   cat("\n")
 
   #outcome summary
-  exp=as.data.frame(data[,c("WAVE", colnames(data)[colnames(data) %in% outcomes])])
+  exp=as.data.frame(data[,c("WAVE", colnames(data)[colnames(data) %in% outcome])])
   exp=suppressWarnings(exp%>%dplyr::filter(WAVE %in% outcome_time_pt)%>%dplyr::group_by(WAVE)%>%dplyr::summarise_all(list(mean=mean, sd=sd, min=min, max=max), na.rm=TRUE))
   exp=exp[,order(colnames(exp), decreasing=TRUE)]
 
@@ -124,13 +117,6 @@ formatDataStruct <-function(object) {
   if (sum(factor_covariates %in% colnames(data))<length(factor_covariates)){
     stop('Please provide factor covariates that correspond to columns in your data when creating the msm object')
   }
-
-
-
-  # #appends outcome time point to outcomes if it is not already time-varying as later code will look for it in this way
-  # if (sum(outcomes %in% time_varying_covariates)!=length(outcomes)){
-  #   colnames(data)[colnames(data) %in% outcomes]=paste0(outcomes, ".", outcome_time_pt)
-  # }
 
 
   data[,factor_covariates] <- lapply(data[,factor_covariates] , factor)

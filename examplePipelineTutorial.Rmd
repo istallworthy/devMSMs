@@ -47,13 +47,13 @@ object <- msmObject(
   
   ##### Directories Information (required) ####
   # directories to long dataset 
-
+  
   data_path ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv",
-
+  
   # home_dir = "~/Library/CloudStorage/Box-Box/BSL General/Meriah/TSST MSM PAPER/MSMs/!MSM package test_10.17.22/MSMs-main", #string
   # home_dir = "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah test/", #string
   home_dir ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/",
-
+  
   
   #### Dataset Information (required) ####
   #individual identifier 
@@ -69,7 +69,7 @@ object <- msmObject(
   #list out all variables that are time-varying; including ANY variables collected at only a single time point (with missin for other time points )
   
   time_varying_variables= c("ADHDtcTot", "ALI_Le","SAAmylase", "EARS_TJo","Chaos_Unstable", "Chaos_HomEnv", "SEmply","MDI",  "LESMnPos","LESMnNeg","pcx_pos", "pcx_neg", "pcx_engaged", "pcx_sensitive", "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "RHasSO","QSSOverallMe", "WndNbrhood", "EF_avg_perc","CCTHrs","TcAge","CORTB","Cotin_rep1ngmL", "PEmply", "IBRApro", "IBRAfct", "IBRAttn","IBRReac", "IBRIrit","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1","InRatioCor"),
-
+  
   #list all continuous variables here; all others assumed ordinal for imputation; default is none 
   # continuous_variables=c("GrosPay1", "RMomAgeU", "RMAge1st", "SwghtLB","RWghtLb", "IBQDnovm", "MDI", "AGE", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1", "INR"),
   continuous_variables=c("PmAge2", "ADHDtcTot", "ALI_Le", "CCTHrs", "SAAmylase", "EARS_Tjo", "Chaos_Unstable", "Chaos_HomEnv", "CORTB", "Cotin_rep1ngmL", "IBRApro", "IBRAfct", "TcAge","IBRReac", "IBRAttn", "IBRIrit","LESMnPos", "LESMnNeg","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1", "pcx_pos", "pcx_neg","pcx_engaged", "pcx_sensitive", "PmMrSt2",
@@ -80,56 +80,57 @@ object <- msmObject(
   
   
   #### Imputation Specification (optional) ####
-  #number of imputations for step 4; default is 5 --add any other imputation parameters here?
+  #number of imputations for step 4; default is 5 
   m=2, #integer
   imp_method= "pmm", #imputation method; pmm, midastouch, sample, cart (default), rf
   
   
   #### Exposure Information (required) ####
-  #exposures of interest that potentially have causal effects on outcomes and exposure time point(s) (corresponding to values in time_var)
-  exposures=c("InRatioCor", "HOMEETA1"), #list of strings
+  #exposure of interest that potentially have causal effects on outcome and exposure time point(s) (corresponding to values in time_var)
+  exposure=c("InRatioCor"), #list of strings
   # exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
   exposure_time_pts=c(6, 15, 24, 35, 58), #list of integers
-
+  
   
   #### Balancing Information (optional) ###
-  weights_method="cbps", #method for calculating weights: cbps, npcbps, bart, ps
+  short_form_lag=1, #integer specifying the maximum time lag for time-varying covariates for the initial round of balancing weights
+  weights_method="bart", #method for calculating weights: cbps, npcbps, bart, ps
   balance_thresh=0.1, #correlation value above which covariates are not considered balanced with respect to exposure/outcome;used for finding potential confounds and asessing balance; default set to 0.12 from Stuart et al.
-  
+
   #whether confounder identification and balancing should be conducted only in relation to the exposure (and not the outcome); default set to F
   bal_only_exp=F,
   weights_percentile_cutoff=0.95, #percentile cutoff value for truncating weights to avoid heavy tails; default is 0.95; 
   
   
   #### History Comparison Information (required & optional) ####
-   #developmental time periods (and their corresponding time points) that constitute regime/history units of interest --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects of exposure histories (e.g, chronically high exposure vs. exposure only in infancy) on outcomes
+  #developmental time periods (and their corresponding time points) that constitute regime/history units of interest --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects of exposure histories (e.g, chronically high exposure vs. exposure only in infancy) on outcomes
   exposure_epochs=data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), #user-created names of epochs as a list of strings
                              values=I(list(c(6,15), c(24,35), c(58)))), #time point(s) encompassed in each epoch that correspond to data as a list of numeric lists
   
-    #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
+  #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
   # apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
   #select one of the above histories, or permutations of high ("h") and low ("l") levels of exposure (one leve for each of the exposure epochs) as your reference event, or the history/sequence to which you would like to compare the other histories  
   reference="h-h-h", #optional: set a reference history of high ("h") and low ("l") levels of exposure separate by a "-"; the default is set to the history denoting low ("l") exposure at all time points; character string of "h" and "l" separated by a "-" 
   comparisons="", #optional: set a comparison history from list above; the default is to include all non-reference histories as comparisons; character string of "h" and "l" separated by a "-" 
   
-  hi_cutoff=.75, #optional integer value for quantile value constituting the threshold for "high" levels of an exposure; default set to 0.75
-  lo_cutoff=.25, #optional integer value for quantile value constituting the threshold for "low" levels of an exposure; default set to 0.25
-
+  hi_cutoff=.75, #optional integer value for quantile value constituting the threshold for "high" levels of an exposure for outcome modeling; default set to 0.75
+  lo_cutoff=.25, #optional integer value for quantile value constituting the threshold for "low" levels of an exposure for outcome modeling; default set to 0.25
+  
   mc_method="BH", #optional method for multiple comparison correction for linear hypothesis tests; default is Benjamini-Hochburg, options are "holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
   
   
   #### Outcome Information (required) ####
   #outcomes of interest and outcome time point
   # outcomes=c("CORTBASE", "sAABASE"), #list of strings 
-  outcomes=c("EF_avg_perc"), #list of strings 
+  outcome=c("EF_avg_perc"), #list of strings 
   outcome_time_pt=58, #integer value
   
   
- #### Inclusion Information (optional) ####
+  #### Inclusion Information (optional) ####
   #list any variables for mandatory inclusion in balancing for theoretical or other reasons (regardless of their correlations with exposure/outcome); if it is a time-varying covariate the code will include it in the forms for all time points;  can specify time after "."; default set to none
   mandatory_keep_covariates=NULL,
- 
- #list any time-varying variables that you wish to include concurrently in the balancing forms (over-riding default of excluding concurrent time-varying variables as they cannot be distinguished from colliders)
+  
+  #list any time-varying variables that you wish to include concurrently in the balancing forms (over-riding default of excluding concurrent time-varying variables as they cannot be distinguished from colliders)
   keep_concurrent_tv_vars=NULL, 
   
   
@@ -151,24 +152,24 @@ object <- msmObject(
   # potential_colliders=data.frame(exp_out_pair=c("HOMEETA1-CORTBASE", "ESETA1-CORTBASE"), #names of exposure-outcome pair separated by "-", no spaces; list of strings
   #                                colliders=I(list(c("AGE"), c("HOMEETA1.154", "AGE"))), #list of colliders for each exposure-outcome pair; list of lists of strings
   #                                exclude_lags=c("T", "F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair; list of strings
- potential_colliders=NULL,
-                                 
- 
- ### Plotting Information (optional) ###
- #optional list of alternative labels for exposures that will be used only for plotting
-   # exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"), 
-    exposure_labels=c("Income-to-needs-ratio"), 
-
-   
+  potential_colliders=NULL,
+  
+  
+  ### Plotting Information (optional) ###
+  #optional list of alternative labels for exposures that will be used only for plotting
+  # exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"), 
+  exposure_labels=c("Income-to-needs-ratio"), 
+  
+  
   #optional list of alternative labels for outcomes that will be used only for plotting
-   # outcome_labels=c("Cortisol","Salivary Alpha Amalayse"),
-    outcome_labels=c("EF"),
-
- #optional string ("h" or "l") denoting which level of exposure at each exposure epoch to use when calculating dose (default is "h")
-   dose_level="l",
- 
- #the plots color data by dose (i.e., number of epochs) of high exposure; optional list of colors (equal to number of epochs +1) or brewer palette (see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) 
-   colors=(c("Dark2")) #list of string(s); default is 'Dark2'); c("blue4", "darkgreen", "darkgoldenrod", "red2")
+  # outcome_labels=c("Cortisol","Salivary Alpha Amalayse"),
+  outcome_labels=c("EF"),
+  
+  #optional string ("h" or "l") denoting which level of exposure at each exposure epoch to use when calculating dose (default is "h")
+  dose_level="l",
+  
+  #the plots color data by dose (i.e., number of epochs) of high exposure; optional list of colors (equal to number of epochs +1) or brewer palette (see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) 
+  colors=(c("Dark2")) #list of string(s); default is 'Dark2'); c("blue4", "darkgreen", "darkgoldenrod", "red2")
 )
 
 
@@ -188,10 +189,10 @@ When creating the msm object, the user must specify which covariates are time-va
 ```{r}
 
 #identifies the total number covariates available in the dataset and prints them for user inspection
-potential_covariates <- identifyCovariates(object, data)
+all_potential_covariates <- identifyCovariates(object, data)
 
 #of those covariates, variables at the exposure time point or prior that correlate with either the exposure at that time point or the outcome at the outcome time point  and thus could be potential confounders
-covariates_to_include <- identifyPotentialConfounds(object, potential_covariates)
+# covariates_to_include <- identifyPotentialConfounds(object, all_potential_covariates)
 
 ```
 
@@ -202,10 +203,10 @@ ONlY run this code when needed! Creates 'm' imputed datasets using the Amelia pa
 The parameter 'read_imps_from_file' will allow you to read imputed data in from local storage (="yes") so as not to have to re-run this imputation code or impute data (="no"; default). The number of imputed datasets is specified as 'm' in the msm object. 
 ```{r}
 #create final dataset for imputations with only the necessary variables
-data_to_impute <- dataToImpute(object, covariates_to_include)
+data_to_impute <- dataToImpute(object, all_potential_covariates)
 
 #creates imputed datasets and saves them out
-imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="yes")
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no")
 
 ```
 
@@ -222,10 +223,23 @@ This step creates balancing weights using the Covariate Balancing Propensity Sco
 wide_long_datasets <- formatForWeights(object, data, imputed_datasets)
 
 #creates formulas for each exposure-outcome pairing at each time point and saves and prints them for user inspection
-forms <- createForms(object, wide_long_datasets, covariates_to_include)
+full_forms <- createForms(object, wide_long_datasets, all_potential_covariates)
+
+#does pre balance checking on full forms to examine initial imbalance
+preBalanceChecking(object, wide_long_datasets, full_forms)
+
+#create short forms with time-varying covariates only at t-1 for initial weights creation
+short_forms <- createShortForms(object, full_forms, keep=list(exposure=c("HOMEETA1"),
+                                                         time=c(24),
+                                                         tv_covar=c("InRatioCor.6")))
+
 
 #creates balancing weights for each exposure-outcome pair at each exposure time point 
-imp_data_w<- createWeights(object, wide_long_datasets, forms, read_in_from_file="yes") 
+object$weights_method="npcbps" #try different weights methods and re-run
+data_for_model_with_weights<- createWeights(object, wide_long_datasets, short_forms, read_in_from_file="no") 
+
+#assesses balance for short forms
+balance_stats <- assessBalance(object, short_forms, data_for_model_with_weights, weighted=1)
 
 ```
 
@@ -236,8 +250,14 @@ This code evaluates which covariates are still correlated with exposures (i.e., 
 IS not sure how to suppress console output....
 ```{r}
 
-#assesses covariate balance and produces figures for user inspection
-unbalanced_covariates_for_models <- assessBalance(object, data, weights_models)
+#assesses balance for full forms
+balance_stats_full <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1)
+
+#update forms to include any imbalanced time-varying covariates >t-1
+new_short_forms <- updateForms(object, short_forms, data_for_model_with_weights, balance_stats_full)
+
+#re-create weights, if needed ONLY
+data_for_model_with_weights<- createWeights(object, wide_long_datasets, new_short_forms, read_in_from_file="no") 
 
 ```
 
@@ -248,7 +268,7 @@ Given that weights with heavy tails can be problematic, this code caps weight va
 You can stop here if you have specific MSM models you want to fit or you can continue on to fit a standard single-outcome model. We also suggest conducting sensitivity/robustness tests by creating weights using several percentile cutoff values and ensuring your subsequent models produce similar results regardless of which percentile cutoff you used. 
 ```{r}
 #truncate weights 
-data_for_model_with_weights_cutoff <- truncateWeights(object, data_for_model_with_weights, imp_data_w)
+data_for_model_with_weights_cutoff <- truncateWeights(object, data_for_model_with_weights)
 
 ```
 
@@ -335,7 +355,7 @@ mplusObject <- mplusObject(
   
   #list your outcomes and (optionally) any corresponding covariates you want included in each respective model
   additional_covariates=data.frame(outcomes=c("lnCORTR", "sqrtSAAR"), #names of outcomes that are in long form (MLD)
-                        additional_covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c")))) #like methods covariates that don't need balancing
+                                   additional_covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c")))) #like methods covariates that don't need balancing
 )
 
 

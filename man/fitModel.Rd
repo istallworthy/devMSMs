@@ -3,7 +3,7 @@
 \name{fitModel}
 \alias{fitModel}
 \title{Fit weighted model
-This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcomes}
+This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcome}
 \usage{
 fitModel(
   object,
@@ -24,7 +24,7 @@ marginal structural models
 }
 \description{
 Fit weighted model
-This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcomes
+This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcome
 }
 \examples{
 fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
