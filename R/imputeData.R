@@ -26,13 +26,8 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
 
     imputed_datasets=list()
 
-    # for (x in 1:m){ #reads in each imputed dataset locally
-      # file_name=(paste("imp", x, '.csv', sep=""))
-      # name=paste("imp", x, sep="")
-      # imp=suppressMessages(as.data.frame(readr::read_csv(paste(paste0(home_dir, "imputations/"), file_name, sep=""), show_col_types = FALSE)))
       imp=readRDS(paste0(home_dir,"imputations/all_imp.rds"))
       imputed_datasets<-imp
-    # }
     return(imputed_datasets)
 
   }else{
@@ -59,12 +54,8 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
 
 
     data_to_impute=as.data.frame(data_to_impute)
-    data_to_impute$S_ID=as.factor(data_to_impute$S_ID)
-
-    # temp=data_to_impute%>%
-    #   dplyr::group_by({{ ID }})%>%
-    #   tidyr::complete(WAVE=c({{ time_pts }}))%>%
-    #   dplyr::ungroup()
+    data_to_impute[,ID]=as.factor(data_to_impute[,ID])
+    # data_to_impute$S_ID=as.factor(data_to_impute$S_ID)
 
     #adding in missing longitudinal time points in long format
     data_to_impute_full=data_to_impute%>%
@@ -83,53 +74,23 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
     #making variable types
     data_to_impute_full[,colnames(data_to_impute_full) %in% factor_covariates]=lapply(data_to_impute_full[,colnames(data_to_impute_full) %in% factor_covariates], factor)
 
-    #finds ordinal variables --all others assumed continuous
-    # ordinal_vars=colnames(data_to_impute)[!colnames(data_to_impute) %in% c(to_remove, continuous_variables)]
-
-    #creates 5 imputed datasets --add more detail here
-    # imputed=suppressMessages(Amelia::amelia(x = data_to_impute, m = m, idvars = ID, #m=5 for final
-    #                        ts = "WAVE", cs =cs, priors = priors, lags = lags, intercs = intercs, leads = leads, splinetime = splinetime,
-    #                        logs = logs, sqrts = sqrts, lgstc = lgstc, noms = noms,
-    #                        ords=ordinal_vars,
-    #                        empri=0.01*nrow(data_to_impute),
-    #                        bounds=bounds,  max.resample = max.resample, #100 seems to be the default
-    #                        tolerance = 1e-04
-    # ))
-
-    #patterns of missingness
-    # md.pattern(data_to_impute)
-
-    # predictorMatrix <- matrix(0, ncol = length(data_to_impute_full), nrow = length(data_to_impute_full))
-    # rownames(predictorMatrix) <- colnames(data_to_impute_full)
-    # colnames(predictorMatrix) <- colnames(data_to_impute_full)
-    # impute_vars=c(names(which(colSums(is.na(data_to_impute_full))>0))) #finds cols with missing data
-    # imputerMatrix<- predictorMatrix
-    # imputerMatrix[,impute_vars] <- 1
-    # diag(imputerMatrix) <- 0
-
-
-    #impute data using mice.
-    # imputed=mice::mice(data_to_impute, m=2, method="fastpmm", predictorMatrix = imputerMatrix, maxit = 0, printFlag = T, seed=1234)
-    # complete(imputed, "long") #put them all in a long file
-    #complete(imp, "broad")
-
 
     ## Set seed for reproducibility
     set.seed(123)
 
-    M=m
+    # M=m
     ## Parallelized execution
-    miceout <- foreach(i = seq_len(M), .combine = mice::ibind) %dorng% {
+    # miceout <- foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
       cat("### Started iteration", i, "\n")
-      miceout <- mice::mice(data_to_impute_full, m=1, method="pmm", maxit = 0,
-                           print = T)
+      miceout <- mice::mice(data_to_impute_full, m=m, method="pmm", maxit = 3,
+                           print = F)
       # miceout <- mice(data = df_before, m = 1, print = TRUE,
       #                 predictorMatrix = predictorMatrix, method = dryMice$method,
       #                 MaxNWts = 2000)
       cat("### Completed iteration", i, "\n")
       ## Make sure to return the output
-      miceout
-    }
+    #   miceout
+    # }
     imputed=miceout
     # a=complete(imputed,2) #extract each imputed dataset
 
@@ -138,8 +99,9 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
     saveRDS(imputed, paste0(home_dir,"imputations/all_imp.rds"))
 
     #print warnings
-    cat("USER ALERT: Please view the logged events from the imputation below:", "\n")
-    print(imputed$loggedEvents)
+    cat("USER ALERT: Please view any logged events from the imputation below:", "\n")
+    # print(imputed$loggedEvents)
+    cat(knitr::kable(imputed$loggedEvents, caption="Logged Events from mice", format='pipe'),  sep="\n")
 
 
     #this contains each of the imputed datasets

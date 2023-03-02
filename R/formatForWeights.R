@@ -56,38 +56,17 @@ formatForWeights <- function(object, data, imputed_datasets){
                      timevar="WAVE",
                      times=c(time_pts),
                      direction="wide"))
-                    # dplyr::select(dput(as.character(time_varying_wide)))
-
-      # dplyr::select(cat(paste0("c(", unlist(paste0('"',time_varying_wide, '"', collapse=", ")), ")"))))
-
 
     imp_wide=imp_wide[,!colnames(imp_wide) %in% time_var_exclude] #only include what should be there
 
-    # #creates hybrid wide/long dataset
-    # msm_data=merge(imp, imp_wide, by=ID, all.x=T) #dont delete rows
-
-    #remove time points that should not be there (but may have been added by imputation)
-    # msm_data=msm_data[msm_data$WAVE %in% time_pts,]
     msm_data=imp_wide
 
-    #re-labels time points
-    # for (x in 1:length(time_pts)){
-    #   msm_data$WAVE[msm_data$WAVE==time_pts[x]]=x}
-
     msm_data=as.data.frame(msm_data)
-
-    # return(assign(paste("imp", k, "_widelong", sep=""), msm_data)) #save each out e.g., imp1_widelong
     wide_long_datasets[[paste("imp", k, "_widelong", sep="")]] <- msm_data
 
   }
 
-  #as mids object
-
-
   #create dataset for future modeling
-  #run this code to make wide dataset for future use in actual msm model (i.e., non-imputed wide data)
-  # imp=as.data.frame(data)
-  # imp=as.data.frame(imputed_datasets$imp1) #IS changed to ue imputed dataset
   imp=as.data.frame(mice::complete(imputed_datasets,1)) #IS changed to use imputed dataset
 
   imp_wide=suppressWarnings(stats::reshape(data=imp,
@@ -100,8 +79,6 @@ formatForWeights <- function(object, data, imputed_datasets){
 
 
   #
-  # imp_wide=plyr::join(test,t, by=ID)
-  #Create long/wide hybrid: merge this newly created wide dataset with long dataset
   write.csv(imp_wide, paste0(home_dir, "data_for_final_model.csv"))
   write.csv(wide_long_datasets[[1]], paste0(home_dir, "data_for_final_Mplus_model.csv"))
 

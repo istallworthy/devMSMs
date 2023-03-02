@@ -4,7 +4,7 @@
 \alias{dataToImpute}
 \title{Creates data structure for imputation}
 \usage{
-dataToImpute(object, covariates_to_include)
+dataToImpute(object, all_potential_covariates)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
@@ -15,10 +15,10 @@ dataToImpute(object, covariates_to_include)
 data_to_impute
 }
 \description{
-Creates data structure for imputation with only the variables needed (i.e., exposures, outcomes, potential confounds)
+Creates data structure for imputation with only the variables needed (i.e., exposure, outcome, potential confounds)
 }
 \examples{
-dataToImpute(ID, data, exposures, outcomes, covariates_to_include, exclude_covariates)
+dataToImpute(ID, data, exposure, outcome, covariates_to_include, exclude_covariates)
 
 }
 \seealso{

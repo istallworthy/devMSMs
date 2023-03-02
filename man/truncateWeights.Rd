@@ -4,7 +4,7 @@
 \alias{truncateWeights}
 \title{Truncates weights}
 \usage{
-truncateWeights(object, wide_long_datasets, imp_data_w)
+truncateWeights(object, data_for_model_with_weights)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
@@ -18,7 +18,7 @@ data_for_model_with_weights_cutoff
 Code to 'cut off' weights at 90th percentile and populate all of those above at 90th percentile value to avoid heavy tails that can bias results
 }
 \examples{
-truncateWeights(data_for_model_with_weights, home_dir, exposures)
+truncateWeights(data_for_model_with_weights, home_dir, exposure)
 
 }
 \seealso{

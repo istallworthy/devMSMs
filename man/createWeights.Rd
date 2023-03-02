@@ -2,9 +2,14 @@
 % Please edit documentation in R/createWeights.R
 \name{createWeights}
 \alias{createWeights}
-\title{Creates balancing weights for potential confounding covariates in relation to exposures at each time point}
+\title{Creates balancing weights for potential confounding covariates in relation to exposure at each time point}
 \usage{
-createWeights(object, wide_long_datasets, forms, read_in_from_file = "no")
+createWeights(
+  object,
+  wide_long_datasets,
+  short_forms,
+  read_in_from_file = "no"
+)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
