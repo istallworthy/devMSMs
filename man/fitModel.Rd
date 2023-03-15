@@ -8,7 +8,7 @@ This code fits a weighted marginal structural model to examine the effects of di
 fitModel(
   object,
   data_for_model_with_weights_cutoff,
-  unbalanced_covariates_for_models = NULL,
+  balance_stats_final,
   model = "m4"
 )
 }

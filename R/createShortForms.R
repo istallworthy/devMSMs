@@ -46,7 +46,7 @@ createShortForms<- function(object, full_forms, keep=NULL){
 
       cat(paste0("The short form for ", names(list)[z], " including time-varying covariates at t-", short_form_lag, " only is:"), "\n")
       # print(new_form)
-      cat(new_Form)
+      cat(as.character(new_form))
       short_forms[[names(list)[z]]] <- new_form
       cat("\n")
     }

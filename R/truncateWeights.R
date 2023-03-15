@@ -24,7 +24,7 @@ truncateWeights <-function(object, data_for_model_with_weights){
   if (weights_percentile_cutoff>1 | weights_percentile_cutoff<0){
     stop('Please select a percentile cutoff between 0 and 1 in the msmObject')}
 
-  imp_data=readRDS(paste0(home_dir, "imputations/all_imp.rds", sep=""))
+  imp_data_w=readRDS(paste0(home_dir, "original weights/imp_data_w.rds", sep=""))
 
   #creating list of all cutoff values to cycle through
   all_cutoffs=c(weights_percentile_cutoff, weights_percentile_cutoffs_sensitivity)
@@ -57,10 +57,10 @@ truncateWeights <-function(object, data_for_model_with_weights){
       name=paste0(exposure, "-", outcome,"_", cutoff, "_weight_cutoff") #labeling new weight column
       cutoff_weights=WeightIt::trim(data[,paste0(exposure, "-", outcome, "_weights")], cutoff, lower=F)
 
-      if(cutoff==weights_percentile_cutoff){ #prints only values for user-specified cutoff
+      # if(cutoff==weights_percentile_cutoff){ #prints only values for user-specified cutoff
         cat(paste0("For ", exposure, "-", outcome, ", using the user-specified cutoff percentile of ", cutoff, ", the median weight is ", median(as.numeric(unlist(cutoff_weights))) ,
                    " (SD= ",sd(as.numeric(unlist(cutoff_weights))), "; range= ", min(as.numeric(unlist(cutoff_weights))), " - ", max(as.numeric(unlist(cutoff_weights))), ")"), "\n")
-      }
+      # }
 
       cutoff_weights=data.frame(x=cutoff_weights)
       colnames(cutoff_weights)=name
@@ -112,9 +112,13 @@ truncateWeights <-function(object, data_for_model_with_weights){
 
   #adds weights to mids object
   # colnames(all_weights)=c(ID, "weights")
+
   a=complete(imp_data_w, action="long", include = TRUE)
   b=merge(a, all_trunc_weights, by=c(ID, ".imp"), all = T)
   imp_data_w_t=mice::as.mids(b, .imp = ".imp")
+
+  saveRDS(imp_data_w_t, paste0(home_dir, "final weights/values/imp_data_w_t.rds"))
+  saveRDS(data_for_model_with_weights_cutoff, paste0(home_dir, "final weights/values/data_for_model_with_weights_cutoff.rds"))
 
   cat("USER ALERT: final cutoff weights using the user-specified cutoff values and 2 other values for subsequent sensiivity analyses have now each been saved as a dataset in 'final weights' folder","\n")
   cat(paste0("A histogram of weights cut off at ", cutoff, " for exposure ", exposure, " on ", outcome, ", imputation ", k,  " has been saved to the 'final weights/histograms/' folder"),"\n")
