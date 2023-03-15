@@ -8,7 +8,7 @@
 #' @seealso [assessModel()]
 #' @return history_comparisons lists of linear hypothesis tests
 #' @examples compareHistories(object, best_models)
-compareHistories <-function(object, data_for_model_with_weights_cutoff, all_models, imp_data_w_t){
+compareHistories <-function(object, data_for_model_with_weights_cutoff, all_models){
 
   home_dir=object$home_dir
   exposure=object$exposure
@@ -17,7 +17,8 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   outcome_time_pt=object$outcome_time_pt
   hi_cutoff=object$hi_cutoff
   lo_cutoff=object$lo_cutoff
-  reference=object$reference
+  factor_covariates=object$factor_covariates
+  # reference=object$reference
   comparisons=object$comparisons
   weights_percentile_cutoff=object$weights_percentile_cutoff
   weights_percentile_cutoffs_sensitivity=c(as.numeric(unlist(strsplit(object$weights_percentile_cutoffs_sensitivity, " "))))
@@ -37,8 +38,9 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   all_data=unname(all_data)
   a=do.call(rbind.data.frame, all_data)
 
-  data=complete(imp_data_w_t, 1)
-  test=mice::as.mids(all_data, .imp=".imp")
+  data=readRDS(paste0(home_dir, "final weights/values/imp_data_w_t.rds"))
+  data=complete(data, 1)
+  # test=mice::as.mids(all_data, .imp=".imp")
 
   #creates permutations of high ("h") and low ("l") levels of exposure for each exposure epoch
   exposure_levels=apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
@@ -49,8 +51,8 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
     stop('Please select hi_cutoff between 0 and 1 in the msm object')}
   if (lo_cutoff>1 | lo_cutoff<0){
     stop('Please select lo_cutoff between 0 and 1 in the msm object')}
-  if (sum(exposure_levels %in% reference)==0){
-    stop(paste0('Please select a valid reference history in the msm object from the following list ', paste0(apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-"), sep=" ", collapse=" ")))}
+  # if (sum(exposure_levels %in% reference)==0){
+  #   stop(paste0('Please select a valid reference history in the msm object from the following list ', paste0(apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-"), sep=" ", collapse=" ")))}
 
 
   #if no comparison is specified by the user, compare to all histories aside from the reference
@@ -62,13 +64,13 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
     comp_histories=exposure_levels[exposure_levels %in% comparisons]
   }
 
-  #if no reference is set by user, set to low exposure at all time points
-  if (reference==""){
+  # #if no reference is set by user, set to low exposure at all time points
+  # if (reference==""){
     reference=apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")[length(apply(gtools::permutations(2, nrow(exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-"))]
-  }else {
-    if (sum(exposure_levels %in% reference)==0){
-      stop('Please select a valid reference history in the msm object')}
-  }
+  # }else {
+  #   if (sum(exposure_levels %in% reference)==0){
+  #     stop('Please select a valid reference history in the msm object')}
+  # }
 
 
   #final list of all comparisons for all exposure-outcome pairs
@@ -90,26 +92,30 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
 
     #gets best-fitting model formula
     # formula=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]$formula
-    formula=all_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]
-    formula=formula[[model]]
-    # formula=formula$coef.names
+    final_model=all_models[[paste0("fit", k,"_", exposure, "-", outcome, "_cutoff_", cutoff)]]
+    final_model=final_model[[1]]
+
+    formula=final_model$formula
 
     # final_model=best_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]
-    final_model=as.formula(paste0(paste0(outcome, ".", outcome_time_pt), "~", paste(formula$coef.names[2:length(formula$coef.names)], sep=" ", collapse=" + ")))
-    final_model=all_models[[paste0(exposure, "-", outcome, "_cutoff_", cutoff)]]
+    # final_model=as.formula(paste0(paste0(outcome, ".", outcome_time_pt), "~", paste(formula$coef.names[2:length(formula$coef.names)], sep=" ", collapse=" + ")))
+    # final_model=all_models[[paste0("fit", k, "_", exposure, "-", outcome, "_cutoff_", cutoff)]]
 
     #identifying model parameters
     # parameters=sapply(strsplit(formula, "~"),  "[", 2)
-    parameters=formula$coef.names
-    parameters=as.data.frame(strsplit(parameters, " +"))
-    parameters=parameters[parameters !="+"]
+    # parameters=formula$coef.names
+    parameters=names(final_model$coefficients)
+    #renaming any factor covariates
+    # parameters[sapply(strsplit(sapply(strsplit(parameters, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates] <-sapply(strsplit(parameters, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(parameters, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
+
+    # parameters=as.data.frame(strsplit(parameters, " +"))
+    # parameters=parameters[parameters !="+"]
 
     #gathering epoch information for each exposure for deriving betas
     epoch_info=as.data.frame(rep(exposure, length(epochs)))
     epoch_info$time=epochs
     epoch_info$low=NA
     epoch_info$high=NA
-
 
     #cycling through epochs to find hi and lo values of the exposure for each epoch based on user-specified values
     for (t in 1:length(epochs)){
@@ -158,7 +164,6 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
         }
       }else{ #if it does not contain exposure, it is a covariate, use grand mean as beta
         ref_parameters_betas$beta[z]=mean(data[,colnames(data)[colnames(data)==ref_parameters_betas[z,1]]], na.rm=T)
-
       }
     }
     #create reference form with betas and parameters
@@ -219,8 +224,57 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
 
 
       #linear hypothesis test to compare the comparison and reference values
-      linear_hypothesis=car::linearHypothesis(a, paste(ref_form, comp_form, sep=" = "), test="F")
+      # linear_hypothesis=car::linearHypothesis(formula, paste(ref_form, comp_form, sep=" = "))
       # mitml::testConstraints(m0,  constraints=paste(ref_form, comp_form, sep=" = "))
+
+      #average marginal estimates
+      data_all_imp=data_for_model_with_weights_cutoff[which(grepl(paste(exposure, "-", outcome, "_", cutoff, sep=""), names(data_for_model_with_weights_cutoff)))]
+
+      #renaming to make it easier for svydesign
+      weights_name=colnames( data_all_imp[[1]])[grepl(paste0(exposure, "-", outcome, "_", cutoff, "_weight_cutoff"), colnames(data_all_imp[[1]]))]
+      data_all_imp=lapply(data_all_imp, function(x) {names(x)[names(x)==weights_name] <- "weights";x})
+      data_all_imp=lapply(data_all_imp, function(x) {names(x)[names(x)==ID] <- "ID";x})
+
+      data=data_all_imp[[k]]
+      s=svydesign(id=~ID,
+                  # data=data_for_model_with_weights_cutoff,
+                  data=mitools::imputationList(data_all_imp), #adds list of imputation data
+                  # data=data, #adds list of imputation data
+                  weights=~weights)
+
+      data_all_imp= readRDS(paste0(home_dir, "final weights/values/imp_data_w_t.rds"))
+
+      #https://r-survey.r-forge.r-project.org/survey/svymi.html
+      fits=with(s, svyglm(noquote(f0)))
+      # fits=with(s,svyglm(as.formula(f0), design=s))
+      fits=unname(fits)
+      fits=as.mira(fits)
+
+      a=as.mira(MIcombine(fits))
+
+      data_all_imp= readRDS(paste0(home_dir, "final weights/values/imp_data_w_t.rds"))
+     test=with(data_all_imp,  marginaleffects::avg_predictions(final_model,
+                                                               newdata=datagridcf(HOMEETA1_Infancy=c(-0.87125,0.48375) ,
+                                                                                            HOMEETA1_Toddlerhood=c(-0.403875,1.123375),
+                                                                                            HOMEETA1_Childhood=c(-0.02475,1.60475)),
+                                                               by=c("HOMEETA1_Infancy","HOMEETA1_Toddlerhood","HOMEETA1_Childhood")))
+
+
+     pooled_pred <- pool(as.mira(test))
+     summary(pooled_pred)
+
+
+
+
+
+    pred= marginaleffects::avg_predictions(fits,
+                                       newdata=datagridcf(HOMEETA1_Infancy=c(-0.87125,0.48375) ,
+                                                              HOMEETA1_Toddlerhood=c(-0.403875,1.123375),
+                                                              HOMEETA1_Childhood=c(-0.02475,1.60475)),
+                                       by=c("HOMEETA1_Infancy","HOMEETA1_Toddlerhood","HOMEETA1_Childhood"))
+
+     pred |> marginaleffects::hypotheses("pairwise")
+
 
       if (cutoff==weights_percentile_cutoff){
         cat(paste0("The uncorrected difference between the effects of ", exposure, " at ", comparison, " compared to ", reference, " on ", outcome, " has a p-value of ", linear_hypothesis$`Pr(>F)`)[2], "\n")

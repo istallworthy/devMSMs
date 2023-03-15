@@ -1,6 +1,6 @@
 
 #code to calculate balance stats based on Jackson paper (either weighted or unweighted)
-calcBalStats <-function(object, imp_wide_data, forms, exposure, outcome, k=1, weighted=0){
+calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome, k=1, weighted=0){
 
   # #for testing
   # outcome=object$outcomes
@@ -13,6 +13,8 @@ calcBalStats <-function(object, imp_wide_data, forms, exposure, outcome, k=1, we
   # weighted=1
   # long_data=imputed_datasets
   #
+
+  # browser()
   ID=object$ID
   home_dir=object$home_dir
   exposure_time_pts=object$exposure_time_pts
@@ -20,6 +22,8 @@ calcBalStats <-function(object, imp_wide_data, forms, exposure, outcome, k=1, we
 
   library(cobalt)
   library(tidyr)
+
+  form_name=f_type
 
   #creating initial data frames
   #data frame with all sampling weights for all exposures at all exposure time points for all histories
@@ -44,7 +48,7 @@ calcBalStats <-function(object, imp_wide_data, forms, exposure, outcome, k=1, we
   # data_long=tidyr::complete(long_data,k)
   # data$history=NA
   # numeric_vars=numeric_vars[numeric_vars %in% colnames(data)]
-  data[,numeric_vars] <- lapply(data[,numeric_vars] , as.numeric)
+  # data[,numeric_vars] <- lapply(data[,numeric_vars] , as.numeric)
 
 
   folder=ifelse(weighted==0, "pre-balance/", "balance/")
@@ -291,7 +295,7 @@ calcBalStats <-function(object, imp_wide_data, forms, exposure, outcome, k=1, we
     all_bal_stats$covar_time[is.na(all_bal_stats$covar_time)]=0
 
 
-    x_lab=ifelse(exposure_type=="continuous", "Correlation", "Standardized Mean Difference")
+    x_lab=ifelse(exposure_type=="continuous", "Exposure-Covariate Correlation", "Standardized Mean Difference")
     labels=ifelse(bal_stats$balanced==0, bal_stats$covariate, "")
     min_val=ifelse(min(bal_stats$std_bal_stats)<0, min(bal_stats$std_bal_stats)-0.1, balance_thresh-0.05)
     max_val=ifelse(max(bal_stats$std_bal_stats)>0, max(bal_stats$std_bal_stats)+0.1, balance_thresh+0.05)
@@ -309,28 +313,28 @@ calcBalStats <-function(object, imp_wide_data, forms, exposure, outcome, k=1, we
       ggplot2::ylab("Covariate")+
       ggplot2::xlim(min_val, max_val)+
       ggplot2::ggtitle(paste0(exposure, "(t=", exposure_time_pt, ") Balance"))+
-      ggplot2::theme(panel.background = element_rect(fill = "white"),
-                     axis.text.x = element_text(color = "black"),
-                     axis.text.y = element_text(color = "black"),
-                     axis.text = element_text(size=8),
+      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
+                     axis.text.x = ggplot2::element_text(color = "black"),
+                     axis.text.y = ggplot2::element_text(color = "black"),
+                     axis.text = ggplot2::element_text(size=8),
                      # axis.ticks.length.y = unit(0.85, "cm"),
-                     panel.border = element_rect(fill = NA, color = "black"),
-                     plot.background = element_blank(),
-                     plot.title=element_text(size=10),
-                     legend.background = element_blank(),
-                     legend.key = element_blank(),
+                     panel.border = ggplot2::element_rect(fill = NA, color = "black"),
+                     plot.background = ggplot2::element_blank(),
+                     plot.title=ggplot2::element_text(size=10),
+                     legend.background = ggplot2::element_blank(),
+                     legend.key = ggplot2::element_blank(),
                      legend.position="none")+
-      ggplot2::theme(plot.title = element_text(hjust = 0.5))
+      ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
     if(nrow(bal_stats)>40){ #stagger covariate labels if there are many
-      lp <- lp+ ggplot2::scale_y_discrete(guide = guide_axis(n.dodge=2))
+      lp <- lp+ ggplot2::scale_y_discrete(guide = ggplot2::guide_axis(n.dodge=2))
     }
-    suppressMessages(ggplot2::ggsave(paste0(home_dir, folder, "/plots/", exposure, "_", exposure_time_pt, "_summary_balance_plot.jpeg"),
+    suppressMessages(ggplot2::ggsave(paste0(home_dir, folder, "/plots/", form_name, "_imp_",k, "_", exposure,"_", exposure_time_pt, "_summary_balance_plot.jpeg"),
                                      width=6, height=8))
-    cat(paste0("A balance summary plot for ", exposure, " at time ", exposure_time_pt, " has now been saved in the '", folder, "/plots/' folder."), "\n")
+    cat(paste0("A", gsub("/", "", folder), "  summary plot for ", form_name, " ", exposure,  "imputation ", k," at time ", exposure_time_pt, " has now been saved in the '", folder, "/plots/' folder."), "\n")
     #
   } #ends exp_time_pt
 
-  theme(axis.text.x=element_text(angle=90,margin = margin(1, unit = "cm"),vjust =1))
+  # theme(axis.text.x=element_text(angle=90,margin = margin(1, unit = "cm"),vjust =1))
 
   #
   #   a=bal_stats%>%
@@ -352,24 +356,21 @@ calcBalStats <-function(object, imp_wide_data, forms, exposure, outcome, k=1, we
                      imbalanced_n=sum(balanced==0),
                      n=dplyr::n())
 
-  write.csv(bal_summary_exp, paste0(home_dir, folder, exposure, "_",k, "_imbalanced_covars.csv"))
+  # write.csv(bal_summary_exp, paste0(home_dir, folder, exposure, "_",k, "_imbalanced_covars.csv"))
 
 
-
-
-
-  write.csv(bal_summary, paste0(home_dir, folder, exposure, "_",k, "_balance_stat_summary.csv"))
-  cat(paste0("Balance statistics for ", exposure, ", imputation ", k, " have been saved in the '", folder, "' folder"), "\n")
+  write.csv(bal_summary_exp, paste0(home_dir, folder, exposure, "_",k, "_balance_stat_summary.csv"))
+  cat(paste0("Balance statistics for ", form_name, " ",exposure, ", imputation ", k, " have been saved in the '", folder, "' folder"), "\n")
 
 
   write.csv(all_prop_weights, paste0(home_dir, folder, exposure, "_", k, "_history_sample_weight.csv"))
-  cat(paste0("Sampling weights ", "for ", exposure, ", imputation ", k, ", weighted=", weighted, " have been saved in the '", folder, "' folder"), "\n")
+  cat(paste0("Sampling weights ", "for ", form_name, " ", exposure, ", imputation ", k, ", weighted=", weighted, " have been saved in the '", folder, "' folder"), "\n")
 
 
   cat(paste0("USER ALERT: For exposure ", exposure, " imputation ", k, ", ", sum(bal_summary_exp$imbalanced_n, na.rm=T), " out of ", sum(bal_summary_exp$n, na.rm=T),
              " (", round((sum(bal_summary_exp$imbalanced_n, na.rm=T)/sum(bal_summary_exp$n))*100,0), "%) covariates remain imbalanced as shown below:"), "\n")
   # print(bal_summary_exp)
-  cat(knitr::kable(bal_summary_exp, caption="Imbalanced Covariates", format='pipe'),  sep="\n")
+  cat(knitr::kable(bal_summary_exp, caption=paste0(form_name, " Imbalanced Covariates"), format='pipe'),  sep="\n")
 
 
   rownames(all_bal_stats)<-NULL

@@ -27,12 +27,6 @@ createForms <- function(object, wide_long_datasets, all_potential_covariates){
 
   covariates_to_include=all_potential_covariates
 
-  #error checking
-  if (length(potential_colliders$colliders)!=length(potential_colliders$exp_out_pair)){
-    stop('Please provide at least one collider variable for each listed exposure-outcome pair in the msm object')}
-  if (length(potential_colliders$exclude_lags)!=length(potential_colliders$exp_out_pair)){
-    stop('Please indicate whether you want to exclude lagged values of colliders for each listed exposure-outcome pair in the msm object')}
-
 
   # browser()
   ####Creates CBPS forms for each exposure at each time point (e.g., HOMEETA.6) that includes: all identified potential confounds for that treatment (at any time point) and lagged time points of the treatment, excludes other outcome a the given time point (as potential colliders).
@@ -84,28 +78,28 @@ createForms <- function(object, wide_long_datasets, all_potential_covariates){
 
 
   # browser()
-  #gathers potential colliders
-  #checking to see if there are colliders listed for exposure-outcome pair
-  if (nrow(potential_colliders)>0 && sum(potential_colliders$exp_out_pair== paste0(exposure, "-", outcome))>0){
-    #gathers all colliders
-    colliders=c(as.character(unlist(potential_colliders$colliders[potential_colliders$exp_out_pair== paste0(exposure, "-", outcome)])))
-    #finds if user wants to included lags of colliders
-    colliders_lagged=potential_colliders$exclude_lags[potential_colliders$exp_out_pair== paste0(exposure, "-", outcome)]
-    #finds out if user specified time pts for any colliders
-    time_spec_colliders=colliders[grepl("\\.", colliders)]
-    #finds any time-varying colliders with not time point specified
-    all_time_colliders=colliders[colliders %in% time_varying_covariates]
-    #finds any time invariant colliders
-    time_invariant_colliders=colliders[!colliders %in% all_time_colliders & !colliders %in% time_spec_colliders]
-
-  }else{
+  # #gathers potential colliders
+  # #checking to see if there are colliders listed for exposure-outcome pair
+  # if (nrow(potential_colliders)>0){
+  #   #gathers all colliders
+  #   colliders=c(as.character(unlist(potential_colliders$colliders)))
+  #   #finds if user wants to included lags of colliders
+  #   colliders_lagged=potential_colliders$exclude_lags
+  #   #finds out if user specified time pts for any colliders
+  #   time_spec_colliders=colliders[grepl("\\.", colliders)]
+  #   #finds any time-varying colliders with not time point specified
+  #   all_time_colliders=colliders[colliders %in% time_varying_covariates]
+  #   #finds any time invariant colliders
+  #   time_invariant_colliders=colliders[!colliders %in% all_time_colliders & !colliders %in% time_spec_colliders]
+  #
+  # }else{
     colliders=NULL
     all_time_colliders=NULL
     colliders_lagged=F
     time_varying_colliders=NULL
     time_spec_colliders=NULL
     time_invariant_colliders=NULL
-  }
+  # }
 
 
   #Cycles through all exposure time points
@@ -124,11 +118,11 @@ createForms <- function(object, wide_long_datasets, all_potential_covariates){
     concurrent_colliders={}
     lagged_colliders={}
     #finding all concurrent and lagged time-specified colliders
-    if (length(time_spec_colliders>0)){
+    if (length(time_spec_colliders)>0){
       if (sum(as.numeric(sapply(strsplit(time_spec_colliders, "\\."), "[", 2))==time)>0){ #add any time-speciic colliders to concurrent if time matches
         concurrent_colliders=c(concurrent_colliders, time_spec_colliders[as.numeric(sapply(strsplit(time_spec_colliders, "\\."), "[", 2))==time])
       }
-      if(sum(sapply(strsplit(time_spec_colliders, "\\."), "[", 2) %in% lags)>0){ #add time-specific colliders to lagged list if time is lagged
+      if(as.numeric(sapply(strsplit(time_spec_colliders, "\\."), "[", 2))<time){ #add time-specific colliders to lagged list if time is lagged
         lagged_colliders=c(lagged_colliders, time_spec[sapply(strsplit(time_spec_colliders, "\\."), "[", 2) %in% lags])
       }
     }

@@ -30,18 +30,6 @@ Please provide user input for the following fields to create an msm object that 
 ```{r}
 # source("") #string
 
-# data=read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial.csv")
-# data=data%>%dplyr::filter(TAge<60)
-# data=data[data$TAge!=48,]
-# data$EF_avg_perc= rowMeans(data[,54:60], na.rm=T)
-# data$fscore=NULL
-# data=data[,!grepl("pct", colnames(data))]
-# # data$lnINR=log10(data$InRatioCor)
-# # data$InRatioCor=NULL
-# data[data=="NaN"]=NA
-# write.csv(data, "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", row.names = F)
-
-# temp=data%>%dplyr::select(InRatioCor, lnINR)
 
 object <- msmObject(
   
@@ -87,7 +75,7 @@ object <- msmObject(
   
   #### Exposure Information (required) ####
   #exposure of interest that potentially have causal effects on outcome and exposure time point(s) (corresponding to values in time_var)
-  exposure=c("InRatioCor"), #list of strings
+  exposure=c("HOMEETA1"), #list of strings
   # exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
   exposure_time_pts=c(6, 15, 24, 35, 58), #list of integers
   
@@ -149,11 +137,9 @@ object <- msmObject(
                      "StrDif_Tot.15","StrDif_Tot.24", "QSSOverallMe.15", "WndNbrhood.15", "EF_avg_perc.6", "EF_avg_perc.15", "EF_avg_perc.24"), #default set to none
   
   #when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure and outcome, and at lagged values if specified by the user, as balancing on colliders can lead to problematic outcomes; default is none; will override mandatory_keep_covariates
-  # potential_colliders=data.frame(exp_out_pair=c("HOMEETA1-CORTBASE", "ESETA1-CORTBASE"), #names of exposure-outcome pair separated by "-", no spaces; list of strings
-  #                                colliders=I(list(c("AGE"), c("HOMEETA1.154", "AGE"))), #list of colliders for each exposure-outcome pair; list of lists of strings
-  #                                exclude_lags=c("T", "F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair; list of strings
-  potential_colliders=NULL,
-  
+  # potential_colliders=data.frame(colliders=c("ADHDtcTot.58"), #list of colliders for each exposure-outcome pair; list of lists of strings
+  #                                exclude_lags=c("F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair; list of strings
+
   
   ### Plotting Information (optional) ###
   #optional list of alternative labels for exposures that will be used only for plotting
@@ -206,7 +192,7 @@ The parameter 'read_imps_from_file' will allow you to read imputed data in from 
 data_to_impute <- dataToImpute(object, all_potential_covariates)
 
 #creates imputed datasets and saves them out
-imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no")
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="yes")
 
 ```
 
@@ -236,7 +222,7 @@ short_forms <- createShortForms(object, full_forms, keep=list(exposure=c("HOMEET
 
 #creates balancing weights for each exposure-outcome pair at each exposure time point 
 object$weights_method="npcbps" #try different weights methods and re-run
-data_for_model_with_weights<- createWeights(object, wide_long_datasets, short_forms, read_in_from_file="no") 
+data_for_model_with_weights<- createWeights(object, wide_long_datasets, short_forms, read_in_from_file="yes") 
 
 #assesses balance for short forms
 balance_stats <- assessBalance(object, short_forms, data_for_model_with_weights, weighted=1)
@@ -257,7 +243,10 @@ balance_stats_full <- assessBalance(object, full_forms, data_for_model_with_weig
 new_short_forms <- updateForms(object, short_forms, data_for_model_with_weights, balance_stats_full)
 
 #re-create weights, if needed ONLY
-data_for_model_with_weights<- createWeights(object, wide_long_datasets, new_short_forms, read_in_from_file="no") 
+data_for_model_with_weights<- createWeights(object, wide_long_datasets, new_short_forms, read_in_from_file="yes") 
+
+#final balance assessment
+balance_stats_final <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1)
 
 ```
 
@@ -296,10 +285,10 @@ The code will automatically choose the model with the lowest AIC but user can ov
 ```{r}
 
 #code to fit a series of baseline, covariates, and interaction weighted models to determine which is best fitting; prints only models with user-specified weight cutoff values (sensitivity checks output into folder)
-all_models <- fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models, model="m4")
+all_models <- fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m0")
 
 #determine best-fitting model  --should this print all sensitivity analyses or nah? 
-best_models <- assessModel(object, all_models, best_model="m1")
+# best_models <- assessModel(object, all_models, best_model="m1")
 
 ```
 
@@ -315,7 +304,7 @@ This code uses predicted values to plot the effects of the different exposure hi
 ```{r}
 
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
-history_comparisons <- compareHistories(object, best_models, all_models)
+history_comparisons <- compareHistories(object, data_for_model_with_weights_cutoff, all_models)
 
 #adjusts p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
 signifcant_comparisons <- mcCorrection(object, history_comparisons) 
