@@ -1,4 +1,4 @@
-------Begin Mplus Model Run: 01Mar2023 08:36:15------
+------Begin Mplus Model Run: 06Apr2023 18:46:12------
 Run options:
 	Recursive (run models in subdirectories): FALSE
 	Show output on console: FALSE
@@ -16,4 +16,4 @@ Skipping model because output file already exists for: /Users/isabella/Desktop/E
 Currently running model: scoring.inp
 Skipping model because output file already exists for: /Users/isabella/Desktop/E-Lab/Latent language/results/varimpactscript.inp
 
-------End Mplus Model Run: 01Mar2023 08:36:28------
+------End Mplus Model Run: 06Apr2023 18:46:24------

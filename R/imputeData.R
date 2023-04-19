@@ -21,13 +21,10 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
   factor_covariates=object$factor_covariates
 
 
-
   if (read_imps_from_file=="yes"){
-
     imputed_datasets=list()
-
-      imp=readRDS(paste0(home_dir,"imputations/all_imp.rds"))
-      imputed_datasets<-imp
+    imp=readRDS(paste0(home_dir,"imputations/all_imp.rds"))
+    imputed_datasets<-imp
     return(imputed_datasets)
 
   }else{
@@ -79,21 +76,19 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
     set.seed(123)
 
     # M=m
-    ## Parallelized execution
-    # miceout <- foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
-      cat("### Started iteration", i, "\n")
-      miceout <- mice::mice(data_to_impute_full, m=m, method="pmm", maxit = 3,
-                           print = F)
-      # miceout <- mice(data = df_before, m = 1, print = TRUE,
-      #                 predictorMatrix = predictorMatrix, method = dryMice$method,
-      #                 MaxNWts = 2000)
-      cat("### Completed iteration", i, "\n")
-      ## Make sure to return the output
-    #   miceout
-    # }
+    # Parallelized execution
+    miceout <- foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
+    cat("### Started iteration", i, "\n")
+    miceout <- mice::mice(data_to_impute_full, m=m, method="pmm", maxit = 5,
+                          print = T)
+    # miceout <- mice(data = df_before, m = 1, print = TRUE,
+    #                 predictorMatrix = predictorMatrix, method = dryMice$method,
+    #                 MaxNWts = 2000)
+    cat("### Completed iteration", i, "\n")
+    ## Make sure to return the output
+      miceout
+    }
     imputed=miceout
-    # a=complete(imputed,2) #extract each imputed dataset
-
 
     # library(miceadds)
     saveRDS(imputed, paste0(home_dir,"imputations/all_imp.rds"))
@@ -105,12 +100,10 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
 
 
     #this contains each of the imputed datasets
-    # imputed_datasets<- imputed$imputations
     imputed_datasets<- imputed
 
     #save out imputed datasets
     for (k in 1:m){
-      # write.csv(imputed_datasets[[paste0("imp", k)]], file=paste0(home_dir,"imputations/imp", k,".csv"))
       write.csv(mice::complete(imputed,k), file=paste0(home_dir,"imputations/imp", k,".csv"))
 
     }

@@ -23,7 +23,13 @@ formatDataStruct <-function(object) {
   exposure=object$exposure
   outcome=object$outcome
   exposure_time_pts=object$exposure_time_pts
+  exposure_epochs=object$exposure_epochs
   outcome_time_pt=object$outcome_time_pt
+  time_varying_covariates=object$time_varying_variables
+  time_pts=object$time_pts
+  time_var_exclude=object$time_var_exclude
+  hi_cutoff=object$hi_cutoff
+  lo_cutoff=object$lo_cutoff
 
 
   options(readr.num_columns = 0)
@@ -57,7 +63,6 @@ formatDataStruct <-function(object) {
   if(dir.exists(paste0(home_dir, "pre-balance/"))==F){dir.create(paste0(home_dir, "pre-balance/"))}
   if(dir.exists(paste0(home_dir, "pre-balance/plots/"))==F){dir.create(paste0(home_dir, "pre-balance/plots/"))}
 
-
   if(dir.exists(paste0(home_dir, "balance/"))==F){dir.create(paste0(home_dir, "balance/"))}
   if(dir.exists(paste0(home_dir, "balance/plots/"))==F){dir.create(paste0(home_dir, "balance/plots/"))}
   if(dir.exists(paste0(home_dir, "balance/comparison values/"))==F){dir.create(paste0(home_dir, "balance/comparison values/"))}
@@ -69,9 +74,9 @@ formatDataStruct <-function(object) {
   if(dir.exists(paste0(home_dir, "msms/"))==F){dir.create(paste0(home_dir, "msms/"))}
   if(dir.exists(paste0(home_dir, "msms/original/"))==F){dir.create(paste0(home_dir, "msms/original/"))}
   if(dir.exists(paste0(home_dir, "msms/sensitivity checks/"))==F){dir.create(paste0(home_dir, "msms/sensitivity checks/"))}
-  if(dir.exists(paste0(home_dir, "msms/linear hypothesis testing/"))==F){dir.create(paste0(home_dir, "msms/linear hypothesis testing/"))}
-  if(dir.exists(paste0(home_dir, "msms/linear hypothesis testing/original/"))==F){dir.create(paste0(home_dir, "msms/linear hypothesis testing/original/"))}
-  if(dir.exists(paste0(home_dir, "msms/linear hypothesis testing/sensitivity checks/"))==F){dir.create(paste0(home_dir, "msms/linear hypothesis testing/sensitivity checks/"))}
+  if(dir.exists(paste0(home_dir, "msms/estimated means/"))==F){dir.create(paste0(home_dir, "msms/estimated means/"))}
+  if(dir.exists(paste0(home_dir, "msms/estimated means/original/"))==F){dir.create(paste0(home_dir, "msms/estimated means/original/"))}
+  if(dir.exists(paste0(home_dir, "msms/estimated means/sensitivity checks/"))==F){dir.create(paste0(home_dir, "msms/estimated means/sensitivity checks/"))}
 
   if(dir.exists(paste0(home_dir, "results figures/"))==F){dir.create(paste0(home_dir, "results figures/"))}
   if(dir.exists(paste0(home_dir, "results figures/original/"))==F){dir.create(paste0(home_dir, "results figures/original/"))}
@@ -101,6 +106,46 @@ formatDataStruct <-function(object) {
         kableExtra::save_kable(file=paste0(home_dir, "exposure_info.html")))
   cat("Exposure descriptive statistics have now been saved in the home directory", "\n")
   cat("\n")
+
+
+  #exposure history summary
+  time_varying_wide=apply(expand.grid(time_varying_covariates, as.character(time_pts)), 1, paste, sep="", collapse=".")
+  time_varying_wide=sort(time_varying_wide)
+  time_varying_wide=c(id, time_varying_wide)
+  time_varying_wide=time_varying_wide[!time_varying_wide %in% time_var_exclude] #rem
+  dat_wide=suppressWarnings(stats::reshape(data=data,idvar=id,v.names= time_varying_covariates, timevar="WAVE", times=c(time_pts), direction="wide"))
+  new=data.frame(ID=dat_wide[,id])
+  colnames(new)<-id
+  for (e in 1:nrow(exposure_epochs)){
+    epoch=exposure_epochs[e,1]
+    temp=data.frame(row.names=1:nrow(dat_wide))
+    new_var=paste0(exposure, "_", epoch)
+    #finds data from each time point in each epoch, horizontally aligns all exposure values within the epoch for averaging
+    for (l in 1:length(as.numeric(unlist(exposure_epochs[e,2])))){
+      level=as.numeric(unlist(exposure_epochs[e,2]))[l]
+      z=dat_wide[,which(grepl(paste0(exposure, ".", level), names(dat_wide)))]
+      temp=cbind(temp, z) }
+    new=new%>%dplyr::mutate(!!new_var :=rowMeans(temp, na.rm=T))
+    new[,new_var]=as.numeric(new[,new_var])}
+  new$history<- lapply(1:nrow(new), function(x){
+    paste(lapply(1:nrow(exposure_epochs), function(y){
+      if(is.nan(new[x,y+1])){
+        return(NA)}
+      if(new[x,y+1]>=as.numeric(quantile(new[,y+1],probs=hi_cutoff, na.rm=T))){
+        return("h")}
+      if(new[x,y+1]<=as.numeric(quantile(new[,y+1],probs=lo_cutoff, na.rm=T))){
+        return("l")}
+    }), collapse="-")
+  })
+  his_summ=as.data.frame(as.data.frame(new)%>%dplyr::group_by(history)%>%dplyr::summarize(n=dplyr::n()))
+  his_summ=his_summ[!grepl("NULL", unlist(his_summ$history)),]
+  his_summ=his_summ[!grepl("NA", unlist(his_summ$history)),]
+  cat("Out of the total of ", nrow(dat_wide), " individuals, below is the distribution of the ", sum(his_summ$n), "(", (sum(his_summ$n)/nrow(dat_wide))*100, "%) that fall into the following exposure histories defined by ",
+      lo_cutoff, " and ", hi_cutoff, "percentile values for low and high levels of exposure, respectively, across ", paste0(exposure_epochs$epochs), ":", "\n")
+  cat(knitr::kable(as.data.frame(his_summ), caption="Summary of Exposure Histories", format='pipe', row.names = F ), sep="\n")
+
+  cat("\n")
+
 
   #outcome summary
   exp=as.data.frame(data[,c("WAVE", colnames(data)[colnames(data) %in% outcome])])

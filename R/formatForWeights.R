@@ -32,13 +32,10 @@ formatForWeights <- function(object, data, imputed_datasets){
   cat("\n")
 
 
-  #makes hybrid "wide/long" dataset for each impute dataset: all time-varying covariates listed as long and wide
+  #makes wide for each impute dataset: all time-varying covariates listed as long and wide
 
   #Cyles through imputed datasets and puts them in hybrid wide/long dataset
-  wide_long_datasets=list()
-  for (k in 1:m){
-
-    # imp=imputed_datasets[[paste0("imp", k)]]
+  wide_long_datasets<-lapply(1:m, function(k){
     imp=mice::complete(imputed_datasets,k)
     imp=as.data.frame(imp)
 
@@ -51,23 +48,22 @@ formatForWeights <- function(object, data, imputed_datasets){
     #MAKE SURE ALL YOUR TX AND OUTCOME VARIABLES AT EACH TIME PT ARE LISTED BELOW IN WIDE FORMAT
     # browser()
     imp_wide=suppressWarnings(stats::reshape(data=imp,
-                     idvar=ID,
-                     v.names= time_varying_covariates, #list ALL time-varying covariates
-                     timevar="WAVE",
-                     times=c(time_pts),
-                     direction="wide"))
+                                             idvar=ID,
+                                             v.names= time_varying_covariates, #list ALL time-varying covariates
+                                             timevar="WAVE",
+                                             times=c(time_pts),
+                                             direction="wide"))
 
     imp_wide=imp_wide[,!colnames(imp_wide) %in% time_var_exclude] #only include what should be there
-
     msm_data=imp_wide
-
     msm_data=as.data.frame(msm_data)
-    wide_long_datasets[[paste("imp", k, "_widelong", sep="")]] <- msm_data
-
-  }
+  })
+names(wide_long_datasets)<-1:m
 
   #create dataset for future modeling
   imp=as.data.frame(mice::complete(imputed_datasets,1)) #IS changed to use imputed dataset
+
+  print(colnames(imp))
 
   imp_wide=suppressWarnings(stats::reshape(data=imp,
                                            idvar=ID,

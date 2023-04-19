@@ -29,16 +29,18 @@ assessBalance <- function (object, forms, data_for_model_with_weights, weighted)
   # browser()
 
   .call <- match.call()
-  form_type=.call[[3]]
-  form_name=as.character(form_type)
+  form_type<-.call[[3]]
+  form_name<-as.character(form_type)
 
   assign(as.character(form_type), forms)
+  # browser()
 
   # forms=short_forms
   exposure_type=ifelse(length(unique(data_for_model_with_weights[[1]][,paste0(exposure,".", exposure_time_pts[1])]))<3, "binary", "continuous")
 
   #gathering balance stats for all imputed datasets
   bal_stats= lapply(seq(m), function(i){
+    # browser()
     calcBalStats(object, data_for_model_with_weights, get(form_type), form_name, exposure, outcome, k=i, weighted)
   })
 

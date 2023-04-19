@@ -35,12 +35,16 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
   # bal_stats=data.frame(exposure=NA, exp_time=NA,covariate=NA,covar_time=NA,balance_stat=NA,balanced=NA, prop_weight=NA, n=NA)
   all_bal_stats=data.frame()
 
+  # browser()
 
   #wide data
   data= tryCatch({
     imp_wide_data[[names(imp_wide_data)[grepl(paste0("fit_", k, "_", exposure, "-", outcome), names(imp_wide_data))]]]
   }, error=function(e){
-    imp_wide_data[[names(imp_wide_data)[grepl(paste0("imp", k), names(imp_wide_data))]]]
+    # imp_wide_data[[names(imp_wide_data)[grepl(paste0("imp", k), names(imp_wide_data))]]]
+    # imp_wide_data[[names(imp_wide_data)[grepl(k, names(imp_wide_data))]]]
+    imp_wide_data[[k]]
+    # mice::complete(imp_wide_data,k)
   })
 
   # data=wide_long_datasets[[paste("imp", 1, "_widelong", sep="")]]
@@ -90,11 +94,11 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
       if(weighted==1){
         if(exposure_type=="continuous"){
           bal_stats= cobalt::col_w_cov(temp[, c(covars)], temp[, paste0(exposure, ".", exposure_time_pt)], std=T, #finding cor
-                                       weights=temp[,paste0(exposure, "-", outcome, "_weights")])
+                                       weights=temp[,"weights"])
         }
         if (exposure_type=="binary")
           bal_stats=cobalt::col_w_smd(temp[, c(covars)], temp[, paste0(exposure, ".", exposure_time_pt)], std=T, #finding smd
-                                      weights=temp[,paste0(exposure, "-", outcome, "_weights")])
+                                      weights=temp[,"weights"])
       }
 
       bal_stats=as.data.frame(bal_stats)
@@ -232,7 +236,7 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
               temp2=temp%>%dplyr::filter(history==i)
               cobalt::col_w_cov(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std=F, #finding covariance
                                 subset=temp2$history[temp2$history==i]==i,
-                                weights=temp2[,paste0(exposure, "-", outcome, "_weights")])
+                                weights=temp2[, "weights"])
             })
 
           #getting weighted mean across histories, weighting by proportion of those w/ that same history
@@ -248,6 +252,10 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
                                                 })*sd(data[,paste0(exposure, ".", exposure_time_pt)], na.rm=T)))%>% #exposure SD
             dplyr::mutate(balanced=ifelse(abs(std_bal_stats)<balance_thresh,1,0)) #compare to balance threshold
 
+          #for a weighted_bal_stat of 0, make std stat also 0
+          bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] =0
+          bal_stats$balanced=ifelse(abs(bal_stats$std_bal_stats)<balance_thresh,1,0)
+
           bal_stats=bal_stats%>%dplyr::select(contains(c("std", "balanced")))
         }
 
@@ -258,7 +266,7 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
             temp2=temp%>%dplyr::filter(history==i)
             cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std=F, #finding mean difference
                               subset=temp2$history[temp2$history==i]==i,
-                              weights=temp2[,paste0(exposure, "-", outcome, "_weights")])
+                              weights=temp2[,"weights"])
           })
 
         #getting weighted mean across histories, weighting by proportion of those w/ that same history
@@ -274,6 +282,10 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
                                                   sd(data[,paste0(exposure, ".", exposure_time_pts[1])], na.rm=T) #getting sd of first time pt exp only
                                               }))%>% #exposure
           dplyr::mutate(balanced=ifelse(abs(std_bal_stats)<balance_thresh,1,0)) #compare to balance threshold
+
+        #for a weighted_bal_stat of 0, make std stat also 0
+        bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] =0
+        bal_stats$balanced=ifelse(abs(bal_stats$std_bal_stats)<balance_thresh,1,0)
 
         bal_stats=bal_stats%>%dplyr::select(contains(c("std", "balanced")))
 
@@ -299,6 +311,8 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
     labels=ifelse(bal_stats$balanced==0, bal_stats$covariate, "")
     min_val=ifelse(min(bal_stats$std_bal_stats)<0, min(bal_stats$std_bal_stats)-0.1, balance_thresh-0.05)
     max_val=ifelse(max(bal_stats$std_bal_stats)>0, max(bal_stats$std_bal_stats)+0.1, balance_thresh+0.05)
+
+    # browser()
 
     #make love plot per exposure time point
     lp <- ggplot2::ggplot(aes(x =  bal_stats$std_bal_stats, y = bal_stats$covariate), data = bal_stats) +
@@ -330,8 +344,8 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
     }
     suppressMessages(ggplot2::ggsave(paste0(home_dir, folder, "/plots/", form_name, "_imp_",k, "_", exposure,"_", exposure_time_pt, "_summary_balance_plot.jpeg"),
                                      width=6, height=8))
-    cat(paste0("A", gsub("/", "", folder), "  summary plot for ", form_name, " ", exposure,  "imputation ", k," at time ", exposure_time_pt, " has now been saved in the '", folder, "/plots/' folder."), "\n")
-    #
+    cat(paste0("A ", gsub("/", "", folder), "  summary plot for ", form_name, " ", exposure,  " imputation ", k," at time ", exposure_time_pt, " has now been saved in the '", folder, "plots/' folder."), "\n")
+    cat("\n")
   } #ends exp_time_pt
 
   # theme(axis.text.x=element_text(angle=90,margin = margin(1, unit = "cm"),vjust =1))

@@ -32,14 +32,10 @@ Please provide user input for the following fields to create an msm object that 
 
 
 object <- msmObject(
-  
   ##### Directories Information (required) ####
   # directories to long dataset 
-  
   data_path ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv",
   
-  # home_dir = "~/Library/CloudStorage/Box-Box/BSL General/Meriah/TSST MSM PAPER/MSMs/!MSM package test_10.17.22/MSMs-main", #string
-  # home_dir = "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/Isa/MSMs/Meriah test/", #string
   home_dir ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/",
   
   
@@ -56,26 +52,27 @@ object <- msmObject(
   
   #list out all variables that are time-varying; including ANY variables collected at only a single time point (with missin for other time points )
   
-  time_varying_variables= c("ADHDtcTot", "ALI_Le","SAAmylase", "EARS_TJo","Chaos_Unstable", "Chaos_HomEnv", "SEmply","MDI",  "LESMnPos","LESMnNeg","pcx_pos", "pcx_neg", "pcx_engaged", "pcx_sensitive", "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "RHasSO","QSSOverallMe", "WndNbrhood", "EF_avg_perc","CCTHrs","TcAge","CORTB","Cotin_rep1ngmL", "PEmply", "IBRApro", "IBRAfct", "IBRAttn","IBRReac", "IBRIrit","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1","InRatioCor"),
+  time_varying_variables= c("ALI_Le","SAAmylase", "EARS_TJo", "MDI",  "LESMnPos","LESMnNeg", "pcx_engaged", "pcx_CompTwo", "StrDif_Tot", "RHasSO", "WndNbrhood", 
+                            "EF_avg_perc", "IBRAttn","B18Raw", "HOMEETA1","InRatioCor"),
   
   #list all continuous variables here; all others assumed ordinal for imputation; default is none 
   # continuous_variables=c("GrosPay1", "RMomAgeU", "RMAge1st", "SwghtLB","RWghtLb", "IBQDnovm", "MDI", "AGE", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1", "INR"),
-  continuous_variables=c("PmAge2", "ADHDtcTot", "ALI_Le", "CCTHrs", "SAAmylase", "EARS_Tjo", "Chaos_Unstable", "Chaos_HomEnv", "CORTB", "Cotin_rep1ngmL", "IBRApro", "IBRAfct", "TcAge","IBRReac", "IBRAttn", "IBRIrit","LESMnPos", "LESMnNeg","B18Raw", "ESETA1", "HOMEETA1", "CTSETA1", "pcx_pos", "pcx_neg","pcx_engaged", "pcx_sensitive", "PmMrSt2",
-                         "pcx_CompTwo", "StrDif_ES", "StrDif_CP", "StrDif_HY", "StrDif_PP", "StrDif_PR", "StrDif_Tot", "QSSOverallMe", "WndNbrhood", "InRatioCor", "EF_avg_perc"),
+  continuous_variables=c("PmAge2", "ALI_Le", "SAAmylase", "EARS_Tjo", "IBRAttn", "LESMnPos", "LESMnNeg","B18Raw", "HOMEETA1", "pcx_engaged", "PmMrSt2",
+                         "pcx_CompTwo", "StrDif_Tot", "WndNbrhood", "InRatioCor", "EF_avg_perc", "gov_asst", "mat_health", "peri_health"),
   
   #list any covariates that are factors here; default is none, or that all variables are continuous 
-  factor_covariates=c("state","TcSex2", "TcBlac2", "PmBlac2",  "PEmply", "SEmply", "RHasSO"), #list of characters
+  factor_covariates=c("state","TcBlac2", "PmBlac2", "RHasSO"), #list of characters
   
   
   #### Imputation Specification (optional) ####
   #number of imputations for step 4; default is 5 
-  m=2, #integer
+  m=5, #integer
   imp_method= "pmm", #imputation method; pmm, midastouch, sample, cart (default), rf
   
   
   #### Exposure Information (required) ####
   #exposure of interest that potentially have causal effects on outcome and exposure time point(s) (corresponding to values in time_var)
-  exposure=c("HOMEETA1"), #list of strings
+  exposure=c("InRatioCor"), #list of strings
   # exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
   exposure_time_pts=c(6, 15, 24, 35, 58), #list of integers
   
@@ -98,8 +95,8 @@ object <- msmObject(
   #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
   # apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
   #select one of the above histories, or permutations of high ("h") and low ("l") levels of exposure (one leve for each of the exposure epochs) as your reference event, or the history/sequence to which you would like to compare the other histories  
-  reference="h-h-h", #optional: set a reference history of high ("h") and low ("l") levels of exposure separate by a "-"; the default is set to the history denoting low ("l") exposure at all time points; character string of "h" and "l" separated by a "-" 
-  comparisons="", #optional: set a comparison history from list above; the default is to include all non-reference histories as comparisons; character string of "h" and "l" separated by a "-" 
+  reference=NA, #optional: set a reference history of high ("h") and low ("l") levels of exposure separate by a "-"; the default is set to the history denoting low ("l") exposure at all time points; character string of "h" and "l" separated by a "-" 
+  comparisons=NA, #optional: set a comparison history from list above; the default is to include all non-reference histories as comparisons; character string of "h" and "l" separated by a "-" 
   
   hi_cutoff=.75, #optional integer value for quantile value constituting the threshold for "high" levels of an exposure for outcome modeling; default set to 0.75
   lo_cutoff=.25, #optional integer value for quantile value constituting the threshold for "low" levels of an exposure for outcome modeling; default set to 0.25
@@ -127,14 +124,11 @@ object <- msmObject(
   exclude_covariates=NULL, #list of characters
   
   #list any time-varying variables that may get imputed but should NOT be present in the dataset because of planned missingness design with ".time_pt" format
-  time_var_exclude=c("ADHDtcTot.6", "ADHDtcTot.15", "ADHDtcTot.24", "ADHDtcTot.35","ALI_Le.6", "ALI_Le.15","ALI_Le.24","ALI_Le.58","SAAmylase.35", "SAAmylase.58",
-                     "EARS_TJo.6","EARS_TJo.15", "EARS_TJo.58",  "Chaos_HomEnv.6", "Chaos_HomEnv.15", "Chaos_HomEnv.24", "Chaos_Unstable.6", "Chaos_Unstable.15", "Chaos_Unstable.24",
-                     "CORTB.35", "CORTB.58", "Cotin_rep1ngmL.35", "Cotin_rep1ngmL.58", "Cotin_rep1ngmL.35", "IBRApro.35", "IBRApro.58", "IBRAfct.35", "IBRAfct.58", 
-                     "IBRAttn.35", "IBRAttn.58", "IBRReac.35", "IBRReac.58", "IBRIrit.35", "IBRIrit.58", "MDI.24", "MDI.35", "MDI.58", "LESMnPos.6", "LESMnPos.15", "LESMnPos.58", 
-                     "LESMnNeg.6", "LESMnNeg.15", "LESMnNeg.58", "B18Raw.35",  "pcx_pos.58", "pcx_neg.58","pcx_engaged.58", "pcx_sensitive.58", "pcx_CompTwo.6", "pcx_CompTwo.15",
-                     "pcx_CompTwo.24", "pcx_CompTwo.35", "StrDif_ES.6", "StrDif_ES.15","StrDif_ES.24", "StrDif_CP.6", "StrDif_CP.15","StrDif_CP.24", "StrDif_HY.6", 
-                     "StrDif_HY.15","StrDif_HY.24", "StrDif_PP.6", "StrDif_PP.15","StrDif_PP.24", "StrDif_PR.6", "StrDif_PR.15","StrDif_PR.24", "StrDif_Tot.6", 
-                     "StrDif_Tot.15","StrDif_Tot.24", "QSSOverallMe.15", "WndNbrhood.15", "EF_avg_perc.6", "EF_avg_perc.15", "EF_avg_perc.24"), #default set to none
+  time_var_exclude=c("ALI_Le.6", "ALI_Le.15","ALI_Le.24","ALI_Le.58","SAAmylase.35", "SAAmylase.58",
+                     "EARS_TJo.6","EARS_TJo.15", "EARS_TJo.58", "IBRAttn.35", "IBRAttn.58", "MDI.24", "MDI.35", "MDI.58", "LESMnPos.6", 
+                     "LESMnPos.15","LESMnPos.58", "LESMnNeg.6", "LESMnNeg.15", "LESMnNeg.58", "B18Raw.35","pcx_engaged.58", "pcx_CompTwo.6", "pcx_CompTwo.15",
+                     "pcx_CompTwo.24", "pcx_CompTwo.35","StrDif_Tot.6", "StrDif_Tot.15","StrDif_Tot.24", "WndNbrhood.15", "EF_avg_perc.6", "EF_avg_perc.15", 
+                     "EF_avg_perc.24"), #default set to none
   
   #when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure and outcome, and at lagged values if specified by the user, as balancing on colliders can lead to problematic outcomes; default is none; will override mandatory_keep_covariates
   # potential_colliders=data.frame(colliders=c("ADHDtcTot.58"), #list of colliders for each exposure-outcome pair; list of lists of strings
@@ -177,9 +171,6 @@ When creating the msm object, the user must specify which covariates are time-va
 #identifies the total number covariates available in the dataset and prints them for user inspection
 all_potential_covariates <- identifyCovariates(object, data)
 
-#of those covariates, variables at the exposure time point or prior that correlate with either the exposure at that time point or the outcome at the outcome time point  and thus could be potential confounders
-# covariates_to_include <- identifyPotentialConfounds(object, all_potential_covariates)
-
 ```
 
 
@@ -215,12 +206,13 @@ full_forms <- createForms(object, wide_long_datasets, all_potential_covariates)
 preBalanceChecking(object, wide_long_datasets, full_forms)
 
 #create short forms with time-varying covariates only at t-1 for initial weights creation
-short_forms <- createShortForms(object, full_forms, keep=list(exposure=c("HOMEETA1"),
+short_forms <- createShortForms(object, full_forms, keep=list(exposure=c("InRatioCor"),
                                                          time=c(24),
-                                                         tv_covar=c("InRatioCor.6")))
+                                                         tv_covar=c("HOMEETA1.6")))
 
 
 #creates balancing weights for each exposure-outcome pair at each exposure time point 
+#options:cbps, npcbps, bart, ps
 object$weights_method="npcbps" #try different weights methods and re-run
 data_for_model_with_weights<- createWeights(object, wide_long_datasets, short_forms, read_in_from_file="yes") 
 
@@ -306,8 +298,8 @@ This code uses predicted values to plot the effects of the different exposure hi
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
 history_comparisons <- compareHistories(object, data_for_model_with_weights_cutoff, all_models)
 
-#adjusts p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
-signifcant_comparisons <- mcCorrection(object, history_comparisons) 
+# #adjusts p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
+# signifcant_comparisons <- mcCorrection(object, history_comparisons) 
 
 #saves out plots of exposure histories for each out exposure-outcome pairing, colored by dosage of exposure 
 plotResults(object, best_models)

@@ -11,7 +11,7 @@
 #' @seealso [truncateWeights()], [asesssBalance()]
 #' @examples fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
 
-fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m4"){
+fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m3"){
 
   home_dir=object$home_dir
   ID=object$ID
@@ -36,10 +36,16 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
     dplyr::mutate(balanced_avg=ifelse(abs(avg_bal)<balance_thresh,1,0))%>%
     dplyr::filter(balanced_avg==0)%>%
     dplyr::select(covariate)
+  #makes wide for modeling
+  unbalanced_covars=sapply(strsplit(unbalanced_covars$covariate, "\\."), "[",1)
 
   #renaming any factor covariates
-  unbalanced_covars$covariate[sapply(strsplit(sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates] <-sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
+  # unbalanced_covars$covariate[sapply(strsplit(sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates] <-sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
+  # unbalanced_covars$covariate[unbalanced_covars$covariate %in% factor_covariates] <-sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
 
+  if (!model %in% c("m0", "m1", "m2", "m3")){
+    stop('Please provide a valid model "m" from 0-3 (e.g., "m1")')
+  }
 
   if (length(outcome_time_pt)>1){
     stop('This function is designed only for single time point outcome')}
@@ -53,13 +59,16 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
 
 
   #creates matrix of k and m for sequencing through
-  cut_m=expand.grid(all_cutoffs, 1:m)
-  cut_m=as.data.frame(cut_m)
-  colnames(cut_m)=c("cutoff", "k")
+  # cut_m=expand.grid(all_cutoffs, 1:m)
+  # cut_m=as.data.frame(cut_m)
+  # colnames(cut_m)=c("cutoff", "k")
+  #
+  library(MatchThem)
 
-  all_models <-lapply(1:nrow(cut_m), function(i){
-    cutoff=cut_m$cutoff[i]
-    k=cut_m$k[i]
+  #creating lists of models for each truncation cutoff value
+  all_models <-lapply(1:length(all_cutoffs), function(i){
+    cutoff=all_cutoffs[i]
+    # k=cut_m$k[i]
 
     #cycles through each outcome
     models=list()
@@ -69,19 +78,75 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
     #lists out exposure-epoch combos
     exp_epochs= apply(expand.grid(exposure, as.character(exposure_epochs[,1])), 1, paste, sep="", collapse="_")
 
-    data_all_imp=data_for_model_with_weights_cutoff[which(grepl(paste(exposure, "-", outcome, "_", cutoff, sep=""), names(data_for_model_with_weights_cutoff)))]
+    # data_all_imp=data_for_model_with_weights_cutoff[which(grepl(paste(exposure, "-", outcome, "_", cutoff, sep=""), names(data_for_model_with_weights_cutoff)))]
 
-    #renaming to make it easier for svydesign
+    #getting mids object of all imputed data with truncated weights
+    data_all_imp= readRDS(paste0(home_dir, "final weights/values/imp_data_w_t.rds"))
+
     weights_name=colnames( data_all_imp[[1]])[grepl(paste0(exposure, "-", outcome, "_", cutoff, "_weight_cutoff"), colnames(data_all_imp[[1]]))]
-    data_all_imp=lapply(data_all_imp, function(x) {names(x)[names(x)==weights_name] <- "weights";x})
-    data_all_imp=lapply(data_all_imp, function(x) {names(x)[names(x)==ID] <- "ID";x})
 
-    data=data_all_imp[[k]]
+    #renaming for ease
+    a=complete(data_all_imp, action="long", include = TRUE)
+    colnames(a)[colnames(a) %in% paste0(exposure, ".", outcome, "_", cutoff, "_weight_cutoff")]<-"weights"
+    b=mice::as.mids(a, .imp = ".imp")
+
+    # names(data_all_imp$imp)[names(data_all_imp$imp)==weights_name]  <- "weights" #renaming for ease
+    # data_all_imp=lapply(data_all_imp, function(x) {names(x$imp)[names(x$imp)==weights_name] <- "weights";names(x$imp)})
+    # data_all_imp=lapply(data_all_imp, function(x) {names(x)[names(x)==ID] <- "ID";x})
+
+    #creating large mild file with all imputed datasets
+    Wd2 <- MatchThem::complete(b, "all")
+
+    # #renaming to make it easier for svydesign
+    # # weights_name=colnames( data_all_imp[[1]])[grepl(paste0(exposure, "-", outcome, "_", cutoff, "_weight_cutoff"), colnames(data_all_imp[[1]]))]
+    # Wd2=lapply( Wd2, function(x) {names(x)[names(x)==weights_name] <- "weights";x[]})
+    # Wd2 <- MatchThem::complete(mice::as.mids(Wd2), "all")
+
+    # data_all_imp=lapply( Wd2, function(x) {names(x)[names(x)==ID] <- "ID";x})
+
+   a= lapply(1:length(dat_w_t), function(y){
+     browser()
+     d=dat_w_t[[y]]
+     lapply(d, function(x){
+       d=d[[x]]
+    survey::svydesign(~ID,#~1, #
+                  # data=data_for_model_with_weights_cutoff,
+                  data=d, #adds list of imputation data
+                  # data=data, #adds list of imputation data
+                  weights=~weights)
+
+    })
+   })
+
+
+    s=svydesign(~1, #id=~ID,#~1, #
+                # data=data_for_model_with_weights_cutoff,
+                data=mitools::imputationList(Wd2), #adds list of imputation data
+                # data=data, #adds list of imputation data
+                weights=~weights)
+
+    #
+    #     s=svydesign(~1, #id=~ID,#~1, #
+    #                 # data=data_for_model_with_weights_cutoff,
+    #                 data=mitools::imputationList(Wd2), #adds list of imputation data
+    #                 # data=data, #adds list of imputation data
+    #                 weights=~`HOMEETA1-EF_avg_perc_0.95_weight_cutoff`)
+
+    #https://r-survey.r-forge.r-project.org/survey/svymi.html
+    f0=paste("outcome", "~", paste0(exp_epochs, sep="", collapse=" + "))
+    m0=with(s, survey::svyglm(as.formula(f0))) #list of model fitted to all imputed datasets
+
+    # #renaming to make it easier for svydesign
+    # weights_name=colnames( data_all_imp[[1]])[grepl(paste0(exposure, "-", outcome, "_", cutoff, "_weight_cutoff"), colnames(data_all_imp[[1]]))]
+    # data_all_imp=lapply(data_all_imp, function(x) {names(x)[names(x)==weights_name] <- "weights";x})
+    # data_all_imp=lapply(data_all_imp, function(x) {names(x)[names(x)==ID] <- "ID";x})
+
+    # data=data_all_imp[[k]]
 
     #creates initial survey design type specifying ID, data, and weights to use
-    s=svydesign(id=~ID,
-                data=data, #adds list of imputation data
-                weights=~weights)
+    # s=svydesign(id=~ID,
+    #             data=data, #adds list of imputation data
+    #             weights=~weights)
 
 
     cutoff_label=ifelse(cutoff==weights_percentile_cutoff, paste0("original weight cutoff value (", cutoff, ")"), paste0("sensitivity test weight cutoff value (", cutoff, ")"))
@@ -89,8 +154,8 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
     model_ref=data.frame()
 
     #fits initial baseline model to all imps
-    f0=paste(paste0(outcome, ".", outcome_time_pt), "~", paste0(exp_epochs, sep="", collapse=" + "))
-    m0=svyglm(as.formula(f0), design=s)
+    # f0=paste(paste0(outcome, ".", outcome_time_pt), "~", paste0(exp_epochs, sep="", collapse=" + "))
+    # m0=svyglm(as.formula(f0), design=s)
 
     #baseline model (main effects) only
     if(model=="m0"){
@@ -110,27 +175,30 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
           cat("The following imbalanced covariates are included in the covariate model: ", "\n")
           cat(covariate_list)
           f1.temp=paste(f0, "+", covariate_list) #baseline + covariate model
-          m1.temp=svyglm(noquote(f1.temp), design=s)
+          # m1.temp=svyglm(noquote(f1.temp), design=s)
+          # m1.temp=with(s, survey::svyglm(as.formula(f1.temp)))
 
-          #determining which covariates are significant
-          sig_covars=as.data.frame(summary(m1.temp)$coefficients)
-          sig_covars=sig_covars[sig_covars$`Pr(>|t|)`<0.05,]
-          sig_covars=rownames(sig_covars)
-          sig_covars=sig_covars[!grepl(c("(Intercept)"), sig_covars)]
-          sig_covars=sig_covars[!grepl(c(exposure), sig_covars)]
-          sig_covars=c(as.character(sig_covars))
+          # #determining which covariates are significant
+          # sig_covars=as.data.frame(summary(m1.temp)$coefficients)
+          # sig_covars=sig_covars[sig_covars$`Pr(>|t|)`<0.05,]
+          # sig_covars=rownames(sig_covars)
+          # sig_covars=sig_covars[!grepl(c("(Intercept)"), sig_covars)]
+          # sig_covars=sig_covars[!grepl(c(exposure), sig_covars)]
+          # sig_covars=c(as.character(sig_covars))
 
           #in the case of significant covariates
           # if (length(sig_covars)!=0){
-            # f1=paste(f0, "+", paste(sig_covars, sep="", collapse=" + ")) #baseline + sig covar model
-            f1=f1.temp
-            cat(paste0("The only significant covariate(s) for this model are: ", paste(sig_covars, sep="", collapse=" , ")),"\n")
-            cat("\n")
-            m1=svyglm(noquote(f1), design=s)
-            #baseline + sig imbalanced covars
-            if(model=="m1"){
-              models[["m1"]]<-m1
-            }
+          # f1=paste(f0, "+", paste(sig_covars, sep="", collapse=" + ")) #baseline + sig covar model
+          f1=f1.temp
+          # cat(paste0("The only significant covariate(s) for this model are: ", paste(sig_covars, sep="", collapse=" , ")),"\n")
+          # cat("\n")
+          # m1=svyglm(noquote(f1), design=s)
+          m1=with(s, survey::svyglm(as.formula(f1)))
+
+          #baseline + imbalanced covars
+          if(model=="m1"){
+            models[["m1"]]<-m1
+          }
           # }else{
           #   stop("You have selected a covariate model but there are no imbalanced covariates that are statistically significant for one or more imputed datasets. Please choose another model.")
           # }
@@ -147,22 +215,23 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
         #baseline + interactions
         if (model=="m2"){
           f2.temp=paste(f0, "+", paste(interactions, sep="", collapse=" + "))
-          m2.temp=svyglm(noquote(f2.temp), design=s)
+          # m2.temp=svyglm(noquote(f2.temp), design=s)
 
-          #determining which interactions are signficant
-          sig_ints=as.data.frame(summary(m2.temp)$coefficients)
-          sig_ints=sig_ints[sig_ints$`Pr(>|t|)`<0.05,]
-          sig_ints=rownames(sig_covars)
-          sig_ints=sig_ints[grepl(c(":"), sig_ints)] #makes sure to only get interactions
+          # #determining which interactions are signficant
+          # sig_ints=as.data.frame(summary(m2.temp)$coefficients)
+          # sig_ints=sig_ints[sig_ints$`Pr(>|t|)`<0.05,]
+          # sig_ints=rownames(sig_covars)
+          # sig_ints=sig_ints[grepl(c(":"), sig_ints)] #makes sure to only get interactions
 
           # if (length(sig_ints)==0){
           #   stop("You have selected an interaction (m2) model but there are no interactions are statistically significant for. Please choose another model.")
-          # }else{ #there are sig ints
-          cat(paste0("The only significant interactions(s) for this model are: ", paste(sig_ints, sep="", collapse=" , ")), "\n")
-          cat("\n")
+          # # }else{ #there are sig ints
+          # cat(paste0("The only significant interactions(s) for this model are: ", paste(sig_ints, sep="", collapse=" , ")), "\n")
+          # cat("\n")
           # f2=paste(f0, "+", paste(sig_ints, sep="", collapse=" + "))
           f2=f2.temp
-          m2=svyglm(noquote(f2), design=s)
+          # m2=svyglm(noquote(f2), design=s)
+          m2=with(s, survey::svyglm(as.formula(f2)))
           #baseline + interactions
           models[["m2"]]<-m2
           # }
@@ -171,22 +240,23 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
         #baseline + covars + interactions
         if (model=="m3"){
           f3.temp=paste(f2, "+", paste(interactions, sep="", collapse=" + "))
-          m3.temp=svyglm(noquote(f3.temp), design=s)
-
-          #determining which interactions are signficant
-          sig_ints=as.data.frame(summary(m3.temp)$coefficients)
-          sig_ints=sig_ints[sig_ints$`Pr(>|t|)`<0.05,]
-          sig_ints=rownames(sig_covars)
-          sig_ints=sig_ints[grepl(c(":"), sig_ints)] #makes sure to only get interactions
+          # m3.temp=svyglm(noquote(f3.temp), design=s)
+          #
+          # #determining which interactions are signficant
+          # sig_ints=as.data.frame(summary(m3.temp)$coefficients)
+          # sig_ints=sig_ints[sig_ints$`Pr(>|t|)`<0.05,]
+          # sig_ints=rownames(sig_covars)
+          # sig_ints=sig_ints[grepl(c(":"), sig_ints)] #makes sure to only get interactions
 
           # if (length(sig_ints)==0){
           #   stop("You have selected an interaction (m3) model but no interactions are statistically significant. Please choose another model.")
           # }else{ #there are sig ints
-          cat(paste0("The only significant interactions(s) for this model are: ", paste(sig_ints, sep="", collapse=" , ")), "\n")
-          cat("\n")
+          # cat(paste0("The only significant interactions(s) for this model are: ", paste(sig_ints, sep="", collapse=" , ")), "\n")
+          # cat("\n")
           # f3=paste(f2, "+", paste(sig_ints, sep="", collapse=" + "))
           f3=f3.temp
-          m3=svyglm(noquote(f3), design=s)
+          # m3=svyglm(noquote(f3), design=s)
+          m3=with(s, survey::svyglm(as.formula(f3)))
           #baseline + covars+ interactions
           models[["m3"]]<-m3
           # }
@@ -196,9 +266,9 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
     }
 
 
-    cat(paste0("The marginal model selected for imp",k, "_", exposure, "-", outcome, "_cutoff_", cutoff, " is summarized here:"), "\n")
-    print(summary(models[[model]]))
-
+    cat(paste0("The marginal model selected and run for each imputed dataset using the weights truncation cutoff ", cutoff, " is summarized here:"), "\n")
+    # print(summary(models[[model]]))
+    print(lapply(models[[model]], summary))
 
     # all_models[[paste0("fit", k, "_", exposure, "-", outcome, "_cutoff_", cutoff)]]<-models
 
@@ -207,7 +277,6 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
     m1=NULL
     m2=NULL
     m3=NULL
-    m4=NULL
 
 
     cat("\n")
@@ -220,7 +289,8 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
 
   })
 
-  names(all_models)<-paste0("fit", cut_m$k, "_", exposure, "-", outcome, "_cutoff_", cut_m$cutoff)
+  # browser()
+  names(all_models)<-paste0(exposure, "-", outcome, "_cutoff_", all_cutoffs)
 
   # cat(paste0("All models with ", file_label, " cutoff weights have been saved as an .rds object in the 'msms/", file_label, "/' folder"),"\n")
 

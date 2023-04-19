@@ -23,7 +23,7 @@
 #' @param colors colors for plotting dose
 #' @examples msmObject(data_path, home_dir, ID, time_pts, time_var, missing, m, exposures, exposure_time_pts, exposure_epochs, outcomes, outcome_time_pt, continuous_variables, time_var_exclude)
 
-msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time_varying_variables=NULL, continuous_variables=NULL, factor_covariates=NULL, m=5, imp_method="cart", exposure, exposure_time_pts, short_form_lag=1, weights_method="cbps", balance_thresh=0.1, bal_only_exp=F, weights_percentile_cutoff=0.95, exposure_epochs, reference="", comparisons="", hi_cutoff=.75,lo_cutoff=.25, mc_method="BH", outcome, outcome_time_pt, mandatory_keep_covariates=NULL, keep_concurrent_tv_vars=NULL, exclude_covariates=NULL, time_var_exclude=NULL, potential_colliders=NULL, exposure_labels=NULL, outcome_labels=NULL, dose_level="h", colors="Dark2"){
+msmObject <- function(data_path, home_dir, ID, time_pts, time_var, missing, time_varying_variables=NULL, continuous_variables=NULL, factor_covariates=NULL, m=5, imp_method="cart", exposure, exposure_time_pts, short_form_lag=1, weights_method="cbps", balance_thresh=0.1, bal_only_exp=F, weights_percentile_cutoff=0.95, exposure_epochs, reference=NA, comparisons=NA, hi_cutoff=.75,lo_cutoff=.25, mc_method="BH", outcome, outcome_time_pt, mandatory_keep_covariates=NULL, keep_concurrent_tv_vars=NULL, exclude_covariates=NULL, time_var_exclude=NULL, potential_colliders=NULL, exposure_labels=NULL, outcome_labels=NULL, dose_level="h", colors="Dark2"){
 
 
   if (!file.exists(home_dir)){

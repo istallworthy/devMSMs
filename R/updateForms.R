@@ -6,6 +6,7 @@ updateForms <-function(object, forms, data_for_model_with_weights, balance_stats
   exposure_time_pts=object$exposure_time_pts
   outcome=object$outcome
   balance_thresh=object$balance_thresh
+  factor_covariates=object$factor_covariates
 
   # forms=short_forms
   bal_stats=balance_stats_full

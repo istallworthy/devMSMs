@@ -5,12 +5,7 @@
 \title{Compare exposure histories
 This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome u sing linear hypothesis testing}
 \usage{
-compareHistories(
-  object,
-  data_for_model_with_weights_cutoff,
-  all_models,
-  imp_data_w_t
-)
+compareHistories(object, data_for_model_with_weights_cutoff, all_models)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}

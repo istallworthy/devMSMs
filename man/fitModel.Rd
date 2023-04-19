@@ -9,7 +9,7 @@ fitModel(
   object,
   data_for_model_with_weights_cutoff,
   balance_stats_final,
-  model = "m4"
+  model = "m3"
 )
 }
 \arguments{
