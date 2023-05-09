@@ -71,6 +71,8 @@ truncateWeights <-function(object, data_for_model_with_weights){
       # browser()
 
       new=data.frame(ID=data[,ID])
+
+      #adds exposure epochs
       #calculates the mean value for each exposure for each exposure epoch
       for (e in 1:nrow(exposure_epochs)){
         epoch=exposure_epochs[e,1]
@@ -89,11 +91,13 @@ truncateWeights <-function(object, data_for_model_with_weights){
       }
       new=cbind(new, cutoff_weights)
       data=cbind(data, new)
+      # data=cbind(data, cutoff_weights)
 
       # truncated_weights_exp=merge(truncated_weights_exp, new, by=c(colnames(truncated_weights_exp)[colnames(truncated_weights_exp) %in% colnames(new)]), all.x=T)
       # truncated_weights_d<-merge(data, truncated_weights_exp%>%dplyr::filter(.imp==k), by=c(ID), all.x=T)
       # data_for_model_with_weights_cutoff[[paste("fit_", k, "_", exposure, "-", outcome, "_", cutoff, sep="")]] <-truncated_weights_d
 
+      # browser()
       #print histogram of new weights by cutoff value
       ggplot2::ggplot(data=as.data.frame(data), aes(x = as.numeric(data[,name]))) +
         geom_histogram(color = 'black', bins = 15)

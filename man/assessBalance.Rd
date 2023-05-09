@@ -4,7 +4,13 @@
 \alias{assessBalance}
 \title{Assess success of covariate balancing}
 \usage{
-assessBalance(object, forms, data_for_model_with_weights, weighted)
+assessBalance(
+  object,
+  forms,
+  data_for_model_with_weights,
+  weighted,
+  histories = 1
+)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}

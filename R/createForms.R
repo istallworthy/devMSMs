@@ -169,6 +169,8 @@ createForms <- function(object, wide_long_datasets, all_potential_covariates){
     print(f)
     cat("\n")
 
+    # browser()
+
     forms_csv_temp=data.frame()
     forms_csv_temp[1,1]=paste0("Full formula for ", exposure, "-", outcome, " at ", exposure," time point ", as.character(time),":")
     forms_csv_temp[1,2]=paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep="", collapse=" + "))

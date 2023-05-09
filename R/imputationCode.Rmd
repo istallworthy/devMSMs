@@ -1,0 +1,175 @@
+---
+title: "Untitled"
+author: "Isa Stallworthy"
+date: "2023-04-25"
+output: html_document
+---
+
+
+Code to run imputations on desktop to and from Box desktop. 
+
+
+### Load package
+```{r}
+# install.packages(c("devtools", "roxygen2", "testthat", "knitr"))
+library(devtools)
+library(roxygen2)
+load_all()
+
+devtools::document()
+
+```
+
+
+```{r}
+# source("") #string
+object <- msmObject(
+  ##### Directories Information (required) ####
+  # directories to long dataset
+  data_path ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv",
+
+  home_dir ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/",
+
+
+  #### Dataset Information (required) ####
+  #individual identifier
+  ID = "S_ID", #string
+
+  #time points of interest and name of time variable in long dataset
+  time_pts=c(6, 15, 24, 35, 58), #list of integers
+  time_var="TAge", #string
+
+  #marker for missing data
+  missing="NA", #string or integer(s)
+
+  #list out all variables that are time-varying; including ANY variables collected at only a single time point (with missin for other time points )
+
+  time_varying_variables= c("ALI_Le","SAAmylase", "EARS_TJo", "MDI",  "LESMnPos","LESMnNeg", "pcx_engaged", "pcx_CompTwo", "StrDif_Tot", "RHasSO", "WndNbrhood","EF_avg_perc", "IBRAttn","B18Raw", "HOMEETA1","InRatioCor", "ESETA1", "CORTB"),
+
+  #list all continuous variables here; all others assumed ordinal for imputation; default is none
+  # continuous_variables=c("GrosPay1", "RMomAgeU", "RMAge1st", "SwghtLB","RWghtLb", "IBQDnovm", "MDI", "AGE", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1", "INR"),
+  continuous_variables=c("PmAge2", "ALI_Le", "SAAmylase", "EARS_Tjo", "IBRAttn", "LESMnPos", "LESMnNeg","B18Raw", "HOMEETA1", "pcx_engaged", "PmMrSt2",
+                         "pcx_CompTwo", "StrDif_Tot", "WndNbrhood", "InRatioCor", "EF_avg_perc", "gov_asst", "mat_health", "peri_health", "ESETA1", "CORTB"),
+
+  #list any covariates that are factors here; default is none, or that all variables are continuous
+  factor_covariates=c("state","TcBlac2", "PmBlac2", "RHasSO"), #list of characters
+
+
+  #### Imputation Specification (optional) ####
+  #number of imputations for step 4; default is 5
+  m=2, #integer
+  imp_method= "pmm", #imputation method; pmm, midastouch, sample, cart (default), rf
+
+
+  #### Exposure Information (required) ####
+  #exposure of interest that potentially have causal effects on outcome and exposure time point(s) (corresponding to values in time_var)
+  exposure=c("ESETA1"), #list of strings
+  # exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
+  exposure_time_pts=c(6, 15, 24, 35, 58), #list of integers
+
+
+  #### Balancing Information (optional) ###
+  short_form_lag=1, #integer specifying the maximum time lag for time-varying covariates for the initial round of balancing weights
+  weights_method="bart", #method for calculating weights: cbps, npcbps, bart, ps
+  balance_thresh=0.1, #correlation value above which covariates are not considered balanced with respect to exposure/outcome;used for finding potential confounds and asessing balance; default set to 0.12 from Stuart et al.
+
+  #whether confounder identification and balancing should be conducted only in relation to the exposure (and not the outcome); default set to F
+  bal_only_exp=F,
+  weights_percentile_cutoff=0.95, #percentile cutoff value for truncating weights to avoid heavy tails; default is 0.95;
+
+
+  #### History Comparison Information (required & optional) ####
+  #developmental time periods (and their corresponding time points) that constitute regime/history units of interest --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects of exposure histories (e.g, chronically high exposure vs. exposure only in infancy) on outcomes
+  exposure_epochs=data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), #user-created names of epochs as a list of strings
+                             values=I(list(c(6,15), c(24,35), c(58)))), #time point(s) encompassed in each epoch that correspond to data as a list of numeric lists
+
+  #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
+  # apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
+  #select one of the above histories, or permutations of high ("h") and low ("l") levels of exposure (one leve for each of the exposure epochs) as your reference event, or the history/sequence to which you would like to compare the other histories
+  reference=NA, #optional: set a reference history of high ("h") and low ("l") levels of exposure separate by a "-"; the default is set to the history denoting low ("l") exposure at all time points; character string of "h" and "l" separated by a "-"
+  comparisons=NA, #optional: set a comparison history from list above; the default is to include all non-reference histories as comparisons; character string of "h" and "l" separated by a "-"
+
+  hi_cutoff=.75, #optional integer value for quantile value constituting the threshold for "high" levels of an exposure for outcome modeling; default set to 0.75
+  lo_cutoff=.25, #optional integer value for quantile value constituting the threshold for "low" levels of an exposure for outcome modeling; default set to 0.25
+
+  mc_method="BH", #optional method for multiple comparison correction for linear hypothesis tests; default is Benjamini-Hochburg, options are "holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
+
+
+  #### Outcome Information (required) ####
+  #outcomes of interest and outcome time point
+  # outcomes=c("CORTBASE", "sAABASE"), #list of strings
+  outcome=c("EF_avg_perc"), #list of strings
+  outcome_time_pt=58, #integer value
+
+
+  #### Inclusion Information (optional) ####
+  #list any variables for mandatory inclusion in balancing for theoretical or other reasons (regardless of their correlations with exposure/outcome); if it is a time-varying covariate the code will include it in the forms for all time points;  can specify time after "."; default set to none
+  mandatory_keep_covariates=NULL,
+
+  #list any time-varying variables that you wish to include concurrently in the balancing forms (over-riding default of excluding concurrent time-varying variables as they cannot be distinguished from colliders)
+  keep_concurrent_tv_vars=NULL,
+
+
+  #### Exclusion Information (optional) ####
+  #list out any variables that should be excluded from consideration as confounds via balancing based on practical or theoretical reasons; if it is a time-varying covariate the code will include it in the forms for all time points with the exception of in its own forms if it is an exposure; can specify time after "."; default set to none; will over ride mandatory_keep_covariates
+  exclude_covariates=NULL, #list of characters
+
+  #list any time-varying variables that may get imputed but should NOT be present in the dataset because of planned missingness design with ".time_pt" format
+  time_var_exclude=c("ALI_Le.6", "ALI_Le.15","ALI_Le.24","ALI_Le.58","SAAmylase.35", "SAAmylase.58","CORTB.58",
+                     "EARS_TJo.6","EARS_TJo.15", "EARS_TJo.58", "IBRAttn.35", "IBRAttn.58", "MDI.24", "MDI.35", "MDI.58", "LESMnPos.6",
+                     "LESMnPos.15","LESMnPos.58", "LESMnNeg.6", "LESMnNeg.15", "LESMnNeg.58", "B18Raw.35","pcx_engaged.58", "pcx_CompTwo.6", "pcx_CompTwo.15",
+                     "pcx_CompTwo.24", "pcx_CompTwo.35","StrDif_Tot.6", "StrDif_Tot.15","StrDif_Tot.24", "WndNbrhood.15", "EF_avg_perc.6", "EF_avg_perc.15",
+                     "EF_avg_perc.24"), #default set to none
+
+  #when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure and outcome, and at lagged values if specified by the user, as balancing on colliders can lead to problematic outcomes; default is none; will override mandatory_keep_covariates
+  # potential_colliders=data.frame(colliders=c("ADHDtcTot.58"), #list of colliders for each exposure-outcome pair; list of lists of strings
+  #                                exclude_lags=c("F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair; list of strings
+
+
+  ### Plotting Information (optional) ###
+  #optional list of alternative labels for exposures that will be used only for plotting
+  # exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"),
+  exposure_labels=c("Perceived Economic Strain"),
+
+
+  #optional list of alternative labels for outcomes that will be used only for plotting
+  # outcome_labels=c("Cortisol","Salivary Alpha Amalayse"),
+  outcome_labels=c("EF"),
+
+  #optional string ("h" or "l") denoting which level of exposure at each exposure epoch to use when calculating dose (default is "h")
+  dose_level="l",
+
+  #the plots color data by dose (i.e., number of epochs) of high exposure; optional list of colors (equal to number of epochs +1) or brewer palette (see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html)
+  colors=(c("Dark2")) #list of string(s); default is 'Dark2'); c("blue4", "darkgreen", "darkgoldenrod", "red2")
+)
+
+
+```{r}
+
+#Creates the necessary directories in your home directory and formats your dataset
+data <- formatDataStruct(object)
+```
+### 2. Identify covariate confounders of the relationship(s) between exposure(s) and outcome(s) to be used to create balancing weights
+MSMs focus on the covariates that are associated with both exposure(s) and outcome(s) and thus could act as a confounding variable. More specifically, potential confounds for a given exposure-outcome pair at a given time point include any covariate: correlated with the exposure at that time point, lagged values of the exposure, or correlated with the outcome. The method assumes that you have included all possible confounding variables as columns in your dataset.
+
+When creating the msm object, the user must specify which covariates are time-varying ('time_varying covariates'). This code identifies all possible confounding variables and creates a simplified dataset for imputation. This is primarily a data-driven approach to identifying potential confounds. However, the user has the option to specify any covariates to be sure to exclude ('exclude_covariates') as well as those to include ('keep_covariates'), for theoretical or other reasons. The user can include time-invariant or time-varying covariates in these fields. Append ".x" (e.g., "INR.6) to the covariate to indicate a time-varying variable at a specific time point only, otherwise the condition will be assumed to all time points of any time-varying variables.
+
+```{r}
+
+#identifies the total number covariates available in the dataset and prints them for user inspection
+all_potential_covariates <- identifyCovariates(object, data)
+
+```
+
+### 3. Impute data to account of missingness
+ONlY run this code when needed! Creates 'm' imputed datasets using the Amelia package (Honaker, King, & Blackwell, 2011) and functions to eventually generate weights for each imputed dataset (that will be combined at the end). This code takes a few minutes to run per imputation.
+
+The parameter 'read_imps_from_file' will allow you to read imputed data in from local storage (="yes") so as not to have to re-run this imputation code or impute data (="no"; default). The number of imputed datasets is specified as 'm' in the msm object.
+```{r}
+#create final dataset for imputations with only the necessary variables
+data_to_impute <- dataToImpute(object, all_potential_covariates)
+
+#creates imputed datasets and saves them out
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="no")
+
+```

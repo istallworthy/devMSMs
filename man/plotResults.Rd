@@ -5,7 +5,7 @@
 \title{Plot results from history comparisons
 Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure}
 \usage{
-plotResults(object, best_models)
+plotResults(object, history_estimates)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}

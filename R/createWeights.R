@@ -36,39 +36,42 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
   time_varying_covariates=object$time_varying_variables
   weights_method=object$weights_method
 
+  # browser()
+
+  .call <- match.call()
+  form_type<-.call[[4]]
+  form_name<-as.character(form_type)
+
   library(cobalt)
 
-  library(dbarts)
+  # library(dbarts)
 
   # browser()
   data_for_model_with_weights=list()
 
   if (read_in_from_file=="yes"){ #reads in saved weights instead of re-creating
     # weights_models=readRDS(paste0(home_dir, "original weights/weights_models.rds"))
-    dat_w <-readRDS(paste(paste0(home_dir, "original weights/dat_w.rds", sep="")))
+    # dat_w <-readRDS(paste(paste0(home_dir, "original weights/dat_w.rds", sep="")))
+    dat_w <- readRDS(paste(paste0(home_dir, "original weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_dat_w.rds", sep="")))
 
     return(dat_w)
 
   }else{ #otherwise, calculate weights
 
 
-    if(!weights_method %in% c("cbps", "npcbps", "bart", "ps")){
+    if(!weights_method %in% c("cbps", "npcbps", "bart", "ps", "entropy")){
       stop("Please enter a weighting method in the msmObject from this list: cbps, npcbps, bart, ps")
     }
 
     weights_models=list()
-    # all_weights=data.frame(expand.grid(wide_long_datasets[[paste("imp", 1, "_widelong", sep="")]][,ID], 1:m))
-    # colnames(all_weights)<-c(ID,".imp")
-
-
-    # all_weights_exp=data.frame()
-    # name=paste0(exposure, "-", outcome)
 
     #list of forms for each time point
     form=short_forms[which(grepl(paste("form_", exposure, "-", outcome, sep=""), names(short_forms)))]
     form=unname(form)
 
-    cat("For the ", weights_method, " weighting method:", "\n")
+    cat("You will see some preliminary balance statistics (output from the cobalt::bal_tab() function. These are only preliminary. Please use the assesBalance function for final balance statistics.", "\n")
+
+    cat(paste0("For the ", weights_method, " weighting method using the ", form_name, " formulas:"), "\n")
 
     # for (k in 1:m){
     dat_w<-lapply(1:length(wide_long_datasets), function(i){
@@ -76,32 +79,41 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
       d=wide_long_datasets[[i]]
       d=as.data.frame(d)
 
-      # browser()
-
-      # MSMDATA=wide_long_datasets[[paste("imp", k, "_widelong", sep="")]]
-
       #determining exposure type
       exposure_type=ifelse(length(unique(d[,colnames(d)[colnames(d)==paste0(exposure,".", exposure_time_pts[1])]]))<3, "binary", "continuous")
 
       set.seed(1234)
+
       fit <- WeightIt::weightitMSM(form, data=d,
                                    method=weights_method,
                                    stabilize=T, #recommended stabilized weights
                                    density="dt_2", #using t-distribution w/ 2 DF for bart
                                    use.kernel=T,
+                                   weightit.force = TRUE, #to allow entropy (temp)
                                    over=F) #similar to exact=T in cbsp package
-
       d$weights <- fit$weights
 
-      bal=cobalt::bal.tab(fit, stats = c("corr"), continuous="std", binary="std",
-                          un=T,thresholds = c(corr =balance_thresh), which.time=.none)
+      if (exposure_type=="continuous"){
+        bal=cobalt::bal.tab(fit, stats = c("corr"), continuous="std", binary="std",
+                            un=T,thresholds = c(corr =balance_thresh), which.time=.none)
 
-      cat(paste0("Preliminary summary balance statistics for imputation ", k, " using the ", weights_method, " weighting method, ", bal$Balanced.correlations$count[1], " covariates were balanced and ",
-                 bal$Balanced.correlations$count[2], " covariates remain imbalanced."), "\n")
-      # cat('\n')
+        cat(paste0("Preliminary summary balance statistics for imputation ", k, " using the ", weights_method, " weighting method and the ", form_name, " formulas,",
+                   bal$Balanced.correlations$count[1], " covariates were balanced and ",
+                   bal$Balanced.correlations$count[2], " covariates remain imbalanced."), "\n")
+        cobalt::bal.tab(fit, stats = c("corr"), continuous="std", binary="std",
+                        un=T,thresholds = c(corr =balance_thresh), which.time=.all)
+      }
 
-      cobalt::bal.tab(fit, stats = c("corr"), continuous="std", binary="std",
-                      un=T,thresholds = c(corr =balance_thresh), which.time=.all)
+      if(exposure_type=="binary"){ #need to test
+        bal=cobalt::bal.tab(fit, continuous="std", binary="std",
+                            un=T,thresholds = c(m =balance_thresh), which.time=.none)
+
+        cat(paste0("Preliminary summary balance statistics for imputation ", k, " using the ", weights_method, " weighting method and the ", form_name, " formulas,",
+                   bal$Balanced.correlations$count[1], " covariates were balanced and ",
+                   bal$Balanced.correlations$count[2], " covariates remain imbalanced."), "\n")
+        cobalt::bal.tab(fit, continuous="std", binary="std",
+                        un=T,thresholds = c(m =balance_thresh), which.time=.all)
+      }
 
       weights_models[[k]] <-fit
 
@@ -109,35 +121,15 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
                  " (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), " - ", round(max(fit$weights),2), ")"), "\n")
       cat('\n')
 
-      #get weights from output and cbind to data
-      # weights=as.data.frame(cbind(MSMDATA_temp[,colnames(MSMDATA_temp)==ID], fit$weights))
-      # w=data.frame(imp=k,
-      #              ID=MSMDATA[,ID],
-      #              name=fit$weights)
-      # colnames(w)=c(".imp",ID, paste0(name, "_weights"))
-      #
-      # all_weights_exp=rbind(all_weights_exp,w)
-      #
-      #
-      # weights=merge(MSMDATA, w%>%dplyr::select(c(ID,paste0(name, "_weights"))), by=ID)
-      # data_for_model_with_weights[[paste("fit_", k, "_", exposure, "-", outcome, sep="")]]<-weights
-
-      # browser()
 
       #Save weights merged with ID variable
-      write.csv(x=as.data.frame(d), file=paste(home_dir, "original weights/values/weights_method=",weights_method, "_",k, ".csv", sep=""))
-
-      # cat("\n")
+      write.csv(x=as.data.frame(d), file=paste(home_dir, "original weights/values/", exposure, "-", outcome,"_", form_name, "_", weights_method, "_",k, ".csv", sep=""))
 
       # #Writes image of histogram of weights to assess heavy tails
       ggplot2::ggplot(data=as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
         ggplot2::geom_histogram(color = 'black', bins = 15)
-      suppressMessages(ggplot2::ggsave(paste("Hist_weights_method=",weights_method, "_", k, ".png", sep=""), path=paste0(home_dir, "original weights/histograms"), height=8, width=14))
+      suppressMessages(ggplot2::ggsave(paste("Hist_", exposure,"-", outcome, "_", form_name,"_",weights_method, "_", k, ".png", sep=""), path=paste0(home_dir, "original weights/histograms"), height=8, width=14))
 
-      # cat("\n")
-
-      # cat(paste0("USER ALERT: Balancing figures for ", exposure,  "-", outcome," for imputation ", k,  " have now been saved into the 'balance/plots/' folder for future inspection", "\n"))
-      # cat("\n")
 
       fit=NULL
       d
@@ -147,29 +139,10 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
     cat(paste0("Weights histogram for each imputation have now been saved in the 'original weights/histograms/' folder --likely has heavy tails"),"\n")
 
 
-    #gathering all weights
-    # all_weights<-merge(all_weights, all_weights_exp, by=c(ID, ".imp"), all.x=T)
-
-    #   } #ends exposure loop
-    #
-    # } #ends outcome loop
-
-    # }
-
-    # #adds weights to mids object
-    # # colnames(all_weights)=c(ID, "weights")
-    # a=complete(imputed_datasets, action="long", include = TRUE)
-    # # a$weights=NA
-    # b=merge(a, all_weights, by=c(ID, ".imp"), all.x=T)
-    # imp_data_w=mice::as.mids(b, .imp = ".imp")
-    #
-    #
-    #
-    #
     # saveRDS(data_for_model_with_weights, file = paste(paste0(home_dir, "original weights/data_for_model_with_weights.rds", sep="")))
-    saveRDS(dat_w, file = paste(paste0(home_dir, "original weights/weights_method=", weights_method, "_dat_w.rds", sep="")))
+    saveRDS(dat_w, file = paste(paste0(home_dir, "original weights/", exposure, "-", outcome,"_", form_name, "_", weights_method, "_dat_w.rds", sep="")))
 
-    saveRDS(weights_models, file = paste(paste0(home_dir, "original weights/weights_method=", weights_method, "_weights_models.rds", sep="")))
+    saveRDS(weights_models, file = paste(paste0(home_dir, "original weights/",  exposure, "-", outcome,"_", form_name, "_", weights_method, "_weights_models.rds", sep="")))
     cat("\n")
     cat("Weights models have been saved as an .rds object in the 'original weights' folder","\n")
 
