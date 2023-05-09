@@ -1,6 +1,6 @@
 
 #code to calculate balance stats based on Jackson paper (either weighted or unweighted)
-calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome, k=1, weighted=0){
+calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome, k=1, weighted=0, histories=1){
 
   # #for testing
   # outcome=object$outcomes
@@ -19,9 +19,16 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
   home_dir=object$home_dir
   exposure_time_pts=object$exposure_time_pts
   balance_thresh=object$balance_thresh
+  factor_covariates=object$factor_covariates
+
+  weights_method=ifelse(weighted==1, object$weights_method, "no weights")
+  h=histories
+  histories=NULL
 
   library(cobalt)
-  library(tidyr)
+  # library(tidyr)
+
+  set.seed(1234)
 
   form_name=f_type
 
@@ -155,13 +162,15 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
       #summarize contributors to each history
       prop_sum=prop_weights%>%dplyr::group_by(as.factor(history))%>%dplyr::summarize(n=dplyr::n())
 
-      cat(paste0("For exposure ", exposure, ", imputation ", k, " at time point ", exposure_time_pt, ", individuals were distributed within histories across lagged time point(s) ", paste(lagged_time_pts, collapse=" "), " as follows:"),
-          "\n")
-      prop_sum$`as.factor(history)`=as.character(prop_sum$`as.factor(history)`)
-      colnames(prop_sum)=c("history","n")
-      # print(prop_sum)
-      cat(knitr::kable(prop_sum, caption="History Distribution", format='pipe'),  sep="\n")
-      cat("\n")
+      if(h==1){
+        cat(paste0("For exposure ", exposure, ", imputation ", k, " at time point ", exposure_time_pt, ", individuals were distributed within histories across lagged time point(s) ", paste(lagged_time_pts, collapse=" "), " as follows:"),
+            "\n")
+        prop_sum$`as.factor(history)`=as.character(prop_sum$`as.factor(history)`)
+        colnames(prop_sum)=c("history","n")
+        # print(prop_sum)
+        cat(knitr::kable(prop_sum, caption="History Distribution for Weighting Balance Statistics", format='pipe'),  sep="\n")
+        cat("\n")
+      }
 
 
 
@@ -299,12 +308,16 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
     #ADDS INFO TO BAL STATS
     bal_stats=as.data.frame(bal_stats)
     bal_stats$covariate=rownames(bal_stats)
+    #renames factor covariates
+    bal_stats$covariate[sapply(strsplit(sapply(strsplit(bal_stats$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates] <-sapply(strsplit(bal_stats$covariate, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(bal_stats$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
+
     bal_stats=bal_stats%>%dplyr::mutate(
       exposure=exposure, exp_time=exposure_time_pt)%>%
       dplyr::mutate(covar_time=sapply(strsplit(covariate, "\\."), "[", 2))
 
     all_bal_stats=rbind(all_bal_stats, bal_stats)
     all_bal_stats$covar_time[is.na(all_bal_stats$covar_time)]=0
+
 
 
     x_lab=ifelse(exposure_type=="continuous", "Exposure-Covariate Correlation", "Standardized Mean Difference")
@@ -318,7 +331,7 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
     lp <- ggplot2::ggplot(aes(x =  bal_stats$std_bal_stats, y = bal_stats$covariate), data = bal_stats) +
       ggplot2::geom_point(aes(y = as.factor(bal_stats$covariate),
                               x = bal_stats$std_bal_stats,
-                              fill = "white", na.rm = TRUE,
+                              fill = "white",
                               alpha = 1))+
       ggplot2::geom_text(aes(label=labels, hjust=-0.2, vjust=0.2), size=1.5, color="red")+
       ggplot2::geom_vline(xintercept = balance_thresh,linetype = "dashed", color = "red")+
@@ -342,26 +355,11 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
     if(nrow(bal_stats)>40){ #stagger covariate labels if there are many
       lp <- lp+ ggplot2::scale_y_discrete(guide = ggplot2::guide_axis(n.dodge=2))
     }
-    suppressMessages(ggplot2::ggsave(paste0(home_dir, folder, "/plots/", form_name, "_imp_",k, "_", exposure,"_", exposure_time_pt, "_summary_balance_plot.jpeg"),
+    suppressMessages(ggplot2::ggsave(paste0(home_dir, folder, "/plots/", form_name, "_imp_",k, "_", exposure,"_", exposure_time_pt,"_",weights_method, "_summary_balance_plot.jpeg"),
                                      width=6, height=8))
-    cat(paste0("A ", gsub("/", "", folder), "  summary plot for ", form_name, " ", exposure,  " imputation ", k," at time ", exposure_time_pt, " has now been saved in the '", folder, "plots/' folder."), "\n")
+    cat(paste0("A ", gsub("/", "", folder), "  summary plot for ", form_name, " ", exposure,  " imputation ", k," at time ", exposure_time_pt," for weighting method ",weights_method, " has now been saved in the '", folder, "plots/' folder."), "\n")
     cat("\n")
   } #ends exp_time_pt
-
-  # theme(axis.text.x=element_text(angle=90,margin = margin(1, unit = "cm"),vjust =1))
-
-  #
-  #   a=bal_stats%>%
-  #     dplyr::group_by(exposure, exp_time, covariate, covar_time)%>%
-  #     dplyr::summarize(mean_w=stats::weighted.mean(balance_stat, prop_weight, na.rm=T), n=dplyr::n())%>%
-  #     dplyr::mutate(balanced=ifelse(abs(mean_w)<balance_thresh,1,0))
-
-
-  # bal_summary=bal_stats%>%
-  #   dplyr::group_by(exposure, exp_time, covariate, covar_time)%>%
-  #   dplyr::summarize(mean_w=stats::weighted.mean(balance_stat, prop_weight, na.rm=T), n=dplyr::n())%>%
-  #   # dplyr::summarize(mean_w=mean(balance_stat, na.rm=T), n_his=dplyr::n())%>%
-  #   dplyr::mutate(balanced=ifelse(abs(mean_w)<balance_thresh,1,0))
 
 
 
@@ -370,21 +368,37 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
                      imbalanced_n=sum(balanced==0),
                      n=dplyr::n())
 
+  # browser()
   # write.csv(bal_summary_exp, paste0(home_dir, folder, exposure, "_",k, "_imbalanced_covars.csv"))
 
 
-  write.csv(bal_summary_exp, paste0(home_dir, folder, exposure, "_",k, "_balance_stat_summary.csv"))
-  cat(paste0("Balance statistics for ", form_name, " ",exposure, ", imputation ", k, " have been saved in the '", folder, "' folder"), "\n")
+  write.csv(bal_summary_exp, paste0(home_dir, folder, exposure, "_",k,"_",weights_method, "_balance_stat_summary.csv"))
+  cat(paste0("Balance statistics for ", form_name, " ",exposure, ", imputation ", k, ", weighting method ",weights_method," have been saved in the '", folder, "' folder"), "\n")
 
 
-  write.csv(all_prop_weights, paste0(home_dir, folder, exposure, "_", k, "_history_sample_weight.csv"))
-  cat(paste0("Sampling weights ", "for ", form_name, " ", exposure, ", imputation ", k, ", weighted=", weighted, " have been saved in the '", folder, "' folder"), "\n")
+  write.csv(all_prop_weights, paste0(home_dir, folder, exposure, "_", k, "_",weights_method, "_history_sample_weight.csv"))
+  cat(paste0("Sampling weights ", "for ", form_name, " ", exposure, ", imputation ", k,", weighting method ",weights_method,  ", weighted=", weighted, " have been saved in the '", folder, "' folder"), "\n")
 
+  cat("\n")
 
-  cat(paste0("USER ALERT: For exposure ", exposure, " imputation ", k, ", ", sum(bal_summary_exp$imbalanced_n, na.rm=T), " out of ", sum(bal_summary_exp$n, na.rm=T),
-             " (", round((sum(bal_summary_exp$imbalanced_n, na.rm=T)/sum(bal_summary_exp$n))*100,0), "%) covariates remain imbalanced as shown below:"), "\n")
+  #GETS total possible COVARIATES FROM FORM FOR ASSESSING BALANCE
+  all_form=as.data.frame(do.call(rbind, forms))
+  tot_covars=deparse(all_form[,3], width.cutoff = 500)
+  tot_covars=as.character(unlist(strsplit(tot_covars, "\\+")))[!grepl("form", as.character(unlist(strsplit(tot_covars, "\\+"))))]
+  tot_covars=gsub(" ", "", tot_covars)
+  tot_covars=na.omit(sapply(strsplit(tot_covars, "\\."), "[",1)[!duplicated(sapply(strsplit(tot_covars, "\\."), "[",1))])
+
+  cat(paste0("USER ALERT: For exposure ", exposure, " imputation ", k, " using ", weights_method, " , ",
+             sum(bal_summary_exp$imbalanced_n, na.rm=T), " out of ", sum(bal_summary_exp$n, na.rm=T),
+             " (", round((sum(bal_summary_exp$imbalanced_n, na.rm=T)/sum(bal_summary_exp$n))*100,0), "%) covariates across time points corresponding to ",
+             length(sapply(strsplit(all_bal_stats[all_bal_stats$balanced==0, "covariate"], "\\."), "[", 1)[!duplicated( sapply(strsplit(all_bal_stats[all_bal_stats$balanced==0, "covariate"], "\\."), "[", 1))]) ,
+             " out of ", length(tot_covars), " unique constructs remain imbalanced with an average absolute value correlation/std mean difference of ",
+             round(mean(abs(all_bal_stats[all_bal_stats$balanced==0, "std_bal_stats"]), na.rm = T),2), " (range= ",
+             round(min(abs(all_bal_stats[all_bal_stats$balanced==0, "std_bal_stats"]), na.rm = T),2), "-",
+             round(max(abs(all_bal_stats[all_bal_stats$balanced==0, "std_bal_stats"]), na.rm = T),2), "), based on the ", form_name, " as shown below:"), "\n")
+  cat("\n")
   # print(bal_summary_exp)
-  cat(knitr::kable(bal_summary_exp, caption=paste0(form_name, " Imbalanced Covariates"), format='pipe'),  sep="\n")
+  cat(knitr::kable(bal_summary_exp, caption=paste0("Imbalanced Covariates using ", weights_method, " and ", form_name), format='pipe'),  sep="\n")
 
 
   rownames(all_bal_stats)<-NULL

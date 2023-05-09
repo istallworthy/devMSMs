@@ -9,11 +9,15 @@ createShortForms<- function(object, full_forms, keep=NULL){
   exposure=object$exposure
   outcome=object$outcome
 
+  forms_csv=data.frame()
+
+
   if (!is.null(keep) & length(unique(lengths(keep)))!=1){ #makes sure all keep fields are equal
     stop('Make sure the number of entries in each field of "keep" are equal')}
 
   short_forms=list()
 
+  # browser()
 
   list=full_forms[names(full_forms)[grepl(exposure, names(full_forms))]]
 
@@ -24,8 +28,10 @@ createShortForms<- function(object, full_forms, keep=NULL){
     time=as.numeric(sapply(strsplit(names(list)[z], "-"), "[", length(unlist(strsplit(names(list)[z], "-")))))
 
     #find any user-specified covariates to keep
-    if (!is.null(keep) & keep$exposure %in% exposure & keep$time %in% time){
+    if (!is.null(keep)){
+      if(keep$exposure %in% exposure & keep$time %in% time){
       keep_cov=keep$tv_covar[which(keep$exposure==exposure & keep$time==time)]
+    }
     }else(keep_cov=NA)
 
     if (time ==exp_time_pts[1] | time ==exp_time_pts[2]){ #ignore first time point as there are no lagged values and second time pt bc only t-1 exists
@@ -51,13 +57,19 @@ createShortForms<- function(object, full_forms, keep=NULL){
       print(new_form)
       cat("\n")
 
+      forms_csv_temp=data.frame()
+      forms_csv_temp[1,1]=paste0("Short formula for ", exposure, "-", outcome, " at ", exposure," time point ", as.character(time),":")
+      forms_csv_temp[1,2]=paste0(dv, "~", paste(new_covars, sep="", collapse="+"))
+      forms_csv=rbind(forms_csv, forms_csv_temp)
+
       short_forms[[names(list)[z]]] <- new_form
     }
   }
 
+  write.csv(forms_csv, paste0(home_dir, "forms/short_balancing_formulas.csv", sep=""), row.names = F)
 
   saveRDS(short_forms, paste0(home_dir, "forms/short_forms.rds"))
-  cat("Short formulas including time-varying covariates at t-", short_form_lag, " only have now been saved in the 'forms/' folder", "\n")
+  cat(paste0("Short formulas including time-varying covariates at t-", short_form_lag, " only have now been saved in the 'forms/' folder"), "\n")
 
   return(short_forms)
 }

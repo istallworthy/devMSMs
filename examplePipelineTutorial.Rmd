@@ -52,13 +52,12 @@ object <- msmObject(
   
   #list out all variables that are time-varying; including ANY variables collected at only a single time point (with missin for other time points )
   
-  time_varying_variables= c("ALI_Le","SAAmylase", "EARS_TJo", "MDI",  "LESMnPos","LESMnNeg", "pcx_engaged", "pcx_CompTwo", "StrDif_Tot", "RHasSO", "WndNbrhood", 
-                            "EF_avg_perc", "IBRAttn","B18Raw", "HOMEETA1","InRatioCor"),
+  time_varying_variables= c("ALI_Le","SAAmylase", "EARS_TJo", "MDI",  "LESMnPos","LESMnNeg", "pcx_engaged", "pcx_CompTwo", "StrDif_Tot", "RHasSO", "WndNbrhood","EF_avg_perc", "IBRAttn","B18Raw", "HOMEETA1","InRatioCor", "ESETA1", "CORTB"),
   
   #list all continuous variables here; all others assumed ordinal for imputation; default is none 
   # continuous_variables=c("GrosPay1", "RMomAgeU", "RMAge1st", "SwghtLB","RWghtLb", "IBQDnovm", "MDI", "AGE", "WIND", "PCX_POS", "PCX_NEG", "BSI", "TIMEofDAY", "CORTBASE", "sAABASE", "ESETA1", "HOMEETA1", "CTSETA1", "INR"),
   continuous_variables=c("PmAge2", "ALI_Le", "SAAmylase", "EARS_Tjo", "IBRAttn", "LESMnPos", "LESMnNeg","B18Raw", "HOMEETA1", "pcx_engaged", "PmMrSt2",
-                         "pcx_CompTwo", "StrDif_Tot", "WndNbrhood", "InRatioCor", "EF_avg_perc", "gov_asst", "mat_health", "peri_health"),
+                         "pcx_CompTwo", "StrDif_Tot", "WndNbrhood", "InRatioCor", "EF_avg_perc", "gov_asst", "mat_health", "peri_health", "ESETA1", "CORTB"),
   
   #list any covariates that are factors here; default is none, or that all variables are continuous 
   factor_covariates=c("state","TcBlac2", "PmBlac2", "RHasSO"), #list of characters
@@ -67,7 +66,7 @@ object <- msmObject(
   #### Imputation Specification (optional) ####
   #number of imputations for step 4; default is 5 
   m=5, #integer
-  imp_method= "pmm", #imputation method; pmm, midastouch, sample, cart (default), rf
+  imp_method= "rf", #imputation method; pmm, midastouch, sample, cart , rf (default)
   
   
   #### Exposure Information (required) ####
@@ -82,8 +81,6 @@ object <- msmObject(
   weights_method="bart", #method for calculating weights: cbps, npcbps, bart, ps
   balance_thresh=0.1, #correlation value above which covariates are not considered balanced with respect to exposure/outcome;used for finding potential confounds and asessing balance; default set to 0.12 from Stuart et al.
 
-  #whether confounder identification and balancing should be conducted only in relation to the exposure (and not the outcome); default set to F
-  bal_only_exp=F,
   weights_percentile_cutoff=0.95, #percentile cutoff value for truncating weights to avoid heavy tails; default is 0.95; 
   
   
@@ -124,7 +121,7 @@ object <- msmObject(
   exclude_covariates=NULL, #list of characters
   
   #list any time-varying variables that may get imputed but should NOT be present in the dataset because of planned missingness design with ".time_pt" format
-  time_var_exclude=c("ALI_Le.6", "ALI_Le.15","ALI_Le.24","ALI_Le.58","SAAmylase.35", "SAAmylase.58",
+  time_var_exclude=c("ALI_Le.6", "ALI_Le.15","ALI_Le.24","ALI_Le.58","SAAmylase.35", "SAAmylase.58","CORTB.58",
                      "EARS_TJo.6","EARS_TJo.15", "EARS_TJo.58", "IBRAttn.35", "IBRAttn.58", "MDI.24", "MDI.35", "MDI.58", "LESMnPos.6", 
                      "LESMnPos.15","LESMnPos.58", "LESMnNeg.6", "LESMnNeg.15", "LESMnNeg.58", "B18Raw.35","pcx_engaged.58", "pcx_CompTwo.6", "pcx_CompTwo.15",
                      "pcx_CompTwo.24", "pcx_CompTwo.35","StrDif_Tot.6", "StrDif_Tot.15","StrDif_Tot.24", "WndNbrhood.15", "EF_avg_perc.6", "EF_avg_perc.15", 
@@ -138,7 +135,7 @@ object <- msmObject(
   ### Plotting Information (optional) ###
   #optional list of alternative labels for exposures that will be used only for plotting
   # exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"), 
-  exposure_labels=c("Income-to-needs-ratio"), 
+  exposure_labels=c("Income-to-needs-rato"), 
   
   
   #optional list of alternative labels for outcomes that will be used only for plotting
@@ -197,27 +194,29 @@ This step creates balancing weights using the Covariate Balancing Propensity Sco
 ```{r}
 
 #creates wide/long datasets for each imputation
+object$exclude_covariates=NULL
 wide_long_datasets <- formatForWeights(object, data, imputed_datasets)
 
 #creates formulas for each exposure-outcome pairing at each time point and saves and prints them for user inspection
 full_forms <- createForms(object, wide_long_datasets, all_potential_covariates)
 
 #does pre balance checking on full forms to examine initial imbalance
-preBalanceChecking(object, wide_long_datasets, full_forms)
+preBalanceChecking(object, wide_long_datasets, full_forms, histories=1)
 
 #create short forms with time-varying covariates only at t-1 for initial weights creation
-short_forms <- createShortForms(object, full_forms, keep=list(exposure=c("InRatioCor"),
-                                                         time=c(24),
-                                                         tv_covar=c("HOMEETA1.6")))
+# short_forms <- createShortForms(object, full_forms, keep=list(exposure=c("ESETA1"),
+#                                                          time=c(24),
+#                                                          tv_covar=c("HOMEETA1.6")))
+short_forms <- createShortForms(object, full_forms, keep=NULL)
 
 
 #creates balancing weights for each exposure-outcome pair at each exposure time point 
 #options:cbps, npcbps, bart, ps
-object$weights_method="npcbps" #try different weights methods and re-run
+object$weights_method="cbps" #try different weights methods and re-run
 data_for_model_with_weights<- createWeights(object, wide_long_datasets, short_forms, read_in_from_file="yes") 
 
 #assesses balance for short forms
-balance_stats <- assessBalance(object, short_forms, data_for_model_with_weights, weighted=1)
+balance_stats <- assessBalance(object, short_forms, data_for_model_with_weights, weighted=1, histories=0)
 
 ```
 
@@ -229,7 +228,7 @@ IS not sure how to suppress console output....
 ```{r}
 
 #assesses balance for full forms
-balance_stats_full <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1)
+balance_stats_full <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1, histories=1)
 
 #update forms to include any imbalanced time-varying covariates >t-1
 new_short_forms <- updateForms(object, short_forms, data_for_model_with_weights, balance_stats_full)
@@ -238,7 +237,7 @@ new_short_forms <- updateForms(object, short_forms, data_for_model_with_weights,
 data_for_model_with_weights<- createWeights(object, wide_long_datasets, new_short_forms, read_in_from_file="yes") 
 
 #final balance assessment
-balance_stats_final <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1)
+balance_stats_final <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1, histories=0)
 
 ```
 
@@ -277,10 +276,7 @@ The code will automatically choose the model with the lowest AIC but user can ov
 ```{r}
 
 #code to fit a series of baseline, covariates, and interaction weighted models to determine which is best fitting; prints only models with user-specified weight cutoff values (sensitivity checks output into folder)
-all_models <- fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m0")
-
-#determine best-fitting model  --should this print all sensitivity analyses or nah? 
-# best_models <- assessModel(object, all_models, best_model="m1")
+all_models <- fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m3")
 
 ```
 
@@ -296,13 +292,12 @@ This code uses predicted values to plot the effects of the different exposure hi
 ```{r}
 
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
-history_comparisons <- compareHistories(object, data_for_model_with_weights_cutoff, all_models)
-
-# #adjusts p-values for multiple comparisons with an optional user-specified method with Benjamini-Hochburg as the default
-# signifcant_comparisons <- mcCorrection(object, history_comparisons) 
+object$hi_cutoff=0.75
+object$lo_cutoff=0.25
+history_estimates <- compareHistories(object, data_for_model_with_weights_cutoff, all_models)
 
 #saves out plots of exposure histories for each out exposure-outcome pairing, colored by dosage of exposure 
-plotResults(object, best_models)
+plotResults(object, history_estimates)
 ```
 
 

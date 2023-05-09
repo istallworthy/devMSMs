@@ -38,6 +38,7 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
     library(doRNG)
     ## Detect core count
     nCores <- min(parallel::detectCores(), 8)
+    # nCores<-1
     ## Used by parallel::mclapply() as default
     options(mc.cores = nCores)
     ## Used by doParallel as default
@@ -73,14 +74,14 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
 
 
     ## Set seed for reproducibility
-    set.seed(123)
+    # set.seed(123)
 
     # M=m
     # Parallelized execution
     miceout <- foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
     cat("### Started iteration", i, "\n")
-    miceout <- mice::mice(data_to_impute_full, m=m, method="pmm", maxit = 5,
-                          print = T)
+    miceout <- mice::mice(data_to_impute_full, m=1, method=imp_method, maxit = 5,
+                          print = F)
     # miceout <- mice(data = df_before, m = 1, print = TRUE,
     #                 predictorMatrix = predictorMatrix, method = dryMice$method,
     #                 MaxNWts = 2000)

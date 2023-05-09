@@ -8,6 +8,9 @@ updateForms <-function(object, forms, data_for_model_with_weights, balance_stats
   balance_thresh=object$balance_thresh
   factor_covariates=object$factor_covariates
 
+  forms_csv=data.frame()
+
+
   # forms=short_forms
   bal_stats=balance_stats_full
 
@@ -37,18 +40,33 @@ updateForms <-function(object, forms, data_for_model_with_weights, balance_stats
         dplyr::select(covariate)
 
       #renames factors (that were appended w/ level)
+      # browser()
+      if (nrow(temp)>0){
       temp$covariate[sapply(strsplit(sapply(strsplit(temp$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates] <-sapply(strsplit(temp$covariate, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(temp$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
 
       temp=as.character(unlist(temp))
 
       cat(paste0("For ", exposure, " at t ", exposure_time_pt, ", the following covariate(s) will be added to the short form: "), temp, "\n")
       f=paste( paste(deparse(f, width.cutoff = 500), collapse=""), paste(temp, sep="", collapse=" + "), sep=" + ")
+      # forms_csv_temp[1,2]=paste( paste(deparse(f, width.cutoff = 500), collapse=""), paste(temp, sep="", collapse=" + "), sep=" + ")
+      }
+
+
     }
+
+    f=as.formula(f)
     f
+
 
   })
 
   names(new_forms)  <-names(forms)
+
+  # browser()
+  forms_csv=data.frame(name=names(lapply(new_forms, function(f){paste(deparse(f, width.cutoff = 500), collapse="")})),
+                        form=unlist(lapply(new_forms, function(f){paste(deparse(f, width.cutoff = 500), collapse="")})))
+
+  write.csv(forms_csv, paste0(home_dir, "forms/updated_short_balancing_formulas.csv", sep=""), row.names = F)
 
   return(new_forms)
 }
