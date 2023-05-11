@@ -185,7 +185,7 @@ createForms <- function(object, wide_long_datasets, all_potential_covariates){
   }
   #   }
   # # }
-  write.csv(forms_csv, paste0(home_dir, "forms/full_balancing_formulas.csv", sep=""), row.names = F)
+  write.csv(forms_csv, paste0(home_dir, "forms/",  exposure, "-", outcome,"_full_balancing_formulas.csv", sep=""), row.names = F)
 
   return(forms)
 }

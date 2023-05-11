@@ -50,10 +50,6 @@ formatDataStruct <-function(object) {
   if(dir.exists(paste0(home_dir, "original weights/values/"))==F){dir.create(paste0(home_dir, "original weights/values/"))}
   if(dir.exists(paste0(home_dir, "original weights/histograms/"))==F){dir.create(paste0(home_dir, "original weights/histograms/"))}
 
-  if(dir.exists(paste0(home_dir, "combined weights/"))==F){dir.create(paste0(home_dir, "combined weights/"))}
-  if(dir.exists(paste0(home_dir, "combined weights/values/"))==F){dir.create(paste0(home_dir, "combined weights/values/"))}
-  if(dir.exists(paste0(home_dir, "combined weights/histograms/"))==F){dir.create(paste0(home_dir, "combined weights/histograms/"))}
-
   if(dir.exists(paste0(home_dir, "final weights/"))==F){dir.create(paste0(home_dir, "final weights/"))}
   if(dir.exists(paste0(home_dir, "final weights/values/"))==F){dir.create(paste0(home_dir, "final weights/values/"))}
   if(dir.exists(paste0(home_dir, "final weights/histgrams/"))==F){dir.create(paste0(home_dir, "final weights/histograms/"))}
@@ -67,23 +63,19 @@ formatDataStruct <-function(object) {
   if(dir.exists(paste0(home_dir, "balance/plots/"))==F){dir.create(paste0(home_dir, "balance/plots/"))}
   if(dir.exists(paste0(home_dir, "balance/comparison values/"))==F){dir.create(paste0(home_dir, "balance/comparison values/"))}
   if(dir.exists(paste0(home_dir, "balance/unbalanced covariates/"))==F){dir.create(paste0(home_dir, "balance/unbalanced covariates/"))}
-  if(dir.exists(paste0(home_dir, "balance/unbalanced covariates/"))==F){dir.create(paste0(home_dir, "balance/unbalanced covariates/"))}
 
   if(dir.exists(paste0(home_dir, "balance/potential confounds/"))==F){dir.create(paste0(home_dir, "balance/potential confounds"))}
 
   if(dir.exists(paste0(home_dir, "msms/"))==F){dir.create(paste0(home_dir, "msms/"))}
   if(dir.exists(paste0(home_dir, "msms/original/"))==F){dir.create(paste0(home_dir, "msms/original/"))}
-  # if(dir.exists(paste0(home_dir, "msms/sensitivity checks/"))==F){dir.create(paste0(home_dir, "msms/sensitivity checks/"))}
   if(dir.exists(paste0(home_dir, "msms/estimated means/"))==F){dir.create(paste0(home_dir, "msms/estimated means/"))}
   if(dir.exists(paste0(home_dir, "msms/contrasts/"))==F){dir.create(paste0(home_dir, "msms/contrasts/"))}
-  # if(dir.exists(paste0(home_dir, "msms/estimated means/original/"))==F){dir.create(paste0(home_dir, "msms/estimated means/original/"))}
-  # if(dir.exists(paste0(home_dir, "msms/estimated means/sensitivity checks/"))==F){dir.create(paste0(home_dir, "msms/estimated means/sensitivity checks/"))}
 
   if(dir.exists(paste0(home_dir, "results figures/"))==F){dir.create(paste0(home_dir, "results figures/"))}
   if(dir.exists(paste0(home_dir, "results figures/original/"))==F){dir.create(paste0(home_dir, "results figures/original/"))}
   if(dir.exists(paste0(home_dir, "results figures/sensitivity checks/"))==F){dir.create(paste0(home_dir, "results figures/sensitivity checks/"))}
 
-  if(dir.exists(paste0(home_dir, "for Mplus/"))==F){dir.create(paste0(home_dir, "for Mplus/"))}
+  # if(dir.exists(paste0(home_dir, "for Mplus/"))==F){dir.create(paste0(home_dir, "for Mplus/"))}
 
 
   cat("\n")
@@ -100,12 +92,12 @@ formatDataStruct <-function(object) {
   exp=exp%>%dplyr::filter(WAVE %in% exposure_time_pts)%>%dplyr::group_by(WAVE)%>%
     dplyr::summarise_all(list(mean=mean, sd=sd, min=min, max=max), na.rm=TRUE)
   exp=exp[,order(colnames(exp), decreasing=TRUE)]
-  cat(knitr::kable(exp, caption="Summary of Exposure Information", format='pipe'),  sep="\n")
+  cat(knitr::kable(exp, caption=paste0("Summary of ", exposure, " Exposure Information"), format='pipe'),  sep="\n")
 
-  invisible(knitr::kable(exp, caption="Summary of Exposure Information", format='html')%>%
+  invisible(knitr::kable(exp, caption=paste0("Summary of ", exposure, " Exposure Information"), format='html')%>%
         kableExtra::kable_styling()%>%
-        kableExtra::save_kable(file=paste0(home_dir, "exposure_info.html")))
-  cat("Exposure descriptive statistics have now been saved in the home directory", "\n")
+        kableExtra::save_kable(file=paste0(home_dir, exposure, "_exposure_info.html")))
+  cat(paste0(exposure, " exposure descriptive statistics have now been saved in the home directory"), "\n")
   cat("\n")
 
 
@@ -141,9 +133,11 @@ formatDataStruct <-function(object) {
   his_summ=as.data.frame(as.data.frame(new)%>%dplyr::group_by(history)%>%dplyr::summarize(n=dplyr::n()))
   his_summ=his_summ[!grepl("NULL", unlist(his_summ$history)),]
   his_summ=his_summ[!grepl("NA", unlist(his_summ$history)),]
-  cat("Out of the total of ", nrow(dat_wide), " individuals, below is the distribution of the ", sum(his_summ$n), "(", (sum(his_summ$n)/nrow(dat_wide))*100, "%) that fall into the following exposure histories defined by ",
-      lo_cutoff, " and ", hi_cutoff, "percentile values for low and high levels of exposure, respectively, across ", paste0(exposure_epochs$epochs), ":", "\n")
-  cat(knitr::kable(as.data.frame(his_summ), caption="Summary of Exposure Histories", format='pipe', row.names = F ), sep="\n")
+  cat(paste0("Out of the total of ", nrow(dat_wide), " individuals, below is the distribution of the ", sum(his_summ$n), " (",
+             round((sum(his_summ$n)/nrow(dat_wide))*100,2), "%) that fall into the following exposure histories defined by ",
+      lo_cutoff, " and ", hi_cutoff, "percentile values for low and high levels of exposure ", exposure, ", respectively, across ", paste(exposure_epochs$epochs, collapse=","), ":"), "\n")
+  cat("\n")
+  cat(knitr::kable(as.data.frame(his_summ), caption=paste0("Summary of Exposure ", exposure, " Histories"), format='pipe', row.names = F ), sep="\n")
 
   cat("\n")
 
@@ -153,11 +147,11 @@ formatDataStruct <-function(object) {
   exp=suppressWarnings(exp%>%dplyr::filter(WAVE %in% outcome_time_pt)%>%dplyr::group_by(WAVE)%>%dplyr::summarise_all(list(mean=mean, sd=sd, min=min, max=max), na.rm=TRUE))
   exp=exp[,order(colnames(exp), decreasing=TRUE)]
 
-  cat(knitr::kable(as.data.frame(exp), caption="Summary of Outcome Information", format='pipe'), sep="\n")
-  knitr::kable(exp, caption="Summary of Outcome Information", format='html')%>%
+  cat(knitr::kable(as.data.frame(exp), caption=paste0("Summary of Outcome ", outcome, " Information"), format='pipe'), sep="\n")
+  knitr::kable(exp, caption=paste0("Summary of Outcome ", outcome, " Information"), format='html')%>%
     kableExtra::kable_styling()%>%
-    kableExtra::save_kable(file=paste0(home_dir, "outcome_info.html"))
-  cat("Outcome descriptive statistics have now been saved in the home directory", "\n")
+    kableExtra::save_kable(file=paste0(home_dir, outcome, "_outcome_info.html"))
+  cat(paste0(outcome, " outcome descriptive statistics have now been saved in the home directory"), "\n")
 
 
   if (sum(factor_covariates %in% colnames(data))<length(factor_covariates)){

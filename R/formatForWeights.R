@@ -25,6 +25,8 @@ formatForWeights <- function(object, data, imputed_datasets){
   time_pts=object$time_pts
   time_var_exclude=object$time_var_exclude
   time_varying_covariates=object$time_varying_variables
+  exposure=object$exposure
+  outcome=object$outcome
 
   options(readr.num_columns = 0)
   cat("\n")
@@ -75,8 +77,8 @@ names(wide_long_datasets)<-1:m
 
 
   #
-  write.csv(imp_wide, paste0(home_dir, "data_for_final_model.csv"))
-  write.csv(wide_long_datasets[[1]], paste0(home_dir, "data_for_final_Mplus_model.csv"))
+  write.csv(imp_wide, paste0(home_dir,  exposure, "-", outcome, "_data_for_final_model.csv"))
+  # write.csv(wide_long_datasets[[1]], paste0(home_dir, "data_for_final_Mplus_model.csv"))
 
   cat("\n")
   cat("A dataset has been saved out as a csv file in home directory for later modeling ")

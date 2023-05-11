@@ -71,7 +71,7 @@ identifyCovariates <- function(object, data){
   covar_table=covar_table[order(covar_table$time_pt,  covar_table$variable),]
   covar_table=aggregate(variable ~ time_pt, covar_table, toString)
   covar_table=covar_table[order(as.numeric(covar_table$time_pt)),]
-  write.csv(covar_table, paste0(home_dir, "balance/covariates_considered_by_time_pt.csv"), row.names = F)
+  write.csv(covar_table, paste0(home_dir, "balance/", exposure, "-", outcome, "_covariates_considered_by_time_pt.csv"), row.names = F)
 
   unique_vars=length(unique(c(time_invar_covars, sapply(strsplit(all_potential_covariates, "\\."), "[", 1))))
 
@@ -86,7 +86,7 @@ identifyCovariates <- function(object, data){
   test=rbind(test, t(NumTimePts))
   NumVars=data.frame(NumVars=rowSums(test, na.rm=T))
   test[1:nrow(test),ncol(test)+1]=NumVars
-  write.csv(test, paste0(home_dir, "balance/matrix_of_covariates_considered_by_time_pt.csv"), row.names = T)
+  write.csv(test, paste0(home_dir, "balance/",  exposure, "-", outcome, "_matrix_of_covariates_considered_by_time_pt.csv"), row.names = T)
 
   cat("See the balance folder for a table and matrix displaying all covariates considered for each time point.", "\n")
 
@@ -193,7 +193,7 @@ dataToImpute <-function(object, all_potential_covariates){
   data_to_impute=data2
 
   #makes correlation table
-  pdf(file = paste0(home_dir, "all_vars_corr_plot.pdf"))
+  pdf(file = paste0(home_dir,  exposure, "-", outcome,"_all_vars_corr_plot.pdf"))
   suppressWarnings(corrplot::corrplot(cor(
     as.data.frame(lapply(data_to_impute[,colnames(data_to_impute)[colnames(data_to_impute)!=ID]], as.numeric)), use="pairwise.complete.obs"
   ), method="color", order='alphabet', diag=FALSE, type="lower", tl.cex = 0.5, tl.col="black"))
@@ -255,7 +255,7 @@ dataToImpute <-function(object, all_potential_covariates){
 
 
 
-  write.csv(data_to_impute, paste0(home_dir, "imputations/data_to_impute.csv"))
+  write.csv(data_to_impute, paste0(home_dir, "imputations/",  exposure, "-", outcome,"_data_to_impute.csv"))
   cat("See the 'imputations' folder for a csv file of the data to be imputed","\n")
 
   return(data_to_impute)

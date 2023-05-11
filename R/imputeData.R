@@ -19,11 +19,13 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
   imp_method=object$imp_method
   time_varying_covariates=object$time_varying_variables
   factor_covariates=object$factor_covariates
+  exposure=object$exposure
+  outcome=object$outcome
 
 
   if (read_imps_from_file=="yes"){
     imputed_datasets=list()
-    imp=readRDS(paste0(home_dir,"imputations/all_imp.rds"))
+    imp=readRDS(paste0(home_dir,"imputations/",  exposure, "-", outcome,"_all_imp.rds"))
     imputed_datasets<-imp
     return(imputed_datasets)
 
@@ -92,7 +94,7 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
     imputed=miceout
 
     # library(miceadds)
-    saveRDS(imputed, paste0(home_dir,"imputations/all_imp.rds"))
+    saveRDS(imputed, paste0(home_dir,"imputations/",  exposure, "-", outcome,"_all_imp.rds"))
 
     #print warnings
     cat("USER ALERT: Please view any logged events from the imputation below:", "\n")
@@ -105,7 +107,7 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
 
     #save out imputed datasets
     for (k in 1:m){
-      write.csv(mice::complete(imputed,k), file=paste0(home_dir,"imputations/imp", k,".csv"))
+      write.csv(mice::complete(imputed,k), file=paste0(home_dir,"imputations/",  exposure, "-", outcome,"_imp", k,".csv"))
 
     }
     cat("See the 'imputations' folder for a .csv file of each imputed dataset","\n")

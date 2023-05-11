@@ -174,7 +174,7 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
   cat("\n")
 
   # file_label=ifelse(cutoff==weights_percentile_cutoff, "original", "sensitivity checks")
-  saveRDS(fits, file = paste(paste0(home_dir, "msms/all_exposure-outcome_models_weights.rds", sep="")))
+  saveRDS(fits, file = paste(paste0(home_dir, "msms/exposure-outcome_", model, "_model.rds", sep="")))
 
 
   cat("\n")

@@ -108,7 +108,7 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
         bal=cobalt::bal.tab(fit, continuous="std", binary="std",
                             un=T,thresholds = c(m =balance_thresh), which.time=.none)
 
-        cat(paste0("Preliminary summary balance statistics for imputation ", k, " using the ", weights_method, " weighting method and the ", form_name, " formulas,",
+        cat(paste0("Preliminary summary balance statistics for imputation ", k, " using the ", weights_method, " weighting method and the ", form_name, " formulas, ",
                    bal$Balanced.correlations$count[1], " covariates were balanced and ",
                    bal$Balanced.correlations$count[2], " covariates remain imbalanced."), "\n")
         cobalt::bal.tab(fit, continuous="std", binary="std",
@@ -117,8 +117,8 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
 
       weights_models[[k]] <-fit
 
-      cat(paste0("For ", k, "_", exposure, "-", outcome, " , the median weight value is ", round(median(fit$weights),2) ,
-                 " (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), " - ", round(max(fit$weights),2), ")"), "\n")
+      cat(paste0("For ", k, "_", exposure, "-", outcome, ", the median weight value is ", round(median(fit$weights),2) ,
+                 " (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-", round(max(fit$weights),2), ")."), "\n")
       cat('\n')
 
 
