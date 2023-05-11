@@ -71,7 +71,7 @@ object <- msmObject(
   
   #### Exposure Information (required) ####
   #exposure of interest that potentially have causal effects on outcome and exposure time point(s) (corresponding to values in time_var)
-  exposure=c("InRatioCor"), #list of strings
+  exposure=c("ESETA1"), #list of strings
   # exposure_time_pts=c(6, 15, 24, 35, 58, 90, 154), #list of integers
   exposure_time_pts=c(6, 15, 24, 35, 58), #list of integers
   
@@ -117,9 +117,6 @@ object <- msmObject(
   
   
   #### Exclusion Information (optional) ####
-  #list out any variables that should be excluded from consideration as confounds via balancing based on practical or theoretical reasons; if it is a time-varying covariate the code will include it in the forms for all time points with the exception of in its own forms if it is an exposure; can specify time after "."; default set to none; will over ride mandatory_keep_covariates
-  exclude_covariates=NULL, #list of characters
-  
   #list any time-varying variables that may get imputed but should NOT be present in the dataset because of planned missingness design with ".time_pt" format
   time_var_exclude=c("ALI_Le.6", "ALI_Le.15","ALI_Le.24","ALI_Le.58","SAAmylase.35", "SAAmylase.58","CORTB.58",
                      "EARS_TJo.6","EARS_TJo.15", "EARS_TJo.58", "IBRAttn.35", "IBRAttn.58", "MDI.24", "MDI.35", "MDI.58", "LESMnPos.6", 
@@ -127,15 +124,11 @@ object <- msmObject(
                      "pcx_CompTwo.24", "pcx_CompTwo.35","StrDif_Tot.6", "StrDif_Tot.15","StrDif_Tot.24", "WndNbrhood.15", "EF_avg_perc.6", "EF_avg_perc.15", 
                      "EF_avg_perc.24"), #default set to none
   
-  #when creating a balancing formula at each time point, we need to remove potential colliders at that time point. list potential colliders (i.e., variables that could cause both the treatment and the outcome) at each time point below. these will be EXCLUDED from balancing only at the time point of the exposure and outcome, and at lagged values if specified by the user, as balancing on colliders can lead to problematic outcomes; default is none; will override mandatory_keep_covariates
-  # potential_colliders=data.frame(colliders=c("ADHDtcTot.58"), #list of colliders for each exposure-outcome pair; list of lists of strings
-  #                                exclude_lags=c("F")), #whether or not lagged values of listed colliders, if they are time-varying, should also be excluded ("Y"=exclude lagged values); one entry per exp-out pair; list of strings
-
   
   ### Plotting Information (optional) ###
   #optional list of alternative labels for exposures that will be used only for plotting
   # exposure_labels=c("Home Resources", "Conflict in the Home", "Threat"), 
-  exposure_labels=c("Income-to-needs-rato"), 
+  exposure_labels=c("Economic Strain"), 
   
   
   #optional list of alternative labels for outcomes that will be used only for plotting
@@ -201,7 +194,7 @@ wide_long_datasets <- formatForWeights(object, data, imputed_datasets)
 full_forms <- createForms(object, wide_long_datasets, all_potential_covariates)
 
 #does pre balance checking on full forms to examine initial imbalance
-preBalanceChecking(object, wide_long_datasets, full_forms, histories=1)
+preBalanceChecking(object, wide_long_datasets, full_forms, histories=0)
 
 #create short forms with time-varying covariates only at t-1 for initial weights creation
 # short_forms <- createShortForms(object, full_forms, keep=list(exposure=c("ESETA1"),
@@ -212,7 +205,7 @@ short_forms <- createShortForms(object, full_forms, keep=NULL)
 
 #creates balancing weights for each exposure-outcome pair at each exposure time point 
 #options:cbps, npcbps, bart, ps
-object$weights_method="cbps" #try different weights methods and re-run
+object$weights_method="npcbps" #try different weights methods and re-run
 data_for_model_with_weights<- createWeights(object, wide_long_datasets, short_forms, read_in_from_file="yes") 
 
 #assesses balance for short forms
@@ -228,7 +221,7 @@ IS not sure how to suppress console output....
 ```{r}
 
 #assesses balance for full forms
-balance_stats_full <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1, histories=1)
+balance_stats_full <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1, histories=0)
 
 #update forms to include any imbalanced time-varying covariates >t-1
 new_short_forms <- updateForms(object, short_forms, data_for_model_with_weights, balance_stats_full)
@@ -276,7 +269,7 @@ The code will automatically choose the model with the lowest AIC but user can ov
 ```{r}
 
 #code to fit a series of baseline, covariates, and interaction weighted models to determine which is best fitting; prints only models with user-specified weight cutoff values (sensitivity checks output into folder)
-all_models <- fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m3")
+all_models <- fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m1")
 
 ```
 
@@ -300,49 +293,6 @@ history_estimates <- compareHistories(object, data_for_model_with_weights_cutoff
 plotResults(object, history_estimates)
 ```
 
-
-Implement this step if you have a growth process for your outcome at the outcome time point 
-
-### 9. For an outcome growth process: Create an MPlus template for fitting weighted, more complex weighted models
-This code creates a template for fitting weighted more complex growth models in MPlus in the form of a .inp file. The code defaults to estimating slope (s) and quadratic (qd) growth and estimates contrasts examining the differences between different exposure histories. 
-
-The user is advised to independently apply the appropriate transformations to their outcome measure and establish its appropriate functional form. They can then provide a .csv file to this function to create a template of an MPlus .inp file for fitting a growth model. The user can then modify the template .inp file as needed prior to running. 
-
-[Meriah to add more info about what these models do]
-
-assumes same missing indicator as original data
-abridged dataset --only include necessary variables?
-does up to 3-way interactions only
-data must have outcomes in long form but exposures in wide form --check to see if there's a wide/long version of data saved out somewhere to guide the user?
-
-Note for Meriah: any other variables/input fields that the user should specify? anything else to save out along the way?
-
-Data should be modeled after the csv: TSST_allTxseq_LONG3.csv (which i manually put in the 'for Mplus' folder) which the user should create independently
-
-The user can also view unbalanced covariates by time and averaged across time in the 'balance/post-balance correlation values/' folder. 
-```{r}
-#inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
-# apply(gtools::permutations(2, nrow(object$exposure_epochs), c("L", "H"), repeats.allowed=TRUE), 1, paste, sep="", collapse="")
-
-
-mplusObject <- mplusObject(
-  #location of your data file in long format including final truncated weights (labeed exposure-outcome)
-  data_file=paste0(object$home_dir, "for Mplus/TSST_allTxseq_LONG3.csv"),
-  
-  #list your outcomes and (optionally) any corresponding covariates you want included in each respective model
-  additional_covariates=data.frame(outcomes=c("lnCORTR", "sqrtSAAR"), #names of outcomes that are in long form (MLD)
-                                   additional_covariates=I(list(c("Timeofday_c"), c("SubStressR_mn","Timeofday_c")))) #like methods covariates that don't need balancing
-)
-
-
-#create .imp files and header-less .csv files for each exposure-outcome pairing. This code adapts content from Gottfredson et al., 2019 via the aMNLFA package. 
-makeMplusInputs(object, mplusObject)
-
-
-#automatically run all inputs in the Mplus folder after you have manually modified/checked them
-MplusAutomation::runModels(replaceOutfile = "never",  target = paste0(object$home_dir, 'for MPlus/original/'))
-
-```
 
 
 References --add Gottfredson, Stuart, Imai, etc. 

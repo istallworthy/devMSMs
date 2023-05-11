@@ -66,9 +66,9 @@ createShortForms<- function(object, full_forms, keep=NULL){
     }
   }
 
-  write.csv(forms_csv, paste0(home_dir, "forms/short_balancing_formulas.csv", sep=""), row.names = F)
+  write.csv(forms_csv, paste0(home_dir, "forms/",  exposure, "-", outcome, "_short_balancing_formulas.csv", sep=""), row.names = F)
 
-  saveRDS(short_forms, paste0(home_dir, "forms/short_forms.rds"))
+  saveRDS(short_forms, paste0(home_dir, "forms/",  exposure, "-", outcome,"_short_forms.rds"))
   cat(paste0("Short formulas including time-varying covariates at t-", short_form_lag, " only have now been saved in the 'forms/' folder"), "\n")
 
   return(short_forms)

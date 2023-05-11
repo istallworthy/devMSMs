@@ -7,6 +7,7 @@ updateForms <-function(object, forms, data_for_model_with_weights, balance_stats
   outcome=object$outcome
   balance_thresh=object$balance_thresh
   factor_covariates=object$factor_covariates
+  home_dir=object$home_dir
 
   forms_csv=data.frame()
 
@@ -66,7 +67,7 @@ updateForms <-function(object, forms, data_for_model_with_weights, balance_stats
   forms_csv=data.frame(name=names(lapply(new_forms, function(f){paste(deparse(f, width.cutoff = 500), collapse="")})),
                         form=unlist(lapply(new_forms, function(f){paste(deparse(f, width.cutoff = 500), collapse="")})))
 
-  write.csv(forms_csv, paste0(home_dir, "forms/updated_short_balancing_formulas.csv", sep=""), row.names = F)
+  write.csv(forms_csv, paste0(home_dir, "forms/",  exposure, "-", outcome, "_updated_short_balancing_formulas.csv", sep=""), row.names = F)
 
   return(new_forms)
 }

@@ -131,7 +131,7 @@ truncateWeights <-function(object, data_for_model_with_weights){
   # b=merge(a, all_trunc_weights, by=c(ID, ".imp"), all = T)
   # imp_data_w_t=mice::as.mids(b, .imp = ".imp")
 
-  saveRDS(dat_w_t, paste0(home_dir, "final weights/values/dat_w_t.rds"))
+  saveRDS(dat_w_t, paste0(home_dir, "final weights/values/",  exposure, "-", outcome,"_dat_w_t.rds"))
   # saveRDS(data_for_model_with_weights_cutoff, paste0(home_dir, "final weights/values/data_for_model_with_weights_cutoff.rds"))
 
   cat("USER ALERT: final cutoff weights using the user-specified cutoff values and 2 other values for subsequent sensiivity analyses have now each been saved as a dataset in 'final weights' folder","\n")

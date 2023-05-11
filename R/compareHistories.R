@@ -175,12 +175,14 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   #STEP 2: Create custom tidy method--need to automate this
   # ; not called directly but used in mice::pool()
   #this does not work
-  tidy.pred_custom <- function(x, ...) {
+  tidy.pred_custom <<- function(x, ...) {
+    # args <<-args
     out <- NextMethod("tidy", x)
-    out$term<-do.call(sprintf, c(paste0(paste(names(args), collapse=" = %s, "), " = %s"),
-                                 as.list(unclass(out[,names(args)]))))
+    out$term <- do.call(sprintf, c(paste0(paste(names(args), collapse=" = %s, "), " = %s"),
+                                  as.list(unclass(out[,names(args)]))))
     out
   }
+
 
   # tidy.pred_custom <- function(x, ...) {
   #   out <- NextMethod("tidy", x)
@@ -198,16 +200,16 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   #   out
   # }
 
-  library(tidyr)
-  # #this works
+  # library(tidyr)
+  #this works
   # tidy.pred_custom <- function(x, ...) {
   #   out <- NextMethod("tidy", x)
   #   # out$term <- sprintf("treat = %s, married = %s", out$treat, out$married)
-  #   out$term <- sprintf("ESETA1_Infancy = %s, ESETA1_Toddlerhood = %s, ESETA1_Childhood = %s",
-  #                       out$ESETA1_Infancy, out$ESETA1_Toddlerhood, out$ESETA1_Childhood)
+  #   out$term <- sprintf("InRatioCor_Infancy = %s, InRatioCor_Toddlerhood = %s, InRatioCor_Childhood = %s",
+  #                       out$InRatioCor_Infancy, out$InRatioCor_Toddlerhood, out$InRatioCor_Childhood)
   #   out
   # }
-  #
+
 
   #STEP 3: pooling predicted estimates --seem to be the same for all cutoff values
   # Pool results

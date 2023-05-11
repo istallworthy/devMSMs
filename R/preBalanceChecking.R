@@ -9,6 +9,7 @@ preBalanceChecking <- function(object, wide_long_datasets, all_forms, histories=
   exposure_time_pts=object$exposure_time_pts
   balance_thresh=object$balance_thresh
   factor_covariates=object$factor_covariates
+  home_dir=object$home_dir
 
   .call <- match.call()
   form_type=.call[[4]]
@@ -96,9 +97,9 @@ preBalanceChecking <- function(object, wide_long_datasets, all_forms, histories=
 
 
   #save out correlations/std mean differences
-  sink(paste0(home_dir, "pre balance/all_pre-balance_associations.html"))
+  sink(paste0(home_dir, "pre balance/",  exposure, "-", outcome, "_all_pre-balance_associations.html"))
   stargazer::stargazer(unbalanced_covars,type="html", digits=2, column.labels = colnames(unbalanced_covars),summary=FALSE, rownames = FALSE, header=FALSE,
-                       out=paste0(home_dir, "pre balance/all_pre-balance_assocations.html"))
+                       out=paste0(home_dir, "pre balance/",  exposure, "-", outcome,"_all_pre-balance_assocations.html"))
   sink()
 
   cat(paste0("USER ALERT: Check 'pre balance/comparison values/' folder for a table of all pre-balance correlations or standardized mean differences and averaged across imputed datasets"),"\n")
@@ -123,9 +124,9 @@ preBalanceChecking <- function(object, wide_long_datasets, all_forms, histories=
   cat(knitr::kable(unbalanced_covars, caption="Imbalanced Covariates Before Weighting", format='pipe'),  sep="\n")
 
   #save out only imbalanced covariates
-  sink(paste0(home_dir, "pre balance/all_imbalanced_covariates.html"))
+  sink(paste0(home_dir, "pre balance/",  exposure, "-", outcome,"_all_imbalanced_covariates.html"))
   stargazer::stargazer(unbalanced_covars,type="html", digits=2, column.labels = colnames(unbalanced_covars),summary=FALSE, rownames = FALSE, header=FALSE,
-                       out=paste0(home_dir, "pre balance/all_imbalanced_covariates.html"))
+                       out=paste0(home_dir, "pre balance/",  exposure, "-", outcome,"_all_imbalanced_covariates.html"))
   sink()
 
   write.csv(unbalanced_covars, paste0(home_dir, "pre balance/", exposure, "_prebalance_stat_summary.csv"))

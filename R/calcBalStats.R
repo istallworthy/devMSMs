@@ -22,7 +22,7 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
   factor_covariates=object$factor_covariates
 
   weights_method=ifelse(weighted==1, object$weights_method, "no weights")
-  h=histories
+  print_hist=histories
   histories=NULL
 
   library(cobalt)
@@ -162,7 +162,8 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
       #summarize contributors to each history
       prop_sum=prop_weights%>%dplyr::group_by(as.factor(history))%>%dplyr::summarize(n=dplyr::n())
 
-      if(h==1){
+      # browser()
+      if(print_hist==1){
         cat(paste0("For exposure ", exposure, ", imputation ", k, " at time point ", exposure_time_pt, ", individuals were distributed within histories across lagged time point(s) ", paste(lagged_time_pts, collapse=" "), " as follows:"),
             "\n")
         prop_sum$`as.factor(history)`=as.character(prop_sum$`as.factor(history)`)
