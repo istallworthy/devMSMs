@@ -134,10 +134,10 @@ formatDataStruct <-function(object) {
   his_summ=his_summ[!grepl("NULL", unlist(his_summ$history)),]
   his_summ=his_summ[!grepl("NA", unlist(his_summ$history)),]
   cat(paste0("Out of the total of ", nrow(dat_wide), " individuals, below is the distribution of the ", sum(his_summ$n), " (",
-             round((sum(his_summ$n)/nrow(dat_wide))*100,2), "%) that fall into the following exposure histories defined by ",
-      lo_cutoff, " and ", hi_cutoff, "percentile values for low and high levels of exposure ", exposure, ", respectively, across ", paste(exposure_epochs$epochs, collapse=","), ":"), "\n")
+             round((sum(his_summ$n)/nrow(dat_wide))*100,2), "%) that fall into the following user-defined exposure histories created from ",
+      lo_cutoff, " and ", hi_cutoff, " percentile values for low and high levels of exposure ", exposure, ", respectively, across ", paste(exposure_epochs$epochs, collapse=", "), ":"), "\n")
   cat("\n")
-  cat(knitr::kable(as.data.frame(his_summ), caption=paste0("Summary of Exposure ", exposure, " Histories"), format='pipe', row.names = F ), sep="\n")
+  cat(knitr::kable(as.data.frame(his_summ), caption=paste0("Summary of User-Specified Exposure ", exposure, " Histories Based on Exposure Epochs"), format='pipe', row.names = F ), sep="\n")
 
   cat("\n")
 

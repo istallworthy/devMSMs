@@ -358,9 +358,10 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
     }
     suppressMessages(ggplot2::ggsave(paste0(home_dir, folder, "/plots/", form_name, "_imp_",k, "_", exposure,"_", exposure_time_pt,"_",weights_method, "_summary_balance_plot.jpeg"),
                                      width=6, height=8))
-    cat(paste0("A ", gsub("/", "", folder), "  summary plot for ", form_name, " ", exposure,  " imputation ", k," at time ", exposure_time_pt," for weighting method ",weights_method, " has now been saved in the '", folder, "plots/' folder."), "\n")
-    cat("\n")
+    cat(paste0("A ", gsub("/", "", folder), " summary plot for ", form_name, " ", exposure,  " imputation ", k," at time ", exposure_time_pt," for weighting method ",weights_method, " has now been saved in the '", folder, "plots/' folder."), "\n")
   } #ends exp_time_pt
+
+  cat("\n")
 
 
 
@@ -389,17 +390,19 @@ calcBalStats <-function(object, imp_wide_data, forms, f_type, exposure, outcome,
   tot_covars=gsub(" ", "", tot_covars)
   tot_covars=na.omit(sapply(strsplit(tot_covars, "\\."), "[",1)[!duplicated(sapply(strsplit(tot_covars, "\\."), "[",1))])
 
-  cat(paste0("USER ALERT: For exposure ", exposure, " imputation ", k, " using ", weights_method, " , ",
+  cat(paste0("For exposure ", exposure, " imputation ", k, " using ", weights_method, ", and ", form_name, ", ",
              sum(bal_summary_exp$imbalanced_n, na.rm=T), " out of ", sum(bal_summary_exp$n, na.rm=T),
              " (", round((sum(bal_summary_exp$imbalanced_n, na.rm=T)/sum(bal_summary_exp$n))*100,0), "%) covariates across time points corresponding to ",
              length(sapply(strsplit(all_bal_stats[all_bal_stats$balanced==0, "covariate"], "\\."), "[", 1)[!duplicated( sapply(strsplit(all_bal_stats[all_bal_stats$balanced==0, "covariate"], "\\."), "[", 1))]) ,
-             " out of ", length(tot_covars), " unique constructs remain imbalanced with an average absolute value correlation/std mean difference of ",
+             " out of ", length(tot_covars), " domains remain imbalanced with an average absolute value residual correlation/std mean difference of ",
              round(mean(abs(all_bal_stats[all_bal_stats$balanced==0, "std_bal_stats"]), na.rm = T),2), " (range= ",
              round(min(abs(all_bal_stats[all_bal_stats$balanced==0, "std_bal_stats"]), na.rm = T),2), "-",
-             round(max(abs(all_bal_stats[all_bal_stats$balanced==0, "std_bal_stats"]), na.rm = T),2), "), based on the ", form_name, " as shown below:"), "\n")
+             round(max(abs(all_bal_stats[all_bal_stats$balanced==0, "std_bal_stats"]), na.rm = T),2), "), as shown below:"), "\n")
   cat("\n")
   # print(bal_summary_exp)
-  cat(knitr::kable(bal_summary_exp, caption=paste0("Imbalanced Covariates using ", weights_method, " and ", form_name), format='pipe'),  sep="\n")
+  cat(knitr::kable(bal_summary_exp, caption=paste0("Imbalanced Covariates for imputation ", k, " using ", weights_method, " and ", form_name), format='pipe'),  sep="\n")
+  cat("\n")
+  cat("\n")
 
 
   rownames(all_bal_stats)<-NULL

@@ -27,7 +27,6 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
   time_varying_covariates=object$time_varying_variables
   time_pts=object$time_pts
 
-  # browser()
 
   all_cutoffs=c(weights_percentile_cutoff, weights_percentile_cutoffs_sensitivity)
 
@@ -40,7 +39,6 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
     dplyr::mutate(balanced_avg=ifelse(abs(avg_bal)<balance_thresh,1,0))%>%
     dplyr::filter(balanced_avg==0)%>%
     dplyr::select(covariate)
-  # unbalanced_covars=sapply(strsplit(unbalanced_covars$covariate, "\\."), "[",1)
   #getting only time invariant or t1 imbalanced covariates
   unbalanced_covars$keep=ifelse(grepl(paste0(".", time_pts[1]), unlist(unbalanced_covars$covariate)), 1, 0)
   unbalanced_covars$keep=ifelse(unbalanced_covars$keep==0 &
@@ -49,13 +47,10 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
   nonb_covars=unlist(unbalanced_covars%>%dplyr::filter(keep==0)%>%dplyr::select(covariate))
 
   #listing any imbalanced covariates
-  # baseline_covars=unlist(unbalanced_covars)[!gsub(" ", "",sapply(strsplit(unlist(unbalanced_covars), "\\."), "[",1)) %in% time_varying_covariates]
   #renames factors (that were appended w/ level)
   baseline_covars[sapply(strsplit(sapply(strsplit(baseline_covars, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates] <-sapply(strsplit(baseline_covars, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(baseline_covars, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
   baseline_covars=baseline_covars[!grepl(exposure, baseline_covars)] #excludes exposure
   covariate_list= paste(as.character(baseline_covars), sep="", collapse=" + ")
-
-
 
 
   if (!model %in% c("m0", "m1", "m2", "m3")){
@@ -70,12 +65,17 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
     if(covariate_list[1]==""){
       stop("You have selected a covariate model but there are no imbalanced baseline covariates. Please choose another model.")
     }else{ #there are imbalanced covariates
-      cat("The following imbalanced baseline covariates are included in the model: ", "\n")
-      cat(covariate_list)
+      cat("USER ALERT: The following imbalanced baseline covariates are included in the model: ", "\n")
+      cat(covariate_list, "\n")
+      cat("\n")
+
 
       cat("\n")
-      cat("The following imbalanced covariates will NOT be included in the model: ", "\n")
-      cat(nonb_covars)
+      cat("USER ALERT: The following imbalanced covariates will NOT be included in the model: ", "\n")
+
+      cat(nonb_covars, "\n")
+      cat("\n")
+
     }
   }
 
@@ -96,8 +96,6 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
       data=x
       data$weights=NULL
       data$weights<-data[,colnames(data)[grepl("weight", colnames(data))]]
-
-      # browser()
 
       s=survey::svydesign(id=~1, #
                           data=data, #adds list of imputation data
@@ -146,9 +144,11 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
   })
   names(fits)=all_cutoffs
 
-  cat(paste0("The marginal model, ", model, ", run for each imputed dataset using the weights truncation cutoffs ", paste(all_cutoffs, collapse=","), " is summarized here:"), "\n")
-  # print(summary(models[[model]]))
-  print(lapply(fits,function(x){lapply(x, summary)}))
+  cat(paste0("The marginal model, ", model, ", run for each imputed dataset using the user-specified weights truncation percentile value of ",
+             paste(weights_percentile_cutoff), " is summarized here:"), "\n")
+  # browser()
+
+  print(lapply(fits[paste0(weights_percentile_cutoff)],function(x){lapply(x, summary)}))
 
   # browser()
 
@@ -160,11 +160,8 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
                                           file.name =paste0(home_dir, "msms/", names(fits)[y],"_", model, "_table_mod_ev.docx", sep="")))
   })
 
-  cat("Tables of model evidence have now been saved in the 'msm' folder.")
+  cat("Tables of model evidence for all truncation percentile values have now been saved in the 'msm' folder.")
 
-  # all_models[[paste0("fit", k, "_", exposure, "-", outcome, "_cutoff_", cutoff)]]<-models
-
-  # models=NULL
   m0=NULL
   m1=NULL
   m2=NULL
@@ -179,7 +176,6 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
 
   cat("\n")
   # cat("A new data file has been saved as a .csv file in the in the 'msms' folder","\n")
-
 
   return(fits)
 
