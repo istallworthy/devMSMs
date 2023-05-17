@@ -61,6 +61,8 @@ truncateWeights <-function(object, data_for_model_with_weights){
       cutoff_weights=WeightIt::trim(data[,paste0("weights")], cutoff, lower=F)
 
       # if(cutoff==weights_percentile_cutoff){ #prints only values for user-specified cutoff
+      #   cat(paste)
+
         cat(paste0("For ", exposure, "-", outcome, ", using the user-specified cutoff percentile of ", cutoff, ", the median weight is ", round(median(as.numeric(unlist(cutoff_weights))),2) ,
                    " (SD= ",round(sd(as.numeric(unlist(cutoff_weights))),2), "; range= ", round(min(as.numeric(unlist(cutoff_weights))),2), " - ", round(max(as.numeric(unlist(cutoff_weights))),2), ")"), "\n")
       # }
@@ -93,51 +95,25 @@ truncateWeights <-function(object, data_for_model_with_weights){
       data=cbind(data, new)
       # data=cbind(data, cutoff_weights)
 
-      # truncated_weights_exp=merge(truncated_weights_exp, new, by=c(colnames(truncated_weights_exp)[colnames(truncated_weights_exp) %in% colnames(new)]), all.x=T)
-      # truncated_weights_d<-merge(data, truncated_weights_exp%>%dplyr::filter(.imp==k), by=c(ID), all.x=T)
-      # data_for_model_with_weights_cutoff[[paste("fit_", k, "_", exposure, "-", outcome, "_", cutoff, sep="")]] <-truncated_weights_d
-
-      # browser()
       #print histogram of new weights by cutoff value
       ggplot2::ggplot(data=as.data.frame(data), aes(x = as.numeric(data[,name]))) +
         geom_histogram(color = 'black', bins = 15)
       ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_weights_cutoff_", cutoff, "imp_", k, ".png", sep=""), path=paste0(home_dir, "final weights/histograms/"), height=8, width=14)
 
       cat(paste0("A histogram with weights truncated at ", cutoff, " for ", "imp_", k, " have now been saved in the 'final weights/histograms/' folder."), "\n")
-      write.csv(data,paste0(home_dir, exposure, "-", outcome, "_weights_cutoff_", cutoff, "imp_", k,"_", paste(all_cutoffs, sep=",", collapse=" "), ".csv") )
+      write.csv(data,paste0(home_dir, "final weights/", exposure, "-", outcome, "_weights_cutoff_", cutoff, "imp_", k,"_", paste(all_cutoffs, sep=",", collapse=" "), ".csv") )
 
       data
     })
   })
 
   names(dat_w_t)=all_cutoffs
-  # dat_w_t=lapply(dat_w_t,function(x){ names(x) <-all_cutoffs})
-
-
-
-
-  #   } #ends k loop
-  #
-  #   all_trunc_weights=rbind(all_trunc_weights, truncated_weights_exp)
-  #
-  # } #ends cutoff loop
-
-  #adds weights to mids object
-  # colnames(all_weights)=c(ID, "weights")
-
-  # a=MatchThem::complete(dat_w_t, "all")
-  # a=mice::complete(imp_data_w, action="broad", include = TRUE)
-  # a$outcome<-ifelse(a$WAVE==outcome_time_pt, a[,outcome], NA) #makes outcome variable for modeling w/ long dataset later
-  # b=merge(a, all_trunc_weights, by=c(ID, ".imp"), all = T)
-  # imp_data_w_t=mice::as.mids(b, .imp = ".imp")
 
   saveRDS(dat_w_t, paste0(home_dir, "final weights/values/",  exposure, "-", outcome,"_dat_w_t.rds"))
-  # saveRDS(data_for_model_with_weights_cutoff, paste0(home_dir, "final weights/values/data_for_model_with_weights_cutoff.rds"))
 
   cat("USER ALERT: final cutoff weights using the user-specified cutoff values and 2 other values for subsequent sensiivity analyses have now each been saved as a dataset in 'final weights' folder","\n")
   cat(paste0("A histogram of weights for exposure ", exposure, " on ", outcome, ", all imputations has been saved to the 'final weights/histograms/' folder"),"\n")
   cat("\n")
   return(dat_w_t)
-
 
 }

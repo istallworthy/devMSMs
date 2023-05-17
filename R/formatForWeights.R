@@ -30,7 +30,7 @@ formatForWeights <- function(object, data, imputed_datasets){
 
   options(readr.num_columns = 0)
   cat("\n")
-  cat("USER ALERT: Inspect the list of time-varying covariates (following the ID variable) and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running","\n")
+  cat("USER ALERT: Inspect the list of time-varying domains (following the ID variable) and remove any that should not be there because of planned missingness design by adding them to 'time_var_exclude' in the msmObject and re-running:","\n")
   cat("\n")
 
 
@@ -38,6 +38,7 @@ formatForWeights <- function(object, data, imputed_datasets){
 
   #Cyles through imputed datasets and puts them in hybrid wide/long dataset
   wide_long_datasets<-lapply(1:m, function(k){
+    # browser()
     imp=mice::complete(imputed_datasets,k)
     imp=as.data.frame(imp)
 

@@ -37,11 +37,12 @@ createForms <- function(object, wide_long_datasets, all_potential_covariates){
   forms=list()
   forms_csv=data.frame()
 
-  cat("USER ALERT: Please inspect the balancing weights formulas below that contain all confounders that will be used to assess balance at each exposure time point.", "\n",
+  cat("USER ALERT: Please inspect the full balancing formulas for each time point below. They contain all confounders that will be used to assess balance at each exposure time point.", "\n",
       "By default, these formulas exclude any contemporaneous time-varying variables (given that they are difficult to disentangle from mediators).","\n",
       "If there aare contemporaneous time-varying variables that you wish to include in the balancing formula, please list them in the 'keep_concurrent_tv_vars' field of the msmObject and re-run this function.","\n",
-      "If there are any time-varying variables you wish to omit given their potential to be colliders, please list them in the 'potential_colliders' field of the msmObject and re-run,","\n",
+      # "If there are any time-varying variables you wish to omit given their potential to be colliders, please list them in the 'potential_colliders' field of the msmObject and re-run,","\n",
       "You can also omit or include variables in all balancing forms using the 'exclude_covariates' and 'mandatory_keep_covariates' fields of the msmObject, respectively.", "\n")
+  cat("\n")
   cat("All forms are saved out in the 'forms' folder as csv files", "\n")
   cat("\n")
 
@@ -93,12 +94,12 @@ createForms <- function(object, wide_long_datasets, all_potential_covariates){
   #   time_invariant_colliders=colliders[!colliders %in% all_time_colliders & !colliders %in% time_spec_colliders]
   #
   # }else{
-    colliders=NULL
-    all_time_colliders=NULL
-    colliders_lagged=F
-    time_varying_colliders=NULL
-    time_spec_colliders=NULL
-    time_invariant_colliders=NULL
+  colliders=NULL
+  all_time_colliders=NULL
+  colliders_lagged=F
+  time_varying_colliders=NULL
+  time_spec_colliders=NULL
+  time_invariant_colliders=NULL
   # }
 
 
@@ -185,7 +186,14 @@ createForms <- function(object, wide_long_datasets, all_potential_covariates){
   }
   #   }
   # # }
+  cat(paste0("Across all full balancing formulas at all exposure time points, there are a total of ",
+             sum(unlist(lapply(1:nrow(forms_csv), function(x){length(unlist(strsplit(forms_csv[x,2], "\\+")))}))),
+             " covariate confounders."))
+  cat("\n")
+
   write.csv(forms_csv, paste0(home_dir, "forms/",  exposure, "-", outcome,"_full_balancing_formulas.csv", sep=""), row.names = F)
+  cat("All full balancing formulas have been saved in the 'forms/' folder.")
+  cat("\n")
 
   return(forms)
 }

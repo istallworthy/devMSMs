@@ -89,12 +89,13 @@ identifyCovariates <- function(object, data){
   write.csv(test, paste0(home_dir, "balance/",  exposure, "-", outcome, "_matrix_of_covariates_considered_by_time_pt.csv"), row.names = T)
 
   cat("See the balance folder for a table and matrix displaying all covariates considered for each time point.", "\n")
-
+  cat("\n")
 
 
   #-2 to exclude ID and WAVE
-  cat(paste0("Below are the ", as.character(length(all_potential_covariates)-2), " variables, across ", unique_vars-2, " unique constructs, that will be evalated empirically as potential confounding variables for all exposure-outcome pairs."), "\n",
-      "Please inspect this list carefully. It should include all time-varying covariates (excluding time points when they were not collected), time invariant covariates, exposure (if you have listed more than one), and outcome variables if they were collected at time points earlier than the outcome time point.", "\n",
+  cat(paste0("USER ALERT: Below are the ", as.character(length(all_potential_covariates)-2), " variables, across ", unique_vars-2, " domains, that will be treated as potential confounding variables for the relation betweeen ",
+  exposure, " and ", outcome, " ."), "\n",
+  "Please inspect this list carefully. It should include all time-varying covariates (excluding any time points when they were not collected), time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.", "\n",
       "If you would like to exclude any variables from consideration as covariate confounders, please add them to 'exclude_covariates' field in the msmObject and re-run.","\n")
   cat("\n")
   print(all_potential_covariates[!all_potential_covariates %in% c(ID, "WAVE")])
@@ -200,7 +201,7 @@ dataToImpute <-function(object, all_potential_covariates){
   dev.off()
 
   cat("A correlation plot of all variables has been saved in the home directory", "\n")
-
+  cat("\n")
 
   data2=data2[,!colnames(data2) %in% c(exposure, outcome)]
 
@@ -215,44 +216,8 @@ dataToImpute <-function(object, all_potential_covariates){
   View_hi_corr_covars=View_hi_corr_covars[!View_hi_corr_covars$row %in% c("WAVE") & !View_hi_corr_covars$column %in% c("WAVE"),]
 
   cat("USER ALERT: To simplify the balancing models, consider removing any highly correlated, redundant covariates by listing them in the 'exclude_covariates' field in the msm object and re-running:", "\n")
-  # print(knitr::kable(View_hi_corr_covars))
   cat(knitr::kable(View_hi_corr_covars, caption="Correlated Covariates", format='pipe'),  sep="\n")
-
-
- #  #adding in exposure epoch interactions pre-imputation
- #  time_varying_wide=apply(expand.grid(time_varying_covariates, as.character(time_pts)), 1, paste, sep="", collapse=".")
- #  time_varying_wide=sort(time_varying_wide)
- #  time_varying_wide=c(ID, time_varying_wide)
- #  dat_wide=suppressWarnings(stats::reshape(data=data_to_impute,idvar=ID,v.names= time_varying_covariates, timevar="WAVE", times=c(time_pts), direction="wide"))
- #  exp_epochs= apply(expand.grid(exposure, as.character(exposure_epochs[,1])), 1, paste, sep="", collapse="_")
- #  interactions<-paste0(unlist(lapply(2:length(exp_epochs), function(z){
- #    apply(combn(exp_epochs,z), 2, paste, sep="", collapse=":")
- #  })))
- #  new=data.frame(ID=dat_wide[,ID])
- #  names(new)=ID
- #  #calculates the mean value for each exposure for each exposure epoch
- #  for (e in 1:nrow(exposure_epochs)){
- #    epoch=exposure_epochs[e,1]
- #    temp=data.frame(row.names=1:nrow(dat_wide))
- #    new_var=paste0(exposure, "_", epoch)
- #    #finds data from each time point in each epoch, horizontally aligns all exposure values within the epoch for averaging
- #    for (l in 1:length(as.numeric(unlist(exposure_epochs[e,2])))){
- #      level=as.numeric(unlist(exposure_epochs[e,2]))[l]
- #      z=dat_wide[,which(grepl(paste0(exposure, ".", level), names(dat_wide)))]
- #      temp=cbind(temp, z)
- #    }
- #    #adds a new variable of the exposure averaged within epoch
- #    new=new%>%dplyr::mutate(!!new_var :=rowMeans(temp, na.rm=T))
- #    new[,new_var]=as.numeric(new[,new_var])
- #  }
- #  new[new=="NaN"]=NA
- #
- #  for (x in interactions){
- #    temp=new%>%dplyr::select(c(unlist(strsplit(x, ":"))))
- #    new=new%>%dplyr::mutate(!!x :=apply(temp,1,prod))
- #  }
- # data_to_impute=merge(data_to_impute, new, by=ID, all.x=T)
-
+  cat("\n")
 
 
   write.csv(data_to_impute, paste0(home_dir, "imputations/",  exposure, "-", outcome,"_data_to_impute.csv"))

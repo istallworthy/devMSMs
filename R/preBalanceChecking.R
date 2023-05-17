@@ -19,10 +19,9 @@ preBalanceChecking <- function(object, wide_long_datasets, all_forms, histories=
 
 
 
-  cat("The following statistics display covariate imbalance for each exposure at each exposure time point prior to weighting, using full formulas that reflect covariates at all lagged time points.
-      Best practice for assessing balance for time-varying exposures (Jackson, 2016) first assesses imbalance for each exposure history
-      (note that these histories are different from the user-specified ones used in the final model as they reflect median split high (1) and low (0) values at each time point) up until the exposure time point and then averages the balance statistics across histories.
-      Below you will see the distributions of individuals in each history for each exposure time point that contribbute to the average balance statistics used to determine balance in the final table.", "\n")
+  cat("USER ALERT: The following statistics display covariate imbalance for each exposure at each exposure time point prior to weighting, using full formulas that reflect covariates at all lagged time points. Best practice for assessing balance for time-varying exposures (Jackson, 2016) first assesses imbalance for each exposure history
+      (note that these histories are different from the user-specified ones used in the final model as they reflect median split high (1) and low (0) values at each exposure time point) up until the exposure time point and then averages the balance statistics across histories.
+      Below you will see the distributions of individuals in each history for each exposure time point that contribute to the average balance statistics used to determine balance in the final table.", "\n")
 
   # forms=all_forms
 
@@ -113,13 +112,13 @@ preBalanceChecking <- function(object, wide_long_datasets, all_forms, histories=
   unbalanced_covars$covariate[sapply(strsplit(sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates] <-sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(unbalanced_covars$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
 
   unbalanced_constructs=sapply(strsplit(unbalanced_covars$covariate, "\\."), "[",1)[!duplicated(sapply(strsplit(unbalanced_covars$covariate, "\\."), "[",1))]
-
   cat("\n")
-  cat(paste0("USER ALERT: Before weighting, averaging across all imputed datasets for exposure ", exposure, ", the following ", nrow(unbalanced_covars) ," covariates across time points (out of ",
+  cat("\n")
+  cat(paste0("USER ALERT: Before weighting, averaging across all imputed datasets for exposure ", exposure, " using the ", form_name, ", the following ", nrow(unbalanced_covars) ," covariates across time points (out of ",
              length(tot_covars), " total) spanning ",
-             length(unbalanced_constructs), " unique constructs (out of ", length(tot_cons), ") are imbalanced with an average absolute value correlation/std mean difference in relation to ",
+             length(unbalanced_constructs), " domains (out of ", length(tot_cons), ") are imbalanced with an average absolute value residual correlation/std mean difference in relation to ",
              exposure, " of ", round(mean(abs(unbalanced_covars$avg_bal)),2), " (range=",
-             round(min(unbalanced_covars$avg_bal),2), "-", round(max(unbalanced_covars$avg_bal),2), "), based on the ", form_name, " : "), "\n")
+             round(min(unbalanced_covars$avg_bal),2), "-", round(max(unbalanced_covars$avg_bal),2), "), : "), "\n")
   # print(unbalanced_covars)
   cat(knitr::kable(unbalanced_covars, caption="Imbalanced Covariates Before Weighting", format='pipe'),  sep="\n")
 

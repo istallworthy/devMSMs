@@ -74,8 +74,7 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   # #final list of all betas and parameters for all comparisons
   # parameter_beta_info=list()
 
-  cat("USER ALERT: please inspect the following exposure history comparisons using user-specified original weight cutoff values:", "\n")
-  cat("\n")
+
 
   fits=all_models
   ints=gsub(" ", "", as.character(unlist(strsplit(as.character(unlist(fits[[1]][[1]]$terms)), "\\+"))))
@@ -235,6 +234,7 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   doses=rep(list(doses), length(preds_pool))
   preds_pool<-Map(cbind, preds_pool, dose = doses)
 
+  cat("\n")
   cat("Below are the pooled average predictions by history:")
   print(preds_pool)
 
@@ -296,6 +296,8 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   dose_count=rep(list(dose_count), length(comps_pool))
   comps_pool<-Map(cbind, comps_pool, dose_count = dose_count)
 
+  cat("USER ALERT: please inspect the following exposure history comparisons using user-specified original weight cutoff values:", "\n")
+  cat("\n")
   cat("Below are the pooled comparisons by history which are saved in the 'msms/constrasts folder':")
   print(comps_pool)
 

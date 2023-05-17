@@ -11,6 +11,11 @@ createShortForms<- function(object, full_forms, keep=NULL){
 
   forms_csv=data.frame()
 
+  # browser()
+  cat(paste0("Short formulas containing all time invariant covariates and only time-varying covariates at t-", short_form_lag,
+             " will be created at each of the following exposure time points: ", paste(exp_time_pts[short_form_lag+2:length(exp_time_pts)-1], collapse=", "), "."), "\n")
+  cat("\n")
+
 
   if (!is.null(keep) & length(unique(lengths(keep)))!=1){ #makes sure all keep fields are equal
     stop('Make sure the number of entries in each field of "keep" are equal')}
@@ -21,8 +26,8 @@ createShortForms<- function(object, full_forms, keep=NULL){
 
   list=full_forms[names(full_forms)[grepl(exposure, names(full_forms))]]
 
-  if (length(list)!=length(exp_time_pts)){ #makes sure all expossure time points are there
-    stop('Make sure the forms list contains forms for each exposure time point for each exposure')}
+  if (length(list)!=length(exp_time_pts)){ #makes sure all exposure time points are there
+    stop('Make sure the forms list contains formulas for each exposure time point for each exposure')}
 
   for (z in 1:length(list)){
     time=as.numeric(sapply(strsplit(names(list)[z], "-"), "[", length(unlist(strsplit(names(list)[z], "-")))))
@@ -50,7 +55,7 @@ createShortForms<- function(object, full_forms, keep=NULL){
 
       new_form=as.formula(paste0(dv, "~", paste(new_covars, sep="", collapse="+")))
 
-      cat(paste0("The short form for ", names(list)[z], " including time-varying covariates at t-", short_form_lag, " only is:"), "\n")
+      cat(paste0("The short formula for ", names(list)[z], " including time-varying covariates at t-", short_form_lag, " only is:"), "\n")
       # print(new_form)
 
       # browser()
@@ -69,6 +74,11 @@ createShortForms<- function(object, full_forms, keep=NULL){
   write.csv(forms_csv, paste0(home_dir, "forms/",  exposure, "-", outcome, "_short_balancing_formulas.csv", sep=""), row.names = F)
 
   saveRDS(short_forms, paste0(home_dir, "forms/",  exposure, "-", outcome,"_short_forms.rds"))
+
+  cat(paste0("Across all short balancing formulas at all exposure time points, there are a total of ",
+             sum(unlist(lapply(1:nrow(forms_csv), function(x){length(unlist(strsplit(forms_csv[x,2], "\\+")))}))),
+             " covariate confounders."))
+  cat("\n")
   cat(paste0("Short formulas including time-varying covariates at t-", short_form_lag, " only have now been saved in the 'forms/' folder"), "\n")
 
   return(short_forms)

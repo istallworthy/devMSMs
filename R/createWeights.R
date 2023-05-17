@@ -54,6 +54,9 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
     # dat_w <-readRDS(paste(paste0(home_dir, "original weights/dat_w.rds", sep="")))
     dat_w <- readRDS(paste(paste0(home_dir, "original weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_dat_w.rds", sep="")))
 
+    # browser()
+    cat("Reading in balancing weights from local folder.")
+    cat("\n")
     return(dat_w)
 
   }else{ #otherwise, calculate weights
@@ -71,7 +74,7 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
 
     cat("You will see some preliminary balance statistics (output from the cobalt::bal_tab() function. These are only preliminary. Please use the assesBalance function for final balance statistics.", "\n")
 
-    cat(paste0("For the ", weights_method, " weighting method using the ", form_name, " formulas:"), "\n")
+    cat(paste0("Creating longitudinal balancing weights using the ", weights_method, " weighting method and the ", form_name, " formulas:"), "\n")
 
     # for (k in 1:m){
     dat_w<-lapply(1:length(wide_long_datasets), function(i){

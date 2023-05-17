@@ -193,7 +193,7 @@ wide_long_datasets <- formatForWeights(object, data, imputed_datasets)
 #creates formulas for each exposure-outcome pairing at each time point and saves and prints them for user inspection
 full_forms <- createForms(object, wide_long_datasets, all_potential_covariates)
 
-#does pre balance checking on full forms to examine initial imbalance
+#does pre balance checking on full forms to examine initial imbalance; set histories=1 to avoid seeing histories printed
 preBalanceChecking(object, wide_long_datasets, full_forms, histories=0)
 
 #create short forms with time-varying covariates only at t-1 for initial weights creation
@@ -221,7 +221,7 @@ IS not sure how to suppress console output....
 ```{r}
 
 #assesses balance for full forms
-balance_stats_full <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1, histories=0)
+balance_stats_full <- assessBalance(object, full_forms, data_for_model_with_weights, histories=0)
 
 #update forms to include any imbalanced time-varying covariates >t-1
 new_short_forms <- updateForms(object, short_forms, data_for_model_with_weights, balance_stats_full)
@@ -230,7 +230,7 @@ new_short_forms <- updateForms(object, short_forms, data_for_model_with_weights,
 data_for_model_with_weights<- createWeights(object, wide_long_datasets, new_short_forms, read_in_from_file="yes") 
 
 #final balance assessment
-balance_stats_final <- assessBalance(object, full_forms, data_for_model_with_weights, weighted=1, histories=0)
+balance_stats_final <- assessBalance(object, full_forms, data_for_model_with_weights, histories=0)
 
 ```
 
@@ -269,7 +269,7 @@ The code will automatically choose the model with the lowest AIC but user can ov
 ```{r}
 
 #code to fit a series of baseline, covariates, and interaction weighted models to determine which is best fitting; prints only models with user-specified weight cutoff values (sensitivity checks output into folder)
-all_models <- fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m1")
+all_models <- fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m3")
 
 ```
 
@@ -285,8 +285,8 @@ This code uses predicted values to plot the effects of the different exposure hi
 ```{r}
 
 #conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
-object$hi_cutoff=0.75
-object$lo_cutoff=0.25
+object$hi_cutoff=0.60
+object$lo_cutoff=0.30
 history_estimates <- compareHistories(object, data_for_model_with_weights_cutoff, all_models)
 
 #saves out plots of exposure histories for each out exposure-outcome pairing, colored by dosage of exposure 

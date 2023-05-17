@@ -24,14 +24,21 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
 
 
   if (read_imps_from_file=="yes"){
+
     imputed_datasets=list()
     imp=readRDS(paste0(home_dir,"imputations/",  exposure, "-", outcome,"_all_imp.rds"))
     imputed_datasets<-imp
+    cat(paste0("Reading in ", imputed_datasets$m, " imputations from local folder"))
+    cat("\n")
     return(imputed_datasets)
 
   }else{
 
     library(mice)
+    set.seed(123)
+
+    cat(paste0("Creating ", m, " imputed datasets using the ", imp_method, " imputation method in mice. This may take some time to run."))
+    cat("\n")
 
     ## Configure parallelization (code from Kazuki Yoshida; https://rpubs.com/kaz_yos/mice-exclude)
     ## Parallel backend for foreach (also loads foreach and parallel; includes doMC)
@@ -100,7 +107,7 @@ imputeData <- function(object, data_to_impute, read_imps_from_file="no"){
     cat("USER ALERT: Please view any logged events from the imputation below:", "\n")
     # print(imputed$loggedEvents)
     cat(knitr::kable(imputed$loggedEvents, caption="Logged Events from mice", format='pipe'),  sep="\n")
-
+    cat("\n")
 
     #this contains each of the imputed datasets
     imputed_datasets<- imputed

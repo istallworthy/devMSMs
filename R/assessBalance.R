@@ -17,7 +17,7 @@
 #' @importFrom cobalt love.plot
 #' @importFrom dplyr group_by
 #' @examples assessBalance(object, weights_models=list(), just_made_weights="no")
-assessBalance <- function (object, forms, data_for_model_with_weights, weighted, histories=1){
+assessBalance <- function (object, forms, data_for_model_with_weights, histories=1){
 
   home_dir=object$home_dir
   m=object$m
@@ -43,7 +43,7 @@ assessBalance <- function (object, forms, data_for_model_with_weights, weighted,
   #gathering balance stats for all imputed datasets
   bal_stats= lapply(seq(m), function(i){
     # browser()
-    calcBalStats(object, data_for_model_with_weights, get(form_type), form_name, exposure, outcome, k=i, weighted, histories)
+    calcBalStats(object, data_for_model_with_weights, get(form_type), form_name, exposure, outcome, k=i, weighted=1, histories)
   })
 
 
@@ -103,10 +103,9 @@ assessBalance <- function (object, forms, data_for_model_with_weights, weighted,
     # browser()
     suppressMessages(ggplot2::ggsave(lp, filename=paste0(home_dir, "balance/plots/", form_name, "_", exposure, "_all_imps_", exposure_time_pt,"_",weights_method, "_summary_balance_plot.jpeg"),
                                       ))
-    cat(paste0("Balance summary plot for ", form_name, "_", exposure,  " all imputations at time ", exposure_time_pt, " for weighting method ",weights_method," has now been saved in the '", "balance/plots/' folder."), "\n")
+    cat(paste0("USER ALERT: Balance summary plot for ", form_name, "_", exposure,  " all imputations at time ",
+               exposure_time_pt, " for weighting method ",weights_method," has now been saved in the 'balance/plots/' folder."), "\n")
   })
-
-
 
   #save out correlations/std mean differences
   sink(paste0(home_dir, "balance/comparison values/", form_name,"_",weights_method, "_all_post-balance_associations.html"))
@@ -130,9 +129,10 @@ assessBalance <- function (object, forms, data_for_model_with_weights, weighted,
   cat(paste0("USER ALERT: Averaging across all imputed datasets for exposure ", exposure, " using the ", weights_method, " weighting method and the ", form_name,
              ", the following ", nrow(unbalanced_covars) ," covariates across time points out of ",
              length(tot_covars), " total (", round((nrow(unbalanced_covars)/length(tot_covars))*100,2), "%) spanning ",
-             length(unbalanced_constructs), " unique constructs (out of ", length(tot_cons), ") remain imbalanced with an average absolute residual value correlation/std mean difference in relation to ",
+             length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round((length(unbalanced_constructs)/length(tot_cons))*100,2),
+             " %) remain imbalanced with an average absolute value residual correlation/std mean difference in relation to ",
              exposure, " of ", round(mean(abs(unbalanced_covars$avg_bal)),2), " (range=",
-             round(min(unbalanced_covars$avg_bal),2), "-", round(max(unbalanced_covars$avg_bal),2), ") : "), "\n")
+             round(min(unbalanced_covars$avg_bal),2), "-", round(max(unbalanced_covars$avg_bal),2), "): "), "\n")
   # print(unbalanced_covars)
   cat("\n")
   cat(knitr::kable(unbalanced_covars, caption=paste0("Imbalanced Covariates using ", weights_method, " and ",form_name), format='pipe'),  sep="\n")
