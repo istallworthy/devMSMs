@@ -9,16 +9,18 @@ createForms(object, wide_long_datasets, all_potential_covariates)
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
-\item{covariates_to_include}{from identifyPotentialConfounds}
+\item{wide_long_datasets}{from formatForWeights}
+
+\item{all_potential_covariates}{from selectCoariates}
 }
 \value{
 forms
 }
 \description{
-Creates formulas for each exposure at each time point for the CBPS function that will make weights returning a list of forms
+Creates full formulas for each exposure at each time point including all time-varying covariates at all prior lags
 }
 \examples{
-createForms(object, wide_long_datasets,covariates_to_include, potential_colliders)
+createForms(object, wide_long_datasets, all_potential_covariates)
 
 }
 \seealso{

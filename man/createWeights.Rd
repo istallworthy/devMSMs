@@ -16,35 +16,19 @@ createWeights(
 
 \item{wide_long_datasets}{from formatForWeights}
 
-\item{forms}{from createForms}
+\item{short_forms}{from createShortForms}
 
-\item{ATT}{CBPS parameter 1= average treatment effect on the treated, 0=average treatment effect}
-
-\item{iterations}{CBPS parameter for maximum number of number of iterations for optimization}
-
-\item{standardize}{CBPS parameter for whether weights should be normalized to sum to 1; F returns Horvitz-Thompson weights}
-
-\item{method}{CBPS parameter "exact"= fit a model that contains only covariate balancing conditions, "over"= over-identified model}
-
-\item{twostep}{CBPS parameter for two-step estimator, runs fater than continuous updating, set to F for continuous updating from Imai & Ratkovic 2014}
-
-\item{sample.weights}{CBPS parameter for survey sampling weights for obs, NULL defaults to sampling weight of 1 for each observation}
-
-\item{baseline.formula}{CBPS parameter for iCBPS, only works with binary treatments}
-
-\item{diff.formula}{CBPS parameter for iCBPS, only works with binary treatments}
+\item{read_in_from_file}{optional binary indicator of whether weights should be read in from local file}
 }
 \value{
 weights_models
 }
 \description{
-Creates balancing weights using the CBPS package (See CBPS documentation for more detail: https://cran.r-project.org/web/packages/CBPS/CBPS.pdf) for more
-returns a list of weights_models for each exposure-outcome pair
+returns a list of weights_models f
 }
 \examples{
-createWeights(object, wide_long_datasets,forms,read_in_from_file="no", ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
-
+createWeights(object, wide_long_datasets, short_forms, read_in_from_file="no")
 }
 \seealso{
-\code{\link[CBPS:CBPS]{CBPS::CBPS()}}, \code{\link[=formatForWeights]{formatForWeights()}}, \code{\link[=createForms]{createForms()}}
+\code{\link[CBPS:CBPS]{CBPS::CBPS()}}, \code{\link[=formatForWeights]{formatForWeights()}}, \code{\link[=createShortForms]{createShortForms()}}
 }

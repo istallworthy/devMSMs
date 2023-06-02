@@ -2,36 +2,33 @@
 % Please edit documentation in R/assessBalance.R
 \name{assessBalance}
 \alias{assessBalance}
-\title{Assess success of covariate balancing}
+\title{Assess success of covariate balancing
+#Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposure,
+and returns a list of unbalanced covariates for each exposure to add to future models}
 \usage{
-assessBalance(
-  object,
-  forms,
-  data_for_model_with_weights,
-  weighted,
-  histories = 1
-)
+assessBalance(object, forms, data_for_model_with_weights, histories = 1)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
-\item{weights_models}{optional if createWeights has just run or will read in weights models from local storage}
+\item{forms}{formula for assessing balance}
 
-\item{just_made_weights="no"}{no=weights are not assigned in global environment and are instead saved locally}
+\item{data_for_model_with_weights}{imputed data with weights}
+
+\item{histories}{optional binary indicator of whether to print histories for bal stasts}
 }
 \value{
 list of unbalanced_covariates_for_models for each exposure
 }
 \description{
+Assess success of covariate balancing
 #Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposure,
 and returns a list of unbalanced covariates for each exposure to add to future models
 }
 \examples{
-assessBalance(object, weights_models=list(), just_made_weights="no")
+assessBalance(object, forms, data_for_model_with_weights, histories=1)
 }
 \seealso{
-\code{\link[CBPS:balance]{CBPS::balance()}} for more on the balance function
-
 \code{\link[=msmObject]{msmObject()}} for more on the weights_models param
 
 \code{\link[=createWeights]{createWeights()}} for more on the weights_models param

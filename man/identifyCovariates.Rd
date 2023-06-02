@@ -12,7 +12,7 @@ identifyCovariates(object, data)
 \item{data}{data from formatDataStruct}
 }
 \value{
-potential_covariates
+a--Lpotential_covariates
 }
 \description{
 Identifies the covariates in in the dataset that will be candidates for confounding
@@ -21,7 +21,7 @@ Identifies the covariates in in the dataset that will be candidates for confound
 identifyCovariates
 }
 \examples{
-identifyCovariates(object,data, exclude_covariates)
+identifyCovariates(object,data)
 
 }
 \seealso{

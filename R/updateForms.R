@@ -1,5 +1,14 @@
-
-
+#' Creating updated short forms with any imbalanced covariates at time lags greater than the user-specified lag
+#' @param object msm object that contains all relevant user inputs
+#' @param forms short forms from createShortForms
+#' @param data_for_model_with_weights all imputed datasets with weights
+#' @param balance_stats_full balance assessment using full forms
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+#' @return new_forms
+#' @export
+#' @examples updateForms(object, forms, data_for_model_with_weights, balance_stats_full)
 updateForms <-function(object, forms, data_for_model_with_weights, balance_stats_full){
 
   exposure=object$exposure
@@ -20,6 +29,7 @@ updateForms <-function(object, forms, data_for_model_with_weights, balance_stats
   bal_stats=balance_stats_full
   new_forms=forms
 
+  #averaging bal stats across all imputed datasets to determine residual imbalance
   unbalanced_covars=as.data.frame(rowMeans(do.call(cbind, lapply(bal_stats, "[", "std_bal_stats"))))
   unbalanced_covars=data.frame(exposure=exposure,
                                exp_time=bal_stats[[1]]$exp_time,
@@ -35,8 +45,7 @@ updateForms <-function(object, forms, data_for_model_with_weights, balance_stats
 
     f=forms[[names(forms)[grepl(paste0("form_", exposure, "-", outcome, "-", exposure_time_pt), names(forms))]]]
 
-    if (i>2){
-
+    if (i>2){ #ignore first 2 time points
       temp=unbalanced_covars%>%dplyr::filter(exp_time==exposure_time_pt, as.numeric(covar_time)<exposure_time_pts[i-1],
                                              as.numeric(covar_time)>0)%>% #finds any lagged imbalanced covars
         dplyr::select(covariate)
@@ -44,7 +53,6 @@ updateForms <-function(object, forms, data_for_model_with_weights, balance_stats
       #renames factors (that were appended w/ level)
       if (nrow(temp)>0){
       temp$covariate[sapply(strsplit(sapply(strsplit(temp$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates] <-sapply(strsplit(temp$covariate, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(temp$covariate, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
-
       temp=as.character(unlist(temp))
 
       cat(paste0("For ", exposure, " at exposure time point ", exposure_time_pt, ", the following covariate(s) will be added to the short balancing formula: "), temp, "\n")
@@ -56,7 +64,7 @@ updateForms <-function(object, forms, data_for_model_with_weights, balance_stats
     f
   })
 
-  names(new_forms)  <-names(forms)
+  names(new_forms)<-names(forms)
 
   forms_csv=data.frame(name=names(lapply(new_forms, function(f){paste(deparse(f, width.cutoff = 500), collapse="")})),
                         form=unlist(lapply(new_forms, function(f){paste(deparse(f, width.cutoff = 500), collapse="")})))

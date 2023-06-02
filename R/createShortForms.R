@@ -1,6 +1,13 @@
 
-#creating short forms that contain time invariant covariatse and time varying covariates at only t-1
-
+#' creating short forms that contain time invariant covariatse and time varying covariates at only t-1 or user-spec lag
+#'
+#' @param object msm object that contains all relevant user inputs
+#' @param full_forms from createForms
+#' @param keep optional list specifyign any time-varying covariates at larger lags to keep in these forms
+#' @return short_forms
+#' @export
+#' @examples createShortForms(object, full_forms, keep=NULL)
+#'
 createShortForms<- function(object, full_forms, keep=NULL){
 
   home_dir=object$home_dir
@@ -9,39 +16,38 @@ createShortForms<- function(object, full_forms, keep=NULL){
   exposure=object$exposure
   outcome=object$outcome
 
-  forms_csv=data.frame()
+  #error checking
+  if (!is.null(keep) & length(unique(lengths(keep)))!=1){ #makes sure all keep fields are equal
+    stop('Make sure the number of entries in each field of "keep" are equal')}
 
-  # browser()
-  cat(paste0("Short formulas containing all time invariant covariates and only time-varying covariates at t-", short_form_lag,
+  cat(paste0("Short formulas containing all time invariant covariates and time-varying covariates only at t-", short_form_lag,
              " will be created at each of the following exposure time points: ", paste(exp_time_pts[short_form_lag+2:length(exp_time_pts)-1], collapse=", "), "."), "\n")
   cat("\n")
 
 
-  if (!is.null(keep) & length(unique(lengths(keep)))!=1){ #makes sure all keep fields are equal
-    stop('Make sure the number of entries in each field of "keep" are equal')}
-
   short_forms=list()
+  forms_csv=data.frame()
 
-  # browser()
-
+  #getting relevant forms
   list=full_forms[names(full_forms)[grepl(exposure, names(full_forms))]]
 
+  #error checking
   if (length(list)!=length(exp_time_pts)){ #makes sure all exposure time points are there
     stop('Make sure the forms list contains formulas for each exposure time point for each exposure')}
 
+  #cycling through all full formulas (at each exp time point)
   for (z in 1:length(list)){
     time=as.numeric(sapply(strsplit(names(list)[z], "-"), "[", length(unlist(strsplit(names(list)[z], "-")))))
 
     #find any user-specified covariates to keep
     if (!is.null(keep)){
       if(keep$exposure %in% exposure & keep$time %in% time){
-      keep_cov=keep$tv_covar[which(keep$exposure==exposure & keep$time==time)]
-    }
+        keep_cov=keep$tv_covar[which(keep$exposure==exposure & keep$time==time)]
+      }
     }else(keep_cov=NA)
 
     if (time ==exp_time_pts[1] | time ==exp_time_pts[2]){ #ignore first time point as there are no lagged values and second time pt bc only t-1 exists
-      short_forms[[names(list)[z]]] <-list[[z]]
-
+      short_forms[[names(list)[z]]] <-list[[z]] #populate with full formula
     }else{
       form=list[[z]]
       dv=form[[2]]
@@ -50,18 +56,16 @@ createShortForms<- function(object, full_forms, keep=NULL){
       covars=as.character(unlist(strsplit(covars, "\\+")))
 
       if(!is.na(keep_cov)){
-        new_covars=c(covars[!as.numeric(covar_time)<exp_time_pts[z-1] | is.na(covar_time)], keep_cov)}
-      else{ new_covars=covars[!as.numeric(covar_time)<exp_time_pts[z-short_form_lag] | is.na(covar_time)]}
+        new_covars=c(covars[!as.numeric(covar_time)<exp_time_pts[z-1] | is.na(covar_time)], keep_cov)} #adds any user-spec covars to keep
+      else{ new_covars=covars[!as.numeric(covar_time)<exp_time_pts[z-short_form_lag] | is.na(covar_time)]} #filters out longer lags
 
       new_form=as.formula(paste0(dv, "~", paste(new_covars, sep="", collapse="+")))
 
       cat(paste0("The short formula for ", names(list)[z], " including time-varying covariates at t-", short_form_lag, " only is:"), "\n")
-      # print(new_form)
-
-      # browser()
       print(new_form)
       cat("\n")
 
+      #write to csv file
       forms_csv_temp=data.frame()
       forms_csv_temp[1,1]=paste0("Short formula for ", exposure, "-", outcome, " at ", exposure," time point ", as.character(time),":")
       forms_csv_temp[1,2]=paste0(dv, "~", paste(new_covars, sep="", collapse="+"))
@@ -72,7 +76,6 @@ createShortForms<- function(object, full_forms, keep=NULL){
   }
 
   write.csv(forms_csv, paste0(home_dir, "forms/",  exposure, "-", outcome, "_short_balancing_formulas.csv", sep=""), row.names = F)
-
   saveRDS(short_forms, paste0(home_dir, "forms/",  exposure, "-", outcome,"_short_forms.rds"))
 
   cat(paste0("Across all short balancing formulas at all exposure time points, there are a total of ",

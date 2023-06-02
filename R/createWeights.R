@@ -1,29 +1,19 @@
 #' Creates balancing weights for potential confounding covariates in relation to exposure at each time point
 #'
-#' Creates balancing weights using the CBPS package (See CBPS documentation for more detail: https://cran.r-project.org/web/packages/CBPS/CBPS.pdf) for more
-#' returns a list of weights_models for each exposure-outcome pair
+#' returns a list of weights_models f
 #' @param object msm object that contains all relevant user inputs
 #' @param wide_long_datasets from formatForWeights
-#' @param forms from createForms
-#' @param ATT CBPS parameter 1= average treatment effect on the treated, 0=average treatment effect
-#' @param iterations CBPS parameter for maximum number of number of iterations for optimization
-#' @param standardize CBPS parameter for whether weights should be normalized to sum to 1; F returns Horvitz-Thompson weights
-#' @param method CBPS parameter "exact"= fit a model that contains only covariate balancing conditions, "over"= over-identified model
-#' @param twostep CBPS parameter for two-step estimator, runs fater than continuous updating, set to F for continuous updating from Imai & Ratkovic 2014
-#' @param sample.weights CBPS parameter for survey sampling weights for obs, NULL defaults to sampling weight of 1 for each observation
-#' @param baseline.formula CBPS parameter for iCBPS, only works with binary treatments
-#' @param diff.formula CBPS parameter for iCBPS, only works with binary treatments
+#' @param short_forms from createShortForms
+#' @param read_in_from_file optional binary indicator of whether weights should be read in from local file
 #' @return weights_models
 #' @export
-#' @importFrom CBPS CBPS
-#' @importFrom CBPS balance
-#' @importFrom data.table setDT
 #' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_histogram
 #' @importFrom ggplot2 ggsave
-#' @seealso [CBPS::CBPS()], [formatForWeights()], [createForms()]
-#' @examples createWeights(object, wide_long_datasets,forms,read_in_from_file="no", ATT=0, iterations=1000, standardize=FALSE, method="exact", twostep=TRUE, sample.weights=NULL, baseline.forumula=NULL, diff.formula=NULL)
-#'
+#' @importFrom WeightIt weightitMSM
+#' @importFrom cobalt bal.tab
+#' @seealso [CBPS::CBPS()], [formatForWeights()], [createShortForms()]
+#' @examples createWeights(object, wide_long_datasets, short_forms, read_in_from_file="no")
 createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_file="no"){
 
   ID=object$ID
@@ -36,25 +26,18 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
   time_varying_covariates=object$time_varying_variables
   weights_method=object$weights_method
 
-  # browser()
-
+  #getting form type from input
   .call <- match.call()
   form_type<-.call[[4]]
   form_name<-as.character(form_type)
 
-  library(cobalt)
+  library(cobalt) #still not sure how to call this without loading lib
 
-  # library(dbarts)
-
-  # browser()
   data_for_model_with_weights=list()
 
   if (read_in_from_file=="yes"){ #reads in saved weights instead of re-creating
-    # weights_models=readRDS(paste0(home_dir, "original weights/weights_models.rds"))
-    # dat_w <-readRDS(paste(paste0(home_dir, "original weights/dat_w.rds", sep="")))
-    dat_w <- readRDS(paste(paste0(home_dir, "original weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_dat_w.rds", sep="")))
-
-    # browser()
+    tryCatch({dat_w <- readRDS(paste(paste0(home_dir, "original weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_dat_w.rds", sep="")))},
+             error=function(x){cat("These weights have not previously been saved locally. Please re-run with read_in_from_file='no'")})
     cat("Reading in balancing weights from local folder.")
     cat("\n")
     return(dat_w)
@@ -62,9 +45,11 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
   }else{ #otherwise, calculate weights
 
 
-    if(!weights_method %in% c("cbps", "npcbps", "bart", "ps", "entropy")){
+    if(!weights_method %in% c("cbps", "npcbps", "bart", "ps", "entropy")){ #will remove entropy as has not been validated for longit exp
       stop("Please enter a weighting method in the msmObject from this list: cbps, npcbps, bart, ps")
     }
+
+    cat(paste0("Creating longitudinal balancing weights using the ", weights_method, " weighting method and the ", form_name, " formulas"), "\n")
 
     weights_models=list()
 
@@ -72,11 +57,10 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
     form=short_forms[which(grepl(paste("form_", exposure, "-", outcome, sep=""), names(short_forms)))]
     form=unname(form)
 
+    #not sure if we should output the old bal stats from cobalt or nah?
     cat("You will see some preliminary balance statistics (output from the cobalt::bal_tab() function. These are only preliminary. Please use the assesBalance function for final balance statistics.", "\n")
 
-    cat(paste0("Creating longitudinal balancing weights using the ", weights_method, " weighting method and the ", form_name, " formulas:"), "\n")
-
-    # for (k in 1:m){
+    #cycling through imputed datasets
     dat_w<-lapply(1:length(wide_long_datasets), function(i){
       k=i
       d=wide_long_datasets[[i]]
@@ -86,7 +70,7 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
       exposure_type=ifelse(length(unique(d[,colnames(d)[colnames(d)==paste0(exposure,".", exposure_time_pts[1])]]))<3, "binary", "continuous")
 
       set.seed(1234)
-
+      #creating weights
       fit <- WeightIt::weightitMSM(form, data=d,
                                    method=weights_method,
                                    stabilize=T, #recommended stabilized weights
@@ -96,27 +80,26 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
                                    over=F) #similar to exact=T in cbsp package
       d$weights <- fit$weights
 
+      #prelim bal stats
       if (exposure_type=="continuous"){
         bal=cobalt::bal.tab(fit, stats = c("corr"), continuous="std", binary="std",
                             un=T,thresholds = c(corr =balance_thresh), which.time=.none)
-
         cat(paste0("Preliminary summary balance statistics for imputation ", k, " using the ", weights_method, " weighting method and the ", form_name, " formulas,",
                    bal$Balanced.correlations$count[1], " covariates were balanced and ",
                    bal$Balanced.correlations$count[2], " covariates remain imbalanced."), "\n")
         cobalt::bal.tab(fit, stats = c("corr"), continuous="std", binary="std",
                         un=T,thresholds = c(corr =balance_thresh), which.time=.all)
       }
-
       if(exposure_type=="binary"){ #need to test
         bal=cobalt::bal.tab(fit, continuous="std", binary="std",
                             un=T,thresholds = c(m =balance_thresh), which.time=.none)
-
         cat(paste0("Preliminary summary balance statistics for imputation ", k, " using the ", weights_method, " weighting method and the ", form_name, " formulas, ",
                    bal$Balanced.correlations$count[1], " covariates were balanced and ",
                    bal$Balanced.correlations$count[2], " covariates remain imbalanced."), "\n")
         cobalt::bal.tab(fit, continuous="std", binary="std",
                         un=T,thresholds = c(m =balance_thresh), which.time=.all)
       }
+
 
       weights_models[[k]] <-fit
 
@@ -131,15 +114,15 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
       # #Writes image of histogram of weights to assess heavy tails
       ggplot2::ggplot(data=as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
         ggplot2::geom_histogram(color = 'black', bins = 15)
-      suppressMessages(ggplot2::ggsave(paste("Hist_", exposure,"-", outcome, "_", form_name,"_",weights_method, "_", k, ".png", sep=""), path=paste0(home_dir, "original weights/histograms"), height=8, width=14))
-
+      suppressMessages(ggplot2::ggsave(paste("Hist_", exposure,"-", outcome, "_", form_name,"_",weights_method, "_", k, ".png", sep=""),
+                                       path=paste0(home_dir, "original weights/histograms"), height=8, width=14))
 
       fit=NULL
       d
     }) #ends k loop
 
     cat(paste0("Weights for each imputation have now been saved into the 'original weights/values/' folder"),"\n")
-    cat(paste0("Weights histogram for each imputation have now been saved in the 'original weights/histograms/' folder --likely has heavy tails"),"\n")
+    cat(paste0("Weights histograms for each imputation have now been saved in the 'original weights/histograms/' folder --likely has heavy tails"),"\n")
 
 
     # saveRDS(data_for_model_with_weights, file = paste(paste0(home_dir, "original weights/data_for_model_with_weights.rds", sep="")))
@@ -149,12 +132,8 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
     cat("\n")
     cat("Weights models have been saved as an .rds object in the 'original weights' folder","\n")
 
-    # return(weights_models)
     return(dat_w)
-
   }
-
-
 }
 
 
