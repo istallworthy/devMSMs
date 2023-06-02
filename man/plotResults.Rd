@@ -10,7 +10,7 @@ plotResults(object, history_estimates)
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
-\item{best_models}{outcome from assessModels}
+\item{history_estimates}{pooled predicted values for marginal model}
 }
 \value{
 plots
@@ -20,8 +20,5 @@ Plot results from history comparisons
 Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure
 }
 \examples{
-plotResults(object, best_models)
-}
-\seealso{
-\code{\link[=assessModels]{assessModels()}}
+plotResults(object, history_estimates)
 }

@@ -10,14 +10,12 @@ formatForWeights(object, data, imputed_datasets)
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{imputed_datasets}{output from imputeData}
-
-\item{just_imputed}{"yes"= you have imputed datasets in global environment or "no" but they are saved locally from previous run}
 }
 \value{
 wide_long_datasets
 }
 \description{
-This code formats the imputed datasets for calculating balancing weights using CBPS and reutrns a list of wide/long datasets and creates dataset for future modeling
+This code formats the imputed datasets for calculating balancing weights
 }
 \examples{
 formatForWeights(object, data, imputed_datasets)

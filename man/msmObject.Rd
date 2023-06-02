@@ -3,10 +3,10 @@
 \name{msmObject}
 \alias{msmObject}
 \title{Create msm object
-Gathers all information needed for the functions}
+Gathers all information needed for the functions and checks user inputs}
 \usage{
 msmObject(
-  data_path,
+  data_file,
   home_dir,
   ID,
   time_pts,
@@ -22,21 +22,17 @@ msmObject(
   short_form_lag = 1,
   weights_method = "cbps",
   balance_thresh = 0.1,
-  bal_only_exp = F,
   weights_percentile_cutoff = 0.95,
   exposure_epochs,
   reference = NA,
   comparisons = NA,
-  hi_cutoff = 0.75,
-  lo_cutoff = 0.25,
+  hi_cutoff,
+  lo_cutoff,
   mc_method = "BH",
   outcome,
   outcome_time_pt,
-  mandatory_keep_covariates = NULL,
   keep_concurrent_tv_vars = NULL,
-  exclude_covariates = NULL,
   time_var_exclude = NULL,
-  potential_colliders = NULL,
   exposure_labels = NULL,
   outcome_labels = NULL,
   dose_level = "h",
@@ -44,8 +40,6 @@ msmObject(
 )
 }
 \arguments{
-\item{data_path}{path to cleaned dataset}
-
 \item{home_dir}{path to home directory for the project}
 
 \item{ID}{person-level identifier in your dataset}
@@ -72,20 +66,22 @@ msmObject(
 
 \item{exposure_epochs}{data frame containing epochs and correponding time points for exposure histories}
 
+\item{outcome}{list of variables that represent your outcome of interest}
+
 \item{time_var_exclude}{time-varying variables that should not be present because of planned missingness}
 
 \item{colors}{colors for plotting dose}
 
+\item{data_path}{path to cleaned dataset}
+
 \item{exposures}{list of variables that represent your exposures/treatments of interest}
 
-\item{outcomes}{list of variables that represent your outcomes of interest}
-
-\item{outcome_time_pts}{list of time points for outcomes}
+\item{outcome_time_pts}{list of time points for outcome}
 }
 \description{
 Create msm object
-Gathers all information needed for the functions
+Gathers all information needed for the functions and checks user inputs
 }
 \examples{
-msmObject(data_path, home_dir, ID, time_pts, time_var, missing, m, exposures, exposure_time_pts, exposure_epochs, outcomes, outcome_time_pt, continuous_variables, time_var_exclude)
+msmObject(data_file, home_dir, ID, time_pts, time_var, missing, time_varying_variables=NULL, continuous_variables=NULL, factor_covariates=NULL, m=5, imp_method="cart", exposure, exposure_time_pts, short_form_lag=1, weights_method="cbps", balance_thresh=0.1, weights_percentile_cutoff=0.95, exposure_epochs, reference=NA, comparisons=NA, hi_cutoff=.75,lo_cutoff=.25, mc_method="BH", outcome, outcome_time_pt, keep_concurrent_tv_vars=NULL, time_var_exclude=NULL,  exposure_labels=NULL, outcome_labels=NULL, dose_level="h", colors="Dark2")
 }

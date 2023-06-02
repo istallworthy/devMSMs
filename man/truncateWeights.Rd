@@ -12,13 +12,13 @@ truncateWeights(object, data_for_model_with_weights)
 \item{data_for_model_with_weights}{output from condenseWeights}
 }
 \value{
-data_for_model_with_weights_cutoff
+dat_w_t
 }
 \description{
 Code to 'cut off' weights at 90th percentile and populate all of those above at 90th percentile value to avoid heavy tails that can bias results
 }
 \examples{
-truncateWeights(data_for_model_with_weights, home_dir, exposure)
+truncateWeights(object, data_for_model_with_weights)
 
 }
 \seealso{

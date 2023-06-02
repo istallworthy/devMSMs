@@ -17,6 +17,6 @@ Creates the required directories, assesses the data structure and makes it unifo
 This function requires a clean dataset in long format that contain columns for ID, time, exposure, outcome, and potential covariate confounds
 }
 \examples{
-formatDataStruct(object, factor_covariates)
+formatDataStruct(object)
 
 }

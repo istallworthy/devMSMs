@@ -18,7 +18,7 @@ data_to_impute
 Creates data structure for imputation with only the variables needed (i.e., exposure, outcome, potential confounds)
 }
 \examples{
-dataToImpute(ID, data, exposure, outcome, covariates_to_include, exclude_covariates)
+dataToImpute(object, all_potential_covariates)
 
 }
 \seealso{

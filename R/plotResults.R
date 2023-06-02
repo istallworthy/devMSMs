@@ -1,11 +1,22 @@
 #' Plot results from history comparisons
 #' Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure
 #' @param object msm object that contains all relevant user inputs
-#' @param best_models outcome from assessModels
-#' @seealso [assessModels()]
+#' @param history_estimates pooled predicted values for marginal model
 #' @return plots
 #' @importFrom ggplot2 ggplot
-#' @examples plotResults(object, best_models)
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 theme
+#' @importFrom ggplot2 scale_color_manual
+#' @importFrom ggplot2 geom_point
+#' @importFrom ggplot2 xlab
+#' @importFrom ggplot2 xlim
+#' @importFrom ggplot2 ggtitle
+#' @importFrom ggplot2 scale_y_discrete
+#' @importFrom ggplot2 element_line
+#' @importFrom ggplot2 element_blank
+#' @importFrom ggplot2 geom_errorbarh
+#' @importFrom ggplot2 ggsave
+#' @examples plotResults(object, history_estimates)
 plotResults <- function(object, history_estimates){
 
   home_dir=object$home_dir
@@ -17,24 +28,22 @@ plotResults <- function(object, history_estimates){
   weights_percentile_cutoff=object$weights_percentile_cutoff
   dose_level=object$dose_level
 
+  #error checking
   if (length(colors)>1 & length(colors)!=nrow(object$exposure_epochs)+1){
     stop(paste0('Please provide either: ',nrow(object$exposure_epochs)+1, ' different colors, a color palette, or leave this entry blank in the msm object'))}
 
+  #cycling through pooled estimates for each exposure history implicated in comparisons
   lapply(1:length(history_estimates), function(x){
-
     cutoff=names(history_estimates)[x]
     comparisons=history_estimates[[x]]
-    comparisons$term=gsub("InRatioCor_", "",comparisons$term)
-
+    comparisons$term=gsub(paste0(exposure, "_"), "",comparisons$term)
     comparisons$low_ci=comparisons$estimate-(1.96*comparisons$std.error) #finds CIs
     comparisons$high_ci=comparisons$estimate+(1.96*comparisons$std.error) #finds CIs
-
-    # browser()
     comparisons$history=as.factor(comparisons$history)
     comparisons$dose=as.factor(comparisons$dose)
     comparisons=comparisons[order(comparisons$dose),]
 
-    if (length(colors)>1){ #user input a list of colors
+    if (length(colors)>1){ #if user input a list of colors
       ggplot2::ggplot(aes(x=estimate, y=history, color=dose), data=comparisons)+
         ggplot2::geom_point(size=5)+
         ggplot2::scale_color_manual(values=colors)+
@@ -49,9 +58,7 @@ plotResults <- function(object, history_estimates){
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
                        panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
       suppressMessages(ggplot2::ggsave(paste0(home_dir, "results figures/", exposure, "-", outcome, " cutoff= ", cutoff, ".jpeg"), plot=ggplot2::last_plot()))
-
-    }else{ #user lists a palette
-
+    }else{ #if user lists a palette
       ggplot2::ggplot(aes(x=estimate, y=history, color=dose), data=comparisons)+
         ggplot2::geom_point(size=5)+
         ggplot2::scale_color_brewer(palette=colors)+
@@ -66,7 +73,6 @@ plotResults <- function(object, history_estimates){
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
                        panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
       suppressMessages(ggplot2::ggsave(paste0(home_dir, "results figures/", exposure, "-", outcome, " cutoff= ", cutoff, ".jpeg"), plot=ggplot2::last_plot()))
-
     }
 
     cat("\n")

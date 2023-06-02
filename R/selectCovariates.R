@@ -5,41 +5,41 @@
 #' identifyCovariates
 #' @param data data from formatDataStruct
 #' @param object msm object that contains all relevant user inputs
-#' @return potential_covariates
+#' @return a--Lpotential_covariates
 #' @export
 #' @seealso [formatDataStruct()]
-#' @examples identifyCovariates(object,data, exclude_covariates)
+#' @examples identifyCovariates(object,data)
 #'
 identifyCovariates <- function(object, data){
 
   ID=object$ID
   exposure=object$exposure
   outcome=object$outcome
-  exclude_covariates=object$exclude_covariates
+  # exclude_covariates=object$exclude_covariates
   time_varying_covariates=object$time_varying_variables
   time_pts=object$time_pts
   time_var_exclude=object$time_var_exclude
   outcome_time_pt=object$outcome_time_pt
   home_dir=object$home_dir
 
-  #gathering and delineating exclude covariates
-  user_input_exclude_covariates=exclude_covariates
-  exclude_covariates=NULL
-  if (length(user_input_exclude_covariates)>0){
-    for (c in 1:length(user_input_exclude_covariates)){
-      if (grepl("\\.",user_input_exclude_covariates[c])){ #period indicates user specified something time-varying
-        exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c]) #can just be added as is
-      }else{
-        if (sum(grepl(user_input_exclude_covariates[c], time_varying_covariates))>0){ #if it is time-varying but no time specified
-
-          temp=apply(expand.grid(user_input_exclude_covariates[c], as.character(as.numeric(time_pts))), 1, paste0, sep="", collapse=".") #appends all time points
-          exclude_covariates=c(exclude_covariates,temp)
-        }else{ #otherwise it is time invariant
-          exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c])
-        }
-      }
-    }
-  }
+  # #gathering and delineating exclude covariates
+  # user_input_exclude_covariates=exclude_covariates
+  # exclude_covariates=NULL
+  # if (length(user_input_exclude_covariates)>0){
+  #   for (c in 1:length(user_input_exclude_covariates)){
+  #     if (grepl("\\.",user_input_exclude_covariates[c])){ #period indicates user specified something time-varying
+  #       exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c]) #can just be added as is
+  #     }else{
+  #       if (sum(grepl(user_input_exclude_covariates[c], time_varying_covariates))>0){ #if it is time-varying but no time specified
+  #
+  #         temp=apply(expand.grid(user_input_exclude_covariates[c], as.character(as.numeric(time_pts))), 1, paste0, sep="", collapse=".") #appends all time points
+  #         exclude_covariates=c(exclude_covariates,temp)
+  #       }else{ #otherwise it is time invariant
+  #         exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c])
+  #       }
+  #     }
+  #   }
+  # }
 
   # browser()
 
@@ -60,7 +60,8 @@ identifyCovariates <- function(object, data){
   all_potential_covariates=c(time_invar_covars, time_var_covars)
 
   #exclusions
-  all_potential_covariates=all_potential_covariates[!all_potential_covariates %in% c(exclude_covariates, paste(outcome, outcome_time_pt, sep="."), time_var_exclude)]
+  # all_potential_covariates=all_potential_covariates[!all_potential_covariates %in% c(exclude_covariates, paste(outcome, outcome_time_pt, sep="."), time_var_exclude)]
+  all_potential_covariates=all_potential_covariates[!all_potential_covariates %in% c(paste(outcome, outcome_time_pt, sep="."), time_var_exclude)]
 
   all_potential_covariates=all_potential_covariates[order(all_potential_covariates)]
 
@@ -88,15 +89,14 @@ identifyCovariates <- function(object, data){
   test[1:nrow(test),ncol(test)+1]=NumVars
   write.csv(test, paste0(home_dir, "balance/",  exposure, "-", outcome, "_matrix_of_covariates_considered_by_time_pt.csv"), row.names = T)
 
-  cat("See the balance folder for a table and matrix displaying all covariates considered for each time point.", "\n")
+  cat("See the 'balance/' folder for a table and matrix displaying all covariates confounders considered at each exposure time point.", "\n")
   cat("\n")
 
 
   #-2 to exclude ID and WAVE
-  cat(paste0("USER ALERT: Below are the ", as.character(length(all_potential_covariates)-2), " variables, across ", unique_vars-2, " domains, that will be treated as potential confounding variables for the relation betweeen ",
-  exposure, " and ", outcome, " ."), "\n",
-  "Please inspect this list carefully. It should include all time-varying covariates (excluding any time points when they were not collected), time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.", "\n",
-      "If you would like to exclude any variables from consideration as covariate confounders, please add them to 'exclude_covariates' field in the msmObject and re-run.","\n")
+  cat(paste0("USER ALERT: Below are the ", as.character(length(all_potential_covariates)-2), " variables spanning ", unique_vars-2,
+             " unique domains that will be treated as confounding variables for the relation betweeen ", exposure, " and ", outcome, "."), "\n",
+  "Please inspect this list carefully. It should include all time-varying covariates, time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.","\n")
   cat("\n")
   print(all_potential_covariates[!all_potential_covariates %in% c(ID, "WAVE")])
 
@@ -114,12 +114,11 @@ identifyCovariates <- function(object, data){
 #' @param covariates_to_include output from identifyPotentialConfounds
 #' @importFrom Hmisc rcorr
 #' @importFrom knitr kable
-#' @importFrom dplyr filter
 #' @importFrom corrplot corrplot
 #' @return data_to_impute
 #' @export
 #' @seealso [formatDataStruct()], [identifyPotenialConfounds()]
-#' @examples dataToImpute(ID, data, exposure, outcome, covariates_to_include, exclude_covariates)
+#' @examples dataToImpute(object, all_potential_covariates)
 #'
 dataToImpute <-function(object, all_potential_covariates){
 
@@ -128,7 +127,7 @@ dataToImpute <-function(object, all_potential_covariates){
   exposure=object$exposure
   outcome=object$outcome
   time_pts=object$time_pts
-  exclude_covariates=object$exclude_covariates
+  # exclude_covariates=object$exclude_covariates
   mandatory_keep_covariates=object$mandatory_keep_covariates
   time_varying_covariates=object$time_varying_variables
   exposure_epochs=object$exposure_epochs
@@ -145,52 +144,51 @@ dataToImpute <-function(object, all_potential_covariates){
     )
   }
 
-  #assesses and reformat use input of exclude_covariates
-  user_input_exclude_covariates=exclude_covariates
-  exclude_covariates=NULL
-  if (length(user_input_exclude_covariates)>0){
-    for (c in 1:length(user_input_exclude_covariates)){
-      if (grepl("\\.",user_input_exclude_covariates[c])){ #period indicates user specified something time-varying
-        exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c]) #can just be added as is
-      }else{
-        if (sum(grepl(user_input_exclude_covariates[c], time_varying_covariates))>0){ #if it is time-varying but no time specified
-
-          temp=apply(expand.grid(user_input_exclude_covariates[c], as.character(as.numeric(time_pts))), 1, paste0, sep="", collapse=".") #appends all time points
-          exclude_covariates=c(exclude_covariates,temp)
-        }else{ #otherwise it is time invariant
-          exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c])
-        }
-      }
-    }
-  }
+  # #assesses and reformat use input of exclude_covariates
+  # user_input_exclude_covariates=exclude_covariates
+  # exclude_covariates=NULL
+  # if (length(user_input_exclude_covariates)>0){
+  #   for (c in 1:length(user_input_exclude_covariates)){
+  #     if (grepl("\\.",user_input_exclude_covariates[c])){ #period indicates user specified something time-varying
+  #       exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c]) #can just be added as is
+  #     }else{
+  #       if (sum(grepl(user_input_exclude_covariates[c], time_varying_covariates))>0){ #if it is time-varying but no time specified
+  #
+  #         temp=apply(expand.grid(user_input_exclude_covariates[c], as.character(as.numeric(time_pts))), 1, paste0, sep="", collapse=".") #appends all time points
+  #         exclude_covariates=c(exclude_covariates,temp)
+  #       }else{ #otherwise it is time invariant
+  #         exclude_covariates=c(exclude_covariates, user_input_exclude_covariates[c])
+  #       }
+  #     }
+  #   }
+  # }
 
   #assesses and reformat use input of keep covariates
-  user_input_mandatory_keep_covariates=mandatory_keep_covariates
-  mandatory_keep_covariates=NULL
-  if (length(user_input_mandatory_keep_covariates)>0){
-    for (c in 1:length(user_input_mandatory_keep_covariates)){
-      if (grepl("\\.",user_input_mandatory_keep_covariates[c])){ #period indicates user specified something time-varying
-        mandatory_keep_covariates=c(mandatory_keep_covariates, user_input_mandatory_keep_covariates[c]) #can just be added as is
-      }else{
-        if (sum(grepl(user_input_mandatory_keep_covariates[c], time_varying_covariates))>0){ #if it is time-varying but no time specified
-
-          temp=apply(expand.grid(user_input_mandatory_keep_covariates[c], as.character(as.numeric(time_pts))), 1, paste0, sep="", collapse=".") #appends all time points
-          mandatory_keep_covariates=c(mandatory_keep_covariates,temp)
-        }else{ #otherwise it is time invariant
-          mandatory_keep_covariates=c(mandatory_keep_covariates, user_input_mandatory_keep_covariates[c])
-        }
-      }
-    }
-  }
+  # user_input_mandatory_keep_covariates=mandatory_keep_covariates
+  # mandatory_keep_covariates=NULL
+  # if (length(user_input_mandatory_keep_covariates)>0){
+  #   for (c in 1:length(user_input_mandatory_keep_covariates)){
+  #     if (grepl("\\.",user_input_mandatory_keep_covariates[c])){ #period indicates user specified something time-varying
+  #       mandatory_keep_covariates=c(mandatory_keep_covariates, user_input_mandatory_keep_covariates[c]) #can just be added as is
+  #     }else{
+  #       if (sum(grepl(user_input_mandatory_keep_covariates[c], time_varying_covariates))>0){ #if it is time-varying but no time specified
+  #
+  #         temp=apply(expand.grid(user_input_mandatory_keep_covariates[c], as.character(as.numeric(time_pts))), 1, paste0, sep="", collapse=".") #appends all time points
+  #         mandatory_keep_covariates=c(mandatory_keep_covariates,temp)
+  #       }else{ #otherwise it is time invariant
+  #         mandatory_keep_covariates=c(mandatory_keep_covariates, user_input_mandatory_keep_covariates[c])
+  #       }
+  #     }
+  #   }
+  # }
 
 
   #creates final dataset with only relevant variables
   covariates_to_include=covariates_to_include[order(covariates_to_include)]
-
-  variables_to_include=unique(c(ID, "WAVE", exposure, outcome, covariates_to_include, mandatory_keep_covariates, time_varying_covariates))
+  variables_to_include=unique(c(ID, "WAVE", exposure, outcome, covariates_to_include, time_varying_covariates))
+  # variables_to_include=unique(c(ID, "WAVE", exposure, outcome, covariates_to_include, mandatory_keep_covariates, time_varying_covariates))
   data2=as.data.frame(data[names(data)[names(data) %in% variables_to_include] ])
-  data2=data2[,!colnames(data2) %in% c(exclude_covariates[!exclude_covariates %in% c(exposure, outcome)])] #makes sure not to exclude exposure or outcome even if listed to exclude
-
+  # data2=data2[,!colnames(data2) %in% c(exclude_covariates[!exclude_covariates %in% c(exposure, outcome)])] #makes sure not to exclude exposure or outcome even if listed to exclude
   data_to_impute=data2
 
   #makes correlation table
@@ -199,29 +197,25 @@ dataToImpute <-function(object, all_potential_covariates){
     as.data.frame(lapply(data_to_impute[,colnames(data_to_impute)[colnames(data_to_impute)!=ID]], as.numeric)), use="pairwise.complete.obs"
   ), method="color", order='alphabet', diag=FALSE, type="lower", tl.cex = 0.5, tl.col="black"))
   dev.off()
-
-  cat("A correlation plot of all variables has been saved in the home directory", "\n")
+  cat("A correlation plot of all variables in the dataset has been saved in the home directory", "\n")
   cat("\n")
 
-  data2=data2[,!colnames(data2) %in% c(exposure, outcome)]
 
+  #remove exposure/outcome from covariate correlation assessment
+  data2=data2[,!colnames(data2) %in% c(exposure, outcome)]
   #inspect correlations among covariates to check for redundancy and opportunities to simplify the model
   hi_corr_covars <- suppressWarnings(Hmisc::rcorr(as.matrix(data2[,3:ncol(data2)])))
-
-
   hi_corr_covars=flattenCorrMatrix(hi_corr_covars$r, hi_corr_covars$P)
   View_hi_corr_covars=hi_corr_covars%>%
     dplyr::filter(abs(hi_corr_covars$cor)>0.7)
-
   View_hi_corr_covars=View_hi_corr_covars[!View_hi_corr_covars$row %in% c("WAVE") & !View_hi_corr_covars$column %in% c("WAVE"),]
-
-  cat("USER ALERT: To simplify the balancing models, consider removing any highly correlated, redundant covariates by listing them in the 'exclude_covariates' field in the msm object and re-running:", "\n")
+  cat("USER ALERT: To simplify the balancing models, consider removing any highly correlated:", "\n")
   cat(knitr::kable(View_hi_corr_covars, caption="Correlated Covariates", format='pipe'),  sep="\n")
   cat("\n")
 
 
   write.csv(data_to_impute, paste0(home_dir, "imputations/",  exposure, "-", outcome,"_data_to_impute.csv"))
-  cat("See the 'imputations' folder for a csv file of the data to be imputed","\n")
+  cat("See the 'imputations/' folder for a csv file of the data to be imputed","\n")
 
   return(data_to_impute)
 }

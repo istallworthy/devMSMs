@@ -3,20 +3,15 @@
 #' This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcome
 #' @param object msm object that contains all relevant user inputs
 #' @param data_for_model_with_weights_cutoff dataset with truncated weights see truncateWeights
-#' @param balance_stats_final final bal stats conducted w/ full forms
-#' @param model user-specified model
+#' @param unbalanced_covariates_for_models unbalanced covariates see assessBalance
 #' @importFrom survey svydesign
 #' @importFrom survey svyglm
-#' @importFrom jtools export_summs
-#' @importFrom dplyr mutate
-#' @importFrom dplyr filter
-#' @importFrom dplyr select
-#' @return fits
+#' @return marginal structural models
 #' @export
 #' @seealso [truncateWeights()], [asesssBalance()]
-#' @examples fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m3")
+#' @examples fitModel(object, data_for_model_with_weights_cutoff, unbalanced_covariates_for_models)
 
-fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m3"){
+fitModel_uw <- function(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m3"){
 
   home_dir=object$home_dir
   ID=object$ID
@@ -33,17 +28,9 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
   time_pts=object$time_pts
   weights_method=object$weights_method
 
-  #error checking
-  if (!model %in% c("m0", "m1", "m2", "m3")){
-    stop('Please provide a valid model "m" from 0-3 (e.g., "m1")')
-  }
-
-  cat(paste0("Fitting model ", model , " with weights generated using the ", weights_method, " to each of the ", m, " imputed datasets."), "\n")
-  cat("\n")
 
   all_cutoffs=c(weights_percentile_cutoff, weights_percentile_cutoffs_sensitivity)
 
-  #averages across all imputed dataset bal stats to determine imbalanced covariates (baseline ones will be used in any covariate models)
   unbalanced_covars=as.data.frame(rowMeans(do.call(cbind, lapply(balance_stats_final, "[", "std_bal_stats"))))
   unbalanced_covars=data.frame(exposure=exposure,
                                exp_time=balance_stats_final[[1]]$exp_time,
@@ -60,67 +47,93 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
   baseline_covars=unlist(unbalanced_covars%>%dplyr::filter(keep==1)%>%dplyr::select(covariate))
   nonb_covars=unlist(unbalanced_covars%>%dplyr::filter(keep==0)%>%dplyr::select(covariate))
 
-  #listing any baseline imbalanced covariates
+  #listing any imbalanced covariates
   #renames factors (that were appended w/ level)
   baseline_covars[sapply(strsplit(sapply(strsplit(baseline_covars, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates] <-sapply(strsplit(baseline_covars, "_"), "[", 1)[sapply(strsplit(sapply(strsplit(baseline_covars, "_"), "[", 1), "\\."), "[",1) %in% factor_covariates]
   baseline_covars=baseline_covars[!grepl(exposure, baseline_covars)] #excludes exposure
   covariate_list= paste(as.character(baseline_covars), sep="", collapse=" + ")
 
+  cat(paste0("Fitting model UNWEIGHTED ", model , " to each of the ", m, " imputed datasets."), "\n")
 
- # covariate models checking
+
+  if (!model %in% c("m0", "m1", "m2", "m3")){
+    stop('Please provide a valid model "m" from 0-3 (e.g., "m1")')
+  }
+
+
+
+  if (length(outcome_time_pt)>1){
+    stop('This function is designed only for single time point outcome')}
+
   if(model=="m1" | model =="m3"){
     #if there are no imbalanced covariates
     if(covariate_list[1]==""){
-      stop("You have selected a covariate model but there are no imbalanced baseline covariates to include. Please choose another model.")
+      stop("You have selected a covariate model but there are no imbalanced baseline covariates. Please choose another model.")
     }else{ #there are imbalanced covariates
       cat("USER ALERT: The following imbalanced baseline covariates are included in the model: ", "\n")
       cat(covariate_list, "\n")
       cat("\n")
+
+
       cat("\n")
       cat("USER ALERT: The following imbalanced covariates will NOT be included in the model: ", "\n")
+
       cat(nonb_covars, "\n")
       cat("\n")
+
     }
   }
 
   #lists out exposure-epoch combos
   exp_epochs= apply(expand.grid(exposure, as.character(exposure_epochs[,1])), 1, paste, sep="", collapse="_")
 
-  #getting interactions between exposure epoch main effects (e.g., infancy:toddlerhood)
+  #getting interactions
   interactions<-paste(lapply(2:length(exp_epochs), function(z){
     paste(apply(combn(exp_epochs,z), 2, paste, sep="", collapse=":"), sep="", collapse=" + ")
   }), collapse= " + ")
 
-
-  #building the user-spec model
-  fits= lapply(1:length(data_for_model_with_weights_cutoff), function(y){ #cyling through truncation cutoff values
+  fits= lapply(1:length(data_for_model_with_weights_cutoff), function(y){ #cutoffs
     d=data_for_model_with_weights_cutoff[[y]]
     cutoff=all_cutoffs[y]
     cutoff_label=ifelse(cutoff==weights_percentile_cutoff, paste0("original weight cutoff value (", cutoff, ")"), paste0("sensitivity test weight cutoff value (", cutoff, ")"))
 
-    lapply(d, function(x){ #cycling through imputed datasets
+    lapply(d, function(x){ #imputed datasets
       data=x
-      data$weights=NULL
-      data$weights<-data[,colnames(data)[grepl("weight", colnames(data))]]
+      # data$weights=NULL
+      # data$weights<-data[,colnames(data)[grepl("weight", colnames(data))]]
 
-      #getting design info
       s=survey::svydesign(id=~1, #
-                          data=data, #adds list of imputation data
-                          weights=~weights)
+                          data=data)
+                          # weights=~weights)
 
-      #fitting m0
+      # #testinggggg
+      # sb=survey::svydesign(id=~1, #
+      #                     data=data)
+      # browser()
+      # #test
+      # m1=survey::svyglm(as.formula(ESETA1_Childhood~ ESETA1_Infancy), design=s)
+      # summary(m1)
+      # jtools::summ(m1, scale.only=T)
+      # cor(as.matrix(data%>%dplyr::select(dplyr::contains("ESETA1"))))
+      # test=data%>%dplyr::select(dplyr::contains(c("ESETA1","weights")))
+      # stats::cov.wt(as.data.frame(test), wt = test$weights, cor = TRUE)
+      # m3_uw=survey::svyglm(as.formula(f3), design=sb)
+      #
+
+
       f0=paste(paste0(outcome, ".", outcome_time_pt), "~", paste0(exp_epochs, sep="", collapse=" + "))
       m0=survey::svyglm(as.formula(f0), design=s) #list of model fitted to all imputed datasets
+
       #baseline model (main effects) only
       if(model=="m0"){
         return(m0) #save model
       }else{
-
         #baseline + sig covar model OR baseline + sig covar + int model
         if(model=="m1" | model =="m3"){
-          #fitting m1
-          f1=paste(f0, "+", covariate_list) #baseline + covariate model
+          f1.temp=paste(f0, "+", covariate_list) #baseline + covariate model
+          f1=f1.temp
           m1=survey::svyglm(as.formula(f1), design=s)
+
           #baseline + imbalanced covars
           if(model=="m1"){
             return(m1)
@@ -133,7 +146,6 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
 
           #baseline + interactions
           if (model=="m2"){
-            #fitting m2
             m2=survey::svyglm(as.formula(f2), design=s)
             #baseline + interactions
             return(m2)
@@ -141,7 +153,6 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
 
           #baseline + covars + interactions
           if (model=="m3"){
-            #fitting m3
             f3=paste(f1, "+", paste(interactions, sep="", collapse=" + "))
             m3=survey::svyglm(as.formula(f3), design=s)
             #baseline + covars+ interactions
@@ -153,28 +164,38 @@ fitModel <- function(object, data_for_model_with_weights_cutoff, balance_stats_f
   })
   names(fits)=all_cutoffs
 
-  cat(paste0("USER ALERT: the marginal model, ", model, ", run for each imputed dataset using the user-specified weights truncation percentile value of ",
-             paste(weights_percentile_cutoff), " is summarized below for each imputed dataset:"), "\n")
+  cat(paste0("The marginal model, ", model, ", run for each imputed dataset using the user-specified weights truncation percentile value of ",
+             paste(weights_percentile_cutoff), " is summarized here:"), "\n")
+  # browser()
+
   print(lapply(fits[paste0(weights_percentile_cutoff)],function(x){lapply(x, summary)}))
+
+  # browser()
 
   #print table of model evidence comparing imputations per cutoff level
   lapply(1:length(fits), function(y){
     i=fits[[y]]
     suppressWarnings(jtools::export_summs(i, to.file="docx", statistics= c(N="nobs", AIC="AIC", R2="r.squared"),
                                           model.names= c(paste0("Imp.", 1:length(i))),
-                                          file.name =paste0(home_dir, "msms/",exposure, "-", outcome, "_", names(fits)[y],"_", model, "_table_mod_ev.docx", sep="")))
+                                          file.name =paste0(home_dir, "msms_uw/",exposure, "-", outcome, "_", names(fits)[y],"_", model, "_table_mod_ev.docx", sep="")))
   })
 
-  cat("Tables of model evidence for all truncation percentile values have now been saved in the 'msm' folder.")
+  cat("Tables of model evidence for all truncation percentile values have now been saved in the 'msm_uw' folder.")
 
   m0=NULL
   m1=NULL
   m2=NULL
   m3=NULL
 
+
   cat("\n")
-  saveRDS(fits, file = paste(paste0(home_dir, "msms/", exposure, "-", outcome, "_", model, "_model.rds", sep="")))
+
+  # file_label=ifelse(cutoff==weights_percentile_cutoff, "original", "sensitivity checks")
+  saveRDS(fits, file = paste(paste0(home_dir, "msms_uw/", exposure, "-", outcome, "_", model, "_model.rds", sep="")))
+
+
   cat("\n")
+  # cat("A new data file has been saved as a .csv file in the in the 'msms' folder","\n")
 
   return(fits)
 

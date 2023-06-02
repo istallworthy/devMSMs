@@ -2,7 +2,7 @@
 % Please edit documentation in R/imputeData.R
 \name{imputeData}
 \alias{imputeData}
-\title{Imputes dataset so there is no missing at each time point}
+\title{Imputes dataset so there is no missing at each time point using parallel processing to speed up}
 \usage{
 imputeData(object, data_to_impute, read_imps_from_file = "no")
 }
@@ -15,10 +15,10 @@ imputeData(object, data_to_impute, read_imps_from_file = "no")
 imputed_datasets imputation results
 }
 \description{
-Creates m imputed datasets from original dataset using the Aeelia package. See Amelia documentation for more detail: https://cran.r-project.org/web/packages/Amelia/Amelia.pdf
+Creates m imputed datasets from original datasets using mice::mice
 }
 \examples{
-imputeData(object, data_to_impute, read_imps_from_file="no", max.resample = 100, cs=NULL, priors=NULL, lags=NULL, intercs=FALSE, leads=NULL, splinetime=NULL, logs=NULL, sqrts=NULL, lgstc=NULL, noms=NULL, bounds=NULL)
+imputeData(object, data_to_impute, read_imps_from_file="no")
 
 }
 \seealso{
