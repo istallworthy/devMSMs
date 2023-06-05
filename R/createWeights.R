@@ -115,7 +115,7 @@ createWeights <-function(object, wide_long_datasets, short_forms, read_in_from_f
       ggplot2::ggplot(data=as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
         ggplot2::geom_histogram(color = 'black', bins = 15)
       suppressMessages(ggplot2::ggsave(paste("Hist_", exposure,"-", outcome, "_", form_name,"_",weights_method, "_", k, ".png", sep=""),
-                                       path=paste0(home_dir, "original weights/histograms"), height=8, width=14))
+                                       path=paste0(home_dir, "original weights/histograms/"), height=8, width=14))
 
       fit=NULL
       d

@@ -136,7 +136,7 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
 
   #STEP 3: pooling predicted estimates --seem to be the same for all cutoff values
   # Pool results
-  preds_pool<- lapply(preds, function(y){ mice::pool(mice::as.mira(y)) |> summary()
+  preds_pool<- lapply(preds, function(y){ mice::pool(mice::as.mira(y)) |> summary(digits=3)
   })
 
   #adding histories to preds_pool
@@ -153,6 +153,7 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   doses=rep(list(doses), length(preds_pool))
   preds_pool<-Map(cbind, preds_pool, dose = doses)
 
+
   #if the user specified reference and comparison groups, subset pred_pool for inspection and plotting
   if (!is.na(reference) & sum(is.na(comp_histories))==0){
     preds_pool<-lapply(preds_pool, function(y){
@@ -167,9 +168,10 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   #makes table of average estimates and saves out per cutoff value
   lapply(1:length(preds_pool), function(x){
     y=preds_pool[[x]]
+    y$term<-sapply(y$term, function(x){ gsub(paste0(exposure, "_"), "", x)})
     sink(paste0(home_dir, "msms/estimated means/",exposure, "-", outcome, "_estimated_means_",
                 names(preds_pool)[x],"_hi=", hi_cutoff, "_lo=",lo_cutoff, ".html"))
-    stargazer::stargazer(as.data.frame(y),type="html", digits=2, column.labels = colnames(y),summary=FALSE, rownames = FALSE, header=FALSE,
+    stargazer::stargazer(as.data.frame(y),type="html", digits=4, column.labels = colnames(y),summary=FALSE, rownames = FALSE, header=FALSE,
                          out=paste0(home_dir, "msms/estimated means/", exposure, "-", outcome, "_estimated_means_",
                                     names(preds_pool)[x],"_hi=", hi_cutoff, "_lo=",lo_cutoff, ".html"))
     sink()
@@ -266,10 +268,10 @@ compareHistories <-function(object, data_for_model_with_weights_cutoff, all_mode
   #makes table of comparisons and save out for each cutoff value
   lapply(1:length(comps_pool), function(x){
     y=comps_pool[[x]]
-    sink(paste0(home_dir, "msms/contrasts/contrasts_",  exposure, "-", outcome,"_contrasts_",
+    sink(paste0(home_dir, "msms/contrasts/",  exposure, "-", outcome,"_contrasts_",
                 names(comps_pool)[x],"_hi=", hi_cutoff, "_lo=",lo_cutoff,".html"))
     stargazer::stargazer(as.data.frame(y),type="html", digits=4, column.labels = colnames(y),summary=FALSE, rownames = FALSE, header=FALSE,
-                         out=paste0(home_dir, "msms/contrasts/", exposure, "-", outcome,"_contrasts_",
+                         out=paste0(home_dir, "msms/", exposure, "-", outcome,"_contrasts_",
                                     names(comps_pool)[x],"_hi=", hi_cutoff, "_lo=",lo_cutoff,".html"))
     sink()
   })

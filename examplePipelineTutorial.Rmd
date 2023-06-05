@@ -1,30 +1,35 @@
 ---
 title: "examplePipeline for the devMSMs package"
 author: "Isa Stallworthy", "Meriah DeJoseph", "Noah Greiffer", "Emily Padrutt", "Daniel Berry"
-date: 5/30/23
+date: `r Sys.Date()`
 output: html_document
 ---
 
 This code provides a framework for testing the putative causal effects of exposure histories on outcome(s) that measured at a single final time point. 
-The most updated version of this package can be found at: https://github.com/istallworthy/MSMs 
+The most updated version of this package can be found at: https://github.com/istallworthy/devMSMs 
 Example pipeline running the MSM functions in sequence based on causal questions centered on the Family Life Project (FLP). 
 
-### Load package
+### Load packages and workspace
 ```{r}
-# install.packages(c("devtools", "roxygen2", "testthat", "knitr"))
+install.packages(c("devtools", "roxygen2", "rstudioapi"))
+
 library(devtools)
 library(roxygen2)
-load_all()
+# load_all()
 
-devtools::document()
+# devtools::document()
 
-# traceback()
+#source function
+# source("") #string
+
+#load entire R session 
+load(paste0(dirname(rstudioapi::getSourceEditorContext()$path),'devMSMsRsession6.2.23.RData'))
+
 ```
 
 ### 1. Identify Exposure, Exposure Epochs, Exposure Histories, & Outcome and all other mandatory user inputs
 Please provide user input for the following fields to create an msm object that will be used in all future functions, format data, and create the required directories.
 ```{r}
-# source("") #string
 object <- msmObject(
   ##### Directories Information (required) ####
   home_dir ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/",
@@ -239,6 +244,7 @@ print(citation("survey"))
 print(citation("WeightIt"))
 print(citation("mice"))
 print(citation("cobalt"))
+print(citation("marginaleffects"))
 
 ```
 
