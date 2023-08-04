@@ -4,10 +4,20 @@
 \alias{imputeData}
 \title{Imputes dataset so there is no missing at each time point using parallel processing to speed up}
 \usage{
-imputeData(object, data_to_impute, read_imps_from_file = "no")
+imputeData(
+  data,
+  m,
+  method,
+  home_dir,
+  exposure,
+  outcome,
+  tv_confounders,
+  ti_confounders,
+  read_imps_from_file = "no"
+)
 }
 \arguments{
-\item{object}{msm object that contains all relevant user inputs}
+\item{msm_object}{msm object that contains all relevant user inputs}
 
 \item{data_to_impute}{output from dataToImpute}
 }
@@ -18,9 +28,6 @@ imputed_datasets imputation results
 Creates m imputed datasets from original datasets using mice::mice
 }
 \examples{
-imputeData(object, data_to_impute, read_imps_from_file="no")
+imputeData(msm_object, data_to_impute, read_imps_from_file = "no")
 
-}
-\seealso{
-\code{\link[=dataToImpute]{dataToImpute()}}, \code{\link[mice:mice]{mice::mice()}}
 }

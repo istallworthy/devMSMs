@@ -5,22 +5,17 @@
 \title{Code to calculate balance stats based on Jackson paper (either weighted or unweighted)}
 \usage{
 calcBalStats(
-  object,
-  imp_wide_data,
+  data,
   forms,
   f_type,
   exposure,
   outcome,
+  type,
   k = 1,
-  weighted = 0,
-  histories = 1
+  bal_thresh = 0.1
 )
 }
 \arguments{
-\item{object}{msm object that contains all relevant user inputs}
-
-\item{imp_wide_data}{wide data}
-
 \item{forms}{from createForms(), createShortForms, or updateForms}
 
 \item{f_type}{form type label}
@@ -31,6 +26,10 @@ calcBalStats(
 
 \item{k}{imputaiton number}
 
+\item{object}{msm object that contains all relevant user inputs}
+
+\item{imp_wide_data}{wide data}
+
 \item{weighted}{binary indicator of whether to calculate weighted balance stats}
 
 \item{histories}{binary indicator of whether to print history sample distributions}
@@ -40,4 +39,5 @@ Code to calculate balance stats based on Jackson paper (either weighted or unwei
 }
 \examples{
 calcBalStats(object, imp_wide_data, forms, f_type, exposure, outcome, k=1, weighted=0, histories=1)
+Add information to balance statistics (bal_stats)
 }

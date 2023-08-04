@@ -3,9 +3,15 @@
 \name{compareHistories}
 \alias{compareHistories}
 \title{Compare exposure histories
-This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome u sing linear hypothesis testing}
+This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome using linear hypothesis testing}
 \usage{
-compareHistories(object, data_for_model_with_weights_cutoff, all_models)
+compareHistories(
+  object,
+  data_for_model_with_weights_cutoff,
+  all_models,
+  reference = NA,
+  compare = NA
+)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
@@ -16,14 +22,14 @@ compareHistories(object, data_for_model_with_weights_cutoff, all_models)
 
 \item{reference}{optional reference event for custom comparison}
 
-\item{compare}{optional coparison event(s) for custom comparison}
+\item{compare}{optional comparison event(s) for custom comparison}
 }
 \value{
 preds_pool
 }
 \description{
 Compare exposure histories
-This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome u sing linear hypothesis testing
+This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome using linear hypothesis testing
 }
 \examples{
 compareHistories(object, data_for_model_with_weights_cutoff, all_models, reference=NA, compare=NA)

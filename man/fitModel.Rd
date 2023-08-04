@@ -6,14 +6,14 @@
 This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcome}
 \usage{
 fitModel(
-  object,
+  msm_object,
   data_for_model_with_weights_cutoff,
   balance_stats_final,
   model = "m3"
 )
 }
 \arguments{
-\item{object}{msm object that contains all relevant user inputs}
+\item{msm_object}{msm object that contains all relevant user inputs}
 
 \item{data_for_model_with_weights_cutoff}{dataset with truncated weights see truncateWeights}
 
@@ -22,6 +22,8 @@ fitModel(
 \item{model}{user-specified model}
 }
 \value{
+fits
+
 fits
 }
 \description{

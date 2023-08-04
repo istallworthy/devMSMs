@@ -4,10 +4,10 @@
 \alias{updateForms}
 \title{Creating updated short forms with any imbalanced covariates at time lags greater than the user-specified lag}
 \usage{
-updateForms(object, forms, data_for_model_with_weights, balance_stats_full)
+updateForms(msm_object, forms, data_for_model_with_weights, balance_stats_full)
 }
 \arguments{
-\item{object}{msm object that contains all relevant user inputs}
+\item{msm_object}{msm object that contains all relevant user inputs}
 
 \item{forms}{short forms from createShortForms}
 

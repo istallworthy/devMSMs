@@ -2,26 +2,25 @@
 % Please edit documentation in R/createForms.R
 \name{createForms}
 \alias{createForms}
-\title{Creates formulas for generating weights}
+\title{Creates 3 types of formulas for each exposure at each time point including all time-varying covariates at all prior lags}
 \usage{
-createForms(object, wide_long_datasets, all_potential_covariates)
+createForms(object, all_potential_covariates)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
-\item{wide_long_datasets}{from formatForWeights}
-
 \item{all_potential_covariates}{from selectCoariates}
+
+\item{wide_long_datasets}{from formatForWeights}
 }
 \value{
 forms
 }
 \description{
-Creates full formulas for each exposure at each time point including all time-varying covariates at all prior lags
+Creates 3 types of formulas for each exposure at each time point including all time-varying covariates at all prior lags
 }
 \examples{
 createForms(object, wide_long_datasets, all_potential_covariates)
-
 }
 \seealso{
 \code{\link[=formatForWeights]{formatForWeights()}}, \link{identifyPotentialConfounds} for more on inputs
