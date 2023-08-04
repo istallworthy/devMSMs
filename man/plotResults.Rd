@@ -5,12 +5,12 @@
 \title{Plot results from history comparisons
 Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure}
 \usage{
-plotResults(object, history_estimates)
+plotResults(msm_object, history_estimates)
 }
 \arguments{
-\item{object}{msm object that contains all relevant user inputs}
+\item{msm_object}{msm object that contains all relevant user inputs}
 
-\item{history_estimates}{pooled predicted values for marginal model}
+\item{history_estimates}{pooled predicted values for the marginal model}
 }
 \value{
 plots
@@ -20,5 +20,5 @@ Plot results from history comparisons
 Code to plot predicted values of the different exposure histories by history and colored by dosage of exposure
 }
 \examples{
-plotResults(object, history_estimates)
+plotResults(msm_object, history_estimates)
 }

@@ -2,22 +2,22 @@
 % Please edit documentation in R/createShortForms.R
 \name{createShortForms}
 \alias{createShortForms}
-\title{creating short forms that contain time invariant covariatse and time varying covariates at only t-1 or user-spec lag}
+\title{Create short forms that contain time invariant covariates and time varying covariates at only t-1 or user-spec lag}
 \usage{
 createShortForms(object, full_forms, keep = NULL)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
 
-\item{full_forms}{from createForms}
+\item{full_forms}{list of full forms from createForms}
 
-\item{keep}{optional list specifyign any time-varying covariates at larger lags to keep in these forms}
+\item{keep}{optional list specifying any time-varying covariates at larger lags to keep in these forms}
 }
 \value{
 short_forms
 }
 \description{
-creating short forms that contain time invariant covariatse and time varying covariates at only t-1 or user-spec lag
+Create short forms that contain time invariant covariates and time varying covariates at only t-1 or user-spec lag
 }
 \examples{
 createShortForms(object, full_forms, keep=NULL)

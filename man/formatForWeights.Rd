@@ -4,10 +4,12 @@
 \alias{formatForWeights}
 \title{Format data for creating balancing weights}
 \usage{
-formatForWeights(object, data, imputed_datasets)
+formatForWeights(msm_object, data, imputed_datasets)
 }
 \arguments{
-\item{object}{msm object that contains all relevant user inputs}
+\item{msm_object}{msm object that contains all relevant user inputs}
+
+\item{data}{original dataset}
 
 \item{imputed_datasets}{output from imputeData}
 }
@@ -18,7 +20,7 @@ wide_long_datasets
 This code formats the imputed datasets for calculating balancing weights
 }
 \examples{
-formatForWeights(object, data, imputed_datasets)
+formatForWeights(msm_object, data, imputed_datasets)
 
 }
 \seealso{

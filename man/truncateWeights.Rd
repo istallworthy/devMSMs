@@ -4,23 +4,20 @@
 \alias{truncateWeights}
 \title{Truncates weights}
 \usage{
-truncateWeights(object, data_for_model_with_weights)
+truncateWeights(data_for_model_with_weights, msm_object)
 }
 \arguments{
-\item{object}{msm object that contains all relevant user inputs}
-
 \item{data_for_model_with_weights}{output from condenseWeights}
+
+\item{msm_object}{msm object that contains all relevant user inputs}
 }
 \value{
-dat_w_t
+dat_w_t list of truncated weights for each cutoff value
 }
 \description{
-Code to 'cut off' weights at 90th percentile and populate all of those above at 90th percentile value to avoid heavy tails that can bias results
+Code to 'cut off' weights at the 90th percentile and populate all of those above the 90th percentile value to avoid heavy tails that can bias results.
 }
 \examples{
 truncateWeights(object, data_for_model_with_weights)
 
-}
-\seealso{
-\code{\link[=condenseWeights]{condenseWeights()}}
 }

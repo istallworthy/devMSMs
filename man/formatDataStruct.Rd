@@ -4,19 +4,18 @@
 \alias{formatDataStruct}
 \title{Formats dataset and creates required directory}
 \usage{
-formatDataStruct(object)
+formatDataStruct(msm_object)
 }
 \arguments{
-\item{object}{msm object that contains all relevant user inputs}
+\item{msm_object}{msm object that contains all relevant user inputs}
 }
 \value{
 data formatted dataset
 }
 \description{
-Creates the required directories, assesses the data structure and makes it uniform for future functions and returns data
-This function requires a clean dataset in long format that contain columns for ID, time, exposure, outcome, and potential covariate confounds
+Creates the required directories, assesses the data structure, and makes it uniform for future functions and returns data
+This function requires a clean dataset in long format that contains columns for ID, time, exposure, outcome, and potential covariate confounds
 }
 \examples{
 formatDataStruct(object)
-
 }

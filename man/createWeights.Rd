@@ -18,13 +18,13 @@ createWeights(
 
 \item{short_forms}{from createShortForms}
 
-\item{read_in_from_file}{optional binary indicator of whether weights should be read in from local file}
+\item{read_in_from_file}{optional binary indicator of whether weights should be read in from a local file}
 }
 \value{
 weights_models
 }
 \description{
-returns a list of weights_models f
+Returns a list of weights_models
 }
 \examples{
 createWeights(object, wide_long_datasets, short_forms, read_in_from_file="no")

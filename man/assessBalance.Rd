@@ -3,10 +3,18 @@
 \name{assessBalance}
 \alias{assessBalance}
 \title{Assess success of covariate balancing
-#Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposure,
+Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposure,
 and returns a list of unbalanced covariates for each exposure to add to future models}
 \usage{
-assessBalance(object, forms, data_for_model_with_weights, histories = 1)
+assessBalance(
+  data,
+  exposure,
+  outcome,
+  tv_confounders,
+  type,
+  formulas,
+  balance_thresh = 0.1
+)
 }
 \arguments{
 \item{object}{msm object that contains all relevant user inputs}
@@ -15,14 +23,14 @@ assessBalance(object, forms, data_for_model_with_weights, histories = 1)
 
 \item{data_for_model_with_weights}{imputed data with weights}
 
-\item{histories}{optional binary indicator of whether to print histories for bal stasts}
+\item{histories}{optional binary indicator of whether to print histories for bal stats}
 }
 \value{
 list of unbalanced_covariates_for_models for each exposure
 }
 \description{
 Assess success of covariate balancing
-#Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposure,
+Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposure,
 and returns a list of unbalanced covariates for each exposure to add to future models
 }
 \examples{

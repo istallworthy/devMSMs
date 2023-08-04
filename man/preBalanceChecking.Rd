@@ -15,10 +15,12 @@ preBalanceChecking(object, wide_long_datasets, all_forms, histories = 1)
 
 \item{histories}{binary indicator of whether to print history sample distributions}
 }
+\value{
+list of unbalanced_covariates_for_models for each exposure
+}
 \description{
 Examining initial imbalance for each exposure, each time point, each covariate for each history using the Jackson method
 }
 \examples{
-preBalanceChecking(object, wide_long_datasets, all_forms, histories=1)
-
+preBalanceChecking(object, wide_long_datasets, all_forms, histories = 1)
 }
