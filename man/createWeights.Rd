@@ -5,20 +5,23 @@
 \title{Creates balancing weights for potential confounding covariates in relation to exposure at each time point}
 \usage{
 createWeights(
-  object,
-  wide_long_datasets,
-  short_forms,
+  data,
+  exposure,
+  outcome,
+  tv_confounders,
+  formulas,
+  method = "cbps",
   read_in_from_file = "no"
 )
 }
 \arguments{
+\item{read_in_from_file}{optional binary indicator of whether weights should be read in from a local file}
+
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{wide_long_datasets}{from formatForWeights}
 
 \item{short_forms}{from createShortForms}
-
-\item{read_in_from_file}{optional binary indicator of whether weights should be read in from a local file}
 }
 \value{
 weights_models

@@ -6,20 +6,15 @@
 \usage{
 calcBalStats(
   data,
-  forms,
-  f_type,
+  formulas,
   exposure,
   outcome,
-  type,
-  k = 1,
-  bal_thresh = 0.1
+  balance_thresh = 0.1,
+  k = 0,
+  weights = NULL
 )
 }
 \arguments{
-\item{forms}{from createForms(), createShortForms, or updateForms}
-
-\item{f_type}{form type label}
-
 \item{exposure}{exposure}
 
 \item{outcome}{outcome}
@@ -30,14 +25,17 @@ calcBalStats(
 
 \item{imp_wide_data}{wide data}
 
+\item{forms}{from createForms(), createShortForms, or updateForms}
+
+\item{f_type}{form type label}
+
 \item{weighted}{binary indicator of whether to calculate weighted balance stats}
 
-\item{histories}{binary indicator of whether to print history sample distributions}
+\item{histories}{binary indicator of whether to cat history sample distributions}
 }
 \description{
 Code to calculate balance stats based on Jackson paper (either weighted or unweighted)
 }
 \examples{
 calcBalStats(object, imp_wide_data, forms, f_type, exposure, outcome, k=1, weighted=0, histories=1)
-Add information to balance statistics (bal_stats)
 }

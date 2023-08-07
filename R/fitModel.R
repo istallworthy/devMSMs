@@ -40,6 +40,54 @@ fitModel <- function(msm_object, data_for_model_with_weights_cutoff, balance_sta
 
   all_cutoffs <- c(weights_percentile_cutoff, weights_percentile_cutoffs_sensitivity)
 
+
+  ### Assessing data type
+  # Check data type
+  if (!class(data) %in% c("mids", "data.frame", "character")) {
+    stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.")
+  }
+
+  if (class(data) == "character") {
+    if (!dir.exists(data)) {
+      stop("Please provide a valid directory path with imputed datasets, a data frame, or a 'mids' object for the 'data' field.")
+    }
+    if (length(dir(data)) < 2) {
+      stop("If you specify data as a directory, please supply more than 1 imputed dataset.")
+    }
+
+    # List imputed files
+    files <- list.files(data, full.names = TRUE, pattern = "\\.csv")
+
+    # Read and process imputed datasets
+    imps <- lapply(files, function(file) {
+      imp_data <- read.csv(file)
+      imp_data
+    })
+
+    # Process imputed datasets
+    imps2 <- lapply(1:length(imps), function(x) {
+      imp_data <- imps[[x]]
+      v <- sapply(strsplit(tv_confounders, "\\."), "[",1)
+      v <- v[!duplicated(v)]
+      library(splitstackshape)
+      imp_data <- merged.stack(
+        imp_data,
+        id.vars = c(ID, ti_confounders),
+        var.stubs = v,
+        sep = ".",
+        keep.all = TRUE
+      )
+      colnames(imp_data)[colnames(imp_data) == ".time_1"] <- "WAVE"
+      imp_data$.imp <- x - 1
+      imp_data <- data.frame(imp_data)
+      imp_data
+    })
+    # Combine imputed datasets
+    imp2 <- do.call(rbind.data.frame, imps2)
+    imp2$X <- seq_len(nrow(imp2))
+    data <- mice::as.mids(imp2, .imp = ".imp")
+  }
+
   # Averages across all imputed dataset bal stats to determine imbalanced covariates (baseline ones will be used in any covariate models)
   unbalanced_covars <- as.data.frame(rowMeans(do.call(cbind, lapply(balance_stats_final, `[[`, "std_bal_stats"))))
   unbalanced_covars <- data.frame(

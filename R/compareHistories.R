@@ -111,6 +111,10 @@ compareHistories <- function(object, data_for_model_with_weights_cutoff, all_mod
   args <- d$z # creating vector of each epoch and each corresponding h/l value
   names(args) <- (c(d$e))
 
+  #print history sample distribution
+  eval_hist (data, exposure, tv_confounders, epochs, time_pts, hi_lo_cut, ref, comps)
+
+
 
   # STEP 1: Estimated marginal predictions
   # Gets estimated marginal predictions

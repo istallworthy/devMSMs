@@ -13,6 +13,7 @@ assessBalance(
   tv_confounders,
   type,
   formulas,
+  weights = NULL,
   balance_thresh = 0.1
 )
 }
