@@ -22,35 +22,46 @@
 #' @examples imputeData(msm_object, data_to_impute, read_imps_from_file = "no")
 #'
 imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confounders, ti_confounders, read_imps_from_file="no") {
-  # home_dir <- msm_object$home_dir
-  ID <- "ID"
-  # continuous_variables <- msm_object$continuous_variables
-  # m <- msm_object$m
-  imp_method <- method
-  time_varying_covariates <- tv_confounders
-  time_invar <- ti_confounders
-  # factor_covariates <- msm_object$factor_covariates
-  # exposure <- msm_object$exposure
-  # outcome <- msm_object$outcome
+
+  # Error checking}
+  if (!dir.exists(home_dir)) {
+    stop('Please provide a valid home directory.')
+  }
+
 
   if (read_imps_from_file == "yes") {
     imputed_datasets <- list()
+
     # Error checking
-    if (!file.exists(glue::glue("{home_dir}imputations/{exposure}-{outcome}_all_imp.rds"))) {
+    if (!file.exists(glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))) {
       stop("Imputations have not been created and saved locally. Please set 'read_imps_from_file' == 'no' and re-run.")
     }
-    imp <- readRDS(glue::glue("{home_dir}imputations/{exposure}-{outcome}_all_imp.rds"))
+
+    imp <- readRDS(glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))
     imputed_datasets <- imp
     cat("\n")
     cat(glue::glue("Reading in {imputed_datasets$m} imputations from the local folder."))
     cat("\n")
     return(imputed_datasets)
+
   } else {
+
+    ID <- "ID"
+
+    #error checking
+    if (sum(duplicated(data$ID)) > 0){
+      stop("Please provide a wide dataset with a single row per ID.")
+    }
+
     library(mice)
     library(doParallel)
     library(doRNG)
     library(purrr)
     library(tibble)
+
+    imp_method <- method
+    time_varying_covariates <- tv_confounders
+    time_invar <- ti_confounders
 
     # Set seed for reproducibility
     set.seed(123)
@@ -67,35 +78,24 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
     cat("### Using", foreach::getDoParName(), "as the backend\n")
 
     data_to_impute <- tibble(data_to_impute)
-    # data_to_impute[, ID] <- as.factor(data_to_impute[, ID])
-
-    # Adding missing longitudinal time points in long format to create a full dataset
-    # data_to_impute_full <- data_to_impute %>%
-    #   complete(.data[[ID]], WAVE)
-
-    # Filling in all person-level variables (i.e., those not designated as time-varying)
-    # time_invar <- colnames(data_to_impute)[!colnames(data_to_impute) %in% time_varying_covariates]
-    # time_invar <- time_invar[!time_invar %in% c(ID, "WAVE")]
-    person_info <- data_to_impute[!duplicated(data_to_impute$ID),] %>%
-      dplyr::select(c(all_of(ID), all_of(time_invar)))
-    for (x in 1:nrow(person_info)) {
-      id <- as.character(person_info[x, ID])
-      data_to_impute_full[data_to_impute_full[colnames(data_to_impute) == ID] == id,
-                          colnames(data_to_impute_full) %in% time_invar] <- person_info[x, time_invar]
-    }
-
-    # Making variable types
-    # data_to_impute_full[, colnames(data_to_impute_full) %in% factor_covariates] <- lapply(data_to_impute_full[, colnames(data_to_impute_full) %in% factor_covariates], factor)
 
     # Conducts imputations using parallelized execution cycling through m
-    imputed_datasets <- map_dfr(1:m, ~{
-      cat(glue::glue("### Started iteration {i}\n"))
-      miceout <- mice::mice(data_to_impute_full, m = 1, method = imp_method, maxit = 5, print = FALSE)
-      cat(glue::glue("### Completed iteration {i}\n"))
+    imputed_datasets <- foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
+      cat("### Started iteration", i, "\n")
+      miceout <- mice::mice(data_to_impute_full, m=1, method=imp_method, maxit = 0,
+                            print = F)
+      cat("### Completed iteration", i, "\n")
       miceout
-    })
+    }
 
-    saveRDS(imputed_datasets, glue::glue("{home_dir}imputations/{exposure}-{outcome}_all_imp.rds"))
+    # imputed_datasets <- map_dfr (1:m, ~{
+    #   cat(glue::glue("### Started iteration {i}\n"))
+    #   miceout <- mice::mice(data_to_impute, m = 1, method = imp_method, maxit = 0, print = FALSE) #change maxit to 5 after testing
+    #   cat(glue::glue("### Completed iteration {i}\n"))
+    #   miceout
+    # })
+
+    saveRDS(imputed_datasets, glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))
 
     # Print warnings
     cat("USER ALERT: Please view any logged events from the imputation below:", "\n")
@@ -104,7 +104,8 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
 
     # Save out individual imputed datasets
     for (k in 1:m) {
-      write.csv(mice::complete(imputed_datasets, k), file = glue::glue("{home_dir}imputations/{exposure}-{outcome}_imp{k}.csv"))
+      write.csv(mice::complete(imputed_datasets, k),
+                file = glue::glue("{home_dir}/imputations/{exposure}-{outcome}_imp{k}.csv"))
     }
     cat("See the 'imputations/' folder for a .csv file of each imputed dataset and an .rds file of all imputed datasets", "\n")
 

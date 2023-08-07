@@ -29,20 +29,16 @@
 #' @examples assessBalance(object, forms, data_for_model_with_weights, histories=1)
 assessBalance <- function(data, exposure, outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh = 0.1){
 
-  exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
-  ID <- "S_ID"
-
+  # Error checking
   if(! type %in% c("prebalance", "weighted")){
     stop("Please provide a type from the following list: 'prebalance', 'weighted'")
   }
-
-  weights_method <- ifelse(type == "prebalance", "no weights", weights$method)
-
-  # Getting form type from input
-  form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[",1)
-
-  exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
-
+  if (!class(data) %in% c("mids", "data.frame", "character")) {
+    stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.")
+  }
+  if (type == "prebalance" & !is.null(weights)){
+    stop("The 'prebalance' mode of this function assesses balance prior to weighting and thus does not take weights.")
+  }
 
   #creating required directories
   balance_dir <- file.path(home_dir, "balance")
@@ -58,15 +54,16 @@ assessBalance <- function(data, exposure, outcome, tv_confounders, type, formula
     dir.create(plots_dir)
   }
 
-  ### Assessing data type
-  # Check data type
-  if (!class(data) %in% c("mids", "data.frame", "character")) {
-    stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.")
-  }
+  exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
+  exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
+  ID <- "S_ID"
+  weights_method <- ifelse(type == "prebalance", "no weights", weights$method)
+  form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[",1)
+
 
   if (class(data) == "character") {
     if (!dir.exists(data)) {
-      stop("Please provide a valid directory path with imputed datasets, a data frame, or a 'mids' object for the 'data' field.")
+      stop("Please provide a valid directory path with imputed .csv's, a data frame, or a 'mids' object for the 'data' field.")
     }
     if (length(dir(data)) < 2) {
       stop("If you specify data as a directory, please supply more than 1 imputed dataset.")
@@ -75,54 +72,53 @@ assessBalance <- function(data, exposure, outcome, tv_confounders, type, formula
     # List imputed files
     files <- list.files(data, full.names = TRUE, pattern = "\\.csv")
 
-    # Read and process imputed datasets
-    imps <- lapply(files, function(file) {
+    # Read and process imputed datasets as list
+    data <- lapply(files, function(file) {
       imp_data <- read.csv(file)
-      # imp_data <- imp_data %>%
-      #   dplyr::select(-c(X, contains("ESETA1_")))
-      imp_data
-    })
 
-    # Process imputed datasets
-    imps2 <- lapply(1:length(imps), function(x) {
-      imp_data <- imps[[x]]
-      v <- sapply(strsplit(tv_confounders, "\\."), "[",1)
-      v <- v[!duplicated(v)]
-      library(splitstackshape)
-      imp_data <- merged.stack(
-        imp_data,
-        id.vars = c(ID, ti_confounders),
-        var.stubs = v,
-        sep = ".",
-        keep.all = TRUE
-      )
-      colnames(imp_data)[colnames(imp_data) == ".time_1"] <- "WAVE"
-      imp_data$.imp <- x - 1
-      imp_data <- data.frame(imp_data)
+      #error checking
+      if (sum(duplicated(imp_data$ID)) > 0){
+        stop("Please provide a directory to data that are imputed in wide format with a single row per ID.")
+      }
+
       imp_data
     })
-    # Combine imputed datasets
-    imp2 <- do.call(rbind.data.frame, imps2)
-    imp2$X <- seq_len(nrow(imp2))
-    data <- mice::as.mids(imp2, .imp = ".imp")
   }
 
 
   ### Getting balance statistics
-
   if (type == "prebalance"){
 
     message(paste0("USER ALERT: The following statistics display covariate imbalance at each exposure time point prior to weighting,
             using ", form_name, "formulas."), "\n")
     cat("\n")
 
-    # Running balance stats function, unweighted, on each imputed dataset w/ no weights
-    if (class(data) == "mids"){
-      m=data$m
-      bal_stats <- lapply(1:m, function(k) {
-        d <- data[[k]]
-        calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = NULL)
-      })
+    # Running balance stats function, unweighted, on each imputed dataset
+    if (class(data) == "mids" | class(data) =="list"){
+
+      if (class(data) == "mids"){
+        m = data$m
+        bal_stats <- lapply(1:m, function(k) {
+          d <-as.data.frame(mice::complete(data,k))
+          #error checking
+          if (sum(duplicated(d$ID)) > 0){
+            stop("Please provide wide imputed datasets with a single row per ID.")
+          }
+          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = NULL)
+        })
+      }
+
+      if (class(data) == "list"){
+        m = length(data)
+        bal_stats <- lapply(1:m, function(k) {
+          d <- data[[k]]
+          #error checking
+          if (sum(duplicated(d$ID)) > 0){
+            stop("Please provide wide imputd datasets with a single row per ID.")
+          }
+          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = NULL)
+        })
+      }
 
       # Save out balance stats for each imputed dataset
       bal_stats_all_imp <- do.call(bind_rows, bal_stats)
@@ -141,14 +137,18 @@ assessBalance <- function(data, exposure, outcome, tv_confounders, type, formula
       ) %>%
         mutate(balanced_avg = ifelse(abs(avg_bal) < balance_thresh, 1, 0)) # Assessing new averaged bal stat in relation to the balance threshold
 
-
       cat("\n")
       cat(paste0("*** Averaging Across All Imputations ***"), "\n")
       # Getting totals
       tot_covars <- sapply(strsplit(bal_stats[[1]]$covariate, "\\."), `[`, 1)
     }
 
+
     if (class(data) == "data.frame"){
+      #error checking
+      if (sum(duplicated(data$ID)) > 0){
+        stop("Please provide wide dataset with a single row per ID.")
+      }
       bal_stats <- calcBalStats(data, formulas, exposure, outcome, balance_thresh, k = 0, weights = NULL)
 
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
@@ -166,20 +166,39 @@ assessBalance <- function(data, exposure, outcome, tv_confounders, type, formula
   } #ends prebalance
 
 
+  # Weighted
   if (type == "weighted"){
-
     message(paste0("USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting,
             using ", form_name, "formulas."), "\n")
     cat("\n")
 
-    # Running balance stats function, unweighted, on each imputed dataset w/ no weights
-    if (class(data) == "mids"){
-      m <- data$m
-      bal_stats <- lapply(1:m, function(k) {
-        d <- data[[k]]
-        w <- weights[[k]]
-        calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = w) #are weights just in data at this point?
-      })
+    if (class(data) == "mids" | class(data) =="list"){
+      # Running balance stats function, unweighted, on each imputed dataset w/ no weights
+      if (class(data) == "mids"){
+        m <- data$m
+        bal_stats <- lapply(1:m, function(k) {
+          d <-as.data.frame(mice::complete(data,k))
+          #error checking
+          if (sum(duplicated(d$ID)) > 0){
+            stop("Please provide wide imputed datasets with a single row per ID.")
+          }
+          w <- weights[[k]]
+          calcBalStats(d_w, formulas, exposure, outcome, balance_thresh, k = k, weights = w) #are weights just in data at this point?
+        })
+      }
+
+      if (class(data) == "list"){
+        m = length(data)
+        bal_stats <- lapply(1:m, function(k) {
+          d <- data[[k]]
+          #error checking
+          if (sum(duplicated(d$ID)) > 0){
+            stop("Please provide wide imputed datasets with a single row per ID.")
+          }
+          w <- weights[[k]]
+          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = w)
+        })
+      }
 
       # Save out balance stats for each imputed dataset
       bal_stats_all_imp <- do.call(bind_rows, bal_stats)
@@ -198,14 +217,18 @@ assessBalance <- function(data, exposure, outcome, tv_confounders, type, formula
       ) %>%
         mutate(balanced_avg = ifelse(abs(avg_bal) < balance_thresh, 1, 0)) # Assessing new averaged bal stat in relation to the balance threshold
 
-
       cat("\n")
       cat(paste0("*** Averaging Across All Imputations ***"), "\n")
       # Getting totals
       tot_covars <- sapply(strsplit(bal_stats[[1]]$covariate, "\\."), `[`, 1)
     }
 
+
     if (class(data) == "data.frame"){
+      #error checking
+      if (sum(duplicated(data$ID)) > 0){
+        stop("Please provide wide dataset with a single row per ID.")
+      }
 
       bal_stats <- calcBalStats(data, formulas, exposure, outcome, balance_thresh, k = 0, weights = weights)
 
@@ -266,7 +289,7 @@ assessBalance <- function(data, exposure, outcome, tv_confounders, type, formula
     }
     suppressMessages(ggsave(lp, filename = paste0(home_dir, "/balance/", type, "/plots/", form_name, "_", weights_method, "_", exposure, "_all_imps_",
                                                   exposure_time_pt, "_summary_", type, "_plot.jpeg")))
-    if (class(data) == "mids"){
+    if (class(data) == "mids" | class(data) == "list"){
       message(paste0("USER ALERT: A balance summary plot for ", form_name, " ", exposure, " averaged across all imputations at time ",
                      exposure_time_pt, " has now been saved in the 'balance/", type, "/plots/' folder."), "\n")
     } else{
@@ -282,7 +305,7 @@ assessBalance <- function(data, exposure, outcome, tv_confounders, type, formula
                                                            outcome, "_all_", type,"_", weights_method, "_assocations.html"))
   sink()
 
-  if (class(data) == "mids"){
+  if (class(data) == "mids" | class(data) == "list"){
     message(paste0("USER ALERT: Check 'balance/", type, "/' folder for a table of all ", type, " correlations or
                    standardized mean differences averaged across imputed datasets."), "\n")
   } else {
@@ -306,7 +329,7 @@ assessBalance <- function(data, exposure, outcome, tv_confounders, type, formula
     filter(balanced_avg == 0)
   cat("\n")
 
-  if (class(data) == "mids"){
+  if (class(data) == "mids" | class(data) == "list"){
     message(paste0("USER ALERT: Averaging across all imputed datasets for exposure ", exposure, " using the ",
                    form_name, ", the following ", nrow(unbalanced_covars), " covariates across time points out of ",
                    length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), ",%) spanning ",

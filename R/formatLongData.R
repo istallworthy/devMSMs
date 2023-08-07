@@ -2,7 +2,6 @@
 formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, time_var = NA, id_var = NA, missing=NA, factor_confounders = NA){
 
   time_varying_covariates <- tv_confounders
-  id <- "ID"
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
 
   message("Formatting data")
@@ -11,12 +10,11 @@ formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, ti
 
   # Error checking}
   if (!dir.exists(home_dir)) {
-    stop('Please provide a valid home directory in home_dir when creating the msm object')
+    stop('Please provide a valid home directory.')
   }
 
-  # Reading and formatting LONG dataset
-  data <- suppressWarnings(readr::read_csv(data_path, show_col_types = FALSE))
 
+  # Reading and formatting LONG dataset
   if (!is.na(time_var)){
     colnames(data)[colnames(data) == time_var] <- "WAVE" # Assigning time variable
   }
@@ -29,6 +27,9 @@ formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, ti
     data[data == missing] <- NA # Makes NA the missingness indicator
   }
 
+  if (which(colnames(data) == "ID") != 1){
+    data <- data[,which(colnames(data) == "ID"):ncol(data)]
+  }
 
   # Exposure summary
   exposure_summary <- data %>%
@@ -46,6 +47,7 @@ formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, ti
 
 
   # Outcome summary
+  outcome <- sapply(strsplit(outcome, "\\."), "[",1)
   outcome_summary <- data %>%
     # filter(WAVE %in% outcome_time_pt) %>%
     group_by(WAVE) %>%
@@ -59,7 +61,7 @@ formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, ti
   cat(paste0(outcome, " outcome descriptive statistics have now been saved in the home directory"), "\n")
 
 
-  data[, id] <- factor(data[, id])
+  data$ID <- as.factor(data$ID)
 
   if(!is.na(factor_confounders)){
     if (sum(factor_confounders %in% colnames(data)) < length(factor_confounders)) {
@@ -73,6 +75,6 @@ formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, ti
 
   }
 
-  data
+  as.data.frame(data)
 
 }

@@ -6,7 +6,6 @@
 #' @param f_type form type label
 #' @param exposure exposure
 #' @param outcome outcome
-#' @param k imputaiton number
 #' @param weighted binary indicator of whether to calculate weighted balance stats
 #' @param histories binary indicator of whether to cat history sample distributions
 #' @importFrom ggplot2 ggplot
@@ -27,12 +26,15 @@
 #' @importFrom stargazer stargazer
 #' @export
 #' @examples calcBalStats(object, imp_wide_data, forms, f_type, exposure, outcome, k=1, weighted=0, histories=1)
+#'
 calcBalStats <-function(data, formulas, exposure, outcome, balance_thresh = 0.1, k = 0, weights = NULL){
+  library(cobalt)
+  set.seed(1234)
 
   ID <- "S_ID"
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[",1)
-
+  exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
   weighted = ifelse(!is.null(weights), 1, 0)
 
   if (weighted == 1){
@@ -42,28 +44,18 @@ calcBalStats <-function(data, formulas, exposure, outcome, balance_thresh = 0.1,
     weights_method <- "no weights"
   }
 
-  library(cobalt)
-  set.seed(1234)
-
   folder <- ifelse(weighted == 0, "prebalance/", "weighted/")
   data_type <- ifelse(k == 0, "single", "imputed")
-
-
 
   if (data_type == "imputed"){
     cat(paste0("**Imputation ", k, "**"), "\n")
   }
-
 
   #creating initial data frames
   #data frame with all sampling weights for all exposures at all exposure time points for all histories
   all_prop_weights <- data.frame(id = NA,exposure = NA, exp_time = NA, history = NA)
   colnames(all_prop_weights)[colnames(all_prop_weights) == "id"]  <-  ID
   all_bal_stats <- data.frame()
-  # bal_stats <- data.frame()
-
-
-  exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
   for (z in 1:length(exposure_time_pts)){ #cycles through exposure time points
     exposure_time_pt <- exposure_time_pts[z]
@@ -371,10 +363,7 @@ calcBalStats <-function(data, formulas, exposure, outcome, balance_thresh = 0.1,
   all_form <- as.data.frame(do.call(rbind, formulas))
   tot_covars <- deparse(all_form[, 3], width.cutoff = 300)
   tot_covars=as.character(unlist(strsplit(tot_covars, "\\+")))[!grepl("form", as.character(unlist(strsplit(tot_covars, "\\+"))))]
-  # tot_covars <- strsplit(as.character(sapply(strsplit(tot_covars, "\\="), "[",2)), "\\+")
-  # tot_covars <- unlist(tot_covars)
   tot_covars <- gsub(" ", "", tot_covars)
-  # tot_covars <- gsub(")", "", tot_covars)
   tot_covars <- na.omit(sapply(strsplit(tot_covars, "\\."), "[", 1)[!duplicated(sapply(strsplit(tot_covars, "\\."), "[", 1))])
 
   imbalanced_covars <- sum(bal_summary_exp$imbalanced_n, na.rm = TRUE)
@@ -415,8 +404,5 @@ calcBalStats <-function(data, formulas, exposure, outcome, balance_thresh = 0.1,
   rownames(all_bal_stats) <- NULL
 
   all_bal_stats
-
-
-
 
 }
