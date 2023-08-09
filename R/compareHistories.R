@@ -16,7 +16,12 @@
 #' @importFrom knitr kable
 #' @return preds_pool
 #' @examples compareHistories(object, data_for_model_with_weights_cutoff, all_models, reference=NA, compare=NA)
-compareHistories <- function(object, data_for_model_with_weights_cutoff, all_models, reference = NA, compare = NA) {
+compareHistories <- function(home_dir, data_for_model_with_weights_cutoff, all_models, reference = NA, compare = NA) {
+
+  #error checking
+  if (!dir.exists(home_dir)) {
+    stop("Please provide a valid home directory path.")
+  }
 
   home_dir <- object$home_dir
   exposure <- object$exposure

@@ -14,14 +14,17 @@
 #' @importFrom cobalt bal.tab
 #' @seealso [CBPS::CBPS()], [formatForWeights()], [createShortForms()]
 #' @examples createWeights(object, wide_long_datasets, short_forms, read_in_from_file="no")
-createWeights <- function(data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no") {
+createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no") {
 
   #error checking
+  if (!dir.exists(home_dir)) {
+    stop("Please provide a valid home directory path.")
+  }
+
   if(! method %in% c("ps", "glm", "gbm", "bart", "super", "cbps")){
     stop("Please provide a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.")
   }
 
-  # Check data type
   if (!class(data) %in% c("mids", "data.frame", "character")) {
     stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.")
   }

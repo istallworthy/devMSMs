@@ -7,6 +7,7 @@ Assesses how well balance was achieved for each of the covariates/potential conf
 and returns a list of unbalanced covariates for each exposure to add to future models}
 \usage{
 assessBalance(
+  home_dir,
   data,
   exposure,
   outcome,
