@@ -6,7 +6,7 @@
 This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome using linear hypothesis testing}
 \usage{
 compareHistories(
-  object,
+  home_dir,
   data_for_model_with_weights_cutoff,
   all_models,
   reference = NA,
@@ -14,8 +14,6 @@ compareHistories(
 )
 }
 \arguments{
-\item{object}{msm object that contains all relevant user inputs}
-
 \item{data_for_model_with_weights_cutoff}{imputed datasets with truncated weights}
 
 \item{all_models}{fitted models for each imputed dataset}
@@ -23,6 +21,8 @@ compareHistories(
 \item{reference}{optional reference event for custom comparison}
 
 \item{compare}{optional comparison event(s) for custom comparison}
+
+\item{object}{msm object that contains all relevant user inputs}
 }
 \value{
 preds_pool

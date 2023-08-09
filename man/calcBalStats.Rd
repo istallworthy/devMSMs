@@ -19,8 +19,6 @@ calcBalStats(
 
 \item{outcome}{outcome}
 
-\item{k}{imputaiton number}
-
 \item{object}{msm object that contains all relevant user inputs}
 
 \item{imp_wide_data}{wide data}
@@ -38,4 +36,5 @@ Code to calculate balance stats based on Jackson paper (either weighted or unwei
 }
 \examples{
 calcBalStats(object, imp_wide_data, forms, f_type, exposure, outcome, k=1, weighted=0, histories=1)
+
 }

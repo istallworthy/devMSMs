@@ -1,6 +1,6 @@
 
 
-createFormulas <- function(exposure, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NA, keep_conf=NA, ug=F ){
+createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NA, keep_conf=NA, ug=F ){
 
   #error checking
   if(! type %in% c("short", "full", "update")){
@@ -9,7 +9,9 @@ createFormulas <- function(exposure, outcome, tv_confounders, ti_confounders, ty
   if (type != "update" & !is.null(bal_stats)){
     stop ("Please only provide balance statistics for the type 'update'.")
   }
-
+  if (!dir.exists(home_dir)) {
+    stop("Please provide a valid home directory path.")
+  }
   #create parent directory
   forms_dir <- file.path(home_dir, "formulas")
   if (!dir.exists(forms_dir)) {

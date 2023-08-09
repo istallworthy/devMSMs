@@ -4,8 +4,6 @@ formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, ti
   time_varying_covariates <- tv_confounders
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
 
-  message("Formatting data")
-
   options(readr.num_columns = 0)
 
   # Error checking}
