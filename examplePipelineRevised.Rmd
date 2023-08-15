@@ -18,6 +18,14 @@ Assumes time-varying confounders time points are equal to (or a subset of) the t
 
 ### Core inputs
 ```{r}
+<<<<<<< Updated upstream
+=======
+library(devtools)
+library(roxygen2)
+
+home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing'
+
+>>>>>>> Stashed changes
 exposure <- "ESETA1"
 outcome <- "EF_avg_perc.58"
 
@@ -89,6 +97,7 @@ imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, tv
 data <- imputed
 ```
 
+
 ### Pre-balance checking
 ```{r}
 
@@ -97,14 +106,30 @@ concur_conf = NA #optional list of time-varying confounders (var.t) to include i
 keep_conf = NA #optional list of any time-varying confounders to always retain in all formulas at lag-1t (deafult is none)
 bal_stats = NA #output from balance checking, only if type = "update"
 type = "full" # "full" =all tv covars; "short" =only t-1 tv covars; "update" = update short forms w/ imbalanced tv covars t>1
+<<<<<<< Updated upstream
 full_formulas <- createFormulas(exposure, outcome, tv_confounders, ti_confounders, type, bal_stats, concur_conf, keep_conf, ug=F )
+=======
+full_formulas <- createFormulas(home_dir, exposure, outcome, tv_confounders, ti_confounders, type, bal_stats, concur_conf, keep_conf, custom = NULL, ug = F )
+>>>>>>> Stashed changes
 
+
+imp_conf <- NULL
+balance_thresh <- c(0.05) 
 
 ## Conduct exploratory pre-balance checking
 type <- "prebalance"
 formulas <- full_formulas
+<<<<<<< Updated upstream
 balance_thresh <- 0.1 #optional threshold below which confounders are considered imbalanced (corr or smd); default is 0.1
 prebalance_stats <- assessBalance(data, exposure, outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh)
+=======
+# custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr +  mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth + RMomAgeU + 
+#                                     SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
+# names(custom) <-c("full_form_ESETA1-EF_avg_perc.58-6")
+imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") #optional list of important confounders that will be held to a stricter balance thresh
+balance_thresh <- c(0.05, 0.1) #optional list of balance thresholds for importnt & less important confoundres, respectively; one entry will be applied to all confounders; default is 0.1 for all
+prebalance_stats <- assessBalance(home_dir, data, exposure, outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh, imp_conf)
+>>>>>>> Stashed changes
 
 ```
 
@@ -122,13 +147,35 @@ short_formulas <- createFormulas(exposure, outcome, tv_confounders, ti_confounde
 
 ## Create balancing weights with simplified formulas
 formulas= short_formulas
+<<<<<<< Updated upstream
 method = "cbps"; # optional weighting method "glm", "gbm", "bart", "super", "cbp (default is cbps)
 weights <- createWeights(data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no") 
+=======
+
+method = "ps"; # optional weighting method "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
+weights.ps <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no") 
+
+method = "cbps"; # optional weighting method "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
+weights.cbps <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no") 
+
+method = "glm"; # optional weighting method "glm", "gbm", "bart", "super", "cbps" (default is cbps)
+weights.glm <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no") 
+
+method = "gbm"; # optional weighting method "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
+weights.gbm <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no") 
+
+method = "bart"; # optional weighting method "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
+weights.bart <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no") 
+
+method = "super"; # optional weighting method "glm", "gbm", "bart", "super", "cbps" (default is cbps)
+weights.super <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no") 
+>>>>>>> Stashed changes
 
 
 ## Assess balance using simplified formulas
 type <- "weighted"
 formulas <- short_formulas
+<<<<<<< Updated upstream
 weights <- weights 
 balance_thresh <- 0.1 #optional threshold below which confounders are considered imbalanced (corr or smd); default is 0.1
 balance_stats <- assessBalance(data, exposure, outcome, tv_confounders, type, formulas, weights, balance_thresh)
@@ -137,8 +184,34 @@ balance_stats <- assessBalance(data, exposure, outcome, tv_confounders, type, fo
 formulas= short_formulas
 method = "cbps"; # optional weighting method "glm", "gbm", "bart", "super", "cbp (default is cbps)
 best_method_weights <-createWeights(data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no") 
+=======
+weights <- weights.ps 
+balance_stats.ps <- assessBalance(home_dir, data, exposure, outcome, tv_confounders, type, formulas, weights, balance_thresh)
+
+weights <- weights.cbps 
+balance_stats.cbps <- assessBalance(home_dir, data, exposure, outcome, tv_confounders, type, formulas, weights, balance_thresh)
+
+weights <- weights.glm 
+balance_stats.glm <- assessBalance(home_dir, data, exposure, outcome, tv_confounders, type, formulas, weights, balance_thresh)
+
+weights <- weights.gbm
+balance_stats.gbm <- assessBalance(home_dir, data, exposure, outcome, tv_confounders, type, formulas, weights, balance_thresh)
+
+weights <- weights.bart
+balance_stats.bart <- assessBalance(home_dir, data, exposure, outcome, tv_confounders, type, formulas, weights, balance_thresh)
+
+weights <- weights.super 
+balance_stats.super <- assessBalance(home_dir, data, exposure, outcome, tv_confounders, type, formulas, weights, balance_thresh)
+
+
+## Iterate through creating weights/assessing balance for all possible weights methods to identify the best one 
+formulas= short_formulas
+method = "cbps"; # optional weighting method "ps" glm", "gbm", "bart", "super", "cbp (default is cbps)
+best_method_weights <-createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no") 
+>>>>>>> Stashed changes
 
 ```
+
 
 ### Re-specify weights using optimal method
 ```{r}
@@ -167,7 +240,9 @@ final_weights <- createWeights(data, exposure, outcome, tv_confounders, formulas
 
 
 # Truncate weights to reduce heavy tails --
+weights <- final_weights
 quantile <- 0.95 # optional quantile of weights above which weights are trimmed (default is 0.95)
+<<<<<<< Updated upstream
 trim_weights <- trimWeights(final_weights, quantile) #this is just a wrapper function for the trim function to allow for summaries and plotting
 
 #sensitivity tests   
@@ -176,8 +251,19 @@ trim_weights.s1 <- trimWeights(final_weights, quantile) #this is just a wrapper 
 
 quantile <- 0.98 #optional quantile of weights above which weights are trimmed (default is 0.95)
 trim_weights.s2 <- trimWeights(final_weights, quantile) #this is just a wrapper function for the trim function to allow for summaries and plotting
+=======
+trim_weights <- trimWeights(home_dir, weights, quantile) #this is just a wrapper function for the trim function to allow for summaries and plotting
+
+#sensitivity tests   
+quantile <- 0.92 #optional quantile of weights above which weights are trimmed (default is 0.95)
+trim_weights.s1 <- trimWeights(home_dir, weights, quantile) #this is just a wrapper function for the trim function to allow for summaries and plotting
+
+quantile <- 0.98 #optional quantile of weights above which weights are trimmed (default is 0.95)
+trim_weights.s2 <- trimWeights(home_dir, weights, quantile) #this is just a wrapper function for the trim function to allow for summaries and plotting
+>>>>>>> Stashed changes
 
 ```
+
 
 ### Final balance assessment
 ```{r}
@@ -198,6 +284,7 @@ final_balance_stats.s2 <- assessBalance(data, exposure, outcome, tv_confounders,
 
 ```
 
+
 ### Fit marginal structural model & summarize
 ```{r}
 
@@ -207,12 +294,21 @@ model <- "m0"
 # *m1: Covariate model regressing the outcome on the main effects of exposure at each exposure epoch as well as any covariate confounders measured at baseline that remained imbalanced after weighting
 # *m2: Interaction model regressing the outcome on the main effects of exposure at each exposure epoch as well as all interactions between exposure epochs (e.g., infancy:toddlerhood)
 # *m3: Full model regressing the outcome on the main effects of exposure at each exposure epoch, all baseline covariate confounders that remained imbalanced, as well as all exposure epoch interactions (default).
+<<<<<<< Updated upstream
 family <- NA #optional family reflective of outcome distribution
 link <- NA #optional link function
 covariates <- NA #optional list of covariates (e.g., those remaining imbalanced) for covariate models (m1, m3)
+=======
+family <- gaussian #optional family reflective of outcome distribution
+link <- "identity" #optional link function
+int_order = NA
+covariates <- c("KFASTScr", "SWghtLB", "ESETA1.6") #optional list of covariates (e.g., those remaining imbalanced) for covariate models (m1, m3)
+>>>>>>> Stashed changes
 epochs <- data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), # optional subsetting of time points into more coarse epochs 
                              values=I(list(c(6,15), c(24,35), c(58)))) 
+
 weights <- trim_weights
+<<<<<<< Updated upstream
 model <- fitModel(data, weights, exposure, outcome, model, family, link, covariates, epochs)  
 
 #sensitivity tests
@@ -221,6 +317,17 @@ model.s1 <- fitModel(data, weights, exposure, outcome, model, family, link, cova
 
 weights <- trim_weights.s2
 model.s2 <- fitModel(data, weights, exposure, outcome, model, family, link, covariates, epochs)  
+=======
+models <- fitModel(home_dir, data, weights, exposure, outcome, tv_confounders, model, family, link, int_order, covariates, epochs)
+
+
+#sensitivity tests
+weights <- trim_weights.s1
+model.s1 <- fitModel(home_dir, data, weights, exposure, outcome, tv_confounders, model, family, link, int_order, covariates, epochs)
+
+weights <- trim_weights.s2
+model.s2 <- fitModel(home_dir, data, weights, exposure, outcome, tv_confounders, model, family, link, int_order, covariates, epochs)
+>>>>>>> Stashed changes
 
 
 

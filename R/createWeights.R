@@ -32,8 +32,8 @@ createWeights <- function(data, exposure, outcome, tv_confounders, formulas, met
   library(WeightIt)
 
   # Extracting arguments from the msm object
-  ID <- "S_ID"
-  exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
+
+  exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)], "\\."), "[",2))
   time_varying_covariates <- tv_confounders
   weights_method <- method
   exposure_type <- if (length(unique(d[, paste0(exposure, ".", exposure_time_pts[1])])) < 3) "binary" else "continuous"
@@ -65,7 +65,8 @@ createWeights <- function(data, exposure, outcome, tv_confounders, formulas, met
 
   } else {
 
-    message(paste0("Creating longitudinal balancing weights using the ", weights_method, "  weighting method and the ", form_name, " formulas"))
+    message(paste0("Creating longitudinal balancing weights using the ", weights_method, "  weighting method and the ", form_name, " formulas"), "\n")
+    cat("\n")
 
     # List of formulas for each time point
     form <- formulas[grepl(paste("form_", exposure, "-", outcome, sep = ""), names(formulas))]
@@ -90,18 +91,17 @@ createWeights <- function(data, exposure, outcome, tv_confounders, formulas, met
       weights <- lapply(1:data$m, function(i) {
         d <-as.data.frame(mice::complete(data,i))
 
-        #error checking
-        if (sum(duplicated(d$ID)) > 0){
+        if (sum(duplicated(d$"ID")) > 0){
           stop("Please provide wide imputed datasets with a single row per ID.")
         }
 
-        # Creating weights
         fit <- calculate_weights(d_w, form, weights_method)
 
         d$weights <- fit$weights
 
-        message(paste0("USER ALERT: For imputation", i, " and the ", exposure, "-", outcome, " relation, the median weight value is ", round(median(fit$weights),2) ,
-                   " (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-", round(max(fit$weights),2), ")."), "\n")
+        cat(paste0("USER ALERT: For imputation ", i, " and the ", exposure, "-", outcome, " relation, the median weight value is ",
+                       round(median(fit$weights),2) ," (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-",
+                       round(max(fit$weights),2), ")."), "\n")
         cat('\n')
 
         # Save weights merged with ID variable
@@ -129,7 +129,6 @@ createWeights <- function(data, exposure, outcome, tv_confounders, formulas, met
         stop("If you specify data as a directory, please supply more than 1 imputed dataset.")
       }
 
-      # List imputed files
       files <- list.files(data, full.names = TRUE, pattern = "\\.csv")
 
       # Read and process imputed datasets
@@ -142,17 +141,17 @@ createWeights <- function(data, exposure, outcome, tv_confounders, formulas, met
       weights <- lapply(1:length(data), function(i) {
         d <- data[[i]]
 
-        if (sum(duplicated(d$ID)) > 0){
+        if (sum(duplicated(d$"ID")) > 0){
           stop("Please provide wide imputed datasets with a single row per ID.")
         }
 
         fit <- calculate_weights(d, form, weights_method)
+
         d$weights <- fit$weights
 
         message(paste0("USER ALERT: For imputation", i, " and the ", exposure, "-", outcome, " relation, the median weight value is ", round(median(fit$weights),2) ,
                        " (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-", round(max(fit$weights),2), ")."), "\n")
         cat('\n')
-
 
         # Save weights merged with ID variable
         write.csv(x = d, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_", i, ".csv"))
@@ -173,7 +172,7 @@ createWeights <- function(data, exposure, outcome, tv_confounders, formulas, met
 
     if (class(data) == "data.frame"){
 
-      if (sum(duplicated(data$ID)) > 0){
+      if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.")
       }
 

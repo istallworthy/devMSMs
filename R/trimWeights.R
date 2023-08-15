@@ -22,7 +22,6 @@ trimWeights <- function(weights, quantile = 0.95){
     dir.create(hist_dir)
   }
 
-
   #imputed data
   if (is.null(names(weights))) {
 
@@ -32,19 +31,23 @@ trimWeights <- function(weights, quantile = 0.95){
       t <- WeightIt::trim(w$weights, at = quantile)
 
       cat('\n')
-      message(paste0("USER ALERT: For imputation", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
+      message(paste0("USER ALERT: For imputation ", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
                      quantile, " quantile, the median weight value is ", round(median(t),2) ,
                      " (SD= ", round(sd(t),2), "; range= ", round(min(t),2), "-", round(max(t),2), ")."), "\n")
       cat('\n')
 
       # Save histogram of new weights
       ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
-        ggplot2::geom_histogram(color = 'black', bins = 15) +
+        ggplot2::geom_histogram(color = 'black', bins = 15)
         ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_", w$method, "_weights_trim_", quantile, "_imp_", x, ".png", sep = ""),
                         path = paste0(home_dir, "/weights/histograms/"), height = 8, width = 14)
 
-      t
+      w$weights <- NA
+      w$weights <- t
+      w
+
     })
+
   }
 
 
@@ -68,7 +71,9 @@ trimWeights <- function(weights, quantile = 0.95){
         ggplot2::ggsave(paste("Hist_", exposure, "-", outcome,"_", w$method, "_weights_trim_", quantile, ".png", sep = ""),
                         path = paste0(home_dir, "/weights/histograms/"), height = 8, width = 14)
 
-      t
+        w$weights <- NA
+        w$weights <- t
+        w
     })
     names(trim_weights) <- "0"
   }
@@ -77,7 +82,6 @@ trimWeights <- function(weights, quantile = 0.95){
   saveRDS(trim_weights, paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", w$method, "_weights_trim.rds"))
 
   trim_weights
-
 }
 
 

@@ -11,7 +11,8 @@ calcBalStats(
   outcome,
   balance_thresh = 0.1,
   k = 0,
-  weights = NULL
+  weights = NULL,
+  imp_conf = NULL
 )
 }
 \arguments{

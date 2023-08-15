@@ -14,7 +14,8 @@ assessBalance(
   type,
   formulas,
   weights = NULL,
-  balance_thresh = 0.1
+  balance_thresh = 0.1,
+  imp_conf = NULL
 )
 }
 \arguments{

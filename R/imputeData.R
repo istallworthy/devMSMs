@@ -39,6 +39,7 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
 
     imp <- readRDS(glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))
     imputed_datasets <- imp
+
     cat("\n")
     cat(glue::glue("Reading in {imputed_datasets$m} imputations from the local folder."))
     cat("\n")
@@ -46,10 +47,8 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
 
   } else {
 
-    ID <- "ID"
-
     #error checking
-    if (sum(duplicated(data$ID)) > 0){
+    if (sum(duplicated(data$"ID")) > 0){
       stop("Please provide a wide dataset with a single row per ID.")
     }
 
@@ -87,13 +86,6 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
       cat("### Completed iteration", i, "\n")
       miceout
     }
-
-    # imputed_datasets <- map_dfr (1:m, ~{
-    #   cat(glue::glue("### Started iteration {i}\n"))
-    #   miceout <- mice::mice(data_to_impute, m = 1, method = imp_method, maxit = 0, print = FALSE) #change maxit to 5 after testing
-    #   cat(glue::glue("### Completed iteration {i}\n"))
-    #   miceout
-    # })
 
     saveRDS(imputed_datasets, glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))
 

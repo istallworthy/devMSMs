@@ -56,9 +56,9 @@ inspectConfounders <-function(data, home_dir, exposure, outcome, tv_confounders,
 
   # Exposure summary
   exposure_summary <- data %>%
-    filter(WAVE %in% time_pts) %>%
-    group_by(WAVE) %>%
-    summarize_at(vars(all_of(exposure)),
+    dplyr:: filter(WAVE %in% time_pts) %>%
+    dplyr:: group_by(WAVE) %>%
+    dplyr:: summarize_at(vars(all_of(exposure)),
                  list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
 
   cat(knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'pipe'), sep = "\n")
@@ -72,9 +72,9 @@ inspectConfounders <-function(data, home_dir, exposure, outcome, tv_confounders,
 
   # Outcome summary
   outcome_summary <- data %>%
-    select(contains(sapply(strsplit(outcome, "\\."), "[",1))) %>%
-    group_by(WAVE) %>%
-    summarize_at(vars(all_of(outcome)),
+    dplyr:: select(contains(sapply(strsplit(outcome, "\\."), "[",1))) %>%
+    dplyr:: group_by(WAVE) %>%
+    dplyr:: summarize_at(vars(all_of(outcome)),
                  list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
 
   cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
@@ -106,9 +106,9 @@ inspectConfounders <-function(data, home_dir, exposure, outcome, tv_confounders,
   # Format for table output to visualize available covariates by time point
   covar_table <- data.frame(variable = sapply(strsplit(all_potential_covariates, "\\."), "[", 1),
                             time_pt = sapply(strsplit(all_potential_covariates, "\\."), "[", 2)) %>%
-    arrange(time_pt, variable) %>%
-    group_by(time_pt) %>%
-    summarize(variable = toString(variable))
+    dplyr::arrange(time_pt, variable) %>%
+    dplyr::group_by(time_pt) %>%
+    dplyr::summarize(variable = toString(variable))
 
   write.csv(covar_table, glue::glue("{home_dir}/balance/{exposure}-{outcome}_covariates_considered_by_time_pt.csv"), row.names = FALSE)
 
@@ -237,8 +237,8 @@ inspectConfounders <-function(data, home_dir, exposure, outcome, tv_confounders,
 
     # Summarizing n's by history
     his_summ <- new %>%
-      group_by(history) %>%
-      summarize(n = n())
+      dplyr::group_by(history) %>%
+      dplyr::summarize(n = dplyr::n())
 
     his_summ <- his_summ[! grepl("NA", his_summ$history),]
     his_summ <- his_summ[! grepl("NULL", his_summ$history),]
@@ -261,7 +261,14 @@ inspectConfounders <-function(data, home_dir, exposure, outcome, tv_confounders,
       cat("\n")
     }
 
+<<<<<<< Updated upstream:R/inspectConfounders.R
     cat(knitr::kable(his_summ, caption = paste0("Summary of User-Specified Exposure ", exposure, " Histories Based on Exposure Epochs"), format = 'pipe', row.names = F), sep = "\n")
+=======
+    cat(knitr::kable(his_summ, caption = paste0("Summary of User-Specified Exposure ", exposure, " Histories Based on Exposure Epochs ",
+                                               paste(epochs$epochs, collapse = ", "), " containing time points ", paste(epochs$values, collapse = ", "),
+                                               " and the following high/low cutoffs: ", paste(hi_lo_cut, collapse = " & ")),
+                     format = 'pipe', row.names = F), sep = "\n")
+>>>>>>> Stashed changes:R/inspectData.R
     cat("\n")
   }
 
