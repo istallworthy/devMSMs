@@ -41,7 +41,8 @@ calcBalStats <- function(data, formulas, exposure, outcome, balance_thresh = 0.1
 
   if (weighted == 1){
     weights_method = weights$method
-    data <- data %>% dplyr::mutate(weights = weights$weights)
+    w <- weights$weights
+    data <- data %>% dplyr::mutate(weights = as.numeric(w))
   }else{
     weights_method <- "no weights"
   }
@@ -218,10 +219,8 @@ calcBalStats <- function(data, formulas, exposure, outcome, balance_thresh = 0.1
                                                      sapply(seq(ncol(data[,covars])), function(x){
                                                        sqrt(mean( #dividing by pool SD estimate (unadjusted)
                                                          var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 1, covars[x]])), #treated var
-                                                         var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 0, covars[x]]))))})) %>% #untreated var
-
-
-              bal_stats <- bal_stats %>% dplyr::select(contains(c("std")))
+                                                         var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 0, covars[x]]))))})) #untreated var
+            bal_stats <- bal_stats %>% dplyr::select(contains(c("std")))
           } #ends binary
         } #ends weighted=0
 
@@ -272,10 +271,10 @@ calcBalStats <- function(data, formulas, exposure, outcome, balance_thresh = 0.1
                                                        sapply(seq(ncol(data[,covars])), function(x){
                                                          sqrt(mean( #dividing by pool SD estimate (unadjusted)
                                                            var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 1, covars[x]])), #treated var
-                                                           var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 0, covars[x]]))))})) %>% #untreated var
+                                                           var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 0, covars[x]]))))}))  #untreated var
 
-              # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
-              bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
+            # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
+            bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
             bal_stats <- bal_stats %>% dplyr::select(contains(c("std")))
           } #ends binary
         } #ends weighted
@@ -311,8 +310,8 @@ calcBalStats <- function(data, formulas, exposure, outcome, balance_thresh = 0.1
     all_bal_stats$covar_time[is.na(all_bal_stats$covar_time)] <- 0
     x_lab <- ifelse(exposure_type == "continuous", "Correlation with Exposure", "Standardized Mean Difference Between Exposures")
     labels <- ifelse(bal_stats$balanced == 0, bal_stats$covariate, "")
-    min_val <- ifelse(min(bal_stats$std_bal_stats) < 0, min(bal_stats$std_bal_stats) - 0.1, min(balance_thresh) - 0.05)
-    max_val <- ifelse(max(bal_stats$std_bal_stats) > 0, max(bal_stats$std_bal_stats) + 0.1, max(balance_thresh) + 0.05)
+    min_val <- ifelse(min(bal_stats$std_bal_stats) < 0, min(bal_stats$std_bal_stats) - 0.05, min(balance_thresh) - 0.05)
+    max_val <- ifelse(max(bal_stats$std_bal_stats) > 0, max(bal_stats$std_bal_stats) + 0.05, max(balance_thresh) + 0.05)
 
     # Make love plot per exposure time point
     lp <- ggplot2::ggplot(aes(x = std_bal_stats, y = covariate), data = bal_stats) +
@@ -363,17 +362,17 @@ calcBalStats <- function(data, formulas, exposure, outcome, balance_thresh = 0.1
                                                            exposure_time_pt, "_", weights_method, "_summary_balance_plot.jpeg"), width = 6, height = 8))
     }
 
-
-    if (data_type == "imputed"){
-      cat(paste0("A ", gsub("/", "", folder), " summary plot for ", form_name, " ", exposure, " imputation ", k, " at time ", exposure_time_pt,
-                 " for weighting method ", weights_method, " has now been saved in the '", folder, "plots/' folder."), "\n")
-    } else {cat(paste0("A ", gsub("/", "", folder), " summary plot for ", form_name, " ", exposure, " at time ", exposure_time_pt,
-                       " for weighting method ", weights_method, " has now been saved in the '", folder, "plots/' folder."), "\n")
-
-
     }
-    }
-  }     # Ends exp_time_pt loop
+  }
+
+}     # Ends exp_time_pt loop
+
+if (data_type == "imputed"){
+  cat(paste0("For each time point and imputation, ", gsub("/", "", folder), " summary plots for ", form_name, " formulas weighting method ",
+             weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
+} else {cat(paste0(" For each time point, ", gsub("/", "", folder), " summary plots for ", form_name, " formulas and weighting method ",
+                   weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
+
 
   # Summarizing balance
   bal_summary_exp <- all_bal_stats %>%
@@ -417,6 +416,7 @@ calcBalStats <- function(data, formulas, exposure, outcome, balance_thresh = 0.1
 
 
   if (data_type == "imputed"){
+
     cat(paste0("USER ALERT: For exposure ", exposure, " imputation ", k, " using ", weights_method, " and ", form_name, " formulas: "), "\n")
     cat(paste0("The median absolute value relation between exposure and confounder is ", round(median(abs(all_bal_stats$std_bal_stats)), 2), " (range = ",
                round(min(all_bal_stats$std_bal_stats), 2), "-", round(max(all_bal_stats$std_bal_stats), 2), ")."), "\n")
@@ -432,11 +432,11 @@ calcBalStats <- function(data, formulas, exposure, outcome, balance_thresh = 0.1
     cat("\n")
 
 
-  } else {cat(paste0("As shown below, for exposure ", exposure, " using ", weights_method, ", and ", form_name, ", ",
+  } else {cat(paste0("As shown below, for exposure ", exposure, " using ", weights_method, ", and ", form_name, " formulas, ",
                      imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced, "%) covariates across time points corresponding to ",
                      remaining_imbalanced_domains, " out of ", total_domains,
                      " domains remain imbalanced with a remaining average absolute value correlation/std mean difference of ",
-                     remaining_avg_abs_corr, " (range= ", remaining_corr_range, "), :"), "\n")
+                     remaining_avg_abs_corr, " (range= ", remaining_corr_range, ") :"), "\n")
     cat("\n")
     cat(knitr::kable(bal_summary_exp, caption = paste0("Imbalanced covariates using ",
                                                        weights_method, " and ", form_name, " formulas"), format = 'pipe'), sep = "\n")

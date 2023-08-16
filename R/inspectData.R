@@ -10,7 +10,6 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
   time_invar_covars <- ti_confounders
   time_var_covars <- tv_confounders
   time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
-  exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
   if (exposure_type == "continuous"){
     if (is.null(hi_lo_cut)){
@@ -54,12 +53,14 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
     data <- data_wide
   }
 
+  exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
+
   # Exposure summary
   exposure_summary <- data %>%
-    dplyr:: filter(WAVE %in% time_pts) %>%
-    dplyr:: group_by(WAVE) %>%
-    dplyr:: summarize_at(vars(all_of(exposure)),
-                 list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
+    dplyr:: select(colnames(data)[grepl(exposure, colnames(data))])
+  exposure_summary <- psych::describe(exposure_summary, fast = TRUE)
+
+
 
   cat(knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'pipe'), sep = "\n")
   knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'html') %>%
@@ -72,10 +73,9 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
 
   # Outcome summary
   outcome_summary <- data %>%
-    dplyr:: select(contains(sapply(strsplit(outcome, "\\."), "[",1))) %>%
-    dplyr:: group_by(WAVE) %>%
-    dplyr:: summarize_at(vars(all_of(outcome)),
-                 list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
+    dplyr:: select(contains(sapply(strsplit(outcome, "\\."), "[",1)))
+  outcome_summary <- psych::describe(outcome_summary, fast = TRUE)
+
 
   cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
                                                      sapply(strsplit(outcome, "\\."), "[",1), " Information"), format = 'pipe'), sep = "\n")
@@ -89,7 +89,7 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
 
 
   # Confounder summary
-  potential_covariates <- colnames(data)[!(colnames(data) %in% c(ID, "WAVE"))]
+  potential_covariates <- colnames(data)[!(colnames(data) %in% c(ID))]
 
   if (sum(tv_confounders %in% potential_covariates) != length(tv_confounders)){
     stop(paste(tv_confounders[!tv_confounders %in% potential_covariates]), " time-varying confounders are not present in the dataset.")
@@ -124,7 +124,7 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
     test[l, c(sapply(strsplit(all_potential_covariates[grepl(paste0(".", rownames(test)[l]), all_potential_covariates)], "\\."), "[", 1), time_invar_covars)] <- 1
   }
 
-  test <- test[, colnames(test)[!(colnames(test) %in% c(ID, "WAVE"))]]
+  test <- test[, colnames(test)[!(colnames(test) %in% c(ID))]]
   NumTimePts <- data.frame(NumTimePts = colSums(test, na.rm = TRUE))
   test <- rbind(test, t(NumTimePts))
   NumVars <- data.frame(NumVars = rowSums(test, na.rm = TRUE))
@@ -138,7 +138,7 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
   message(glue::glue("USER ALERT: Below are the {as.character(length(all_potential_covariates) - 2)} variables spanning {unique_vars - 2} unique domains that will be treated as confounding variables for the relation between {exposure} and {outcome}."), "\n",
           "Please inspect this list carefully. It should include all time-varying covariates, time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.", "\n")
   cat("\n")
-  print(all_potential_covariates[!(all_potential_covariates %in% c(ID, "WAVE"))])
+  print(all_potential_covariates[!(all_potential_covariates %in% c(ID))])
 
   #covariate correlations
   covariates_to_include <- all_potential_covariates
@@ -162,10 +162,10 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
   # Makes correlation table
   corr_matrix <- cor(as.data.frame(lapply(data_to_impute[, colnames(data_to_impute) != ID], as.numeric)), use = "pairwise.complete.obs")
   ggcorrplot::ggcorrplot(corr_matrix,  type = "lower")+
-    theme(axis.text.x = element_text(size = 5, margin = margin(-2,0,0,0)),  # Order: top, right, bottom, left
-          axis.text.y = element_text(size = 5, margin = margin(0,-2,0,0))) +
-    geom_vline(xintercept = 1:ncol(mtcars) - 0.5, colour="white", size = 2) +
-    geom_hline(yintercept = 1:ncol(mtcars) - 0.5, colour="white", size = 2)
+    ggplot2::theme(axis.text.x = element_text(size = 5, margin = ggplot2::margin(-2,0,0,0)),  # Order: top, right, bottom, left
+          axis.text.y = element_text(size = 5, margin = ggplot2::margin(0,-2,0,0))) +
+    ggplot2::geom_vline(xintercept = 1:ncol(mtcars) - 0.5, colour="white", size = 2) +
+    ggplot2::geom_hline(yintercept = 1:ncol(mtcars) - 0.5, colour="white", size = 2)
 
   # Save correlation plot
   pdf(file = paste0(home_dir, "/", exposure, "-", outcome, "_all_vars_corr_plot.pdf"))

@@ -7,22 +7,31 @@ This code uses the best-fitting model for each exposure-outcome pair to compare 
 \usage{
 compareHistories(
   home_dir,
-  data_for_model_with_weights_cutoff,
-  all_models,
+  exposure,
+  outcome,
+  tv_confounders,
+  model,
+  epochs = NULL,
+  hi_lo_cut = NA,
   reference = NA,
-  compare = NA
+  comparison = NULL,
+  mc_comp_method = "BH",
+  dose_level = "h",
+  exp_lab = NA,
+  out_lab = NA,
+  colors = "Dark2"
 )
 }
 \arguments{
+\item{reference}{optional reference event for custom comparison}
+
+\item{object}{msm object that contains all relevant user inputs}
+
 \item{data_for_model_with_weights_cutoff}{imputed datasets with truncated weights}
 
 \item{all_models}{fitted models for each imputed dataset}
 
-\item{reference}{optional reference event for custom comparison}
-
 \item{compare}{optional comparison event(s) for custom comparison}
-
-\item{object}{msm object that contains all relevant user inputs}
 }
 \value{
 preds_pool

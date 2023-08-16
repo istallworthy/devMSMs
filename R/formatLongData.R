@@ -1,5 +1,5 @@
 
-formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, time_var = NA, id_var = NA, missing = NA, factor_confounders = NA){
+formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, time_var = NA, id_var = NA, missing = NA, factor_confounders = NULL){
 
   time_varying_covariates <- tv_confounders
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
@@ -31,9 +31,9 @@ formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, ti
 
   # Exposure summary
   exposure_summary <- data %>%
-    filter(WAVE %in% exposure_time_pts) %>%
-    group_by(WAVE) %>%
-    summarize_at(vars(all_of(exposure)), list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
+    dplyr::filter(WAVE %in% exposure_time_pts) %>%
+    dplyr::group_by(WAVE) %>%
+    dplyr::summarize_at(dplyr::vars(all_of(exposure)), list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
 
   cat(knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'pipe'), sep = "\n")
   knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'html') %>%
@@ -47,9 +47,8 @@ formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, ti
   # Outcome summary
   outcome <- sapply(strsplit(outcome, "\\."), "[",1)
   outcome_summary <- data %>%
-    # filter(WAVE %in% outcome_time_pt) %>%
-    group_by(WAVE) %>%
-    summarize_at(vars(all_of(outcome)), list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
+    dplyr::group_by(WAVE) %>%
+    dplyr::summarize_at(dplyr::vars(all_of(outcome)), list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
 
   cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ", outcome, " Information"), format = 'pipe'), sep = "\n")
   knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ", outcome, " Information"), format = 'html') %>%
@@ -61,7 +60,7 @@ formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, ti
 
   data$ID <- as.factor(data$ID)
 
-  if(!is.na(factor_confounders)){
+  if(!is.null(factor_confounders)){
     if (sum(factor_confounders %in% colnames(data)) < length(factor_confounders)) {
       stop('Please provide factor covariates that correspond to columns in your data when creating the msm object')
     }
