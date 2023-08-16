@@ -1,8 +1,7 @@
 
 
 
-createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NA, keep_conf= NA, custom = NULL, ug=F ){
-
+createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL, keep_conf= NULL, custom = NULL, ug = F ){
 
   #error checking
   if(! type %in% c("short", "full", "update")){
@@ -16,13 +15,12 @@ createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confo
   }
 
 
-
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
   time_varying_covariates <- tv_confounders
   all_covars <- c(tv_confounders, ti_confounders)
 
   if (!is.null(custom)){
-    if (length(cutom) != length(exposure_time_pts) | class(custom) != "list"){
+    if (length(custom) != length(exposure_time_pts) | class(custom) != "list"){
       stop("If you wish to supply custom formulas, please provide a list of formulas for each exposure time point.")
     }
 
@@ -103,7 +101,7 @@ createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confo
       vars_to_include <- c(ti_confounders, time_var_include)
 
       #adding in any user-specified concurrent confounders (default is only lagged)
-      if(!is.na(concur_conf)){
+      if(!is.null(concur_conf)){
         if(sapply(strsplit(concur_conf, "\\."), "[", 1) %in% exposure){
           stop("Do not include the exposure concurrently. Please revise the concur_conf field.")
         }
@@ -117,7 +115,7 @@ createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confo
       }
 
       #adding in any user-specified confounders to retain in all formulas
-      if(!is.na(keep_conf)){
+      if(!is.null(keep_conf)){
         if(sum(keep_conf %in% tv_confounders) != length(keep_conf)){
           stop("The variables in the keep_conf field must be included in tv_confounders.")
         }

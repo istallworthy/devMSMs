@@ -39,7 +39,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)], "\\."), "[",2))
   time_varying_covariates <- tv_confounders
   weights_method <- method
-  exposure_type <- if (length(unique(d[, paste0(exposure, ".", exposure_time_pts[1])])) < 3) "binary" else "continuous"
+  exposure_type <- if (length(unique(data[, paste0(exposure, ".", exposure_time_pts[1])])) < 3) "binary" else "continuous"
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[",1)
 
   # creating directories
@@ -59,7 +59,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
 
   if (read_in_from_file == "yes") {
     tryCatch({
-      weights = paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_fit.rds")
+      weights = readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_fit.rds"))
       message("Reading in balancing weights from the local folder.")
     }, error = function(x) {
       stop("These weights have not previously been saved locally. Please re-run with read_in_from_file='no'")
@@ -68,8 +68,6 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
 
   } else {
 
-    message(paste0("Creating longitudinal balancing weights using the ", weights_method, "  weighting method and the ", form_name, " formulas"), "\n")
-    cat("\n")
 
     # List of formulas for each time point
     form <- formulas[grepl(paste("form_", exposure, "-", outcome, sep = ""), names(formulas))]
@@ -78,31 +76,32 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
     # Helper function to calculate weights
     calculate_weights <- function(data, form, weights_method) {
       set.seed(1234)
-      fit <- weightitMSM(form, data = data,
+      fit <- weightitMSM(form,
+                         data = data,
                          method = weights_method,
                          stabilize = TRUE,
                          density = "dt_2",
                          use.kernel = TRUE,
                          weightit.force = TRUE,
                          over = FALSE)
-      return(fit)
+      fit
     }
 
 
     if(class(data) == "mids"){
       # Cycling through imputed datasets
       weights <- lapply(1:data$m, function(i) {
-        d <-as.data.frame(mice::complete(data,i))
+        d <- as.data.frame(mice::complete(data, i))
 
         if (sum(duplicated(d$"ID")) > 0){
           stop("Please provide wide imputed datasets with a single row per ID.")
         }
 
-        fit <- calculate_weights(d_w, form, weights_method)
+        fit <- calculate_weights(d, form, weights_method)
 
         d$weights <- fit$weights
 
-        cat(paste0("USER ALERT: For imputation ", i, " and the ", exposure, "-", outcome, " relation, the median weight value is ",
+        cat(paste0("USER ALERT: For imputation ", i, " and the ", weights_method, " weighting method, the median weight value is ",
                        round(median(fit$weights),2) ," (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-",
                        round(max(fit$weights),2), ")."), "\n")
         cat('\n')
@@ -152,7 +151,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
 
         d$weights <- fit$weights
 
-        message(paste0("USER ALERT: For imputation", i, " and the ", exposure, "-", outcome, " relation, the median weight value is ", round(median(fit$weights),2) ,
+        message(paste0("USER ALERT: For imputation", i, " and ", weights_method, ", weighting method, the median weight value is ", round(median(fit$weights),2) ,
                        " (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-", round(max(fit$weights),2), ")."), "\n")
         cat('\n')
 
@@ -160,9 +159,9 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         write.csv(x = d, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_", i, ".csv"))
 
         # Writes image of the histogram of weights to assess heavy tails
-        ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
-          geom_histogram(color = 'black', bins = 15)
-        ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name, "_", weights_method, "_", i, ".png"),
+        ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
+          ggplot2::geom_histogram(color = 'black', bins = 15)
+        ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name, "_", weights_method, "_", i, ".png"),
                height = 8, width = 14)
 
         fit
@@ -183,21 +182,22 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       weights <-  lapply(1, function(i) {
         calculate_weights(data, form, weights_method)
       })
-      names(weights) <- "0"
 
-      data$weights <- weights$weights
+      data$weights <- weights[[1]]$weights
 
-      message(paste0("USER ALERT: For  the ", exposure, "-", outcome, " relation, the median weight value is ", round(median(weights$weights),2) ,
-                     " (SD= ", round(sd(weights$weights),2), "; range= ", round(min(weights$weights),2), "-", round(max(weights$weights),2), ")."), "\n")
+      message(paste0("USER ALERT: for the ", weights_method, " weighting method, the median weight value is ", round(median(data$weights), 2) ,
+                     " (SD= ", round(sd(data$weights), 2), "; range= ", round(min(data$weights), 2), "-", round(max(data$weights), 2), ")."), "\n")
       cat('\n')
+
+      names(weights) <- "0"
 
       # Save weights merged with ID variable
       write.csv(x = data, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", form_name, "_", weights_method, ".csv"))
 
       # Writes image of the histogram of weights to assess heavy tails
-      ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
-        geom_histogram(color = 'black', bins = 15)
-      ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name, "_", weights_method, ".png"),
+      ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
+        ggplot2::geom_histogram(color = 'black', bins = 15)
+      ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name, "_", weights_method, ".png"),
              height = 8, width = 14)
 
       message("Weights have now been saved into the 'weights/values/' folder.")
