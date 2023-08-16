@@ -1,5 +1,5 @@
 
-formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, time_var = NA, id_var = NA, missing=NA, factor_confounders = NA){
+formatLongData <- function(home_dir, data, exposure, outcome, tv_confounders, time_var = NA, id_var = NA, missing = NA, factor_confounders = NA){
 
   time_varying_covariates <- tv_confounders
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
