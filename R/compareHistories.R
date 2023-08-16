@@ -16,10 +16,19 @@
 #' @importFrom knitr kable
 #' @return preds_pool
 #' @examples compareHistories(object, data_for_model_with_weights_cutoff, all_models, reference=NA, compare=NA)
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 compareHistories <- function(object, data_for_model_with_weights_cutoff, all_models, reference = NA, compare = NA) {
 =======
 compareHistories <- function(home_dir, exposure, outcome, tv_confounders, model, epochs = NULL, hi_lo_cut = NA, reference = NA, comparison = NULL, mc_comp_method = "BH", dose_level = "h", exp_lab = NA, out_lab = NA, colors = "Dark2" ) {
+=======
+compareHistories <- function(home_dir, data_for_model_with_weights_cutoff, all_models, reference = NA, compare = NA) {
+
+  #error checking
+  if (!dir.exists(home_dir)) {
+    stop("Please provide a valid home directory path.")
+  }
+>>>>>>> main
 
   #error checking
   if (!dir.exists(home_dir)) {

@@ -5,6 +5,7 @@
 \title{Creates balancing weights for potential confounding covariates in relation to exposure at each time point}
 \usage{
 createWeights(
+  home_dir,
   data,
   exposure,
   outcome,

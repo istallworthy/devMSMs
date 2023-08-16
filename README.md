@@ -1,3 +1,3 @@
 # devMSMs
-Development of a package for using marginal structural models (MSMs) to answer causal questions in human development
+Wiki documentation for the devMSMs package for implementing marginal structural models to answer causal questions in developmental science. 
 

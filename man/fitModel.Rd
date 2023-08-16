@@ -6,21 +6,24 @@
 This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcome}
 \usage{
 fitModel(
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   msm_object,
+=======
+  home_dir,
+>>>>>>> main
   data_for_model_with_weights_cutoff,
   balance_stats_final,
   model = "m3"
 )
 }
 \arguments{
-\item{msm_object}{msm object that contains all relevant user inputs}
-
 \item{data_for_model_with_weights_cutoff}{dataset with truncated weights see truncateWeights}
 
 \item{balance_stats_final}{final bal stats conducted w/ full forms}
 
 \item{model}{user-specified model}
+<<<<<<< HEAD
 =======
   home_dir,
   data,
@@ -45,6 +48,10 @@ fitModel(
 
 \item{balance_stats_final}{final bal stats conducted w/ full forms}
 >>>>>>> Stashed changes
+=======
+
+\item{msm_object}{msm object that contains all relevant user inputs}
+>>>>>>> main
 }
 \value{
 fits

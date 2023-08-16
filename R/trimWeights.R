@@ -1,8 +1,12 @@
 
 
-trimWeights <- function(weights, quantile = 0.95){
+trimWeights <- function(home_dir, weights, quantile = 0.95){
 
   #error checking
+  if (!dir.exists(home_dir)) {
+    stop("Please provide a valid home directory path.")
+  }
+
   if (quantile > 1 || quantile < 0) {
     stop('Please select a quantile value between 0 and 1.')
   }

@@ -1,5 +1,5 @@
 
-inspectConfounders <-function(data, home_dir, exposure, outcome, tv_confounders, ti_confounders, epochs = NULL, hi_lo_cut = NULL){
+inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_confounders, epochs = NULL, hi_lo_cut = NULL){
 
   # Error checking
   if (!class(data) %in% c("mids", "data.frame", "character")) {
@@ -221,19 +221,35 @@ inspectConfounders <-function(data, home_dir, exposure, outcome, tv_confounders,
       tot_hist <- tot_hist[tot_hist %in% c(ref, comps)]
     }
 
-    new$history <- lapply(1:nrow(new), function(x) {
-      paste(lapply(1:nrow(epochs), function(y) {
-        if (is.na(new[x, y + 1])) {
-          return(NA)
-        }
-        if (new[x, y + 1] >= as.numeric(quantile(new[, y + 1], probs = hi_lo_cut[1], na.rm = TRUE))) {
-          return("h")
-        }
-        if (new[x, y + 1] <= as.numeric(quantile(new[, y + 1], probs =  hi_lo_cut[2], na.rm = TRUE))) {
-          return("l")
-        }
-      }), collapse = "-")
-    })
+    if (exposure_type == "continuous"){
+      new$history <- lapply(1:nrow(new), function(x) {
+        paste(lapply(1:nrow(epochs), function(y) {
+          if (is.na(new[x, y + 1])) {
+            return(NA)
+          }
+          if (new[x, y + 1] >= as.numeric(quantile(new[, y + 1], probs = hi_lo_cut[1], na.rm = TRUE))) {
+            return("h")
+          }
+          if (new[x, y + 1] <= as.numeric(quantile(new[, y + 1], probs =  hi_lo_cut[2], na.rm = TRUE))) {
+            return("l")
+          }
+        }), collapse = "-")
+      })}
+
+    if (exposure_type == "binary"){
+      new$history <- lapply(1:nrow(new), function(x) {
+        paste(lapply(1:nrow(epochs), function(y) {
+          if (is.na(new[x, y + 1])) {
+            return(NA)
+          }
+          if (new[x, y + 1] == 1) {
+            return("h")
+          }
+          if (new[x, y + 1] == 0) {
+            return("l")
+          }
+        }), collapse = "-")
+      })}
 
     # Summarizing n's by history
     his_summ <- new %>%
@@ -257,10 +273,11 @@ inspectConfounders <-function(data, home_dir, exposure, outcome, tv_confounders,
     if (nrow(his_summ) != length(tot_hist)) {
       cat(paste0("USER ALERT: There are no individuals in your sample that fall into ",
                  paste(tot_hist[!tot_hist %in% his_summ$history], collapse = " & "),
-                 " exposure history/histories. You may wish to consider different high/low cutoffs, alternative epochs, or choose a different measure to avoid extrapolation."), "\n")
+                 " exposure history/histories. You may wish to consider different high/low cutoffs (for continuous exposures), alternative epochs, or choose a different measure to avoid extrapolation."), "\n")
       cat("\n")
     }
 
+<<<<<<< HEAD:R/inspectConfounders.R
 <<<<<<< Updated upstream:R/inspectConfounders.R
     cat(knitr::kable(his_summ, caption = paste0("Summary of User-Specified Exposure ", exposure, " Histories Based on Exposure Epochs"), format = 'pipe', row.names = F), sep = "\n")
 =======
@@ -269,6 +286,10 @@ inspectConfounders <-function(data, home_dir, exposure, outcome, tv_confounders,
                                                " and the following high/low cutoffs: ", paste(hi_lo_cut, collapse = " & ")),
                      format = 'pipe', row.names = F), sep = "\n")
 >>>>>>> Stashed changes:R/inspectData.R
+=======
+    cat(knitr::kable(his_summ, caption = paste0("Summary of User-Specified Exposure ", exposure, " Histories Based on Exposure Epochs"),
+                     format = 'pipe', row.names = F), sep = "\n")
+>>>>>>> main:R/inspectData.R
     cat("\n")
   }
 
