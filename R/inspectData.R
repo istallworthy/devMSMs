@@ -277,19 +277,12 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
       cat("\n")
     }
 
-<<<<<<< HEAD:R/inspectConfounders.R
-<<<<<<< Updated upstream:R/inspectConfounders.R
-    cat(knitr::kable(his_summ, caption = paste0("Summary of User-Specified Exposure ", exposure, " Histories Based on Exposure Epochs"), format = 'pipe', row.names = F), sep = "\n")
-=======
+
     cat(knitr::kable(his_summ, caption = paste0("Summary of User-Specified Exposure ", exposure, " Histories Based on Exposure Epochs ",
                                                paste(epochs$epochs, collapse = ", "), " containing time points ", paste(epochs$values, collapse = ", "),
                                                " and the following high/low cutoffs: ", paste(hi_lo_cut, collapse = " & ")),
                      format = 'pipe', row.names = F), sep = "\n")
->>>>>>> Stashed changes:R/inspectData.R
-=======
-    cat(knitr::kable(his_summ, caption = paste0("Summary of User-Specified Exposure ", exposure, " Histories Based on Exposure Epochs"),
-                     format = 'pipe', row.names = F), sep = "\n")
->>>>>>> main:R/inspectData.R
+
     cat("\n")
   }
 
