@@ -64,8 +64,12 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
   exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
+<<<<<<< Updated upstream
   weights_method <- ifelse(type == "prebalance", "no weights", weights$method)
 
+=======
+  weights_method <- ifelse(type == "prebalance", "no weights", weights[[1]]$method)
+>>>>>>> Stashed changes
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[",1)
 
   if (class(data) == "character") {
@@ -269,10 +273,18 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
         stop("Please provide wide dataset with a single row per ID.")
       }
 
+<<<<<<< Updated upstream
 
       exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
       bal_stats <- calcBalStats(data, formulas, exposure, outcome, balance_thresh, k = 0, weights = weights[[1]])
+=======
+      bal_stats <- calcBalStats(data, formulas, exposure, outcome, balance_thresh, k = 0, weights = weights)
+
+      exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
+
+
+>>>>>>> Stashed changes
 
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       unbalanced_covars <- data.frame(
