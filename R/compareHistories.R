@@ -17,7 +17,7 @@
 #' @return preds_pool
 #' @examples compareHistories(object, data_for_model_with_weights_cutoff, all_models, reference=NA, compare=NA)
 
-compareHistories <- function(home_dir, exposure, outcome, tv_confounders, model, epochs = NULL, hi_lo_cut = NA, reference = NA, comparison = NULL, mc_comp_method = "BH", dose_level = "h", exp_lab = NA, out_lab = NA, colors = "Dark2" ) {
+compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, epochs = NULL, hi_lo_cut = NA, reference = NA, comparison = NULL, mc_comp_method = "BH", dose_level = "h", exp_lab = NA, out_lab = NA, colors = "Dark2" ) {
 
   #error checking
   if (!dir.exists(home_dir)) {
@@ -34,9 +34,10 @@ compareHistories <- function(home_dir, exposure, outcome, tv_confounders, model,
     dir.create(plot_dir)
   }
 
+  # exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
+
   exposure_type <- ifelse(class(model[[1]]$data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
-  exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
   if( is.null(epochs)){ #making epochs time pts if not specified by user
     epochs <- data.frame(epochs = as.character(exposure_time_pts),
                          values = exposure_time_pts)

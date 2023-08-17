@@ -14,7 +14,7 @@
 #' @importFrom cobalt bal.tab
 #' @seealso [CBPS::CBPS()], [formatForWeights()], [createShortForms()]
 #' @examples createWeights(object, wide_long_datasets, short_forms, read_in_from_file="no")
-createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no") {
+createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no", user.o = TRUE) {
 
   #error checking
   if (!dir.exists(home_dir)) {
@@ -60,7 +60,9 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
   if (read_in_from_file == "yes") {
     tryCatch({
       weights = readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_fit.rds"))
-      message("Reading in balancing weights from the local folder.")
+      if (user.o == TRUE){
+        message("Reading in balancing weights from the local folder.")
+      }
     }, error = function(x) {
       stop("These weights have not previously been saved locally. Please re-run with read_in_from_file='no'")
     })
@@ -102,8 +104,8 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         d$weights <- fit$weights
 
         cat(paste0("USER ALERT: For imputation ", i, " and the ", weights_method, " weighting method, the median weight value is ",
-                       round(median(fit$weights),2) ," (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-",
-                       round(max(fit$weights),2), ")."), "\n")
+                   round(median(fit$weights),2) ," (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-",
+                   round(max(fit$weights),2), ")."), "\n")
         cat('\n')
 
         # Save weights merged with ID variable
@@ -118,8 +120,11 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         fit
       })
 
-      message("Weights for each imputation have now been saved into the 'weights/values/' folder.")
-      message("Weights histograms for each imputation have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
+      if (user.o == TRUE){
+        cat("Weights for each imputation have now been saved into the 'weights/values/' folder.")
+        cat("\n")
+        cat("Weights histograms for each imputation have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
+      }
     }
 
 
@@ -162,12 +167,16 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
           ggplot2::geom_histogram(color = 'black', bins = 15)
         ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name, "_", weights_method, "_", i, ".png"),
-               height = 8, width = 14)
+                        height = 8, width = 14)
 
         fit
       })
-      message("Weights for each imputation have now been saved into the 'weights/values/' folder.")
-      message("Weights histograms for each imputation have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
+
+      if (user.o == TRUE){
+        cat("Weights for each imputation have now been saved into the 'weights/values/' folder.")
+        cat("\n")
+        cat("Weights histograms for each imputation have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
+      }
     }
 
 
@@ -198,14 +207,20 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
         ggplot2::geom_histogram(color = 'black', bins = 15)
       ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name, "_", weights_method, ".png"),
-             height = 8, width = 14)
+                      height = 8, width = 14)
 
-      message("Weights have now been saved into the 'weights/values/' folder.")
-      message("Weights histograms for each imputation have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
+      if (user.o == TRUE){
+        cat("Weights have now been saved into the 'weights/values/' folder.")
+        cat("\n")
+        cat("Weights histograms have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
+      }
     }
 
     saveRDS(weights, file = paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_fit.rds"))
-    message("Weights models have been saved as an .rds object in the 'weights' folder.")
+
+    if (user.o == TRUE){
+      message("Weights models have been saved as an .rds object in the 'weights' folder.")
+    }
 
     weights
   }

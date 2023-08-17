@@ -1,6 +1,6 @@
 
 
-trimWeights <- function(home_dir, weights, quantile = 0.95){
+trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
 
   #error checking
   if (!dir.exists(home_dir)) {
@@ -34,11 +34,13 @@ trimWeights <- function(home_dir, weights, quantile = 0.95){
 
       t <- WeightIt::trim(w$weights, at = quantile)
 
+      if (user.o == TRUE){
       cat('\n')
       message(paste0("USER ALERT: For imputation ", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
                      quantile, " quantile, the median weight value is ", round(median(t),2) ,
                      " (SD= ", round(sd(t),2), "; range= ", round(min(t),2), "-", round(max(t),2), ")."), "\n")
       cat('\n')
+      }
 
       # Save histogram of new weights
       ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
@@ -63,11 +65,13 @@ trimWeights <- function(home_dir, weights, quantile = 0.95){
 
       t <- WeightIt::trim(w$weights, at = quantile)
 
+      if (user.o == TRUE){
       cat('\n')
       message(paste0("USER ALERT: For the ", exposure, "-", outcome, " relation, following trimming at the ",
                      quantile, " quantile, the median weight value is ", round(median(t),2) ,
                      " (SD= ", round(sd(t),2), "; range= ", round(min(t),2), "-", round(max(t),2), ")."), "\n")
       cat('\n')
+      }
 
       # Save histogram of new weights
       ggplot2::ggplot(as.data.frame(t), aes(x = t)) +

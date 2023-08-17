@@ -8,6 +8,7 @@ This code uses the best-fitting model for each exposure-outcome pair to compare 
 compareHistories(
   home_dir,
   exposure,
+  exposure_time_pts,
   outcome,
   tv_confounders,
   model,

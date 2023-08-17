@@ -1,7 +1,7 @@
 
 
 
-createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL, keep_conf= NULL, custom = NULL, ug = F ){
+createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL, keep_conf= NULL, custom = NULL, user.o = TRUE ){
 
   #error checking
   if(! type %in% c("short", "full", "update")){
@@ -15,7 +15,6 @@ createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confo
   }
 
 
-  exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
   time_varying_covariates <- tv_confounders
   all_covars <- c(tv_confounders, ti_confounders)
 
@@ -37,12 +36,12 @@ createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confo
     if (!dir.exists(forms_dir)) {
       dir.create(forms_dir)
     }
+
     # Create type directory
     forms_dir <- file.path(home_dir, "formulas", type)
     if (!dir.exists(forms_dir)) {
       dir.create(forms_dir)
     }
-
 
 
     factor_covariates <- colnames(data)[which(sapply(data, class) == "factor")]
@@ -74,29 +73,36 @@ createFormulas <- function(home_dir, exposure, outcome, tv_confounders, ti_confo
 
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) == exposure_time_pts[x-1]]
 
-        new <- bal_stats %>%
-          dplyr::mutate(balanced_avg = ifelse(abs(avg_bal) < balance_thresh, 1, 0)) %>%
-          dplyr::filter(balanced_avg == 0)%>%
-          dplyr::filter(exp_time == time, as.numeric(covar_time) < exposure_time_pts[x - 1],
-                        as.numeric(covar_time) > 0) %>% # Finds any lagged imbalanced covars
-          dplyr::select(covariate)
+        if (x > 1) {
+          new <- bal_stats %>%
+            dplyr::filter(balanced == 0) %>%
+            dplyr::filter(exp_time == time, as.numeric(covar_time) < exposure_time_pts[x - 1],
+                          as.numeric(covar_time) > 0) %>% # Finds any lagged imbalanced covars
+            dplyr::select(covariate)
 
-        # Renames factors (that were appended w/ level)
-        if (nrow(new) > 0) {
-          new$covariate[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates] <-
-            sapply(strsplit(new$covariate, "_"), `[`, 1)[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates]
 
-          new <- as.character(unlist(new))
+          # Renames factors (that were appended w/ level)
+          if (nrow(new)>0) {
+            new$covariate[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates] <-
+              sapply(strsplit(new$covariate, "_"), `[`, 1)[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates]
 
-          time_var_include=c(time_var_include, new)
+            new <- as.character(unlist(new))
 
-          message(paste0("For ", exposure, " at exposure time point ", exposure_time_pt,
-                         ", the following covariate(s) will be added to the short balancing formula: "), temp, "\n")
-        }else{
-          message(paste0("For ", exposure, " at exposure time point ", exposure_time_pt,
-                         "no time-varying confounders at additional lags were added."))
+            time_var_include <- c(time_var_include, new)
+
+            if (user.o == TRUE){
+              cat(paste0("For ", exposure, " at exposure time point ", time ,
+                         ", the following covariate(s) will be added to the short balancing formula: "), paste(new, collapse = ", "), "\n")
+            }
+          }else{
+            if (user.o == TRUE) {
+              cat(paste0("For ", exposure, " at exposure time point ", time ,
+                         " no time-varying confounders at additional lags were added."), "\n")
+            }
+          }
         }
       }
+
 
       vars_to_include <- c(ti_confounders, time_var_include)
 
