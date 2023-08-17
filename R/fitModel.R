@@ -15,7 +15,7 @@
 #' @examples fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m3")
 
 
-fitModel <- function(home_dir, data, weights, exposure, outcome, tv_confounders, model, family = gaussian, link = "identity", int_order = NA, covariates = NULL, epochs = NULL) {
+fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model, family = gaussian, link = "identity", int_order = NA, covariates = NULL, epochs = NULL, user.o = TRUE) {
 
   # Error checking
   if (!(model %in% c("m0", "m1", "m2", "m3"))) {
@@ -24,7 +24,7 @@ fitModel <- function(home_dir, data, weights, exposure, outcome, tv_confounders,
 
 
   weights_method <- weights[[1]]$method
-  exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
+  # exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
 
   #error checking
   if (!dir.exists(home_dir)) {
@@ -277,29 +277,30 @@ fitModel <- function(home_dir, data, weights, exposure, outcome, tv_confounders,
   }
   names(fits) = "0"
 
+  if (user.o == TRUE){
+    if (class(data) == "mids" | class(data) == "list"){
+      cat(paste0("USER ALERT: the marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
 
-  if (class(data) == "mids" | class(data) == "list"){
-    cat(paste0("USER ALERT: the marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
+      suppressWarnings(jtools::export_summs(
+        fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
+        model.names = c(paste0("Imp.", 1:length(fits))),
+        file.name = file.path(home_dir, "/models/", paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))
+      ))
 
-    suppressWarnings(jtools::export_summs(
-      fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
-      model.names = c(paste0("Imp.", 1:length(fits))),
-      file.name = file.path(home_dir, "/models/", paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))
-    ))
+    } else{
+      cat(paste0("USER ALERT: the marginal model, ", model, ", is summarized below:"), "\n")
 
-  } else{
-    cat(paste0("USER ALERT: the marginal model, ", model, ", is summarized below:"), "\n")
+      suppressWarnings(jtools::export_summs(
+        fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
+        file.name = file.path(home_dir, "/models/", paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))
+      ))
 
-    suppressWarnings(jtools::export_summs(
-      fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
-      file.name = file.path(home_dir, "/models/", paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))
-    ))
+    }
 
+    print(lapply(fits, function(x) {summary(x)}))
+
+    cat("Tables of model evidence have now been saved in the 'models/' folder.\n")
   }
-
-  print(lapply(fits, function(x) {summary(x)}))
-
-  cat("Tables of model evidence have now been saved in the 'models/' folder.\n")
 
   saveRDS(fits, file = file.path(home_dir, "/models/", paste0(exposure, "-", outcome, "_", model, "_model.rds")))
   cat("\n")

@@ -10,6 +10,7 @@ fitModel(
   data,
   weights,
   exposure,
+  exposure_time_pts,
   outcome,
   tv_confounders,
   model,
@@ -17,7 +18,8 @@ fitModel(
   link = "identity",
   int_order = NA,
   covariates = NULL,
-  epochs = NULL
+  epochs = NULL,
+  user.o = TRUE
 )
 }
 \arguments{

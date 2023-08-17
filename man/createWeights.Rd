@@ -12,7 +12,8 @@ createWeights(
   tv_confounders,
   formulas,
   method = "cbps",
-  read_in_from_file = "no"
+  read_in_from_file = "no",
+  user.o = TRUE
 )
 }
 \arguments{

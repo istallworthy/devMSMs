@@ -28,7 +28,7 @@
 #' @importFrom dplyr bind_rows
 #' @examples assessBalance(object, forms, data_for_model_with_weights, histories=1)
 
-assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh = 0.1, imp_conf = NULL){
+assessBalance <- function(home_dir, data, exposure,  outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh = 0.1, imp_conf = NULL, user.o = T){
 
   # Error checking
   if (!dir.exists(home_dir)) {
@@ -65,14 +65,15 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
   }
 
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
+
   exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
-
   weights_method <- ifelse(type == "prebalance", "no weights", weights[[1]]$method)
-  # >>>>>>> Stashed changes
+
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[",1)
 
-  if (class(data) == "character") {
+
+   if (class(data) == "character") {
     if (!dir.exists(data)) {
       stop("Please provide a valid directory path with imputed .csv's, a data frame, or a 'mids' object for the 'data' field.")
     }
@@ -87,7 +88,6 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
     data <- lapply(files, function(file) {
       imp_data <- read.csv(file)
 
-      #error checking
       if (sum(duplicated(imp_data$"ID")) > 0){
         stop("Please provide a directory to data that are imputed in wide format with a single row per ID.")
       }
@@ -98,50 +98,56 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
 
   ### Getting balance statistics
   if (type == "prebalance"){
+    if (user.o == TRUE){
     message(paste0("USER ALERT: The following statistics display covariate imbalance at each exposure time point prior to weighting,
             using ", form_name, " formulas."), "\n")
     cat("\n")
+    }
 
     # Running balance stats function, unweighted, on each imputed dataset
     if (class(data) == "mids" | class(data) =="list"){
 
       if (class(data) == "mids"){
         m = data$m
+
         bal_stats <- lapply(1:m, function(k) {
           d <-as.data.frame(mice::complete(data,k))
 
           exposure_type <- ifelse(class(d[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
-          #error checking
           if (sum(duplicated(d$"ID")) > 0){
             stop("Please provide wide imputed datasets with a single row per ID.")
           }
 
-          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = NULL, imp_conf)
+          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = NULL, imp_conf, user.o)
         })
       }
 
       if (class(data) == "list"){
         m = length(data)
+
         bal_stats <- lapply(1:m, function(k) {
           d <- data[[k]]
 
           exposure_type <- ifelse(class(d[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
-          #error checking
           if (sum(duplicated(d$"ID")) > 0){
             stop("Please provide wide imputd datasets with a single row per ID.")
           }
 
-          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = NULL, imp_conf)
+          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = NULL, imp_conf, user.o)
         })
       }
+
 
       # Save out balance stats for each imputed dataset
       bal_stats_all_imp <- do.call(bind_rows, bal_stats)
       bal_stats_all_imp <- bal_stats_all_imp[order(bal_stats_all_imp$covariate), ]
       write.csv(bal_stats_all_imp, paste0(home_dir, "/balance/", type, "/", exposure, "_all_imps_balance_stat_summary.csv"), row.names = FALSE)
-      message("Pre balance statistics for each imputed dataset have now been saved in the 'balance/prebalance/' folder", "\n")
+
+      if (user.o == TRUE){
+        message("Pre balance statistics for each imputed dataset have now been saved in the 'balance/prebalance/' folder", "\n")
+      }
 
       # Gathering imbalanced covariate statistics to average across imputed datasets for the final list/assessment of imbalanced covariates
       # Averaging across imputed datasets
@@ -163,21 +169,23 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
       }
 
       cat("\n")
-      cat(paste0("*** Averaging Across All Imputations ***"), "\n")
+
+      if (user.o == TRUE){
+        cat(paste0("*** Averaging Across All Imputations ***"), "\n")
+      }
 
       tot_covars <- sapply(strsplit(all_bal_stats$covariate, "\\."), `[`, 1)
     }
 
 
     if (class(data) == "data.frame"){
-      #error checking
       if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.")
       }
 
       exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
-      bal_stats <- calcBalStats(data, formulas, exposure, outcome, balance_thresh, k = 0, weights = NULL, imp_conf)
+      bal_stats <- calcBalStats(data, formulas, exposure, outcome, balance_thresh, k = 0, weights = NULL, imp_conf, user.o)
 
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       all_bal_stats <- data.frame(
@@ -204,17 +212,19 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
       # Running balance stats function, unweighted, on each imputed dataset w/ no weights
       if (class(data) == "mids"){
         m <- data$m
+
         bal_stats <- lapply(1:m, function(k) {
           d <- as.data.frame(mice::complete(data, k))
 
           exposure_type <- ifelse(class(d[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
-          #error checking
           if (sum(duplicated(d$"ID")) > 0){
             stop("Please provide wide imputed datasets with a single row per ID.")
           }
+
           w <- weights[[k]]
-          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = w, imp_conf) #are weights just in data at this point?
+
+          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = w, imp_conf, user.o) #are weights just in data at this point?
         })
       }
 
@@ -225,12 +235,13 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
 
           exposure_type <- ifelse(class(d[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
-          #error checking
           if (sum(duplicated(d$"ID")) > 0){
             stop("Please provide wide imputed datasets with a single row per ID.")
           }
+
           w <- weights[[k]]
-          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = w, imp_conf)
+
+          calcBalStats(d, formulas, exposure, outcome, balance_thresh, k = k, weights = w, imp_conf, user.o)
         })
       }
 
@@ -238,7 +249,10 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
       bal_stats_all_imp <- do.call(bind_rows, bal_stats)
       bal_stats_all_imp <- bal_stats_all_imp[order(bal_stats_all_imp$covariate), ]
       write.csv(bal_stats_all_imp, paste0(home_dir, "/balance/", type, "/", exposure, "_all_imps_balance_stat_summary.csv"), row.names = FALSE)
-      message("Weighted balance statistics for each imputed dataset have now been saved in the 'balance/weighted/' folder", "\n")
+
+      if (user.o == TRUE){
+        message("Weighted balance statistics for each imputed dataset have now been saved in the 'balance/weighted/' folder", "\n")
+      }
 
       # Gathering imbalanced covariate statistics to average across imputed datasets for the final list/assessment of imbalanced covariates
       # Averaging across imputed datasets
@@ -253,14 +267,16 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
       if (!is.null(imp_conf)){
         all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = ifelse(all_bal_stats$covariate %in% imp_conf,
                                                                              balance_thresh[1], balance_thresh[2]))
-        all_bal_stats <- all_bal_stats %>%   dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) < all_bal_stats$bal_thresh, 1, 0) )
+        all_bal_stats <- all_bal_stats %>%dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) < all_bal_stats$bal_thresh, 1, 0) )
       } else{
         all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = balance_thresh)
         all_bal_stats <- all_bal_stats %>% dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) < all_bal_stats$bal_thresh, 1, 0) )
       }
 
       cat("\n")
-      cat(paste0("*** Averaging Across All Imputations ***"), "\n")
+      if (user.o == TRUE){
+        cat(paste0("*** Averaging Across All Imputations ***"), "\n")
+      }
 
       tot_covars <- sapply(strsplit(all_bal_stats$covariate, "\\."), `[`, 1)
     }
@@ -272,12 +288,11 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
         stop("Please provide wide dataset with a single row per ID.")
       }
 
-
       w <- weights[[1]]
-      bal_stats <- calcBalStats(data, formulas, exposure, outcome, balance_thresh, k = 0, weights = w)
+
+      bal_stats <- calcBalStats(data, formulas, exposure, outcome, balance_thresh, k = 0, weights = w, user.o)
 
       exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
-
 
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       all_bal_stats  <- data.frame(
@@ -298,70 +313,81 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
 
   ### Plotting and summarizing
   tot_cons <- tot_covars[!duplicated(tot_covars)] # Total domains/constructs
-  x_lab <- ifelse(exposure_type == "continuous", "Exposure-Covariate Correlation", "Standardized Mean Difference")
+  # x_lab <- ifelse(exposure_type == "continuous", "Exposure-Covariate Correlation", "Standardized Mean Difference")
+
 
   # Make love plot to summarize imbalance at each exposure time point
+  data_type <- ifelse(class(data) == "mids" | class(data) == "list", "imputed", "single")
+  folder <- ifelse(type == "prebalance", "prebalance/", "weighted/")
+
+  weights_method = ifelse(type == "weighted", w$method, "no weights")
+
   sapply(seq_along(exposure_time_pts), function(i) {
     exposure_time_pt <- exposure_time_pts[i]
-
     temp <- all_bal_stats %>% filter(exp_time == exposure_time_pt)
-    labels <- ifelse(temp$balanced == 0, temp$covariate, "")
-    min_val <- ifelse(min(temp$avg_bal) < 0, min(temp$avg_bal) - 0.02, min(balance_thresh) - 0.02)
-    max_val <- ifelse(max(temp$avg_bal) > 0, max(temp$avg_bal) + 0.02, max(balance_thresh) + 0.02)
 
+    # make_love_plot(home_dir, folder, exposure, exposure_type, temp, data_type, balance_thresh, imp_conf)
+    make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k, form_name, temp, data_type, balance_thresh, weights_method, imp_conf)
 
-    lp <- ggplot2::ggplot(temp, aes(x = avg_bal, y = covariate)) +
-      ggplot2::geom_point(aes(fill = "white", alpha = 1), na.rm = TRUE) +
-      ggplot2::geom_text(aes(label = labels, hjust = -0.2, vjust = 0.2), size = 1.5, color = "red") +
-      ggplot2::xlab(x_lab) +
-      ggplot2::ylab("Covariate") +
-      ggplot2::xlim(min_val, max_val) +
-      ggplot2::ggtitle(paste0(exposure, "(t=", exposure_time_pt, ") Balance")) +
-      ggplot2::theme(
-        panel.background = ggplot2::element_rect(fill = "white"),
-        axis.text.x = ggplot2::element_text(color = "black"),
-        axis.text.y = ggplot2::element_text(color = "black"),
-        axis.text = ggplot2::element_text(size = 8),
-        panel.border = ggplot2::element_rect(fill = NA, color = "black"),
-        plot.background = ggplot2::element_blank(),
-        plot.title = ggplot2::element_text(size = 10),
-        legend.background = ggplot2::element_blank(),
-        legend.key = ggplot2::element_blank(),
-        legend.position = "none"
-      ) +
-      ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
-
-    if (nrow(temp) > 40) { # Stagger covariate labels if there are many to ease viewing
-      lp <- lp + ggplot2::scale_y_discrete(guide = ggplot2::guide_axis(n.dodge = 2))
-    }
-
-    if (!is.null(imp_conf)){ #adding threshold lines
-      lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh[1], linetype = "dashed", color = "red")
-      lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh[1], linetype = "dashed", color = "red")
-      lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh[2], linetype = "dashed", color = "red")
-      lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh[2], linetype = "dashed", color = "red")
-    } else{
-      lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh, linetype = "dashed", color = "red")
-      lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh, linetype = "dashed", color = "red")
-    }
-
-    if (class(data) == "mids" | class(data) == "list"){
-      suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", type, "/plots/", form_name, "_", weights_method, "_", exposure, "_all_imps_",
-                                                             exposure_time_pt, "_summary_", type, "_plot.jpeg")))
-
-    } else{
-      suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", type, "/plots/", form_name, "_", weights_method, "_", exposure, "_",
-                                                             exposure_time_pt, "_summary_", type, "_plot.jpeg")))
-
-    }
   })
 
-  if (class(data) == "mids" | class(data) == "list"){
-    cat(paste0("USER ALERT: Summary plots for ", form_name, " ", exposure,
-               " averaged across all imputations have been saved out for each time point in the 'balance/", type, "/plots/' folder."), "\n")
-  } else{
+    # labels <- ifelse(temp$balanced == 0, temp$covariate, "")
+    # min_val <- ifelse(min(temp$avg_bal) < 0, min(temp$avg_bal) - 0.02, min(balance_thresh) - 0.02)
+    # max_val <- ifelse(max(temp$avg_bal) > 0, max(temp$avg_bal) + 0.02, max(balance_thresh) + 0.02)
 
-    message(paste0("USER ALERT: Summary plots for ", form_name, " ", exposure, " have now been saved out for each time point in the 'balance/", type, "/plots/' folder."), "\n")
+
+    # lp <- ggplot2::ggplot(temp, aes(x = avg_bal, y = covariate)) +
+    #   ggplot2::geom_point(aes(fill = "white", alpha = 1), na.rm = TRUE) +
+    #   ggplot2::geom_text(aes(label = labels, hjust = -0.2, vjust = 0.2), size = 1.5, color = "red") +
+    #   ggplot2::xlab(x_lab) +
+    #   ggplot2::ylab("Covariate") +
+    #   ggplot2::xlim(min_val, max_val) +
+    #   ggplot2::ggtitle(paste0(exposure, "(t=", exposure_time_pt, ") Balance")) +
+    #   ggplot2::theme(
+    #     panel.background = ggplot2::element_rect(fill = "white"),
+    #     axis.text.x = ggplot2::element_text(color = "black"),
+    #     axis.text.y = ggplot2::element_text(color = "black"),
+    #     axis.text = ggplot2::element_text(size = 8),
+    #     panel.border = ggplot2::element_rect(fill = NA, color = "black"),
+    #     plot.background = ggplot2::element_blank(),
+    #     plot.title = ggplot2::element_text(size = 10),
+    #     legend.background = ggplot2::element_blank(),
+    #     legend.key = ggplot2::element_blank(),
+    #     legend.position = "none"
+    #   ) +
+    #   ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
+    #
+    # if (nrow(temp) > 40) { # Stagger covariate labels if there are many to ease viewing
+    #   lp <- lp + ggplot2::scale_y_discrete(guide = ggplot2::guide_axis(n.dodge = 2))
+    # }
+    #
+    # if (!is.null(imp_conf)){ #adding threshold lines
+    #   lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh[1], linetype = "dashed", color = "red")
+    #   lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh[1], linetype = "dashed", color = "red")
+    #   lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh[2], linetype = "dashed", color = "red")
+    #   lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh[2], linetype = "dashed", color = "red")
+    # } else{
+    #   lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh, linetype = "dashed", color = "red")
+    #   lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh, linetype = "dashed", color = "red")
+    # }
+#
+#     if (class(data) == "mids" | class(data) == "list"){
+#       suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", type, "/plots/", form_name, "_", weights_method, "_", exposure, "_all_imps_",
+#                                                              exposure_time_pt, "_summary_", type, "_plot.jpeg")))
+#     } else{
+#       suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", type, "/plots/", form_name, "_", weights_method, "_", exposure, "_",
+#                                                              exposure_time_pt, "_summary_", type, "_plot.jpeg")))
+#     }
+#   })
+
+  if (user.o == TRUE){
+    if (class(data) == "mids" | class(data) == "list"){
+      cat(paste0("USER ALERT: Summary plots for ", form_name, " ", exposure,
+                 " averaged across all imputations have been saved out for each time point in the 'balance/", type, "/plots/' folder."), "\n")
+    } else{
+
+      message(paste0("USER ALERT: Summary plots for ", form_name, " ", exposure, " have now been saved out for each time point in the 'balance/", type, "/plots/' folder."), "\n")
+    }
   }
 
 
@@ -372,13 +398,14 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
                                                                       outcome, "_all_", type,"_", weights_method, "_assocations.html"))
   sink()
 
-
-  if (class(data) == "mids" | class(data) == "list"){
-    message(paste0("USER ALERT: Check 'balance/", type, "/' folder for a table of all ", type, " correlations or
+  if (user.o == TRUE){
+    if (class(data) == "mids" | class(data) == "list"){
+      message(paste0("USER ALERT: Check 'balance/", type, "/' folder for a table of all ", type, " correlations or
                    standardized mean differences averaged across imputed datasets."), "\n")
-  } else {
-    message(paste0("USER ALERT: Check 'balance/", type, "/' folder for a table of all ", type, " correlations or
+    } else {
+      message(paste0("USER ALERT: Check 'balance/", type, "/' folder for a table of all ", type, " correlations or
                    standardized mean differences."), "\n")
+    }
   }
 
   # <<<<<<< Updated upstream
@@ -395,12 +422,14 @@ assessBalance <- function(home_dir, data, exposure, outcome, tv_confounders, typ
                                                            outcome, "_all_", type,"_", weights_method, "_assocations.html"))
   sink()
 
-
   # Saving out all pre-balance associations
   write.csv(all_bal_stats, paste0(home_dir, "/balance/", type, "/", exposure, "_", type, "_", weights_method, "_stat_summary.csv"), row.names = FALSE)
-  message(paste0("All associations between exposure and covariates for ", form_name, " ", exposure, "-",
-                 outcome, " have been saved in the '", type, "/' folder"), "\n")
-  cat("\n")
+
+  if (user.o == TRUE){
+    message(paste0("All associations between exposure and covariates for ", form_name, " ", exposure, "-",
+                   outcome, " have been saved in the '", type, "/' folder"), "\n")
+    cat("\n")
+  }
 
   # Finding all imbalanced variables\
   unbalanced_covars <- all_bal_stats %>%
