@@ -22,8 +22,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop('Please provide a valid model "m" from 0-3 (e.g., "m1")')
   }
 
-
-  weights_method <- weights[[1]]$method
   # exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
 
   #error checking
@@ -34,10 +32,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.")
   }
 
-  if( is.null(epochs)){ #making epochs time pts if not specified by user
-    epochs <- data.frame(epochs = as.character(exposure_time_pts),
-                         values = exposure_time_pts)
-  }
   if (!(model %in% c("m0", "m1", "m2", "m3"))) {
     stop('Please provide a valid model "m" from 0-3 (e.g., "m1")')
   }
@@ -52,6 +46,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
 
 
+  weights_method <- weights[[1]]$method
 
   #create models directory
   models_dir <- file.path(home_dir, "models")
@@ -80,14 +75,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
 
 
-  # Covariate models checking
-  if (model == "m1" | model == "m3") {
-    covariate_list <- paste(as.character(covariates), sep = "", collapse = " + ")
-  } else{
-    covariate_list <- NULL
 
-    covariate_list <- paste(as.character(covariates), sep = "", collapse = " + ")
-  }
 
 
   # Lists out exposure-epoch combos
@@ -99,102 +87,83 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
 
 
-  #   fits <- lapply(d, function(x) { # Cycling through imputed datasets
-  #       data <- x
-  #       data$weights <- NULL
-  #       data$weights <- data[, colnames(data)[grepl("weight", colnames(data))]]
-  #
-  #   if (model == "m2" | model == "m3"){
-  #     interactions <- paste(
-  #       lapply(2:length(exp_epochs), function(z) {
-  #         paste(apply(combn(exp_epochs, z), 2, paste, sep = "", collapse = ":"), sep = "", collapse = " + ")
-  #       }),
-  #       collapse = " + "
-  #     )
-  #   }
-  #
-  #   if (class == "list"){ #imputed dataset
-  #     fits <- lapply(1:length(data), function(y) {
-  #       d <- data[[y]]
-  #       d$weights <- NULL
-  #       d$weights <- weights[[y]]$weights
-  #
-  #       # Getting design info
-  #       s <- survey::svydesign(
-  #         id = ~1, #
-  #         data = d, # Adds list of imputation data?
-  #         weights = ~weights
-  #       )
-  #
-  #       # Fitting baseline model w/ main effects only (m0) for all models
-  #       f0 <- paste(paste0(outcome, ".", outcome_time_pt), "~", paste0(exp_epochs, sep = "", collapse = " + "))
-  #       f0 <- paste(paste0(outcome, ".", outcome_time_pt), "~", paste0(exp_epochs, sep = "", collapse = " + "))
-  #
-  #       m0 <- survey::svyglm(as.formula(f0), design = s) # List of model fitted to all imputed datasets
-  #
-  #       if (model == "m0") {
-  #         return(m0) # Save model
-  #       } else {
-  #
-  #         # Baseline + sig covar model OR baseline + sig covar + int model
-  #         if (model == "m1" | model == "m3") {
-  #           # Fitting m1
-  #           f1 <- paste(f0, "+", covariate_list) # Baseline + covariate model
-  #           m1 <- survey::svyglm(as.formula(f1), design = s)
-  #           # Baseline + imbalanced covars
-  #           if (model == "m1") {
-  #             return(m1)
-  #           }
-  #         }
-  #
-  #         # Baseline + interaction OR baseline + covars + interactions
-  #         if (model == "m2" | model == "m3") {
-  #           f2 <- paste(f0, "+", paste(interactions, sep = "", collapse = " + "))
-  #
-  #           # Baseline + interactions
-  #           if (model == "m2") {
-  #             # Fitting m2
-  #             m2 <- survey::svyglm(as.formula(f2), design = s)
-  #             # Baseline + interactions
-  #             return(m2)
-  #           }
-  #
-  #           # Baseline + covars + interactions
-  #           if (model == "m3") {
-  #             # Fitting m3
-  #             f3 <- paste(f1, "+", paste(interactions, sep = "", collapse = " + "))
-  #             m3 <- survey::svyglm(as.formula(f3), design = s)
-  #             # Baseline + covars+ interactions
-  #             return(m3)
-  #           }
-  #         }
-  #       }
-  #     })
-  #   })
-  #
-  #
-  #
-  # =======
 
-  if (model == "m2" | model == "m3"){
-    if (int_order > nrow(epochs)){
-      stop("Please provide an interaction order equal to or less than the total number of epochs/time points.")
-    }
-
-    interactions <- paste(
-      lapply(2:int_order, function(z) {
-        paste(apply(combn(exp_epochs, z), 2, paste, sep = "", collapse = ":"), sep = "", collapse = " + ")
-      }),
-      collapse = " + "
-    )
-  }else{
-    interactions <- NULL
-  }
-
-
-  getModel <- function(d, outcome, exp_epoch, model, fam, link, covariate_list, interactions){
+  getModel <- function(d, outcome, epochs, exp_epochs, int_order, model, fam, link, covariates, interactions){
     if (sum(duplicated(d$"ID")) > 0){
       stop("Please provide wide data with a single row per ID.")
+    }
+
+    # exposure epochs
+    if( is.null(epochs)){ #making epochs time pts if not specified by user
+      epochs <- data.frame(epochs = as.character(exposure_time_pts),
+                           values = exposure_time_pts)
+    } else { #add epochs by averaging exposure time points
+      #adds exposure epochs
+
+      #calculates the mean value for each exposure for each exposure epoch
+      for (e in 1:nrow(epochs)){
+        epoch <- epochs[e,1]
+        temp <- data.frame(row.names = 1:nrow(d))
+        new_var <- paste0(exposure, "_", epoch)
+        if (! new_var %in% colnames(d)){
+          #finds data from each time point in each epoch, horizontally aligns all exposure values within the epoch for averaging
+          for (l in 1:length(as.numeric(unlist(epochs[e,2])))){
+            level <- as.numeric(unlist(epochs[e,2]))[l]
+            z  <- d[,which(grepl(paste0(exposure, ".", level), names(d)))]
+            temp <- cbind(temp, z)
+          }
+          #adds a new variable of the exposure averaged within epoch
+          d  <- d %>% dplyr::mutate(!!new_var := rowMeans(temp, na.rm=T))
+          d[,new_var] <- as.numeric(d[,new_var])
+          # d <- cbind(d, new)
+        }
+      }
+
+    }
+
+    # Covariate models checking
+    if (model == "m1" | model == "m3") {
+      if (sum(covariates %in% colnames(d)) < length(covariates)){
+        stop("Please only include covariates that correspond to variables in the wide dataset.")
+      }
+
+      covariate_list <- paste(as.character(covariates), sep = "", collapse = " + ")
+    } else{
+      covariate_list <- NULL
+
+      covariate_list <- paste(as.character(covariates), sep = "", collapse = " + ")
+    }
+
+
+    # interaction model checking
+    if (model == "m2" | model == "m3"){
+      if (int_order > nrow(epochs)){
+        stop("Please provide an interaction order equal to or less than the total number of epochs/time points.")
+      }
+      interactions <- paste(
+        lapply(2:int_order, function(z) {
+          paste(apply(combn(exp_epochs, z), 2, paste, sep = "", collapse = ":"), sep = "", collapse = " + ")
+        }),
+        collapse = " + "
+      )
+      #create interactions in data
+      for (x in 1:length(unlist(strsplit(interactions, "\\+")))) {
+        name <- gsub(" ", "", unlist(strsplit(interactions, "\\+"))[x])
+        if (! name %in% colnames(d)){
+          temp <- d[, c(gsub(" ", "", as.character(unlist(strsplit(unlist(strsplit(interactions, "\\+"))[x], "\\:"))))) ]
+          d  <- d %>% dplyr::mutate(!! name := matrixStats::rowProds(as.matrix(temp), na.rm=T))
+        }
+      }
+    } else {
+      interactions <- NULL
+    }
+
+
+    if (user.o == TRUE){
+      cat("Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
+      cat("\n")
+      cat("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
+      cat("\n")
     }
 
     s <- survey::svydesign(
@@ -208,15 +177,25 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     m0 <- survey::svyglm(as.formula(f0), family = fam(link = link),  design = s) # List of model fitted to all imputed datasets
 
     if (model == "m0") {
+
+      null <- survey::svyglm(as.formula(paste(outcome, "~", 1)), family = fam(link = link),  design = s)
+      print(anova(null, m0))
+
       return(m0) # Save model
+
     } else {
+
       # Baseline + sig covar model OR baseline + sig covar + int model
       if (model == "m1" | model == "m3") {
-        f1 <- as.formula(paste(f0, "+", covariate_list)) # Baseline + covariate model
+        f1 <- paste(f0, "+", covariate_list) # Baseline + covariate model
         m1 <- survey::svyglm(as.formula(f1), family = fam(link = link), design = s)
 
         # Baseline + imbalanced covars
         if (model == "m1") {
+
+          null <- survey::svyglm(as.formula(paste(outcome, "~ 1 + ", covariate_list)), family = fam(link = link),  design = s)
+          print(anova(null, m1))
+
           return(m1)
         }
       }
@@ -230,15 +209,28 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
           # Fitting m2
           m2 <- survey::svyglm(as.formula(f2), family = fam(link = link), design = s)
           # Baseline + interactions
+
+          null <- survey::svyglm(as.formula(paste(outcome, "~ 1")), family = fam(link = link),  design = s)
+          print(anova(null, m2))
+
           return(m2)
         }
 
         # Baseline + covars + interactions
         if (model == "m3") {
           # Fitting m3
-          f3 <- paste(f1, "+", paste(interactions, sep = "", collapse = " + "))
+          f3 <- paste0(f1, "+", paste(interactions, sep = "", collapse = " + "))
           m3 <- survey::svyglm(as.formula(f3), family = fam(link = link), design = s)
           # Baseline + covars+ interactions
+
+          null <- survey::svyglm(as.formula(paste(outcome, "~ 1 + ", covariate_list)), family = fam(link = link),  design = s)
+          print(anova(null, m3))
+
+          # stack= complete(data, "long")
+          # # colnames(stack)[colnames(stack) == ".imp"] <- "impvar"
+          # psfmi::pool_D4(data = stack, fm1 = f3, nimp = 5, fm0 = as.formula(paste(outcome, "~ 1 + ", covariate_list)), impvar = ".imp")
+
+
           return(m3)
         }
       }
@@ -248,13 +240,17 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   if (class(data) == "mids"){ #imputed dataset
     fits <- lapply(1:data$m, function(y) {
-      d <- complete(imputed_data, y)
+      d <- complete(data, y)
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
 
-      getModel(d, outcome, exp_epoch, model, family, link, covariate_list, interactions)
+      getModel(d, outcome, epochs, exp_epochs, int_order, model, fam, link, covariates, interactions)
+
+
+
     })
   }
+
 
   if (class(data) == "list"){ #imputed dataset
     fits <- lapply(1:length(data), function(y) {
@@ -262,9 +258,11 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
 
-      getModel(d, outcome, exp_epoch, model, family, link, covariate_list, interactions)
+      getModel(d, outcome, epochs, exp_epochs, int_order, model, fam, link, covariates, interactions)
+
     })
   }
+
 
   if (class(data) == "data.frame"){ #imputed dataset
     fits <- lapply(1, function(y) {
@@ -272,10 +270,11 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d$weights <- NULL
       d$weights <- weights[["0"]]$weights
 
-      getModel(d, outcome, exp_epoch, model, family, link, covariate_list, interactions)
+      getModel(d, outcome, epochs, exp_epochs, int_order, model, fam, link, covariates, interactions)
     })
   }
   names(fits) = "0"
+
 
   if (user.o == TRUE){
     if (class(data) == "mids" | class(data) == "list"){
@@ -297,7 +296,9 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
     }
 
+    names(fits) <- 1:length(fits)
     print(lapply(fits, function(x) {summary(x)}))
+    names(fits) <- NULL
 
     cat("Tables of model evidence have now been saved in the 'models/' folder.\n")
   }
@@ -306,6 +307,5 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   cat("\n")
 
   fits
-
 
 }

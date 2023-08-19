@@ -150,11 +150,11 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
     }
 
     # Writes forms_csv to a CSV file
-    forms_csv_file <- file.path(forms_dir, paste0(exposure, "-", outcome, "_", type, "_balancing_formulas.csv"))
+    forms_csv_file <- paste0(forms_dir, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.csv")
     writeLines(forms_csv, con = forms_csv_file)
 
     # writes to rds
-    forms_rds_file <- file.path(forms_dir, paste0(exposure, "-", outcome, "_", type, "_balancing_formulas.rds"))
+    forms_rds_file <- paste0(forms_dir, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
     saveRDS(ls(pattern = type, "_form_", envir = parent.frame()), file = forms_rds_file)
   }
 

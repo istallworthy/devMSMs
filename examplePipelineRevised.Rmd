@@ -53,8 +53,6 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
                     "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
                     "peri_health", "mat_health", "gov_asst") 
 
-confounder_time_pts <- c(6, 15, 24, 35, 58)
-
 ```
 
 ### Testing data
@@ -71,7 +69,8 @@ data_mids <- readRDS(paste0(home_dir, "/imputed_data.rds"))
 #example path to imputed data
 data_path <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/imputations/"
 
-data_wide <- imputed_data[[1]]
+data <- imputed_data[[1]]
+data <- data %>% select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood"))))
 
 ```
 
@@ -123,6 +122,7 @@ imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, tv
 
 #testing
 data <- data_wide
+data <- imputed_data
 ```
 
 
@@ -257,7 +257,7 @@ balance_stats.super <- assessBalance(home_dir, data, exposure, outcome, tv_confo
 
 # identify best weights 
 formulas <- short_formulas
-method  <-  "cbps"; # add best method here
+method  <-  "ps"; # add best method here
 best_method_weights <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "yes", user.o = TRUE) 
 
 
@@ -308,8 +308,8 @@ updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcom
 
 
 # Re-specify weights with optimal method and updated formulas 
-formulas <- final_formulas
-method <- "cbps"; # optional weighting method "glm", "gbm", "bart", "super", "cbp (default is cbps)
+formulas <- updated_formulas
+method <- "ps"; # optional weighting method "glm", "gbm", "bart", "super", "cbp (default is cbps)
 final_weights <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, method, read_in_from_file = "no", user.o = TRUE) 
 
 
@@ -371,17 +371,17 @@ family <- gaussian #optional family reflective of outcome distribution
 link <- "identity" #optional link function
 
 #interaction order (required for interaction models m2-3)
-int_order = NA
+int_order = 3
 
 #covariates (required for covariate models m1, m3)
-covariates <- c("KFASTScr", "SWghtLB", "ESETA1.6") #optional list of covariates (e.g., those remaining imbalanced) for covariate models (m1, m3)
+covariates <- c("ESETA1.6", "gov_asst", "KFASTScr", "peri_health", "PmEd2", "RHealth") #optional list of covariates (e.g., those remaining imbalanced) for covariate models (m1, m3)
 
 #optional specification of epochs
 epochs <- data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), # optional subsetting of time points into more coarse epochs 
                              values=I(list(c(6,15), c(24,35), c(58)))) 
 
 
-model <- "m0"
+model <- "m3"
 weights <- trim_weights
 model <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model, family, link, int_order, covariates, epochs, user.o = TRUE)  
 
@@ -407,10 +407,10 @@ reference <- "l-l-l"
 
 #optional comparison history/historis
 comparison <- NULL #optional list of histories/history for custom comparisons (e.g., c("h-h-h", "h-h-l")) (deafult is all comparisons)
-compariosn <- "h-h-h"
+comparison <- "h-h-h"
 
 #optional multiple comparion method
-mc_method <- # default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
+mc_method <- "BY" # default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
   
 #optional specification of dose level (high or low) for dose count
 dose_level <- "l" #(default is "h")

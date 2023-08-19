@@ -55,9 +55,6 @@ calcBalStats <- function(data, formulas, exposure, outcome, balance_thresh = 0.1
   }
 
 
-
-
-
   #creating initial data frames
   #data frame with all sampling weights for all exposures at all exposure time points for all histories
   all_prop_weights <- data.frame("ID" = NA,exposure = NA, exp_time = NA, history = NA)
@@ -313,64 +310,9 @@ calcBalStats <- function(data, formulas, exposure, outcome, balance_thresh = 0.1
 
     all_bal_stats <- rbind(all_bal_stats, bal_stats)
     all_bal_stats$covar_time[is.na(all_bal_stats$covar_time)] <- 0
-    # x_lab <- ifelse(exposure_type == "continuous", "Correlation with Exposure", "Standardized Mean Difference Between Exposures")
-    # labels <- ifelse(bal_stats$balanced == 0, bal_stats$covariate, "")
-    # min_val <- ifelse(min(bal_stats$std_bal_stats) < 0, min(bal_stats$std_bal_stats) - 0.05, min(balance_thresh) - 0.05)
-    # max_val <- ifelse(max(bal_stats$std_bal_stats) > 0, max(bal_stats$std_bal_stats) + 0.05, max(balance_thresh) + 0.05)
 
     # Make love plot per exposure time point
     make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k, form_name, bal_stats, data_type, balance_thresh, weights_method, imp_conf)
-
-    #
-    # lp <- ggplot2::ggplot(aes(x = std_bal_stats, y = covariate), data = bal_stats) +
-    #   ggplot2::geom_point(aes(y = as.factor(covariate), x = std_bal_stats, fill = "white", alpha = 1)) +
-    #   ggplot2::geom_text(aes(label = labels, hjust = -0.2, vjust = 0.2), size = 1.5, color = "red") +
-    #   ggplot2::xlab(x_lab) +
-    #   ggplot2::ylab("Covariate") +
-    #   ggplot2::xlim(min_val, max_val) +
-    #   ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
-    #                  axis.text.x = ggplot2::element_text(color = "black"),
-    #                  axis.text.y = ggplot2::element_text(color = "black"),
-    #                  axis.text = ggplot2::element_text(size = 8),
-    #                  panel.border = ggplot2::element_rect(fill = NA, color = "black"),
-    #                  plot.background = ggplot2::element_blank(),
-    #                  plot.title = ggplot2::element_text(size = 10),
-    #                  legend.background = ggplot2::element_blank(),
-    #                  legend.key = ggplot2::element_blank(),
-    #                  legend.position = "none") +
-    #   ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
-    #
-    # if (nrow(bal_stats) > 40) { # stagger covariate labels if there are many
-    #   lp <- lp + ggplot2::scale_y_discrete(guide = ggplot2::guide_axis(n.dodge = 2))
-    # }
-    #
-    # if (data_type == "imputed"){
-    #   lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t=", exposure_time_pt, ") Balance for Imputation ", k))
-    # } else {lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t=", exposure_time_pt, ") Balance"))
-    # }
-    #
-    # if (!is.null(imp_conf)){ #adding threshold lines
-    #   lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh[1], linetype = "dashed", color = "red")
-    #   lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh[1], linetype = "dashed", color = "red")
-    #   lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh[2], linetype = "dashed", color = "red")
-    #   lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh[2], linetype = "dashed", color = "red")
-    # } else{
-    #   lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh, linetype = "dashed", color = "red")
-    #   lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh, linetype = "dashed", color = "red")
-    #
-    # }
-    #
-    # if (data_type == "imputed"){
-    #   lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance for Imputation ", k))
-    #
-    #   suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "/plots/", form_name, "_imp_", k, "_", exposure, "_",
-    #                                                          exposure_time_pt, "_", weights_method, "_summary_balance_plot.jpeg"), width = 6, height = 8))
-    # } else {lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance"))
-    #
-    # suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "/plots/", form_name, "_", exposure, "_",
-    #                                                        exposure_time_pt, "_", weights_method, "_summary_balance_plot.jpeg"), width = 6, height = 8))
-    # }
-
 
   }     # Ends exp_time_pt loop
 

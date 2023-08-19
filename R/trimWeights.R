@@ -36,7 +36,7 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
 
       if (user.o == TRUE){
       cat('\n')
-      message(paste0("USER ALERT: For imputation ", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
+      cat(paste0("USER ALERT: For imputation ", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
                      quantile, " quantile, the median weight value is ", round(median(t),2) ,
                      " (SD= ", round(sd(t),2), "; range= ", round(min(t),2), "-", round(max(t),2), ")."), "\n")
       cat('\n')
@@ -58,7 +58,7 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
 
 
   # df
-  if (names(weights) == "0"){
+  if ( !is.null(names(weights)) ){
 
     trim_weights <- lapply(1, function(x){
       w <- weights[[1]]
@@ -67,7 +67,7 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
 
       if (user.o == TRUE){
       cat('\n')
-      message(paste0("USER ALERT: For the ", exposure, "-", outcome, " relation, following trimming at the ",
+      cat(paste0("USER ALERT: For the ", exposure, "-", outcome, " relation, following trimming at the ",
                      quantile, " quantile, the median weight value is ", round(median(t),2) ,
                      " (SD= ", round(sd(t),2), "; range= ", round(min(t),2), "-", round(max(t),2), ")."), "\n")
       cat('\n')

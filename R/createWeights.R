@@ -39,7 +39,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
   exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)], "\\."), "[",2))
   time_varying_covariates <- tv_confounders
   weights_method <- method
-  exposure_type <- if (length(unique(data[, paste0(exposure, ".", exposure_time_pts[1])])) < 3) "binary" else "continuous"
+  # exposure_type <- if (length(unique(data[, paste0(exposure, ".", exposure_time_pts[1])])) < 3) "binary" else "continuous"
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[",1)
 
   # creating directories
@@ -60,6 +60,8 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
   if (read_in_from_file == "yes") {
     tryCatch({
       weights = readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_fit.rds"))
+      # saveRDS(weights, file = paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_fit.rds"))
+
       if (user.o == TRUE){
         message("Reading in balancing weights from the local folder.")
       }
