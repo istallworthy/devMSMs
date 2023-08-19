@@ -108,28 +108,39 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
       data <- do.call("rbind", data)
     }
 
-    if(names(model) == "0"){ #single df (not imputed)
+    if(!is.null(names(model))){ #single df (not imputed)
       data <- model[[1]]$data
     }
 
     for (t in 1:length(eps)) {
       var_name <- paste(exposure, eps[t], sep = "_")
 
-      if(is.na(hi_lo_cut)){
+      if(is.null(hi_lo_cut)){
         epoch_info$low[t] <- as.numeric(median(data[, var_name], na.rm = T))
         epoch_info$high[t] <- as.numeric(median(data[, var_name], na.rm = T))
 
       } else{
 
-        hi_cutoff <- hi_lo_cut[1]
-        lo_cutoff <- hi_lo_cut[2]
+        if (length(hi_lo_cut) == 2){
+          hi_cutoff <- hi_lo_cut[1]
+          lo_cutoff <- hi_lo_cut[2]
 
-        if (hi_cutoff > 1 || hi_cutoff < 0) {
-          stop('Please select a high cutoff value between 0 and 1')
+          if (hi_cutoff > 1 || hi_cutoff < 0) {
+            stop('Please select a high cutoff value between 0 and 1')
+          }
+          if (lo_cutoff > 1 || lo_cutoff < 0) {
+            stop('Please select low cutoff value between 0 and 1')
+          }
+        } else{
+
+          if (hi_lo_cut > 1 || hi_lo_cut < 0) {
+            stop('Please select a hi_lo cutoff value between 0 and 1')
+          }
+
+          hi_cutoff <- hi_lo_cut
+          lo_cutoff <- hi_lo_cut
         }
-        if (lo_cutoff > 1 || lo_cutoff < 0) {
-          stop('Please select low cutoff value between 0 and 1')
-        }
+
 
         epoch_info$low[t] <- as.numeric(quantile(data[, var_name], probs = lo_cutoff, na.rm = T))
         epoch_info$high[t] <- as.numeric(quantile(data[, var_name], probs = hi_cutoff, na.rm = T))
@@ -180,7 +191,6 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
     comps <- create_custom_contrasts(d, reference, comp_histories, exposure, preds)
   }
-
 
 
   #IMPUTED DATA
@@ -264,20 +274,23 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
     # If the user specified reference and comparison groups, subset preds for inspection and plotting
     if (!is.na(reference) & sum(is.na(comp_histories)) == 0) {
-      preds <- lapply(preds, function(y) {
-        as.data.frame(y) %>% dplyr::filter(history %in% c(reference, comp_histories))
-      })
+      # preds <- lapply(preds, function(y) {
+        # as.data.frame(y) %>% dplyr::filter(history %in% c(reference, comp_histories))
+       preds <- preds %>% dplyr::filter(history %in% c(reference, comp_histories))
+
+      # })
     }
 
     cat("\n")
-    cat("Below are the average predictions by user-specified history:") # Not sure if we need to print this?
+    cat("Below are the average predictions by user-specified history:", "\n") # Not sure if we need to print this?
     print(preds)
+    cat("\n")
 
-    # Makes table of average estimates and saves out per cutoff value
+
+    # Makes table of average estimates a
     lapply(1:length(preds), function(x) {
       y <- preds[[x]]
-      sink(paste0(home_dir, "/histories/", exposure, "-", outcome, "_estimated_means_",
-                  names(preds)[x], "_hi=", hi_cutoff, "_lo=", lo_cutoff, ".html"))
+      sink(paste0(home_dir, "/histories/", exposure, "-", outcome, "_estimated_means_hi=", hi_cutoff, "_lo=", lo_cutoff, ".html"))
       stargazer::stargazer(
         as.data.frame(y),
         type = "html",
@@ -286,8 +299,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
         summary = FALSE,
         rownames = FALSE,
         header = FALSE,
-        out = paste0(home_dir, "/histories/", exposure, "-", outcome, "_estimated_means_",
-                     names(preds)[x], "_hi=", hi_cutoff, "_lo=", lo_cutoff, ".html"
+        out = paste0(home_dir, "/histories/", exposure, "-", outcome, "_estimated_means_hi=", hi_cutoff, "_lo=", lo_cutoff, ".html"
         )
       )
       sink()
@@ -296,13 +308,20 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
     #STEP 3: conduct multiple comparison correction
 
+    comps <- comps[[1]]
+
     comps <- add_histories(comps, d)
 
     comps <- add_dose(comps, dose_level)
 
     comps <- perform_multiple_comparison_correction(comps, method)
 
+    # comps$term <- lapply(comps$term, round, 3)
+    # lapply(comps$term, function(x){lapply(x, function(y){ round(y, 3)})})
+    # x=comps[[1]]$term
+    # gsub("(", "", as.character(unlist(strsplit(x, " - "))))
 
+    cat("\n")
     cat(paste0("USER ALERT: please inspect the following comparisons :"), "\n")
     cat(knitr::kable(comps, format = 'pipe', digits = 2), sep = "\n")
     cat("\n")
@@ -326,7 +345,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
   for (x in seq_along(preds)) {
     comparisons <- data.frame(preds)
-    comparisons$term <- gsub(paste0(exposure, "_"), "", comparisons$term)
+    # comparisons$term <- gsub(paste0(exposure, "_"), "", comparisons$term)
     comparisons$low_ci <- comparisons$estimate - (1.96 * comparisons$std.error)
     comparisons$high_ci <- comparisons$estimate + (1.96 * comparisons$std.error)
     comparisons$history <- as.factor(comparisons$history)
@@ -336,194 +355,42 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
       arrange(dose) # Order by dose
 
     if (length(colors) > 1) { # If user input a list of colors
-      p <- ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
-        geom_point(size = 5) +
-        scale_color_manual(values = colors) +
-        scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
-        geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
-        xlab(paste0("Predicted ", outcome_labels, " Value")) +
-        ylab(paste0(exposure_labels, " Exposure History")) +
-        xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci), max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
-        theme(text = element_text(size = 14)) +
-        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+      p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
+        ggplot2::geom_point(size = 5) +
+        ggplot2::scale_color_manual(values = colors) +
+        ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
+        ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
+        ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
+        ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
+        ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci), max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
+        ggplot2::theme(text = ggplot2::element_text(size = 14)) +
+        ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
               panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
-      ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
+      ggplot2::ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
 
     } else { # If user lists a palette
-      p <- ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
-        geom_point(size = 5) +
-        scale_color_palette(name = "Dosage") +
-        scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
-        geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
-        xlab(paste0("Predicted ", outcome_labels, " Value")) +
-        ylab(paste0(exposure_labels, " Exposure History")) +
-        xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci), max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
-        theme(text = element_text(size = 14)) +
-        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-              panel.background = element_blank(), axis.line = element_line(colour = "black"))
+      require("RColorBrewer")
+      p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
+        ggplot2::geom_point(size = 5) +
+        scale_colour_brewer(palette = colors) +
+        # ggplot2::scale_color_palette(name = "Dosage") +
+        ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
+        ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
+        ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
+        ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
+        ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci), max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
+        ggplot2::theme(text = element_text(size = 14)) +
+        ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+              panel.background = element_blank(), axis.line = element_line(colour = "black")) +
+        ggplot2::guides(fill=guide_legend(title="Dosage"))
 
-      ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
+      ggplot2::ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
     }
 
     message("\n")
     message("See the '/plots/' folder for graphical representations of results.")
   }
-
-
-
-
-
-
-
-  # FUNCTIONS
-
-  #custom contrasts
-  get_reference_values <- function(d, reference) {
-    ref_vals <- sapply(1:length(unlist(strsplit(reference, "-"))), function(x) {
-      d[x,unlist(strsplit(reference, "-"))[x]]
-    })
-    ref_vals
-  }
-
-
-  get_comparison_values <- function(d, comp_histories) {
-    comp_vals <- sapply(comp_histories, function(comp) {
-      sapply(1:length(unlist(strsplit(comp, "-"))), function(x) {
-        d[x, unlist(strsplit(comp, "-"))[x]]
-      })
-    })
-    return(t(comp_vals))
-  }
-
-
-  create_custom_contrasts <- function(d, reference, comp_histories, exposure, preds) {
-    if (is.na(reference) | any(is.na(comp_histories))) {
-      return(NULL)  # Invalid input, return early
-    }
-
-    ref_vals <- get_reference_values(d, reference)
-    comp_vals <- get_comparison_values(d, comp_histories)
-    cus_comps <- create_custom_comparisons(preds, ref_vals, comp_vals, exposure)
-
-    comps <- lapply(preds, function(y) {
-      y |> marginaleffects::hypotheses(cus_comps)
-    })
-
-    return(comps)
-  }
-
-
-  create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
-    cus_comps <- matrix(ncol = nrow(comp_vals), nrow = nrow(as.data.frame(preds[[1]][[1]])))
-
-    ref_pos <- which(apply(as.data.frame(preds[[1]])[grepl(exposure, colnames(as.data.frame(preds[[1]])))], 1,
-                           paste, collapse = ",") == paste0(ref_vals, collapse = ","))
-    cus_comps[ref_pos, ] <- -1
-
-    for (x in 1:nrow(comp_vals)) {
-      c <- paste(comp_vals[x, ], collapse = ",")
-      cus_comps[which(apply(as.data.frame(preds[[1]])[grepl(exposure, colnames(as.data.frame(preds[[1]])))], 1,
-                            paste, collapse = ",") == paste0(c, collapse = ",")), x] <- 1
-    }
-
-    if (nrow(comp_vals) > 1) {
-      colnames(cus_comps) <- paste0("(", paste0(paste0(ref_vals, collapse = ","), ") - (", apply(comp_vals, 1, paste, collapse = ",")), ")")
-    } else {
-      colnames(cus_comps) <- paste0("(", paste0(paste0(ref_vals, collapse = ","), ") - (", paste0(paste0(comp_vals, collapse = ",")), ")"))
-    }
-
-    cus_comps[is.na(cus_comps)] <- 0
-    return(cus_comps)
-  }
-
-
-
-  add_histories <- function(p, d){
-    if( "list" %in% class(p) & nrow(p) == 1){
-      history <- matrix(data = NA, nrow = nrow(p[[1]]), ncol = 1) # Get histories from the first element
-      p <- p[[1]]
-    }
-
-    if (sum(d$e %in% colnames(p)) == nrow(d)){
-      for (i in 1:nrow(p)) {
-        vals <- as.data.frame(p)[i, 1:nrow(d)]
-        history[i] <- as.data.frame(paste(ifelse(round(vals, 3) == round(d$l, 3), "l", "h"), collapse = "-"))
-      }
-      history <- unlist(history)
-    }
-
-    if("term" %in% colnames(p)){
-      history <- matrix(data = NA, nrow = nrow(p), ncol = 1) # Get histories from the first element
-
-      if(grepl("\\=", p$term[1])){
-        for (i in 1:nrow(p)){
-          vals <- as.numeric(sapply(strsplit(unlist(strsplit(as.character(p$term[i]), "\\,")), "="), "[",2))
-          history[i] <- as.data.frame(paste(ifelse(round(vals,3)==round(d$l,3), "l", "h"), collapse="-"))
-        }
-        history <- unlist(history)
-
-      }else{
-        for (i in 1:nrow(p)) {
-          temp <- as.character(p$term[i])
-          pair <- lapply(1:2, function(y) {
-            a <- sapply(strsplit(temp, " - "), "[", y)
-            his <- lapply(1:nrow(d), function(z) {
-              ifelse(round(as.numeric(gsub("[^0-9.-]", "", sapply(strsplit(a, "\\,"), "[", z))), 3) == round(d[z, "l"], 3), "l", "h")
-            })
-          })
-          history[i, 1] <- paste(sapply(pair, paste, collapse = "-"), collapse = " vs ")
-        }
-      }
-
-    }
-
-    p <- cbind (p, history = history)
-
-    p
-  }
-
-
-  add_dose <- function(p, dose_level){
-    if( length(p$history[1]) == 1 ){
-      if(grepl("vs", p$history[1])){
-        dose_a <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 1), dose_level)
-        dose_b <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 2), dose_level)
-        dose_count <- data.frame(dose = gsub(" ", " vs ", paste(dose_a, dose_b)))
-      } else{
-
-        dose_count <- stringr::str_count(p$history, dose_level)
-
-      }
-    }
-
-    if (length(p$history[1]) > 1){
-      dose_count <- stringr::str_count(p$history, dose_level)
-    }
-
-    # dose_count <- rep(list(dose_count), length(p))
-    p <- cbind (p, dose_count = dose_count)
-    p
-  }
-
-
-  perform_multiple_comparison_correction <- function(comps, method) {
-    if (any(is.na(reference) & is.na(comp_histories)) | length(comp_histories) > 1) {
-      cat("\n")
-      cat(paste0("Conducting multiple comparison correction using the ", method, " method."), "\n")
-      cat("\n")
-      corr_p <- lapply(comps, function(x) {
-        stats::p.adjust(x$p.value, method = method)
-      })
-      comps <- Map(cbind, comps, p.value_corr = corr_p)
-    } else {
-      cat(paste0("The user specified comparison only between ", reference, " and ", comp_histories,
-                 " so no correction for multiple comparisons will be implemented."), "\n")
-    }
-
-    return(comps)
-  }
-
 
 
   comps
