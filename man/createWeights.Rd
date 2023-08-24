@@ -18,22 +18,10 @@ createWeights(
 }
 \arguments{
 \item{read_in_from_file}{optional binary indicator of whether weights should be read in from a local file}
-
-\item{object}{msm object that contains all relevant user inputs}
-
-\item{wide_long_datasets}{from formatForWeights}
-
-\item{short_forms}{from createShortForms}
 }
 \value{
 weights_models
 }
 \description{
 Returns a list of weights_models
-}
-\examples{
-createWeights(object, wide_long_datasets, short_forms, read_in_from_file="no")
-}
-\seealso{
-\code{\link[CBPS:CBPS]{CBPS::CBPS()}}, \code{\link[=formatForWeights]{formatForWeights()}}, \code{\link[=createShortForms]{createShortForms()}}
 }

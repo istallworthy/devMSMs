@@ -2,14 +2,13 @@
 % Please edit documentation in R/assessBalance.R
 \name{assessBalance}
 \alias{assessBalance}
-\title{Assess success of covariate balancing
-Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposure,
-and returns a list of unbalanced covariates for each exposure to add to future models}
+\title{Assess success of covariate balancing}
 \usage{
 assessBalance(
   home_dir,
   data,
   exposure,
+  exposure_time_pts,
   outcome,
   tv_confounders,
   type,
@@ -17,31 +16,9 @@ assessBalance(
   weights = NULL,
   balance_thresh = 0.1,
   imp_conf = NULL,
-  user.o = T
+  user.o = TRUE
 )
-}
-\arguments{
-\item{object}{msm object that contains all relevant user inputs}
-
-\item{forms}{formula for assessing balance}
-
-\item{data_for_model_with_weights}{imputed data with weights}
-
-\item{histories}{optional binary indicator of whether to print histories for bal stats}
-}
-\value{
-list of unbalanced_covariates_for_models for each exposure
 }
 \description{
 Assess success of covariate balancing
-Assesses how well balance was achieved for each of the covariates/potential confounds in relation to each of the exposure,
-and returns a list of unbalanced covariates for each exposure to add to future models
-}
-\examples{
-assessBalance(object, forms, data_for_model_with_weights, histories=1)
-}
-\seealso{
-\code{\link[=msmObject]{msmObject()}} for more on the weights_models param
-
-\code{\link[=createWeights]{createWeights()}} for more on the weights_models param
 }

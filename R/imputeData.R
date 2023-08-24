@@ -1,7 +1,6 @@
 #' Imputes dataset so there is no missing at each time point using parallel processing to speed up
 #'
 #' Creates m imputed datasets from original datasets using mice::mice
-#' @param msm_object msm object that contains all relevant user inputs
 #' @param data_to_impute output from dataToImpute
 #' @return imputed_datasets imputation results
 #' @export
@@ -19,11 +18,8 @@
 #' @importFrom purrr map_dfr
 #' @importFrom foreach getDoParWorkers
 #' @importFrom foreach getDoParName
-#' @examples imputeData(msm_object, data_to_impute, read_imps_from_file = "no")
 #'
 imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confounders, ti_confounders, read_imps_from_file="no") {
-
-  # Error checking}
   if (!dir.exists(home_dir)) {
     stop('Please provide a valid home directory.')
   }
@@ -32,7 +28,6 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
   if (read_imps_from_file == "yes") {
     imputed_datasets <- list()
 
-    # Error checking
     if (!file.exists(glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))) {
       stop("Imputations have not been created and saved locally. Please set 'read_imps_from_file' == 'no' and re-run.")
     }
@@ -47,16 +42,15 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
 
   } else {
 
-    #error checking
     if (sum(duplicated(data$"ID")) > 0){
       stop("Please provide a wide dataset with a single row per ID.")
     }
 
-    library(mice)
-    library(doParallel)
-    library(doRNG)
-    library(purrr)
-    library(tibble)
+    # library(mice)
+    # library(doParallel)
+    # library(doRNG)
+    # library(purrr)
+    # library(tibble)
 
     imp_method <- method
     time_varying_covariates <- tv_confounders
@@ -81,7 +75,7 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
     # Conducts imputations using parallelized execution cycling through m
     imputed_datasets <- foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
       cat("### Started iteration", i, "\n")
-      miceout <- mice::mice(data_to_impute_full, m=1, method=imp_method, maxit = 0,
+      miceout <- mice::mice(data_to_impute_full, m = 1, method = imp_method, maxit = 0,
                             print = F)
       cat("### Completed iteration", i, "\n")
       miceout

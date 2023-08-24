@@ -1,5 +1,5 @@
 
-inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_confounders, epochs = NULL, hi_lo_cut = NULL){
+inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, epochs = NULL, hi_lo_cut = NULL, reference = NA, comparison = NULL){
 
   # Error checking
   if (!class(data) %in% c("mids", "data.frame", "character")) {
@@ -11,22 +11,9 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
   time_var_covars <- tv_confounders
   time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
 
-  if (exposure_type == "continuous"){
-    if (is.null(hi_lo_cut)){
-      hi_lo_cut <- c(0.75, 0.25)
-    }
-  }
-
-  #
-  # Load necessary packages
-  library(readr)
-  library(dplyr)
-  library(tidyr)
-
   if (class(data) == "mids"){
     data <-as.data.frame(mice::complete(data,1))
   }
-
 
   if (class(data) == "character") {
     if (!dir.exists(data)) {
@@ -55,14 +42,19 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
 
   exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
 
+  if (exposure_type == "continuous"){
+    if (is.null(hi_lo_cut)){
+      hi_lo_cut <- c(0.75, 0.25)
+    }
+  }
+
   # Exposure summary
   exposure_summary <- data %>%
     dplyr:: select(colnames(data)[grepl(exposure, colnames(data))])
   exposure_summary <- psych::describe(exposure_summary, fast = TRUE)
 
-
-
   cat(knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'pipe'), sep = "\n")
+
   knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'html') %>%
     kableExtra::kable_styling() %>%
     kableExtra::save_kable(file = file.path(home_dir, paste0("/", exposure, "_exposure_info.html")))
@@ -78,7 +70,9 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
 
 
   cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
-                                                     sapply(strsplit(outcome, "\\."), "[",1), " Information"), format = 'pipe'), sep = "\n")
+                                                     sapply(strsplit(outcome, "\\."), "[",1), " Information"),
+                   format = 'pipe'), sep = "\n")
+
   knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
                                                  sapply(strsplit(outcome, "\\."), "[",1), " Information"), format = 'html') %>%
     kableExtra::kable_styling() %>%
@@ -92,15 +86,16 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
   potential_covariates <- colnames(data)[!(colnames(data) %in% c(ID))]
 
   if (sum(tv_confounders %in% potential_covariates) != length(tv_confounders)){
-    stop(paste(tv_confounders[!tv_confounders %in% potential_covariates]), " time-varying confounders are not present in the dataset.")
+    stop(paste(tv_confounders[!tv_confounders %in% potential_covariates]),
+         " time-varying confounders are not present in the dataset.")
   }
 
   if (sum(ti_confounders %in% potential_covariates) != length(ti_confounders)){
-    stop(paste(ti_confounders[!ti_confounders %in% potential_covariates]), " time invariant confounders are not present in the dataset.")
+    stop(paste(ti_confounders[!ti_confounders %in% potential_covariates]),
+         " time invariant confounders are not present in the dataset.")
   }
 
   all_potential_covariates <- c(time_invar_covars, time_var_covars)
-  # all_potential_covariates <- all_potential_covariates[!(all_potential_covariates %in% c(paste(outcome, outcome_time_pt, sep = "."), time_var_exclude))]
   all_potential_covariates <- all_potential_covariates[order(all_potential_covariates)]
 
   # Format for table output to visualize available covariates by time point
@@ -110,18 +105,21 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
     dplyr::group_by(time_pt) %>%
     dplyr::summarize(variable = toString(variable))
 
-  write.csv(covar_table, glue::glue("{home_dir}/balance/{exposure}-{outcome}_covariates_considered_by_time_pt.csv"), row.names = FALSE)
+  write.csv(covar_table, glue::glue("{home_dir}/balance/{exposure}-{outcome}_covariates_considered_by_time_pt.csv"),
+            row.names = FALSE)
 
   unique_vars <- length(unique(c(time_invar_covars, sapply(strsplit(all_potential_covariates, "\\."), "[", 1))))
 
   test <- data.frame(matrix(nrow = length(time_pts), ncol = unique_vars))
   colnames(test) <- unique(c(time_invar_covars, sapply(strsplit(all_potential_covariates, "\\."),
                                                        "[", 1)))[order(unique(c(time_invar_covars,
-                                                                                sapply(strsplit(all_potential_covariates, "\\."), "[", 1))))]
+                                                                                sapply(strsplit(all_potential_covariates,
+                                                                                                "\\."), "[", 1))))]
   rownames(test) <- time_pts
 
   for (l in 1:nrow(test)) {
-    test[l, c(sapply(strsplit(all_potential_covariates[grepl(paste0(".", rownames(test)[l]), all_potential_covariates)], "\\."), "[", 1), time_invar_covars)] <- 1
+    test[l, c(sapply(strsplit(all_potential_covariates[grepl(paste0(".", rownames(test)[l]),
+                                                             all_potential_covariates)], "\\."), "[", 1), time_invar_covars)] <- 1
   }
 
   test <- test[, colnames(test)[!(colnames(test) %in% c(ID))]]
@@ -129,7 +127,9 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
   test <- rbind(test, t(NumTimePts))
   NumVars <- data.frame(NumVars = rowSums(test, na.rm = TRUE))
   test[1:nrow(test), ncol(test) + 1] <- NumVars
-  write.csv(test, glue::glue("{home_dir}/balance/{exposure}-{outcome}_matrix_of_covariates_considered_by_time_pt.csv"), row.names = TRUE)
+
+  write.csv(test, glue::glue("{home_dir}/balance/{exposure}-{outcome}_matrix_of_covariates_considered_by_time_pt.csv"),
+            row.names = TRUE)
 
   message(glue::glue("See the 'balance/' folder for a table and matrix displaying all covariates confounders considered at each exposure time point for {exposure} and {outcome}."), "\n")
   cat("\n")
@@ -142,25 +142,17 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
 
   #covariate correlations
   covariates_to_include <- all_potential_covariates
-  flattenCorrMatrix <- function(cormat, pmat) {
-    ut <- upper.tri(cormat)
-    tibble(
-      row = rownames(cormat)[row(cormat)[ut]],
-      column = rownames(cormat)[col(cormat)[ut]],
-      cor = cormat[ut],
-      p = pmat[ut]
-    )
-  }
 
   # Creates final dataset with only relevant variables
   covariates_to_include <- covariates_to_include[order(covariates_to_include)]
   variables_to_include <- unique(c(ID,  outcome, covariates_to_include, time_var_covars))
   data2 <- data %>%
     select(all_of(variables_to_include))
-  data_to_impute <- data2
 
   # Makes correlation table
-  corr_matrix <- cor(as.data.frame(lapply(data_to_impute[, colnames(data_to_impute) != ID], as.numeric)), use = "pairwise.complete.obs")
+  corr_matrix <- cor(as.data.frame(lapply(data2[, colnames(data2) != ID],
+                                          as.numeric)), use = "pairwise.complete.obs")
+
   ggcorrplot::ggcorrplot(corr_matrix,  type = "lower")+
     ggplot2::theme(axis.text.x = element_text(size = 5, margin = ggplot2::margin(-2,0,0,0)),  # Order: top, right, bottom, left
           axis.text.y = element_text(size = 5, margin = ggplot2::margin(0,-2,0,0))) +
@@ -184,7 +176,6 @@ inspectData <-function(data, home_dir, exposure, outcome, tv_confounders, ti_con
                          values = time_pts)
   }
 
-
-
-
+  eval_hist(data = data2, exposure, tv_confounders, epochs,
+            exposure_time_pts, hi_lo_cut, ref = reference, comps = comparison)
 }

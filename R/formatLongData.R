@@ -2,11 +2,8 @@
 formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, time_var = NA, id_var = NA, missing = NA, factor_confounders = NULL){
 
   time_varying_covariates <- tv_confounders
-  # exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
-
   options(readr.num_columns = 0)
 
-  # Error checking}
   if (!dir.exists(home_dir)) {
     stop('Please provide a valid home directory.')
   }
@@ -33,9 +30,11 @@ formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome,
   exposure_summary <- data %>%
     dplyr::filter(WAVE %in% exposure_time_pts) %>%
     dplyr::group_by(WAVE) %>%
-    dplyr::summarize_at(dplyr::vars(all_of(exposure)), list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
+    dplyr::summarize_at(dplyr::vars(all_of(exposure)),
+                        list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
 
-  cat(knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'pipe'), sep = "\n")
+  cat(knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure,
+                                                      " Exposure Information"), format = 'pipe'), sep = "\n")
   knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'html') %>%
     kableExtra::kable_styling() %>%
     kableExtra::save_kable(file = file.path(home_dir, paste0(exposure, "_exposure_info.html")))
@@ -48,9 +47,11 @@ formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome,
   outcome <- sapply(strsplit(outcome, "\\."), "[",1)
   outcome_summary <- data %>%
     dplyr::group_by(WAVE) %>%
-    dplyr::summarize_at(dplyr::vars(all_of(outcome)), list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
+    dplyr::summarize_at(dplyr::vars(all_of(outcome)),
+                        list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
 
   cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ", outcome, " Information"), format = 'pipe'), sep = "\n")
+
   knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ", outcome, " Information"), format = 'html') %>%
     kableExtra::kable_styling() %>%
     kableExtra::save_kable(file = file.path(home_dir, paste0(outcome, "_outcome_info.html")))
@@ -69,9 +70,7 @@ formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome,
     # Formatting numeric covariates
     numeric_vars <- colnames(data)[!colnames(data) %in% c(factor_covariates, id)]
     data[, numeric_vars] <- lapply(data[, numeric_vars], as.numeric)
-
   }
 
   as.data.frame(data)
-
 }

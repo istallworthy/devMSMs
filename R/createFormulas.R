@@ -36,13 +36,11 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
     if (!dir.exists(forms_dir)) {
       dir.create(forms_dir)
     }
-
     # Create type directory
     forms_dir <- file.path(home_dir, "formulas", type)
     if (!dir.exists(forms_dir)) {
       dir.create(forms_dir)
     }
-
 
     factor_covariates <- colnames(data)[which(sapply(data, class) == "factor")]
     factor_covariates <- factor_covariates[!factor_covariates %in% "ID"]
@@ -61,7 +59,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
 
       if (type == "short"){
         message("Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:")
-        time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) == exposure_time_pts[x-1]]
+        time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
+                                                      exposure_time_pts[x-1]]
       }
 
       if (type == "update"){
@@ -71,7 +70,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
 
         message("Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:")
 
-        time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) == exposure_time_pts[x-1]]
+        time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
+                                                      exposure_time_pts[x-1]]
 
         if (x > 1) {
           new <- bal_stats %>%
@@ -93,11 +93,13 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
             if (user.o == TRUE){
               cat(paste0("For ", exposure, " at exposure time point ", time ,
                          ", the following covariate(s) will be added to the short balancing formula: "), paste(new, collapse = ", "), "\n")
+              cat("\n")
             }
           }else{
             if (user.o == TRUE) {
               cat(paste0("For ", exposure, " at exposure time point ", time ,
                          " no time-varying confounders at additional lags were added."), "\n")
+              cat("\n")
             }
           }
         }
@@ -126,8 +128,14 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
           stop("The variables in the keep_conf field must be included in tv_confounders.")
         }
         keep_conf <- keep_conf[!paste0(exposure, ".", time) %in% keep_conf]
-        vars_to_include <- c(vars_to_include, keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time])
+
+        if (length(keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time]) > 0){
+          if(! keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time] %in% vars_to_include){
+            vars_to_include <- c(vars_to_include, keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time])
+          }
+        }
       }
+
 
       # Creates form for the given exposure time point
       f <- as.formula(paste(paste0(exposure, ".", time, " ~ "),
