@@ -24,12 +24,6 @@ fitModel(
 }
 \arguments{
 \item{model}{user-specified model}
-
-\item{msm_object}{msm object that contains all relevant user inputs}
-
-\item{data_for_model_with_weights_cutoff}{dataset with truncated weights see truncateWeights}
-
-\item{balance_stats_final}{final bal stats conducted w/ full forms}
 }
 \value{
 fits
@@ -39,10 +33,4 @@ fits
 \description{
 Fit weighted model
 This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcome
-}
-\examples{
-fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m3")
-}
-\seealso{
-\code{\link[=truncateWeights]{truncateWeights()}}, \code{\link[=asesssBalance]{asesssBalance()}}
 }

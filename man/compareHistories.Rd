@@ -20,17 +20,14 @@ compareHistories(
   dose_level = "h",
   exp_lab = NA,
   out_lab = NA,
-  colors = "Dark2"
+  colors = "Dark2",
+  user.o = TRUE
 )
 }
 \arguments{
+\item{model}{fitted models for each imputed dataset}
+
 \item{reference}{optional reference event for custom comparison}
-
-\item{object}{msm object that contains all relevant user inputs}
-
-\item{data_for_model_with_weights_cutoff}{imputed datasets with truncated weights}
-
-\item{all_models}{fitted models for each imputed dataset}
 
 \item{compare}{optional comparison event(s) for custom comparison}
 }
@@ -40,7 +37,4 @@ preds_pool
 \description{
 Compare exposure histories
 This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome using linear hypothesis testing
-}
-\examples{
-compareHistories(object, data_for_model_with_weights_cutoff, all_models, reference=NA, compare=NA)
 }

@@ -2,11 +2,9 @@
 
 trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
 
-  #error checking
   if (!dir.exists(home_dir)) {
     stop("Please provide a valid home directory path.")
   }
-
   if (quantile > 1 || quantile < 0) {
     stop('Please select a quantile value between 0 and 1.')
   }
@@ -31,7 +29,6 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
 
     trim_weights <- lapply(1:length(weights), function(x){
       w <- weights[[x]]
-
       t <- WeightIt::trim(w$weights, at = quantile)
 
       if (user.o == TRUE){
@@ -45,24 +42,22 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
       # Save histogram of new weights
       ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
         ggplot2::geom_histogram(color = 'black', bins = 15)
-        ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_", w$method, "_weights_trim_", quantile, "_imp_", x, ".png", sep = ""),
-                        path = paste0(home_dir, "/weights/histograms/"), height = 8, width = 14)
+        ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_", weights[[x]]$method, "_weights_trim_",
+                              quantile, "_imp_", x, ".png", sep = ""), path = paste0(home_dir, "/weights/histograms/"),
+                        height = 8, width = 14)
 
       w$weights <- NA
       w$weights <- t
       w
 
     })
-
   }
 
 
   # df
   if ( !is.null(names(weights)) ){
-
     trim_weights <- lapply(1, function(x){
       w <- weights[[1]]
-
       t <- WeightIt::trim(w$weights, at = quantile)
 
       if (user.o == TRUE){
@@ -76,7 +71,7 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
       # Save histogram of new weights
       ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
         ggplot2::geom_histogram(color = 'black', bins = 15)
-        ggplot2::ggsave(paste("Hist_", exposure, "-", outcome,"_", w$method, "_weights_trim_", quantile, ".png", sep = ""),
+        ggplot2::ggsave(paste("Hist_", exposure, "-", outcome,"_",weights[[x]]$method, "_weights_trim_", quantile, ".png", sep = ""),
                         path = paste0(home_dir, "/weights/histograms/"), height = 8, width = 14)
 
         w$weights <- NA
@@ -87,7 +82,7 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
   }
 
   # Save truncated weight data
-  saveRDS(trim_weights, paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", w$method, "_weights_trim.rds"))
+  saveRDS(trim_weights, paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", weights[[1]]$method, "_weights_trim.rds"))
 
   trim_weights
 }
