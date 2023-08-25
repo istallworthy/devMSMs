@@ -164,7 +164,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     }
 
     print(anova(fits[[1]], fits.null[[1]]))
-    names(fits) = "0"
+    names(fits) <- "0"
     cat("\n")
 
   }
@@ -175,12 +175,16 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     if (user.o == TRUE){
       cat(paste0("USER ALERT: the marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
     }
+    names(fits) <- 1:length(fits)
 
     suppressWarnings(jtools::export_summs(
       fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
       model.names = c(paste0("Imp.", 1:length(fits))),
       file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))
     ))
+
+    names(fits) <- NULL
+
 
   } else{
     if (user.o == TRUE){
@@ -194,7 +198,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   }
 
-  names(fits) <- 1:length(fits)
 
   if (user.o == TRUE){
     cat("\n")
@@ -203,7 +206,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     cat("Tables of model evidence have now been saved in the 'models/' folder.\n")
   }
 
-  names(fits) <- NULL
 
   saveRDS(fits, file = file.path(home_dir, "/models/", paste0(exposure, "-", outcome, "_", model, "_model.rds")))
   cat("\n")

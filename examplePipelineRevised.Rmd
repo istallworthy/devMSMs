@@ -14,7 +14,7 @@ Recommended workflow for using the devMSMs package with longitudinal data.
 library(devtools)
 library(roxygen2)
 
-home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing'
+home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing' #no / after
 
 exposure <- "ESETA1"
 
@@ -24,13 +24,13 @@ outcome <- "EF_avg_perc.58"
 
 tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "MDI.6", "MDI.15",                                            
-                    "pcx_engaged.6","pcx_engaged.15", "pcx_engaged.24", "pcx_engaged.35", "pcx_CompTwo.58",                                       
+                    # "pcx_engaged.6","pcx_engaged.15", "pcx_engaged.24", "pcx_engaged.35", "pcx_CompTwo.58",
                     "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58",                                           
                     "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
                     "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
                     "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
                     "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                                       
-                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                                      
+                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                                 
                     "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",                                         
                     "CORTB.6", "CORTB.15", "CORTB.24",                                                                                
                     "EARS_TJo.24", "EARS_TJo.35",                                        
@@ -61,7 +61,7 @@ data_mids <- readRDS(paste0(home_dir, "/imputed_data.rds"))
 data_path <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/imputations/"
 
 data_df <- data_mids[[1]]
-data_df <- data_df %>% select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood"))))
+data_df <- data_df %>% select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx"))))
 
 data <- data_df
 data <- data_mids
@@ -81,7 +81,7 @@ data_long <- formatLongData(home_dir, data_orig, exposure, exposure_time_pts, ou
   
 
 
-#format data from long to wide for imputation
+#format data from long to wide
 v <- sapply(strsplit(tv_confounders, "\\."), "[",1)
 v <- v[!duplicated(v)]
 data_wide <- stats::reshape(data = data_long, 
@@ -107,6 +107,7 @@ data <- data_wide
 data <- imputed_data
 ```
 
+
 #### Preliminary recommended data inspection
 ```{r}
 
@@ -114,17 +115,18 @@ data <- imputed_data
 # can take a single df (wide/long) and will uses first imputation from mids/imp input
 epochs <- data.frame(epochs=c("Infancy", 
                               "Toddlerhood", 
-                              "Childhood"), # optional subsetting of time points into more coarse epochs that will constitute exposure  histories
+                              "Childhood"), 
                      values=I(list(c(6,15), c(24,35), c(58)))) 
 
-hi_lo_cut <- c(0.6, 0.3) #optional list of quantiles specifying high and low cutoff values for continuous expsures; default are c(0.75, 0.25)
+#optional list of quantiles specifying high and low cutoff values for continuous expsures; default are c(0.75, 0.25)
+hi_lo_cut <- c(0.6, 0.3)
 
 #optional reference history (required if comparisons are specified)
 reference <- NA #optional reference history for custom comparisons (e.g, "l-l-l") 
 reference <- "l-l-l"
 
-#optional comparison history/historis
-comparison <- NULL #optional list of histories/history for custom comparisons 
+#optional comparison history/histories
+comparison <- NULL 
 comparison <- "h-h-h" #single
 comparison <- c("h-h-h", "h-h-l") #multiple
 
@@ -140,12 +142,8 @@ inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders
 ## Create full formulas
 
 #optional concurrent confounders
-concur_conf = NULL #optional list of time-varying confounders (var.t) to include in formulas concurrently (default is only lagged); exposure variables will be omitted at concurrent time poin
+concur_conf = NULL 
 concur_conf = "B18Raw.15"
-
-#optional list of tv confounders to always retain (lag t-1)
-keep_conf  <-  NULL #optional list of any time-varying confounders to always retain in all formulas at lag-1 (default is none)
-keep_conf <- "InRatioCor.6"
 
 #optional custom formulas
 custom <- NULL
@@ -155,9 +153,9 @@ custom <- full_formulas
 
 rm(bal_stats)
 
-type = "full" # "full" =all tv covars; "short" =only t-1 tv covars; "update" = update short forms w/ imbalanced tv covars t>1
+type = "full"
 full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, bal_stats = NULL, type, 
-                                concur_conf, keep_conf, custom, user.o = TRUE)
+                                concur_conf, keep_conf = NULL, custom, user.o = TRUE)
 
 
 
@@ -168,10 +166,10 @@ full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, 
 #optional balance threshold specification
 rm(balance_thresh) #don't specify 
 balance_thresh <- 0.1 
-balance_thresh <- c(0.05, 0.1) #optional list of balance thresholds for importnt & less important confoundres, respectively; one entry will be applied to all confounders; default is 0.1 for all
+balance_thresh <- c(0.05, 0.1) 
 
 #optional list of important confounders
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") #optional list of important confounders that will be held to a stricter balance thresh
+imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 imp_conf <- NULL
 
 type <- "prebalance"
@@ -189,11 +187,11 @@ prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, o
 ## Create simplified formulas
 
 #optional list of concurrent confounder
-concur_conf <-  NULL #optional list of time-varying confounders (var.t) to include in formulas concurrently (default is only lagged); exposure variables will be omitted at concurrent time point 
+concur_conf <-  NULL 
 concur_conf <- "B18Raw.15"
 
 #optional list of tv confounders to always retain (lag t-1)
-keep_conf  <-  NULL #optional list of any time-varying confounders to always retain in all formulas at lag-1 (deafault is none)
+keep_conf  <-  NULL 
 keep_conf <- "InRatioCor.6"
 
 #optional custom formulas
@@ -204,14 +202,13 @@ rm(custom)
 
 rm(bal_stats)
 
-type <- "short" # "full" =all tv covars; "short" =only t-1 tv covars; "update" = update short forms w/ imbalanced tv covars t>1
+type <- "short" 
 short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, bal_stats = NULL, type, 
                                  concur_conf, keep_conf, user.o = TRUE)
 
 
 
 ## Iterate through creating weights/assessing balance for all possible weights methods to identify the best one 
-
 
 ## Create balancing weights with simplified formulas
 formulas <- short_formulas
@@ -246,10 +243,10 @@ weights.super <- createWeights(home_dir, data, exposure, outcome, tv_confounders
 
 #optional balance threshold specification
 balance_thresh <- 0.1 
-balance_thresh <- c(0.05, 0.1) #optional list of balance thresholds for importnt & less important confoundres, respectively; one entry will be applied to all confounders; default is 0.1 for all
+balance_thresh <- c(0.05, 0.1) 
 
 #optional list of important confounders
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") #optional list of important confounders that will be held to a stricter balance thresh
+imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 imp_conf <- NULL
 
 type <- "weighted"
@@ -298,10 +295,10 @@ best_method_weights <- createWeights(home_dir, data, exposure, outcome, tv_confo
 
 #optional balance threshold specification
 balance_thresh <- 0.1 
-balance_thresh <- c(0.05, 0.1) #optional list of balance thresholds for importnt & less important confoundres, respectively; one entry will be applied to all confounders; default is 0.1 for all
+balance_thresh <- c(0.05, 0.1) 
 
 #optional list of important confounders
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") #optional list of important confounders that will be held to a stricter balance thresh
+imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 imp_conf <- NULL
 
 type <- "weighted"
@@ -321,14 +318,14 @@ custom <- updated_formulas
 custom <- NULL
 
 #optional list of concurrent confounder
-concur_conf <-  NULL #optional list of time-varying confounders (var.t) to include in formulas concurrently (default is only lagged); exposure variables will be omitted at concurrent time point 
+concur_conf <-  NULL 
 concur_conf <- "B18Raw.15"
 
 #optional list of tv confounders to always retain (lag t-1)
-keep_conf <- NULL #optional list of any time-varying confounders to always retain in all formulas at lag-1 (deafault is none)
+keep_conf <- NULL 
 keep_conf <- "InRatioCor.6"
 
-type <- "update" # "full" =all tv covars; "short" =only t-1 tv covars; "update" = update short forms w/ imbalanced tv covars t>1
+type <- "update"
 bal_stats <- balance_stats
 updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats, 
                                    concur_conf, keep_conf, user.o = TRUE)
@@ -348,17 +345,16 @@ weights <- final_weights
 
 quantile <- 0.95 # optional quantile of weights above which weights are trimmed (default is 0.95)
 trim_weights <- trimWeights(home_dir, weights, quantile, 
-                            user.o = TRUE) #this is just a wrapper function for the trim function to allow for summaries and plotting
+                            user.o = TRUE) 
 
 #sensitivity tests   
 quantile <- 0.92 #optional quantile of weights above which weights are trimmed (default is 0.95)
 trim_weights.s1 <- trimWeights(home_dir, weights, quantile, 
-                               user.o = TRUE) #this is just a wrapper function for the trim function to allow for summaries and plotting
+                               user.o = TRUE) 
 
 quantile <- 0.98 #optional quantile of weights above which weights are trimmed (default is 0.95)
 trim_weights.s2 <- trimWeights(home_dir, weights, quantile, 
-                               user.o = TRUE) #this is just a wrapper function for the trim function to allow for summaries and plotting
-
+                               user.o = TRUE) 
 
 ```
 
@@ -370,10 +366,10 @@ trim_weights.s2 <- trimWeights(home_dir, weights, quantile,
 
 #optional balance threshold specification
 balance_thresh <- 0.1 
-balance_thresh <- c(0.05, 0.1) #optional list of balance thresholds for importnt & less important confoundres, respectively; one entry will be applied to all confounders; default is 0.1 for all
+balance_thresh <- c(0.05, 0.1) 
 
 #optional list of important confounders
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") #optional list of important confounders that will be held to a stricter balance thresh
+imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 imp_conf <- NULL
 
 type <- "weighted"
@@ -400,17 +396,17 @@ final_balance_stats.s2 <- assessBalance(home_dir, data, exposure, exposure_time_
 ```{r}
 
 #optional family/link information for glm
-family <- gaussian  #optional family reflective of outcome distribution
-link <- "identity" #optional link function
+family <- gaussian 
+link <- "identity" 
 
 # max interaction order (required for interaction models m2-3)
 int_order = 3
 
 #covariates (required for covariate models m1, m3)
-covariates <- c("ESETA1.6", "gov_asst") #optional list of covariates (e.g., those remaining imbalanced) for covariate models (m1, m3)
+covariates <- c("ESETA1.6", "gov_asst") 
 
 #optional specification of epochs
-epochs <- data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), # optional subsetting of time points into more coarse epochs 
+epochs <- data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), 
                              values=I(list(c(6,15), c(24,35), c(58)))) 
 
 
@@ -438,11 +434,11 @@ models.s2 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outc
 hi_lo_cut <- c(0.6, 0.3) #default are median split
 
 #optional reference history (required if comparisons are specified)
-reference <- NA #optional reference history for custom comparisons (e.g, "l-l-l") 
+reference <- NA 
 reference <- "l-l-l"
 
 #optional comparison history/historis
-comparison <- NULL #optional list of histories/history for custom comparisons 
+comparison <- NULL 
 comparison <- "h-h-h" #single
 comparison <- c("h-h-h", "h-h-l") #multiple
 
@@ -450,16 +446,18 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 mc_comp_method<- "BY" # default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
   
 #optional specification of dose level (high or low) for dose count
-dose_level <- "l" #(default is "h")
+dose_level <- "h" #(default is "h")
 
 #optional exposure label for plotting
-exp_lab <- "Economic Strain" # (default is var name)
+exp_lab <- "Economic Strain" 
+rm(exp_lab)
 
 #optional outcome label for plotting 
-out_lab <- "Executive Functioning" #(default is var name)
+out_lab <- "Executive Functioning" 
 
 # optional list of colors (equal to number of epochs +1) or brewer palette for plotting
-colors <- (c("Dark2"))  #(see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) for plotting default is 'Dark2'); c("blue4", "darkgreen", "darkgoldenrod", "red2")
+colors <- c("Dark2")  #(see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) for plotting default is 'Dark2'); 
+colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2")
  
  
 model <- models #output from fitModel

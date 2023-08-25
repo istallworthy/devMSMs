@@ -32,9 +32,9 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
     }
 
     #create parent directory
-    forms_dir <- file.path(home_dir, "formulas")
-    if (!dir.exists(forms_dir)) {
-      dir.create(forms_dir)
+    forms_dir1 <- file.path(home_dir, "formulas")
+    if (!dir.exists(forms_dir1)) {
+      dir.create(forms_dir1)
     }
     # Create type directory
     forms_dir <- file.path(home_dir, "formulas", type)
@@ -158,11 +158,11 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
     }
 
     # Writes forms_csv to a CSV file
-    forms_csv_file <- paste0(forms_dir, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.csv")
+    forms_csv_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.csv")
     writeLines(forms_csv, con = forms_csv_file)
 
     # writes to rds
-    forms_rds_file <- paste0(forms_dir, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
+    forms_rds_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
     saveRDS(ls(pattern = type, "_form_", envir = parent.frame()), file = forms_rds_file)
   }
 
