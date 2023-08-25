@@ -210,9 +210,6 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
         bal_stats <- lapply(1:m, function(k) {
           d <- as.data.frame(mice::complete(data, k))
-          # exposure_type <- ifelse(class(d[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
-          assign("exposure_type", ifelse(class(d[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary"),
-                 envir = .GlobalEnv)
 
           if (sum(duplicated(d$"ID")) > 0){
             stop("Please provide wide imputed datasets with a single row per ID.")
@@ -229,9 +226,6 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         m = length(data)
         bal_stats <- lapply(1:m, function(k) {
           d <- data[[k]]
-
-          assign("exposure_type", ifelse(class(d[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary"),
-                 envir = .GlobalEnv)
 
           if (sum(duplicated(d$"ID")) > 0){
             stop("Please provide wide imputed datasets with a single row per ID.")
@@ -293,9 +287,6 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       w <- weights[[1]]
       bal_stats <- calcBalStats(data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = w, imp_conf, user.o)
 
-      assign("exposure_type", ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary"),
-             envir = .GlobalEnv)
-
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       all_bal_stats  <- data.frame(
         exposure = exposure,
@@ -322,6 +313,17 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
   sapply(seq_along(exposure_time_pts), function(i) {
     exposure_time_pt <- exposure_time_pts[i]
+
+    if (class(data) == "mids"){
+      exposure_type <- ifelse(class(mice::complete(data,1)[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
+    }
+    if (class(data) == "list"){
+      exposure_type <- ifelse(class(data[[1]][, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
+    }
+    if (class(data) == "data.frame"){
+      exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
+    }
+
     temp <- all_bal_stats %>% filter(exp_time == exposure_time_pt)
 
     make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, temp,
@@ -345,7 +347,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   sink(paste0(home_dir, "/balance/", type, "/", exposure, "-", outcome, "_all_", type, "_", weights_method, "_associations.html"))
   stargazer::stargazer(all_bal_stats, type = "html", digits = 2, column.labels = colnames(all_bal_stats), summary = FALSE,
                        rownames = FALSE, header = FALSE, out = paste0(home_dir, "/balance/", type, "/", exposure, "-",
-                                                                      outcome, "_all_", type,"_", weights_method, "_assocations.html"))
+                                                                      outcome, "_all_", type,"_", weights_method, "_associations.html"))
   sink()
 
   if (user.o == TRUE){

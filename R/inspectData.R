@@ -105,7 +105,7 @@ inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_
     dplyr::group_by(time_pt) %>%
     dplyr::summarize(variable = toString(variable))
 
-  write.csv(covar_table, glue::glue("{home_dir}/balance/{exposure}-{outcome}_covariates_considered_by_time_pt.csv"),
+  write.csv(covar_table, glue::glue("{home_dir}/{exposure}-{outcome}_covariates_considered_by_time_pt.csv"),
             row.names = FALSE)
 
   unique_vars <- length(unique(c(time_invar_covars, sapply(strsplit(all_potential_covariates, "\\."), "[", 1))))
@@ -128,10 +128,10 @@ inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_
   NumVars <- data.frame(NumVars = rowSums(test, na.rm = TRUE))
   test[1:nrow(test), ncol(test) + 1] <- NumVars
 
-  write.csv(test, glue::glue("{home_dir}/balance/{exposure}-{outcome}_matrix_of_covariates_considered_by_time_pt.csv"),
+  write.csv(test, glue::glue("{home_dir}/{exposure}-{outcome}_matrix_of_covariates_considered_by_time_pt.csv"),
             row.names = TRUE)
 
-  message(glue::glue("See the 'balance/' folder for a table and matrix displaying all covariates confounders considered at each exposure time point for {exposure} and {outcome}."), "\n")
+  message(glue::glue("See the home directory for a table and matrix displaying all covariates confounders considered at each exposure time point for {exposure} and {outcome}."), "\n")
   cat("\n")
 
   #-2 to exclude ID and WAVE

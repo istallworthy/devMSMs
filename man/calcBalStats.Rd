@@ -14,7 +14,7 @@ calcBalStats(
   k = 0,
   weights = NULL,
   imp_conf = NULL,
-  user.o
+  user.o = TRUE
 )
 }
 \description{
