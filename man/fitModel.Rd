@@ -2,8 +2,7 @@
 % Please edit documentation in R/fitModel.R
 \name{fitModel}
 \alias{fitModel}
-\title{Fit weighted model
-This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcome}
+\title{Fit weighted marginal structural model relating exposure to outcome}
 \usage{
 fitModel(
   home_dir,
@@ -19,18 +18,41 @@ fitModel(
   int_order = NA,
   covariates = NULL,
   epochs = NULL,
-  user.o = TRUE
+  verbose = TRUE
 )
 }
 \arguments{
-\item{model}{user-specified model}
+\item{home_dir}{path to home directory}
+
+\item{data}{data in wide format as: a data frame, path to folder of imputed .csv files, or mids object}
+
+\item{weights}{list of IPTW weights output from createWeights()}
+
+\item{exposure}{name of exposure variable}
+
+\item{exposure_time_pts}{list of integers at which weights will be created/assessed that correspond to time points when exposure was measured}
+
+\item{outcome}{name of outcome variable with ".timepoint" suffix}
+
+\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+
+\item{model}{character indicating outcome model "m0" (exposure main effects), "m1" (exposure main effects & covariates), "m2" (exposure main effects & interactions), "m3" (exposure main effects, interactions, covariates)}
+
+\item{family}{(optional) family function specification for svyglm model}
+
+\item{link}{(optional) character link function specification for svyglm model}
+
+\item{int_order}{integer specification of highest order exposure main effects interaction for interaction models}
+
+\item{covariates}{list of characters reflecting variable names of covariates for covariate models}
+
+\item{epochs}{(optional) data frame of exposure epoch labels and values}
+
+\item{verbose}{TRUE or FALSE indicator for user output}
 }
 \value{
-fits
-
-fits
+list of svyglm model output
 }
 \description{
-Fit weighted model
-This code fits a weighted marginal structural model to examine the effects of different exposure histories on outcome
+Fit weighted marginal structural model relating exposure to outcome
 }

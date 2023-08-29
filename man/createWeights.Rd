@@ -13,15 +13,31 @@ createWeights(
   formulas,
   method = "cbps",
   read_in_from_file = "no",
-  user.o = TRUE
+  verbose = TRUE
 )
 }
 \arguments{
-\item{read_in_from_file}{optional binary indicator of whether weights should be read in from a local file}
+\item{home_dir}{path to home directory}
+
+\item{data}{data in wide format as: a data frame, path to folder of imputed .csv files, or mids object}
+
+\item{exposure}{name of exposure variable}
+
+\item{outcome}{name of outcome variable with ".timepoint" suffix}
+
+\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+
+\item{formulas}{list of balancing formulas at each time point output from createFormulas()}
+
+\item{method}{character string of WeightItMSM() balancing method abbreviation}
+
+\item{read_in_from_file}{"yes" or "no" indicator to read in weights that have been previously run and saved locally}
+
+\item{verbose}{TRUE or FALSE indicator for user output}
 }
 \value{
-weights_models
+list of IPTW balancing weights
 }
 \description{
-Returns a list of weights_models
+Creates balancing weights for potential confounding covariates in relation to exposure at each time point
 }

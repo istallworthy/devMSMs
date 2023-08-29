@@ -1,8 +1,21 @@
-
-#function to evaluate distribution of sample in histories
+#' Visualize distribution of sample across exposure histories
+#'
+#' @param data
+#' @param exposure name of exposure variable
+#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
+#' @param epochs
+#' @param time_pts
+#' @param hi_lo_cut list of two numbers indicating quantile values that reflect high and low values, respectively, for continuous exposure
+#' @param ref
+#' @param comps
+#'
+#' @return none
+#' @export
+#'
+#' @examples
 eval_hist <- function(data, exposure, tv_confounders, epochs, time_pts, hi_lo_cut, ref, comps){
 
-  exposure_type <- ifelse(class(data[, paste0(exposure, '.', time_pts[1])]) == "numeric", "continuous", "binary")
+  exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', time_pts[1])], "numeric"), "continuous", "binary")
 
   epochs$epochs <- as.character(epochs$epochs)
   time_varying_wide <- tv_confounders
@@ -13,12 +26,12 @@ eval_hist <- function(data, exposure, tv_confounders, epochs, time_pts, hi_lo_cu
   colnames(new) <- "ID"
 
   # Averages exposure across time points that constitute the exposure epochs (e.g., infancy = 6 & 15)
-  for (e in 1:nrow(epochs)) {
+  for (e in seq_len(nrow(epochs))) {
     epoch <- epochs[e, 1]
-    temp <- data.frame(row.names = 1:nrow(data_wide))
+    temp <- data.frame(row.names = seq_len(nrow(data_wide)))
     new_var <- paste0(exposure, "_", epoch)
     # Finds data from each time point in each epoch, horizontally aligns all exposure values within the epoch for averaging
-    for (l in 1:length(as.numeric(unlist(epochs[e, 2])))) {
+    for (l in seq_len(length(as.numeric(unlist(epochs[e, 2]))))) {
       level <- as.numeric(unlist(epochs[e, 2]))[l]
       z <- data_wide[, which(grepl(paste0(exposure, ".", level), names(data_wide)))]
       temp <- cbind(temp, z)
@@ -41,8 +54,8 @@ eval_hist <- function(data, exposure, tv_confounders, epochs, time_pts, hi_lo_cu
       epoch_info$low[t] <- as.numeric(median(data[, var_name], na.rm = T))
       epoch_info$high[t] <- as.numeric(median(data[, var_name], na.rm = T))
 
-      new$history <- lapply(1:nrow(new), function(x) {
-        paste(lapply(1:nrow(epochs), function(y) {
+      new$history <- lapply(seq_len(nrow(new)), function(x) {
+        paste(lapply(seq_len(nrow(epochs)), function(y) {
           if (is.na(new[x, y + 1])) {
             return(NA)
           }
@@ -55,28 +68,30 @@ eval_hist <- function(data, exposure, tv_confounders, epochs, time_pts, hi_lo_cu
         }), collapse = "-")
       })
 
-    } else{
+    }
+    else{
       if (length(hi_lo_cut) == 2){
         hi_cutoff <- hi_lo_cut[1]
         lo_cutoff <- hi_lo_cut[2]
 
         if (hi_cutoff > 1 || hi_cutoff < 0) {
-          stop('Please select a high cutoff value between 0 and 1')
+          stop('Please select a high cutoff value between 0 and 1', call. = FALSE)
         }
         if (lo_cutoff > 1 || lo_cutoff < 0) {
-          stop('Please select low cutoff value between 0 and 1')
+          stop('Please select low cutoff value between 0 and 1', call. = FALSE)
         }
-      } else{
+      }
+      else{
         if (hi_lo_cut > 1 || hi_lo_cut < 0) {
-          stop('Please select a hi_lo cutoff value between 0 and 1')
+          stop('Please select a hi_lo cutoff value between 0 and 1', call. = FALSE)
         }
         hi_cutoff <- hi_lo_cut
         lo_cutoff <- hi_lo_cut
       }
     }
 
-    new$history <- lapply(1:nrow(new), function(x) {
-      paste(lapply(1:nrow(epochs), function(y) {
+    new$history <- lapply(seq_len(nrow(new)), function(x) {
+      paste(lapply(seq_len(nrow(epochs)), function(y) {
         if (is.na(new[x, y + 1])) {
           return(NA)
         }
@@ -91,9 +106,9 @@ eval_hist <- function(data, exposure, tv_confounders, epochs, time_pts, hi_lo_cu
 
   }
 
-  if (exposure_type == "binary"){
-    new$history <- lapply(1:nrow(new), function(x) {
-      paste(lapply(1:nrow(epochs), function(y) {
+  else if (exposure_type == "binary"){
+    new$history <- lapply(seq_len(nrow(new)), function(x) {
+      paste(lapply(seq_len(nrow(epochs)), function(y) {
         if (is.na(new[x, y + 1])) {
           return(NA)
         }
@@ -119,14 +134,11 @@ eval_hist <- function(data, exposure, tv_confounders, epochs, time_pts, hi_lo_cu
   his_summ <- his_summ[! grepl("NA", his_summ$history),]
   his_summ <- his_summ[! grepl("NULL", his_summ$history),]
 
-  # cat("For the following exposure epochs,")
-  # cat(paste0(paste(epochs$epochs, collapse = ", "), " at ", paste(epochs$values, collapse = ", "), ":"), "\n")
-
   cat(paste0("USER ALERT: Out of the total of ", nrow(data_wide), " individuals in the sample, below is the distribution of the ", sum(his_summ$n), " (",
-                 round((sum(his_summ$n) / nrow(data_wide)) * 100, 2), "%) that fall into ", nrow(his_summ), " out of the ", length(tot_hist),
-                 " the total user-defined exposure histories created from ",
-                 hi_lo_cut[2] * 100, "th and ", hi_lo_cut[1] * 100, "th percentile values for low and high levels of exposure ", exposure,
-                 ", respectively, across ", paste(epochs$epochs, collapse = ", ")), "\n")
+             round((sum(his_summ$n) / nrow(data_wide)) * 100, 2), "%) that fall into ", nrow(his_summ), " out of the ", length(tot_hist),
+             " the total user-defined exposure histories created from ",
+             hi_lo_cut[2] * 100, "th and ", hi_lo_cut[1] * 100, "th percentile values for low and high levels of exposure ", exposure,
+             ", respectively, across ", paste(epochs$epochs, collapse = ", ")), "\n")
 
   cat("Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision:", "\n")
 

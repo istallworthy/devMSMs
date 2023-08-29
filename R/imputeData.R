@@ -1,8 +1,5 @@
 #' Imputes dataset so there is no missing at each time point using parallel processing to speed up
 #'
-#' Creates m imputed datasets from original datasets using mice::mice
-#' @param data_to_impute output from dataToImpute
-#' @return imputed_datasets imputation results
 #' @export
 #' @importFrom mice mice
 #' @importFrom mice ibind
@@ -18,10 +15,48 @@
 #' @importFrom purrr map_dfr
 #' @importFrom foreach getDoParWorkers
 #' @importFrom foreach getDoParName
+#' @seealso {[mice::mice()], <url1>}
+#' @param data data in wide format
+#' @param m (optional) integer number of imputed datasets (default is 5)
+#' @param method (optional) character string of imputation method from mice() (default is random forest "rf")
+#' @param home_dir path to home directory
+#' @param exposure name of exposure variable
+#' @param outcome name of outcome variable with ".timepoint" suffix
+#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
+#' @param ti_confounders list of time invariant confounders
+#' @param read_in_from_file (optional) "yes" or "no" indicatorto read in weights that have been previously run and saved locally (default is "no")
+#' @return mice object of m imputed datasets
 #'
-imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confounders, ti_confounders, read_imps_from_file="no") {
+imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, tv_confounders, ti_confounders, read_imps_from_file = "no") {
+
+  if (missing(home_dir)){
+    stop("Please supply a home directory.", call. = FALSE)
+  }
+  if (missing(data)){
+    stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
+         call. = FALSE)
+  }
+  if (missing(exposure)){
+    stop("Please supply a single exposure.", call. = FALSE)
+  }
+  if (missing(outcome)){
+    stop("Please supply a single outcome.", call. = FALSE)
+  }
+  if (missing(tv_confounders)){
+    stop("Please supply a list of time-varying confounders.", call. = FALSE)
+  }
+  if (missing(ti_confounders)){
+    stop("Please supply a list of time invariant confounders.", call. = FALSE)
+  }
+
   if (!dir.exists(home_dir)) {
-    stop('Please provide a valid home directory.')
+    stop('Please provide a valid home directory.', call. = FALSE)
+  }
+  if(!is.character(method)){
+    stop("Please provide as a character a valid imputation method abbreviation.", call. = FALSE)
+  }
+  if(!is.numeric(m)){
+    stop("Please provide an integer value number of imputations.", call. = FALSE)
   }
 
 
@@ -29,7 +64,7 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
     imputed_datasets <- list()
 
     if (!file.exists(glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))) {
-      stop("Imputations have not been created and saved locally. Please set 'read_imps_from_file' == 'no' and re-run.")
+      stop("Imputations have not been created and saved locally. Please set 'read_imps_from_file' == 'no' and re-run.", call. = FALSE)
     }
 
     imp <- readRDS(glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))
@@ -40,10 +75,11 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
     cat("\n")
     return(imputed_datasets)
 
-  } else {
+  }
+  else {
 
     if (sum(duplicated(data$"ID")) > 0){
-      stop("Please provide a wide dataset with a single row per ID.")
+      stop("Please provide a wide dataset with a single row per ID.", call. = FALSE)
     }
 
     # library(mice)
@@ -55,9 +91,6 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
     imp_method <- method
     time_varying_covariates <- tv_confounders
     time_invar <- ti_confounders
-
-    # Set seed for reproducibility
-    set.seed(123)
 
     cat(glue::glue("Creating {m} imputed datasets using the {imp_method} imputation method in mice. This may take some time to run."))
     cat("\n")
@@ -89,7 +122,7 @@ imputeData <- function(data, m, method, home_dir, exposure, outcome, tv_confound
     cat("\n")
 
     # Save out individual imputed datasets
-    for (k in 1:m) {
+    for (k in seq_len(m)) {
       write.csv(mice::complete(imputed_datasets, k),
                 file = glue::glue("{home_dir}/imputations/{exposure}-{outcome}_imp{k}.csv"))
     }

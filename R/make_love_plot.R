@@ -1,4 +1,22 @@
-#function to create love plots
+#' Create love plots showing balancing statistics
+#'
+#' @param home_dir path to home directory
+#' @param folder folder path for saving
+#' @param exposure name of exposure variable
+#' @param exposure_time_pt exposure time point integer
+#' @param exposure_type character indicating binary or continuous exposure type
+#' @param k imputation number
+#' @param form_name formula name
+#' @param balance_stats data frame of balance statistics
+#' @param data_type
+#' @param balance_thresh one or two numbers between 0 and 1 indicating a single balancing threshold or thresholds for more and less important confounders, respectively
+#' @param weights_method method character string of WeightItMSM() balancing method abbreviation
+#' @param imp_conf list of variable names reflecting important confounders
+#'
+#' @return none
+#' @export
+#'
+#' @examples
 make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, balance_stats, data_type, balance_thresh, weights_method, imp_conf){
 
   stat_var <- colnames(balance_stats)[grepl("_bal", colnames(balance_stats))]
@@ -41,7 +59,8 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
     lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh[1], linetype = "dashed", color = "red")
     lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh[2], linetype = "dashed", color = "red")
     lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh[2], linetype = "dashed", color = "red")
-  } else{
+  }
+  else{
     lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh, linetype = "dashed", color = "red")
     lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh, linetype = "dashed", color = "red")
 
@@ -53,7 +72,8 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
     suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "plots/",
                                                            form_name, "_imp_", k, "_", exposure, "_", exposure_time_pt, "_",
                                                            weights_method, "_summary_balance_plot.jpeg"), width = 6, height = 8))
-  } else {
+  }
+  else {
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance"))
 
     suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "plots/", form_name, "_", exposure, "_",

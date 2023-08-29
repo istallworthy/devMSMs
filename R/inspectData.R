@@ -1,25 +1,64 @@
 
-inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, epochs = NULL, hi_lo_cut = NULL, reference = NA, comparison = NULL){
+#' Inspect long/wide/imputed data
+#'
+#' @param data data in wide format as: a data frame, path to folder of imputed .csv files, or mids object
+#' @param home_dir path to home directory
+#' @param exposure name of exposure variable
+#' @param exposure_time_pts list of integers at which weights will be created/assessed that correspond to time points when exposure was measured
+#' @param outcome name of outcome variable with ".timepoint" suffix
+#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
+#' @param ti_confounders list of time invariant confounders
+#' @param epochs (optional) data frame of exposure epoch labels and values
+#' @param hi_lo_cut (optional) list of two numbers indicating quantile values that reflect high and low values, respectively, for continuous exposure (default is median split)
+#' @param (optional) reference string of "-"-separated "l" and "h" values indicative of a reference exposure history to which to compare comparison, required if comparison is specified
+#' @param (optional) comparison list of one or more strings of "-"-separated "l" and "h" values indicative of comparison history/histories to compare to reference, required if reference is specified
+#'
+#' @return none
+#' @export
+#'
+#' @examples
+inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, epochs = NULL, hi_lo_cut = NULL, reference = NA, comparison = NULL){
 
-  # Error checking
-  if (!class(data) %in% c("mids", "data.frame", "character")) {
-    stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.")
+  if (missing(home_dir)){
+    stop("Please supply a home directory.", call. = FALSE)
+  }
+  if (missing(data)){
+    stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
+         call. = FALSE)
+  }
+  if (missing(exposure)){
+    stop("Please supply a single exposure.", call. = FALSE)
+  }
+  if (missing(outcome)){
+    stop("Please supply a single outcome.", call. = FALSE)
+  }
+  if (missing(exposure_time_pts)){
+    stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
+  }
+  if (missing(tv_confounders)){
+    stop("Please supply a list of time-varying confounders.", call. = FALSE)
+  }
+  if (missing(ti_confounders)){
+    stop("Please supply a list of time invariant confounders.", call. = FALSE)
   }
 
-  ID <- "ID"
+  if (!mice::is.mids(data) & !is.data.frame(data) & !is.character(data)) {
+    stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.", call. = FALSE)
+  }
+
+  # ID <- "ID"
   time_invar_covars <- ti_confounders
   time_var_covars <- tv_confounders
   time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)] , "\\."), "[",2))
 
-  if (class(data) == "mids"){
+  if (mice::is.mids(data)){
     data <-as.data.frame(mice::complete(data,1))
   }
 
-  if (class(data) == "character") {
+  else if (is.character(data)) {
     if (!dir.exists(data)) {
-      stop("Please provide a valid directory path with imputed datasets, a data frame, or a 'mids' object for the 'data' field.")
+      stop("Please provide a valid directory path with imputed datasets, a data frame, or a 'mids' object for the 'data' field.", call. = FALSE)
     }
-
     # List imputed files
     files <- list.files(data, full.names = TRUE, pattern = "\\.csv")
 
@@ -30,7 +69,7 @@ inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_
 
   # long format to wide
   if("WAVE" %in% colnames(data)){
-    v <- sapply(strsplit(tv_confounders, "\\."), "[",1)
+    v <- sapply(strsplit(tv_confounders, "\\."), "[", 1)
     v <- v[!duplicated(v)]
     data_wide <- stats::reshape(data = data_long, idvar = "ID", v.names = v, timevar = "WAVE",
                                 direction = "wide")
@@ -40,7 +79,7 @@ inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_
     data <- data_wide
   }
 
-  exposure_type <- ifelse(class(data[, paste0(exposure, '.', exposure_time_pts[1])]) == "numeric", "continuous", "binary")
+  exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"), "continuous", "binary")
 
   if (exposure_type == "continuous"){
     if (is.null(hi_lo_cut)){
@@ -65,20 +104,19 @@ inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_
 
   # Outcome summary
   outcome_summary <- data %>%
-    dplyr:: select(contains(sapply(strsplit(outcome, "\\."), "[",1)))
+    dplyr:: select(contains(sapply(strsplit(outcome, "\\."), "[", 1)))
   outcome_summary <- psych::describe(outcome_summary, fast = TRUE)
 
-
   cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
-                                                     sapply(strsplit(outcome, "\\."), "[",1), " Information"),
+                                                     sapply(strsplit(outcome, "\\."), "[", 1), " Information"),
                    format = 'pipe'), sep = "\n")
 
   knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
-                                                 sapply(strsplit(outcome, "\\."), "[",1), " Information"), format = 'html') %>%
+                                                 sapply(strsplit(outcome, "\\."), "[", 1), " Information"), format = 'html') %>%
     kableExtra::kable_styling() %>%
-    kableExtra::save_kable(file = file.path(home_dir, paste0("/", sapply(strsplit(outcome, "\\."), "[",1), "_outcome_info.html")))
+    kableExtra::save_kable(file = file.path(home_dir, paste0("/", sapply(strsplit(outcome, "\\."), "[", 1), "_outcome_info.html")))
 
-  cat(paste0(sapply(strsplit(outcome, "\\."), "[",1), " outcome descriptive statistics have now been saved in the home directory"), "\n")
+  cat(paste0(sapply(strsplit(outcome, "\\."), "[", 1), " outcome descriptive statistics have now been saved in the home directory"), "\n")
 
 
 
@@ -87,12 +125,12 @@ inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_
 
   if (sum(tv_confounders %in% potential_covariates) != length(tv_confounders)){
     stop(paste(tv_confounders[!tv_confounders %in% potential_covariates]),
-         " time-varying confounders are not present in the dataset.")
+         " time-varying confounders are not present in the dataset.", call. = FALSE)
   }
 
   if (sum(ti_confounders %in% potential_covariates) != length(ti_confounders)){
     stop(paste(ti_confounders[!ti_confounders %in% potential_covariates]),
-         " time invariant confounders are not present in the dataset.")
+         " time invariant confounders are not present in the dataset.", call. = FALSE)
   }
 
   all_potential_covariates <- c(time_invar_covars, time_var_covars)
@@ -117,7 +155,7 @@ inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_
                                                                                                 "\\."), "[", 1))))]
   rownames(test) <- time_pts
 
-  for (l in 1:nrow(test)) {
+  for (l in seq_len(nrow(test))) {
     test[l, c(sapply(strsplit(all_potential_covariates[grepl(paste0(".", rownames(test)[l]),
                                                              all_potential_covariates)], "\\."), "[", 1), time_invar_covars)] <- 1
   }
@@ -126,7 +164,7 @@ inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_
   NumTimePts <- data.frame(NumTimePts = colSums(test, na.rm = TRUE))
   test <- rbind(test, t(NumTimePts))
   NumVars <- data.frame(NumVars = rowSums(test, na.rm = TRUE))
-  test[1:nrow(test), ncol(test) + 1] <- NumVars
+  test[seq_len(nrow(test)), ncol(test) + 1] <- NumVars
 
   write.csv(test, glue::glue("{home_dir}/{exposure}-{outcome}_matrix_of_covariates_considered_by_time_pt.csv"),
             row.names = TRUE)
@@ -154,10 +192,10 @@ inspectData <-function(data, home_dir, exposure, exposure_time_pts, outcome, tv_
                                           as.numeric)), use = "pairwise.complete.obs")
 
   ggcorrplot::ggcorrplot(corr_matrix,  type = "lower")+
-    ggplot2::theme(axis.text.x = element_text(size = 5, margin = ggplot2::margin(-2,0,0,0)),  # Order: top, right, bottom, left
-          axis.text.y = element_text(size = 5, margin = ggplot2::margin(0,-2,0,0))) +
-    ggplot2::geom_vline(xintercept = 1:ncol(mtcars) - 0.5, colour="white", size = 2) +
-    ggplot2::geom_hline(yintercept = 1:ncol(mtcars) - 0.5, colour="white", size = 2)
+    ggplot2::theme(axis.text.x = element_text(size = 5, margin = ggplot2::margin(-2, 0, 0, 0)),  # Order: top, right, bottom, left
+          axis.text.y = element_text(size = 5, margin = ggplot2::margin(0, -2, 0, 0))) +
+    ggplot2::geom_vline(xintercept = seq_len(ncol(mtcars)) - 0.5, colour="white", size = 2) +
+    ggplot2::geom_hline(yintercept = seq_len(ncol(mtcars)) - 0.5, colour="white", size = 2)
 
   # Save correlation plot
   pdf(file = paste0(home_dir, "/", exposure, "-", outcome, "_all_vars_corr_plot.pdf"))
