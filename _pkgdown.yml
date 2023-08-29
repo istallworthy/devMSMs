@@ -1,0 +1,17 @@
+url: https://istallworthy.github.io/devMSMs/
+template:
+  bootstrap: 5
+  theme: breeze-light
+  bootswatch: materia
+  bslib:
+    pkgdown-nav-height: 100px
+  navbar:
+    structure:
+      left: [intro, reference, articles, tutorials, news]
+      right: [search, github]
+  footer:
+    strcuture:
+      left: developed_by
+      right: built_with
+
+
