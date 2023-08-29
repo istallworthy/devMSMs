@@ -6,8 +6,8 @@
 \usage{
 imputeData(
   data,
-  m,
-  method,
+  m = 5,
+  method = "rf",
   home_dir,
   exposure,
   outcome,
@@ -17,11 +17,27 @@ imputeData(
 )
 }
 \arguments{
-\item{data_to_impute}{output from dataToImpute}
+\item{data}{data in wide format}
+
+\item{m}{integer number of imputed datasets}
+
+\item{method}{character string of imputation method from mice()}
+
+\item{home_dir}{path to home directory}
+
+\item{exposure}{name of exposure variable}
+
+\item{outcome}{name of outcome variable with ".timepoint" suffix}
+
+\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+
+\item{ti_confounders}{list of time invariant confounders}
+
+\item{read_in_from_file}{"yes" or "no" indicatorto read in weights that have been previously run and saved locally}
 }
 \value{
-imputed_datasets imputation results
+mice object of m imputed datasets
 }
 \description{
-Creates m imputed datasets from original datasets using mice::mice
+Imputes dataset so there is no missing at each time point using parallel processing to speed up
 }

@@ -2,8 +2,7 @@
 % Please edit documentation in R/compareHistories.R
 \name{compareHistories}
 \alias{compareHistories}
-\title{Compare exposure histories
-This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome using linear hypothesis testing}
+\title{Estimate, compare, and visualize exposure histories}
 \usage{
 compareHistories(
   home_dir,
@@ -13,7 +12,7 @@ compareHistories(
   tv_confounders,
   model,
   epochs = NULL,
-  hi_lo_cut = NA,
+  hi_lo_cut = NULL,
   reference = NA,
   comparison = NULL,
   mc_comp_method = "BH",
@@ -21,20 +20,45 @@ compareHistories(
   exp_lab = NA,
   out_lab = NA,
   colors = "Dark2",
-  user.o = TRUE
+  verbose = TRUE
 )
 }
 \arguments{
-\item{model}{fitted models for each imputed dataset}
+\item{home_dir}{path to home directory}
 
-\item{reference}{optional reference event for custom comparison}
+\item{exposure}{name of exposure variable}
 
-\item{compare}{optional comparison event(s) for custom comparison}
+\item{exposure_time_pts}{list of integers at which weights will be created/assessed that correspond to time points when exposure wass measured}
+
+\item{outcome}{name of outcome variable with ".timepoint" suffix}
+
+\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+
+\item{model}{list of model outputs from fitModel()}
+
+\item{epochs}{data frame of exposure epoch labels and values}
+
+\item{hi_lo_cut}{list of two numbers indicating quantile values that reflect high and low values, respectively, for continuous exposure}
+
+\item{reference}{string of "-"-separated "l" and "h" values indicative of a reference exposure history to which to compare comparison}
+
+\item{comparison}{list of one or more strings of "-"-separated "l" and "h" values indicative of comparison history/histories to compare to reference}
+
+\item{mc_comp_method}{character abbreviation for multiple comparison correction method}
+
+\item{dose_level}{"l" or "h" indicating whether low or high doses should be tallied in tables and plots}
+
+\item{exp_lab}{character label for exposure variable in plots}
+
+\item{out_lab}{character label for outcome variable in plots}
+
+\item{colors}{character specifying Brewer palette or list of colors (n(epochs)+1) for plotting}
+
+\item{verbose}{TRUE or FALSE indicator for user output}
 }
 \value{
-preds_pool
+data frame of history comparisons
 }
 \description{
-Compare exposure histories
-This code uses the best-fitting model for each exposure-outcome pair to compare the effects of user-specified reference and comparison histories of exposure on outcome using linear hypothesis testing
+Estimate, compare, and visualize exposure histories
 }

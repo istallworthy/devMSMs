@@ -2,7 +2,7 @@
 % Please edit documentation in R/assessBalance.R
 \name{assessBalance}
 \alias{assessBalance}
-\title{Assess success of covariate balancing}
+\title{Assesses confounder balancing}
 \usage{
 assessBalance(
   home_dir,
@@ -16,9 +16,37 @@ assessBalance(
   weights = NULL,
   balance_thresh = 0.1,
   imp_conf = NULL,
-  user.o = TRUE
+  verbose = TRUE
 )
 }
+\arguments{
+\item{home_dir}{path to home directory}
+
+\item{data}{data in wide format as: a data frame, path to folder of imputed .csv files, or mids object}
+
+\item{exposure}{name of exposure variable}
+
+\item{exposure_time_pts}{list of integers at which weights will be created/assessed that correspond to time points when exposure wass measured}
+
+\item{outcome}{name of outcome variable with ".timepoint" suffix}
+
+\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+
+\item{type}{type of balance assessment 'prebalance' or 'weighted'}
+
+\item{formulas}{list of balancing formulas at each time point output from createFormulas()}
+
+\item{weights}{list of IPTW weights output from createWeights}
+
+\item{balance_thresh}{one or two numbers between 0 and 1 indicating a single balancingn threshold or thresholds for more and less important confounders, respectively}
+
+\item{imp_conf}{list of variable names reflecting important confounders}
+
+\item{verbose}{TRUE or FALSE indicator for user output}
+}
+\value{
+a list data frame of balance statistics
+}
 \description{
-Assess success of covariate balancing
+Assesses confounder balancing
 }

@@ -1,33 +1,70 @@
-#' Creates balancing weights for potential confounding covariates in relation to exposure at each time point
+#' Creates IPTW balancing weights for potential confounding covariates in relation to exposure at each time point
 #'
-#' Returns a list of weights_models
-#' @param read_in_from_file optional binary indicator of whether weights should be read in from a local file
-#' @return weights_models
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 geom_histogram
 #' @importFrom ggplot2 ggsave
 #' @importFrom WeightIt weightitMSM
-#' @importFrom cobalt bal.tab
-createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no", user.o = TRUE) {
+#' @seealso {[WeightIt::WeightItMSM()], <url1>}
+#' @param home_dir path to home directory
+#' @param data data in wide format as: a data frame, path to folder of imputed .csv files, or mids object
+#' @param exposure name of exposure variable
+#' @param outcome name of outcome variable with ".timepoint" suffix
+#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
+#' @param formulas list of balancing formulas at each time point output from createFormulas()
+#' @param method (optional) character string of WeightItMSM() balancing method abbreviation (default is Covariate Balancing Propensity Score "cbps")
+#' @param read_in_from_file (optional) "yes" or "no" indicator to read in weights that have been previously run and saved locally (default is "no")
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
+#' @return list of IPTW balancing weights
+
+createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no", verbose = TRUE) {
+
+  if (missing(home_dir)){
+    stop("Please supply a home directory.", call. = FALSE)
+  }
+  if (missing(data)){
+    stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
+         call. = FALSE)
+  }
+  if (missing(exposure)){
+    stop("Please supply a single exposure.", call. = FALSE)
+  }
+  if (missing(outcome)){
+    stop("Please supply a single outcome.", call. = FALSE)
+  }
+  if (missing(tv_confounders)){
+    stop("Please supply a list of time-varying confounders.", call. = FALSE)
+  }
+  if (missing(formulas)){
+    stop("Please supply a list of balancing formulas.", call. = FALSE)
+  }
 
   if (!dir.exists(home_dir)) {
-    stop("Please provide a valid home directory path.")
+    stop("Please provide a valid home directory path.", call. = FALSE)
+  }
+
+  if(!inherits(method, "character")){
+    stop("Please provide as a character string a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.", call. = FALSE)
   }
   if(! method %in% c("ps", "glm", "gbm", "bart", "super", "cbps")){
-    stop("Please provide a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.")
+    stop("Please provide a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.", call. = FALSE)
   }
-  if (!class(data) %in% c("mids", "data.frame", "character")) {
-    stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.")
+
+  if (!mice::is.mids(data) & !is.data.frame(data) & !is.character(data)) {
+    stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.", call. = FALSE)
+  }
+
+  if(!inherits(formulas, "list")){
+    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
 
   # Load required libraries
-  library(cobalt)
+  # library(cobalt)
 
-  exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)], "\\."), "[",2))
+  # exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)], "\\."), "[", 2))
   time_varying_covariates <- tv_confounders
   weights_method <- method
-  form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[",1)
+  form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
 
   # creating directories
   weights_dir <- file.path(home_dir, "weights")
@@ -47,16 +84,15 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
     tryCatch({
       weights <- readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_fit.rds"))
 
-      if (user.o == TRUE){
+      if (verbose){
         message("Reading in balancing weights from the local folder.")
       }
     }, error = function(x) {
-      stop("These weights have not previously been saved locally. Please re-run with read_in_from_file='no'")
+      stop("These weights have not previously been saved locally. Please re-run with read_in_from_file='no'", call. = FALSE)
     })
     weights
-
-  } else {
-
+  }
+  else {
 
     # List of formulas for each time point
     form <- formulas[grepl(paste("form_", exposure, "-", outcome, sep = ""), names(formulas))]
@@ -64,7 +100,6 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
 
     # Helper function to calculate weights
     calculate_weights <- function(data, form, weights_method) {
-      set.seed(1234)
       fit <- weightitMSM(form,
                          data = data,
                          method = weights_method,
@@ -77,13 +112,13 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
     }
 
 
-    if(class(data) == "mids"){
+    if(mice::is.mids(data)){
       # Cycling through imputed datasets
-      weights <- lapply(1:data$m, function(i) {
+      weights <- lapply(seq_len(data$m), function(i) {
         d <- as.data.frame(mice::complete(data, i))
 
         if (sum(duplicated(d$"ID")) > 0){
-          stop("Please provide wide imputed datasets with a single row per ID.")
+          stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
 
         fit <- calculate_weights(d, form, weights_method)
@@ -91,8 +126,8 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         d$weights <- fit$weights
 
         cat(paste0("USER ALERT: For imputation ", i, " and the ", weights_method, " weighting method, the median weight value is ",
-                   round(median(fit$weights),2) ," (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-",
-                   round(max(fit$weights),2), ")."), "\n")
+                   round(median(fit$weights), 2) ," (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
+                   round(max(fit$weights), 2), ")."), "\n")
         cat('\n')
 
         # Save weights merged with ID variable
@@ -109,20 +144,19 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         fit
       })
 
-      if (user.o == TRUE){
+      if (verbose){
         cat("Weights for each imputation have now been saved into the 'weights/values/' folder.")
         cat("\n")
         cat("Weights histograms for each imputation have now been saved in the 'weights/histograms/' folder --likely have heavy tails.")
       }
     }
 
-
-    if(class(data) == "character"){
+    else if(is.character(data)){
       if (!dir.exists(data)) {
-        stop("Please provide a valid directory path with imputed datasets, a data frame, or a 'mids' object for the 'data' field.")
+        stop("Please provide a valid directory path with imputed datasets, a data frame, or a 'mids' object for the 'data' field.", call. = FALSE)
       }
       if (length(dir(data)) < 2) {
-        stop("If you specify data as a directory, please supply more than 1 imputed dataset.")
+        stop("If you specify data as a directory, please supply more than 1 imputed dataset.", call. = FALSE)
       }
 
       files <- list.files(data, full.names = TRUE, pattern = "\\.csv")
@@ -134,22 +168,22 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       })
 
       # Cycling through list of imputed datasets
-      weights <- lapply(1:length(data), function(i) {
+      weights <- lapply(seq_len(length(data)), function(i) {
         d <- data[[i]]
 
         if (sum(duplicated(d$"ID")) > 0){
-          stop("Please provide wide imputed datasets with a single row per ID.")
+          stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
 
         fit <- calculate_weights(d, form, weights_method)
 
         d$weights <- fit$weights
 
-        if (user.o == TRUE){
+        if (verbose){
           message(paste0("USER ALERT: For imputation", i, " and ", weights_method,
-                         ", weighting method, the median weight value is ", round(median(fit$weights),2) ,
-                         " (SD= ", round(sd(fit$weights),2), "; range= ", round(min(fit$weights),2), "-",
-                         round(max(fit$weights),2), ")."), "\n")
+                         ", weighting method, the median weight value is ", round(median(fit$weights), 2) ,
+                         " (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
+                         round(max(fit$weights), 2), ")."), "\n")
           cat('\n')
         }
 
@@ -168,19 +202,16 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         fit
       })
 
-      if (user.o == TRUE){
+      if (verbose){
         cat("Weights for each imputation have now been saved into the 'weights/values/' folder.")
         cat("\n")
         cat("Weights histograms for each imputation have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
       }
     }
 
-
-
-    if (class(data) == "data.frame"){
-
+    else if (is.data.frame(data)){
       if (sum(duplicated(data$"ID")) > 0){
-        stop("Please provide wide dataset with a single row per ID.")
+        stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
       }
 
       # Creating weights
@@ -190,7 +221,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
 
       data$weights <- weights[[1]]$weights
 
-      if (user.o == TRUE){
+      if (verbose){
       message(paste0("USER ALERT: for the ", weights_method, " weighting method, the median weight value is ",
                      round(median(data$weights), 2) , " (SD= ", round(sd(data$weights), 2), "; range= ",
                      round(min(data$weights), 2), "-", round(max(data$weights), 2), ")."), "\n")
@@ -210,7 +241,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
                              "_", form_name, "_", weights_method, ".png"), height = 8, width = 14)
 
-      if (user.o == TRUE){
+      if (verbose){
         cat("Weights have now been saved into the 'weights/values/' folder.")
         cat("\n")
         cat("Weights histograms have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
@@ -220,7 +251,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
     saveRDS(weights, file = paste0(home_dir, "/weights/", exposure, "-", outcome,
                                    "_", form_name, "_", weights_method, "_fit.rds"))
 
-    if (user.o == TRUE){
+    if (verbose){
       message("Weights models have been saved as an .rds object in the 'weights' folder.")
     }
 

@@ -1,11 +1,47 @@
 
+#' Formats long data
+#'
+#' @param home_dir path to home directory
+#' @param data data in wide format as: a data frame, path to folder of imputed .csv files, or mids object
+#' @param exposure name of exposure variable
+#' @param exposure_time_pts list of integers at which weights will be created/assessed that correspond to time points when exposure was measured
+#' @param outcome name of outcome variable with ".timepoint" suffix
+#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
+#' @param time_var (optional) variable name in original dataset demarcating time
+#' @param id_var (optional) variable name in original dataset demarcating ID
+#' @param missing (optional) indicator for missing data in original dataset
+#' @param factor_confounders (optional) list of variable names that are factors (default is numeric)
+#' @return formatted long dataset
+#' @export
+#'
+#' @examples
 formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, time_var = NA, id_var = NA, missing = NA, factor_confounders = NULL){
+
+  if (missing(home_dir)){
+    stop("Please supply a home directory.", call. = FALSE)
+  }
+  if (missing(data)){
+    stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
+         call. = FALSE)
+  }
+  if (missing(exposure)){
+    stop("Please supply a single exposure.", call. = FALSE)
+  }
+  if (missing(outcome)){
+    stop("Please supply a single outcome.", call. = FALSE)
+  }
+  if (missing(exposure_time_pts)){
+    stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
+  }
+  if (missing(tv_confounders)){
+    stop("Please supply a list of time-varying confounders.", call. = FALSE)
+  }
 
   time_varying_covariates <- tv_confounders
   options(readr.num_columns = 0)
 
   if (!dir.exists(home_dir)) {
-    stop('Please provide a valid home directory.')
+    stop('Please provide a valid home directory.', call. = FALSE)
   }
 
 
@@ -19,7 +55,8 @@ formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome,
   }
 
   if(!is.na(missing)){
-    data[data == missing] <- NA # Makes NA the missingness indicator
+    # data[data == missing] <- NA # Makes NA the missingness indicator
+    is.na(data[data == missing]) <- TRUE
   }
 
   if (which(colnames(data) == "ID") != 1){
@@ -63,7 +100,7 @@ formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome,
 
   if(!is.null(factor_confounders)){
     if (sum(factor_confounders %in% colnames(data)) < length(factor_confounders)) {
-      stop('Please provide factor covariates that correspond to columns in your data when creating the msm object')
+      stop('Please provide factor covariates that correspond to columns in your data when creating the msm object', call. = FALSE)
     }
     # Formatting factor covariates
     data[, factor_confounders] <- lapply(data[, factor_confounders], factor)

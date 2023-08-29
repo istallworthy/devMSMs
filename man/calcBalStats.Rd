@@ -14,8 +14,29 @@ calcBalStats(
   k = 0,
   weights = NULL,
   imp_conf = NULL,
-  user.o = TRUE
+  verbose = TRUE
 )
+}
+\arguments{
+\item{data}{data in wide format as: a data frame, path to folder of imputed .csv files, or mids object}
+
+\item{formulas}{list of balancing formulas at each time point output from createFormulas()}
+
+\item{exposure}{name of exposure variable}
+
+\item{exposure_time_pts}{list of integers at which weights will be created/assessed that correspond to time points when exposure wass measured}
+
+\item{outcome}{name of outcome variable with ".timepoint" suffix}
+
+\item{balance_thresh}{one or two numbers between 0 and 1 indicating a single balancingn threshold or thresholds for more and less important confounders, respectively}
+
+\item{k}{imputation number}
+
+\item{weights}{list of IPTW weights output from createWeights}
+
+\item{imp_conf}{list of variable names reflecting important confounders}
+
+\item{verbose}{TRUE or FALSE indicator for user output}
 }
 \description{
 Code to calculate balance stats based on Jackson paper (either weighted or unweighted)

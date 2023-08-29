@@ -1,12 +1,38 @@
 
+#' Trim IPTW balancing weights
+#'
+#' @seealso {[WeightIt::trim()], <url1>}
+#' @param home_dir path to home directory
+#' @param weights list of IPTW weights output from createWeights()
+#' @param quantile (optional) numeric value between 0 and 1 of quantile value at which to trim weights (default is 0.95)
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
+#'
+#' @return list of model output with trimmed weights
+#' @export
+#'
+#' @examples
+trimWeights <- function(home_dir, weights, quantile = 0.95, verbose = TRUE){
 
-trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
+  if (missing(home_dir)){
+    stop("Please supply a home directory.", call. = FALSE)
+  }
+  if (missing(weights)){
+    stop("Please supply a list of IPTW weights.", call. = FALSE)
+  }
 
   if (!dir.exists(home_dir)) {
-    stop("Please provide a valid home directory path.")
+    stop("Please provide a valid home directory path.", call. = FALSE)
   }
-  if (quantile > 1 || quantile < 0) {
-    stop('Please select a quantile value between 0 and 1.')
+
+  if(!is.numeric(quantile)){
+    stop('Please sprovide a numeric quantile value between 0 and 1.', call. = FALSE)
+  }
+  else if (quantile > 1 || quantile < 0) {
+    stop('Please provide a quantile value between 0 and 1.', call. = FALSE)
+  }
+
+  if (!inherits(weights, "list")){
+    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
   }
 
 
@@ -27,15 +53,15 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
   #imputed data
   if (is.null(names(weights))) {
 
-    trim_weights <- lapply(1:length(weights), function(x){
+    trim_weights <- lapply(seq_len(length(weights)), function(x){
       w <- weights[[x]]
       t <- WeightIt::trim(w$weights, at = quantile)
 
-      if (user.o == TRUE){
+      if (verbose){
       cat('\n')
       cat(paste0("USER ALERT: For imputation ", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
-                     quantile, " quantile, the median weight value is ", round(median(t),2) ,
-                     " (SD= ", round(sd(t),2), "; range= ", round(min(t),2), "-", round(max(t),2), ")."), "\n")
+                     quantile, " quantile, the median weight value is ", round(median(t), 2) ,
+                     " (SD= ", round(sd(t), 2), "; range= ", round(min(t), 2), "-", round(max(t), 2), ")."), "\n")
       cat('\n')
       }
 
@@ -46,25 +72,25 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, user.o = TRUE){
                               quantile, "_imp_", x, ".png", sep = ""), path = paste0(home_dir, "/weights/histograms/"),
                         height = 8, width = 14)
 
-      w$weights <- NA
+      # w$weights <- NA
+      is.na(w$weights) <- TRUE
       w$weights <- t
       w
 
     })
   }
 
-
   # df
-  if ( !is.null(names(weights)) ){
+  else if ( !is.null(names(weights)) ){
     trim_weights <- lapply(1, function(x){
       w <- weights[[1]]
       t <- WeightIt::trim(w$weights, at = quantile)
 
-      if (user.o == TRUE){
+      if (verbose){
       cat('\n')
       cat(paste0("USER ALERT: For the ", exposure, "-", outcome, " relation, following trimming at the ",
-                     quantile, " quantile, the median weight value is ", round(median(t),2) ,
-                     " (SD= ", round(sd(t),2), "; range= ", round(min(t),2), "-", round(max(t),2), ")."), "\n")
+                     quantile, " quantile, the median weight value is ", round(median(t), 2) ,
+                     " (SD= ", round(sd(t), 2), "; range= ", round(min(t), 2), "-", round(max(t), 2), ")."), "\n")
       cat('\n')
       }
 

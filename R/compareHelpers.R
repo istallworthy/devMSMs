@@ -1,17 +1,35 @@
 # FUNCTIONS called by compareHistories
 
-#custom contrasts
+
+#' Finds custom reference values
+#'
+#' @param d
+#' @param reference
+#'
+#' @return reference values
+#' @export
+#'
+#' @examples
 get_reference_values <- function(d, reference) {
-  ref_vals <- sapply(1:length(unlist(strsplit(reference, "-"))), function(x) {
-    d[x,unlist(strsplit(reference, "-"))[x]]
+  ref_vals <- sapply(seq_len(length(unlist(strsplit(reference, "-")))), function(x) {
+    d[x, unlist(strsplit(reference, "-"))[x]]
   })
   ref_vals
 }
 
 
+#' Finds custom comparison values
+#'
+#' @param d
+#' @param comp_histories
+#'
+#' @return comparison values
+#' @export
+#'
+#' @examples
 get_comparison_values <- function(d, comp_histories) {
   comp_vals <- sapply(comp_histories, function(comp) {
-    sapply(1:length(unlist(strsplit(comp, "-"))), function(x) {
+    sapply(seq_len(length(unlist(strsplit(comp, "-")))), function(x) {
       d[x, unlist(strsplit(comp, "-"))[x]]
     })
   })
@@ -19,6 +37,18 @@ get_comparison_values <- function(d, comp_histories) {
 }
 
 
+#' Create custom contrasts
+#'
+#' @param d
+#' @param reference
+#' @param comp_histories
+#' @param exposure name of exposure variable
+#' @param preds
+#'
+#' @return contrasts
+#' @export
+#'
+#' @examples
 create_custom_contrasts <- function(d, reference, comp_histories, exposure, preds) {
   if (is.na(reference) | is.null(comp_histories)) {
     return(NULL)  # Invalid input, return early
@@ -36,6 +66,17 @@ create_custom_contrasts <- function(d, reference, comp_histories, exposure, pred
 }
 
 
+#' Title
+#'
+#' @param preds
+#' @param ref_vals
+#' @param comp_vals
+#' @param exposure
+#'
+#' @return
+#' @export
+#'
+#' @examples
 create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
   cus_comps <- matrix(ncol = nrow(comp_vals), nrow = nrow(as.data.frame(preds[[1]][[1]])))
 
@@ -43,7 +84,7 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
                          paste, collapse = ",") == paste0(ref_vals, collapse = ","))
   cus_comps[ref_pos, ] <- -1
 
-  for (x in 1:nrow(comp_vals)) {
+  for (x in seq_len(nrow(comp_vals))) {
     c <- paste(comp_vals[x, ], collapse = ",")
     cus_comps[which(apply(as.data.frame(preds[[1]])[grepl(exposure, colnames(as.data.frame(preds[[1]])))], 1,
                           paste, collapse = ",") == paste0(c, collapse = ",")), x] <- 1
@@ -52,7 +93,8 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
   if (nrow(comp_vals) > 1) {
     colnames(cus_comps) <- paste0("(", paste0(paste0(ref_vals, collapse = ","), ") - (",
                                               apply(comp_vals, 1, paste, collapse = ",")), ")")
-  } else {
+  }
+  else {
     colnames(cus_comps) <- paste0("(", paste0(paste0(ref_vals, collapse = ","), ") - (",
                                               paste0(paste0(comp_vals, collapse = ",")), ")"))
   }
@@ -63,15 +105,24 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 
 
 
+#' Add history labels to table
+#'
+#' @param p
+#' @param d
+#'
+#' @return table with histories labeled
+#' @export
+#'
+#' @examples
 add_histories <- function(p, d) {
-  if( ("list" %in% class(p)) & length(p) == 1){
+  if((is.list(p)) & length(p) == 1){
     history <- matrix(data = NA, nrow = nrow(p[[1]]), ncol = 1) # Get histories from the first element
     p <- p[[1]]
   }
 
   if (sum(d$e %in% colnames(p)) == nrow(d)){
-    for (i in 1:nrow(p)) {
-      vals <- as.data.frame(p)[i, 1:nrow(d)]
+    for (i in seq_len(nrow(p))) {
+      vals <- as.data.frame(p)[i, seq_len(nrow(d))]
       history[i] <- as.data.frame(paste(ifelse(round(vals, 3) == round(d$l, 3), "l", "h"), collapse = "-"))
     }
     history <- unlist(history)
@@ -81,18 +132,19 @@ add_histories <- function(p, d) {
     history <- matrix(data = NA, nrow = nrow(p), ncol = 1) # Get histories from the first element
 
     if(grepl("\\=", p$term[1])) {
-      for (i in 1:nrow(p)){
-        vals <- as.numeric(sapply(strsplit(unlist(strsplit(as.character(p$term[i]), "\\,")), "="), "[",2))
+      for (i in seq_len(nrow(p))){
+        vals <- as.numeric(sapply(strsplit(unlist(strsplit(as.character(p$term[i]), "\\,")), "="), "[", 2))
         history[i] <- as.data.frame(paste(ifelse(round(vals, digits = 2) == round(d$l, digits = 2), "l", "h"), collapse = "-"))
       }
       history <- unlist(history)
 
-    } else {
-      for (i in 1:nrow(p)) {
+    }
+    else {
+      for (i in seq_len(nrow(p))) {
         temp <- as.character(p$term[i])
         pair <- lapply(1:2, function(y) {
           a <- sapply(strsplit(temp, " - "), "[", y)
-          his <- lapply(1:nrow(d), function(z) {
+          his <- lapply(seq_len(nrow(d)), function(z) {
             ifelse(round(as.numeric(gsub("[^0-9.-]", "",
                                          sapply(strsplit(a, "\\,"), "[", z))), 2) == round(d[z, "l"], 2), "l", "h")
           })
@@ -106,13 +158,23 @@ add_histories <- function(p, d) {
 }
 
 
+#' Add dose tally to table
+#'
+#' @param p
+#' @param dose_level "l" or "h" indicating whether low or high doses should be tallied in tables and plots
+#'
+#' @return table with dose level tally
+#' @export
+#'
+#' @examples
 add_dose <- function(p, dose_level) {
   if( length(p$history[1]) == 1 ) {
     if(grepl("vs", p$history[1])) {
       dose_a <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 1), dose_level)
       dose_b <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 2), dose_level)
       dose_count <- data.frame(dose = gsub(" ", " vs ", paste(dose_a, dose_b)))
-    } else{
+    }
+    else{
       dose_count <- stringr::str_count(p$history, dose_level)
     }
   }
@@ -124,6 +186,17 @@ add_dose <- function(p, dose_level) {
 }
 
 
+#' Conduct multiple comparison correction
+#'
+#' @param comps
+#' @param reference
+#' @param comp_histories
+#' @param method character abbreviation for multiple comparison correction method
+#'
+#' @return comparison table with corrected p-values
+#' @export
+#'
+#' @examples
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method) {
   if (any(is.na(reference) & is.na(comp_histories)) | length(comp_histories) > 1) {
     cat("\n")
@@ -131,7 +204,8 @@ perform_multiple_comparison_correction <- function(comps, reference, comp_histor
     cat("\n")
     corr_p <-stats::p.adjust(comps$p.value, method = method)
     comps <- cbind(comps, p.value_corr = corr_p)
-  } else {
+  }
+  else {
     cat("\n")
     cat(paste0("The user specified comparison only between ", reference, " and a single comparison, ", comp_histories,
                ", so no correction for multiple comparisons will be implemented."), "\n")
