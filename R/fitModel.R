@@ -1,24 +1,37 @@
-#' Fit weighted marginal structural model relating exposure to outcome
-
+#' Fit outcome model
+#'
+#' Fits weighted marginal outcome model as a generalized linear model of the
+#' user's choosing, relating exposure main effects to outcome using IPTW
+#' weights.
 #' @importFrom survey svydesign svyglm
 #' @importFrom jtools export_summs
 #' @importFrom dplyr mutate filter select
 #' @seealso {[survey::svyglm()] for more on family/link specifications, <url1>}
 #' @seealso {[createWeights()], <url1>}
 #' @param home_dir path to home directory
-#' @param data data in wide format as: a data frame, path to folder of imputed .csv files, or mids object
+#' @param data data in wide format as: a data frame, path to folder of imputed
+#'   .csv files, or mids object
 #' @param weights list of IPTW weights output from createWeights()
 #' @param exposure name of exposure variable
-#' @param exposure_time_pts list of integers at which weights will be created/assessed that correspond to time points when exposure was measured
+#' @param exposure_time_pts list of integers at which weights will be
+#'   created/assessed that correspond to time points when exposure was measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
-#' @param model character indicating outcome model "m0" (exposure main effects), "m1" (exposure main effects & covariates), "m2" (exposure main effects & interactions), "m3" (exposure main effects, interactions, covariates)
+#' @param tv_confounders list of time-varying confounders with ".timepoint"
+#'   suffix
+#' @param model character indicating one of the following outcome models:
+#'  * "m0" (exposure main effects)
+#'  * "m1" (exposure main effects & covariates)
+#'  * "m2" (exposure main effects & their interactions)
+#'  * "m3" (exposure main effects, their interactions, & covariates)
 #' @param family (optional) family function specification for svyglm model
 #' @param link (optional) character link function specification for svyglm model
-#' @param int_order integer specification of highest order exposure main effects interaction, required for interaction models ("m2", "m3")
-#' @param covariates list of characters reflecting variable names of covariates, required for covariate models ("m1", "m3")
+#' @param int_order integer specification of highest order exposure main effects
+#'   interaction, required for interaction models ("m2", "m3")
+#' @param covariates list of characters reflecting variable names of covariates,
+#'   required for covariate models ("m1", "m3")
 #' @param epochs (optional) data frame of exposure epoch labels and values
-#' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
+#'   TRUE)
 #' @examples fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model = "m0")
 
 #'

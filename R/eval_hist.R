@@ -1,11 +1,16 @@
 #' Visualize distribution of sample across exposure histories
 #'
+#' Create customized, user-specified exposure histories and tables displaying
+#' sample distribution across them for user inspection.
+#'
 #' @param data
 #' @param exposure name of exposure variable
-#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
+#' @param tv_confounders list of time-varying confounders with ".timepoint"
+#'   suffix
 #' @param epochs
 #' @param time_pts
-#' @param hi_lo_cut list of two numbers indicating quantile values that reflect high and low values, respectively, for continuous exposure
+#' @param hi_lo_cut list of two numbers indicating quantile values that reflect
+#'   high and low values, respectively, for continuous exposure
 #' @param ref
 #' @param comps
 #'

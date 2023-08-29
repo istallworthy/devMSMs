@@ -1,5 +1,10 @@
 #' Assesses confounder balancing
 #'
+#' Draws on functions from the cobalt package to quantify the relations between
+#' exposure and confounders at each exposure time point according to the
+#' guidelines from Jackson, 2016 on how to assess balance for time-varying
+#' exposures.
+#'
 #' @importFrom knitr kable
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 theme
@@ -18,18 +23,27 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr %>%
 #' @seealso {[cobalt] package, <url1>}
-#' @seealso {Jackson, 2016 for more on assessing balance for time-varying exposures, <url1>}
+#' @seealso {Jackson, 2016 for more on assessing balance for time-varying
+#'   exposures, <url1>}
 #' @param home_dir path to home directory
-#' @param data data in wide format as: a data frame, path to folder of imputed .csv files, or mids object
+#' @param data data in wide format as: a data frame, path to folder of imputed
+#'   .csv files, or mids object
 #' @param exposure name of exposure variable
-#' @param exposure_time_pts list of integers at which weights will be created/assessed that correspond to time points when exposure wass measured
+#' @param exposure_time_pts list of integers at which weights will be
+#'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
-#' @param formulas list of balancing formulas at each time point output from createFormulas()
-#' @param weights list of IPTW weights output from createWeights, required for type 'weighted'
+#' @param tv_confounders list of time-varying confounders with ".timepoint"
+#'   suffix
+#' @param formulas list of balancing formulas at each time point output from
+#'   createFormulas()
+#' @param weights list of IPTW weights output from createWeights, required for
+#'   type 'weighted'
 #' @param type type of balance assessment 'prebalance' or 'weighted'
-#' @param balance_thresh (optional) one or two numbers between 0 and 1 indicating a single balancingn threshold or thresholds for more and less important confounders, respectively (default = 0.1)
-#' @param imp_conf (optional) list of variable names reflecting important confounders, required if two balance thresholds are supplied
+#' @param balance_thresh (optional) one or two numbers between 0 and 1
+#'   indicating a single balancingn threshold or thresholds for more and less
+#'   important confounders, respectively (default = 0.1)
+#' @param imp_conf (optional) list of variable names reflecting important
+#'   confounders, required if two balance thresholds are supplied
 #' @param verbose TRUE or FALSE indicator for user output
 #' @returns a list data frame of balance statistics
 

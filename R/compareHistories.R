@@ -1,4 +1,9 @@
 #' Estimate, compare, and visualize exposure histories
+#'
+#' Takes fitted model output to created predicted values for user-specified
+#' histories (pooling for imputed data), before conducting contrast comparisons
+#' (pooling for imputed data), correcting for multiple comparisons, and then
+#' plotting results.
 
 #' @importFrom gtools permutations
 #' @importFrom marginaleffects avg_predictions

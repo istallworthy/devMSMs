@@ -1,12 +1,16 @@
 
 #' Trim IPTW balancing weights
 #'
+#' Trims IPTW balancing weights with heavy right tails by populating all weight
+#' values above a given quantile with the weight value of that quantile.
+#'
 #' @seealso {[WeightIt::trim()], <url1>}
 #' @param home_dir path to home directory
 #' @param weights list of IPTW weights output from createWeights()
-#' @param quantile (optional) numeric value between 0 and 1 of quantile value at which to trim weights (default is 0.95)
-#' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
-#'
+#' @param quantile (optional) numeric value between 0 and 1 of quantile value at
+#'   which to trim weights (default is 0.95)
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
+#'   TRUE)
 #' @return list of model output with trimmed weights
 #' @export
 #'

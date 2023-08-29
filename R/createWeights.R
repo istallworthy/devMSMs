@@ -1,4 +1,8 @@
-#' Creates IPTW balancing weights for potential confounding covariates in relation to exposure at each time point
+#' Creates IPTW balancing weights
+#'
+#' Creates IPTW balancing weights at each user-specified exposure time point
+#' using balancing formulas that relate exposure at each time point to all
+#' relevant confounders.
 #'
 #' @export
 #' @importFrom ggplot2 ggplot
@@ -7,14 +11,20 @@
 #' @importFrom WeightIt weightitMSM
 #' @seealso {[WeightIt::WeightItMSM()], <url1>}
 #' @param home_dir path to home directory
-#' @param data data in wide format as: a data frame, path to folder of imputed .csv files, or mids object
+#' @param data data in wide format as: a data frame, path to folder of imputed
+#'   .csv files, or mids object
 #' @param exposure name of exposure variable
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
-#' @param formulas list of balancing formulas at each time point output from createFormulas()
-#' @param method (optional) character string of WeightItMSM() balancing method abbreviation (default is Covariate Balancing Propensity Score "cbps")
-#' @param read_in_from_file (optional) "yes" or "no" indicator to read in weights that have been previously run and saved locally (default is "no")
-#' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
+#' @param tv_confounders list of time-varying confounders with ".timepoint"
+#'   suffix
+#' @param formulas list of balancing formulas at each time point output from
+#'   createFormulas()
+#' @param method (optional) character string of WeightItMSM() balancing method
+#'   abbreviation (default is Covariate Balancing Propensity Score "cbps")
+#' @param read_in_from_file (optional) "yes" or "no" indicator to read in
+#'   weights that have been previously run and saved locally (default is "no")
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
+#'   TRUE)
 #' @return list of IPTW balancing weights
 
 createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no", verbose = TRUE) {

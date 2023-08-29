@@ -18,3 +18,17 @@ usethis::use_pkgdown_github_pages()
 
 pkgdown::build_site()
 devtools::document()
+
+usethis::use_pkgdown()
+usethis::use_github_action(url = "https://raw.githubusercontent.com/r-lib/actions/master/examples/pkgdown.yaml")
+
+build_site_github_pages(
+  pkg = ".",
+  ...,
+  dest_dir = "docs",
+  clean = TRUE,
+  install = FALSE,
+  new_process = FALSE
+)
+
+

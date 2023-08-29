@@ -1,24 +1,48 @@
 
-#' Creates balancing formulas at each exposure time point for creating IPTW weights
+#' Create balancing formulas
+#'
+#' Creates balancing formulas relating exposure to all relevant time-varying and
+#' time invariant confounders at each exposure time point to be used to create
+#' IPTW weights.
 #'
 #' @param home_dir path to home directory
 #' @param exposure name of exposure variable
-#' @param exposure_time_pts list of integers at which weights will be created/assessed that correspond to time points when exposure wass measured
+#' @param exposure_time_pts list of integers at which weights will be
+#'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
+#' @param tv_confounders list of time-varying confounders with ".timepoint"
+#'   suffix
 #' @param ti_confounders list of time invariant confounders
-#' @param type type of formula to create from 'full' (includes all lagged time-varying confounders), 'short' (includes time-varying confounders at t-1 lag only), or 'update' (adds to 'short' formulas any imbalanced time-varying confounders at lags great than t-1)
-#' @param bal_stats list of balance statistics from assessBalance(), required for 'update' type
-#' @param concur_conf (optional) list of variable names reflecting time-varying confounders to retain in formulas contemporaneously (default is none)
-#' @param keep_conf (optional) list of variable names reflecting confounders to always retain in formulas (default depends on type)
-#' @param custom (optional) custom list of formulas at each exposure time point (default is to create automatically according to type)
-#' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
-#'
+#' @param type type of formula to create from 'full' (includes all lagged
+#'   time-varying confounders), 'short' (includes time-varying confounders at
+#'   t-1 lag only), or 'update' (adds to 'short' formulas any imbalanced
+#'   time-varying confounders at lags great than t-1)
+#' @param bal_stats list of balance statistics from assessBalance(), required
+#'   for 'update' type
+#' @param concur_conf (optional) list of variable names reflecting time-varying
+#'   confounders to retain in formulas contemporaneously (default is none)
+#' @param keep_conf (optional) list of variable names reflecting confounders to
+#'   always retain in formulas (default depends on type)
+#' @param custom (optional) custom list of formulas at each exposure time point
+#'   (default is to create automatically according to type)
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
+#'   TRUE)
 #' @return list of balancing formulas at each exposure time point
 #' @export
 #'
 #' @examples
-createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL, keep_conf= NULL, custom = NULL, verbose = TRUE ){
+#' test <- data.frame(A.1 = 1:10,
+#' A.2 = 21:30,
+#' A.3 = 1:10,
+#' B.1 = 2:11,
+#' B.2 = 1:10,
+#' B.3 = 4:13,
+#' C = 3:12,
+#' D.3 = 4:13)
+#' createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
+
+
+createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL, keep_conf = NULL, custom = NULL, verbose = TRUE ){
 
   if (missing(home_dir)){
     stop("Please supply a home directory.", call. = FALSE)

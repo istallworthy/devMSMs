@@ -1,4 +1,9 @@
-#' Code to calculate balance stats based on Jackson paper (either weighted or unweighted)
+#' Calculate balance stats based on Jackson paper
+#'
+#' Calculate weighted or unweighted standardized balance statistics for a given exposure time point,
+#' using all relevant confounders. Draws on Jackson, 2016 approaches to
+#' assessing balance for time-varying exposures by weighting statistics based on
+#' sample distribution in exposure histories.
 #'
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 theme
@@ -17,12 +22,17 @@
 #' @importFrom ggplot2 ggsave
 #' @importFrom stargazer stargazer
 #' @export
-#' @param data data in wide format as: a data frame, path to folder of imputed .csv files, or mids object
-#' @param formulas list of balancing formulas at each time point output from createFormulas()
+#' @param data data in wide format as: a data frame, path to folder of imputed
+#'   .csv files, or mids object
+#' @param formulas list of balancing formulas at each time point output from
+#'   createFormulas()
 #' @param exposure name of exposure variable
-#' @param exposure_time_pts list of integers at which weights will be created/assessed that correspond to time points when exposure wass measured
+#' @param exposure_time_pts list of integers at which weights will be
+#'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param balance_thresh one or two numbers between 0 and 1 indicating a single balancingn threshold or thresholds for more and less important confounders, respectively
+#' @param balance_thresh one or two numbers between 0 and 1 indicating a single
+#'   balancingn threshold or thresholds for more and less important confounders,
+#'   respectively
 #' @param k imputation number
 #' @param weights list of IPTW weights output from createWeights
 #' @param imp_conf list of variable names reflecting important confounders
