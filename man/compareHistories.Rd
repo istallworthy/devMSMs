@@ -20,7 +20,8 @@ compareHistories(
   exp_lab = NA,
   out_lab = NA,
   colors = "Dark2",
-  verbose = TRUE
+  verbose = TRUE,
+  save.out = TRUE
 )
 }
 \arguments{
@@ -28,37 +29,63 @@ compareHistories(
 
 \item{exposure}{name of exposure variable}
 
-\item{exposure_time_pts}{list of integers at which weights will be created/assessed that correspond to time points when exposure wass measured}
+\item{exposure_time_pts}{list of integers at which weights will be
+created/assessed that correspond to time points when exposure wass measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
-\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+\item{tv_confounders}{list of time-varying confounders with ".timepoint"
+suffix}
 
 \item{model}{list of model outputs from fitModel()}
 
-\item{epochs}{data frame of exposure epoch labels and values}
+\item{epochs}{(optional) data frame of exposure epoch labels and values}
 
-\item{hi_lo_cut}{list of two numbers indicating quantile values that reflect high and low values, respectively, for continuous exposure}
+\item{hi_lo_cut}{(optional) list of two numbers indicating quantile values
+that reflect high and low values, respectively, for continuous exposure
+(default is median split)}
 
-\item{reference}{string of "-"-separated "l" and "h" values indicative of a reference exposure history to which to compare comparison}
+\item{reference}{(optional) string of "-"-separated "l" and "h" values
+indicative of a reference exposure history to which to compare comparison,
+required if comparison is supplied}
 
-\item{comparison}{list of one or more strings of "-"-separated "l" and "h" values indicative of comparison history/histories to compare to reference}
+\item{comparison}{(optional) list of one or more strings of "-"-separated "l"
+and "h" values indicative of comparison history/histories to compare to
+reference, required if reference is supplied}
 
-\item{mc_comp_method}{character abbreviation for multiple comparison correction method}
+\item{mc_comp_method}{(optional) character abbreviation for multiple
+comparison correction method for stats::p.adjust, default is
+Benjamini-Hochburg ("BH")}
 
-\item{dose_level}{"l" or "h" indicating whether low or high doses should be tallied in tables and plots}
+\item{dose_level}{(optional) "l" or "h" indicating whether low or high doses
+should be tallied in tables and plots (default is high "h")}
 
-\item{exp_lab}{character label for exposure variable in plots}
+\item{exp_lab}{(optional) character label for exposure variable in plots
+(default is variable name)}
 
-\item{out_lab}{character label for outcome variable in plots}
+\item{out_lab}{(optional) character label for outcome variable in plots
+(default is variable name)}
 
-\item{colors}{character specifying Brewer palette or list of colors (n(epochs)+1) for plotting}
+\item{colors}{(optional) character specifying Brewer palette or list of
+colors (n(epochs)+1) for plotting (default is "Dark2" palette)}
 
-\item{verbose}{TRUE or FALSE indicator for user output}
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is TRUE)}
+
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)}
 }
 \value{
 data frame of history comparisons
 }
 \description{
-Estimate, compare, and visualize exposure histories
+Takes fitted model output to created predicted values for user-specified
+histories (pooling for imputed data), before conducting contrast comparisons
+(pooling for imputed data), correcting for multiple comparisons, and then
+plotting results.
+}
+\seealso{
+{\code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}}, <url1>}
+
+{\code{\link[marginaleffects:hypotheses]{marginaleffects::hypotheses()}}, <url1>}
+
+{\code{\link[stats:p.adjust]{stats::p.adjust()}}, <url1>}
 }

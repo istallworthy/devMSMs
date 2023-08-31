@@ -12,12 +12,12 @@
 #' @param balance_thresh one or two numbers between 0 and 1 indicating a single balancing threshold or thresholds for more and less important confounders, respectively
 #' @param weights_method method character string of WeightItMSM() balancing method abbreviation
 #' @param imp_conf list of variable names reflecting important confounders
-#'
+#' @param save.out TRUE or FALSE indicator to save output and intermediary output locally
 #' @return none
 #' @export
 #'
-#' @examples
-make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, balance_stats, data_type, balance_thresh, weights_method, imp_conf){
+
+make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, balance_stats, data_type, balance_thresh, weights_method, imp_conf, verbose, save.out) {
 
   stat_var <- colnames(balance_stats)[grepl("_bal", colnames(balance_stats))]
   colnames(balance_stats)[colnames(balance_stats) == stat_var] <- "avg_bal"
@@ -69,15 +69,23 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
   if (data_type == "imputed"){
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance for Imputation ", k))
 
+    if(save.out){
     suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "plots/",
                                                            form_name, "_imp_", k, "_", exposure, "_", exposure_time_pt, "_",
                                                            weights_method, "_summary_balance_plot.jpeg"), width = 6, height = 8))
+    }
   }
   else {
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance"))
-
+    if(save.out){
     suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "plots/", form_name, "_", exposure, "_",
                                                            exposure_time_pt, "_", weights_method, "_summary_balance_plot.jpeg"),
                                      width = 6, height = 8))
+    }
   }
+
+  if(verbose){
+    print(lp)
+  }
+
 }

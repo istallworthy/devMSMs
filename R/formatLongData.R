@@ -2,15 +2,18 @@
 #' Formats long data
 #'
 #' @param home_dir path to home directory
-#' @param data data in wide format as: a data frame, path to folder of imputed .csv files, or mids object
+#' @param data dataframe in long format
 #' @param exposure name of exposure variable
-#' @param exposure_time_pts list of integers at which weights will be created/assessed that correspond to time points when exposure was measured
+#' @param exposure_time_pts list of integers at which weights will be
+#'   created/assessed that correspond to time points when exposure was measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
+#' @param tv_confounders list of time-varying confounders with ".timepoint"
+#'   suffix
 #' @param time_var (optional) variable name in original dataset demarcating time
 #' @param id_var (optional) variable name in original dataset demarcating ID
 #' @param missing (optional) indicator for missing data in original dataset
-#' @param factor_confounders (optional) list of variable names that are factors (default is numeric)
+#' @param factor_confounders (optional) list of variable names that are factors
+#'   (default is numeric)
 #' @return formatted long dataset
 #' @export
 #'
@@ -103,7 +106,7 @@ formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome,
       stop('Please provide factor covariates that correspond to columns in your data when creating the msm object', call. = FALSE)
     }
     # Formatting factor covariates
-    data[, factor_confounders] <- lapply(data[, factor_confounders], factor)
+    data[, factor_confounders] <- lapply(data[, factor_confounders], as.factor)
     # Formatting numeric covariates
     numeric_vars <- colnames(data)[!colnames(data) %in% c(factor_covariates, id)]
     data[, numeric_vars] <- lapply(data[, numeric_vars], as.numeric)

@@ -2,22 +2,32 @@
 #' Fits outcome model
 #'
 #' @param d wide data frame
+#' @param exposure name of exposure variable
+#' @param exposure_time_pts list of integers at which weights will be
+#'   created/assessed that correspond to time points when exposure was measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
 #' @param epochs data frame of exposure epoch labels and values
 #' @param exp_epochs
-#' @param int_order integer specification of highest order exposure main effects interaction for interaction models
-#' @param model
+#' @param int_order integer specification of highest order exposure main effects
+#'   interaction for interaction models
+#' @param model character indicating one of the following outcome models:
+#'  * "m0" (exposure main effects)
+#'  * "m1" (exposure main effects & covariates)
+#'  * "m2" (exposure main effects & their interactions)
+#'  * "m3" (exposure main effects, their interactions, & covariates)
+#'  * "covs" (covariate only model)
+#'  * "int" (intercept only model)
 #' @param fam function specification for svyglm model
-#' @param covariates list of characters reflecting variable names of covariates for covariate models
-#' @param interactions
+#' @param covariates list of characters reflecting variable names of covariates
+#'   for covariate models
 #' @param verbose TRUE or FALSE indicator for user output
-#'
 #' @return list of fitted model(s)
 #' @export
 #'
 #' @examples
-getModel <- function(d, outcome, epochs, exp_epochs, int_order, model, fam, covariates, interactions, verbose){
+#'
 
+getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, fam, covariates, verbose){
 
   if (sum(duplicated(d$"ID")) > 0){
     stop("Please provide wide data with a single row per ID.", call. = FALSE)
@@ -34,7 +44,7 @@ getModel <- function(d, outcome, epochs, exp_epochs, int_order, model, fam, cova
     for (e in seq_len(nrow(epochs))){
       epoch <- epochs[e, 1]
       temp <- data.frame(row.names = seq_len(nrow(d)))
-      new_var <- paste0(exposure, "_", epoch)
+      new_var <- paste0(exposure, ".", epoch)
       if (! new_var %in% colnames(d)){
         #finds data from each time point in each epoch, horizontally aligns all exposure values within the epoch for averaging
         for (l in seq_len(length(as.numeric(unlist(epochs[e, 2]))))){
@@ -44,7 +54,7 @@ getModel <- function(d, outcome, epochs, exp_epochs, int_order, model, fam, cova
         }
         #adds a new variable of the exposure averaged within epoch
         d  <- d %>% dplyr::mutate(!!new_var := rowMeans(temp, na.rm=T))
-        d[,new_var] <- as.numeric(d[,new_var])
+        d[, new_var] <- as.numeric(d[, new_var])
       }
     }
   }
@@ -97,19 +107,19 @@ getModel <- function(d, outcome, epochs, exp_epochs, int_order, model, fam, cova
   # Fitting intercept-only model
   if (model == "int"){
     fi <- paste(outcome, "~ 1")
-    mi <- survey::svyglm(as.formula(fi), family = fam,  design = s) # List of model fitted to all imputed datasets
+    mi <- survey::svyglm(as.formula(fi), family = fam,  design = s)
     return(mi)
   }
   else if (model == "covs"){
     fc <- paste(outcome, "~", covariate_list)
-    mc <- survey::svyglm(as.formula(fc), family = fam,  design = s) # List of model fitted to all imputed datasets
+    mc <- survey::svyglm(as.formula(fc), family = fam,  design = s)
     return(mc)
   }
 
 
   # Fitting baseline model w/ main effects only (m0) for all models
   f0 <- paste(outcome, "~", paste0(exp_epochs, sep = "", collapse = " + "))
-  m0 <- survey::svyglm(as.formula(f0), family = fam,  design = s) # List of model fitted to all imputed datasets
+  m0 <- survey::svyglm(as.formula(f0), family = fam,  design = s)
 
   if (model == "m0") {
     return(m0) # Save model
