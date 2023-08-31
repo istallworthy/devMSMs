@@ -4,20 +4,40 @@
 \alias{trimWeights}
 \title{Trim IPTW balancing weights}
 \usage{
-trimWeights(home_dir, weights, quantile = 0.95, verbose = TRUE)
+trimWeights(
+  home_dir,
+  exposure,
+  outcome,
+  weights,
+  quantile = 0.95,
+  verbose = TRUE,
+  save.out = TRUE
+)
 }
 \arguments{
 \item{home_dir}{path to home directory}
 
+\item{exposure}{name of exposure variable}
+
+\item{outcome}{name of outcome variable with ".timepoint" suffix}
+
 \item{weights}{list of IPTW weights output from createWeights()}
 
-\item{quantile}{numeric value between 0 and 1 of quantile value at which to trim weights}
+\item{quantile}{(optional) numeric value between 0 and 1 of quantile value at
+which to trim weights (default is 0.95)}
 
-\item{verbose}{TRUE or FALSE indicator for user output}
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
+TRUE)}
+
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)}
 }
 \value{
 list of model output with trimmed weights
 }
 \description{
-Trim IPTW balancing weights
+Trims IPTW balancing weights with heavy right tails by populating all weight
+values above a given quantile with the weight value of that quantile.
+}
+\seealso{
+{\code{\link[WeightIt:trim]{WeightIt::trim()}}, <url1>}
 }

@@ -2,9 +2,10 @@
 % Please edit documentation in R/calcBalStats.R
 \name{calcBalStats}
 \alias{calcBalStats}
-\title{Code to calculate balance stats based on Jackson paper (either weighted or unweighted)}
+\title{Calculate balance stats based on Jackson paper}
 \usage{
 calcBalStats(
+  home_dir,
   data,
   formulas,
   exposure,
@@ -14,21 +15,29 @@ calcBalStats(
   k = 0,
   weights = NULL,
   imp_conf = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  save.out = TRUE
 )
 }
 \arguments{
-\item{data}{data in wide format as: a data frame, path to folder of imputed .csv files, or mids object}
+\item{home_dir}{path to home directory}
 
-\item{formulas}{list of balancing formulas at each time point output from createFormulas()}
+\item{data}{data in wide format as: a data frame, path to folder of imputed
+.csv files, or mids object}
+
+\item{formulas}{list of balancing formulas at each time point output from
+createFormulas()}
 
 \item{exposure}{name of exposure variable}
 
-\item{exposure_time_pts}{list of integers at which weights will be created/assessed that correspond to time points when exposure wass measured}
+\item{exposure_time_pts}{list of integers at which weights will be
+created/assessed that correspond to time points when exposure wass measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
-\item{balance_thresh}{one or two numbers between 0 and 1 indicating a single balancingn threshold or thresholds for more and less important confounders, respectively}
+\item{balance_thresh}{one or two numbers between 0 and 1 indicating a single
+balancingn threshold or thresholds for more and less important confounders,
+respectively}
 
 \item{k}{imputation number}
 
@@ -37,7 +46,12 @@ calcBalStats(
 \item{imp_conf}{list of variable names reflecting important confounders}
 
 \item{verbose}{TRUE or FALSE indicator for user output}
+
+\item{save.out}{TRUE or FALSE indicator to save output and intermediary output locally}
 }
 \description{
-Code to calculate balance stats based on Jackson paper (either weighted or unweighted)
+Calculate weighted or unweighted standardized balance statistics for a given exposure time point,
+using all relevant confounders. Draws on Jackson, 2016 approaches to
+assessing balance for time-varying exposures by weighting statistics based on
+sample distribution in exposure histories.
 }

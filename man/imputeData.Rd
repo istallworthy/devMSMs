@@ -19,9 +19,9 @@ imputeData(
 \arguments{
 \item{data}{data in wide format}
 
-\item{m}{integer number of imputed datasets}
+\item{m}{(optional) integer number of imputed datasets (default is 5)}
 
-\item{method}{character string of imputation method from mice()}
+\item{method}{(optional) character string of imputation method from mice() (default is random forest "rf")}
 
 \item{home_dir}{path to home directory}
 
@@ -33,11 +33,14 @@ imputeData(
 
 \item{ti_confounders}{list of time invariant confounders}
 
-\item{read_in_from_file}{"yes" or "no" indicatorto read in weights that have been previously run and saved locally}
+\item{read_in_from_file}{(optional) "yes" or "no" indicatorto read in weights that have been previously run and saved locally (default is "no")}
 }
 \value{
 mice object of m imputed datasets
 }
 \description{
 Imputes dataset so there is no missing at each time point using parallel processing to speed up
+}
+\seealso{
+{\code{\link[mice:mice]{mice::mice()}}, <url1>}
 }
