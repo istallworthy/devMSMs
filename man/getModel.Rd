@@ -6,6 +6,8 @@
 \usage{
 getModel(
   d,
+  exposure,
+  exposure_time_pts,
   outcome,
   epochs,
   exp_epochs,
@@ -13,22 +15,38 @@ getModel(
   model,
   fam,
   covariates,
-  interactions,
   verbose
 )
 }
 \arguments{
 \item{d}{wide data frame}
 
+\item{exposure}{name of exposure variable}
+
+\item{exposure_time_pts}{list of integers at which weights will be
+created/assessed that correspond to time points when exposure was measured}
+
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
 \item{epochs}{data frame of exposure epoch labels and values}
 
-\item{int_order}{integer specification of highest order exposure main effects interaction for interaction models}
+\item{int_order}{integer specification of highest order exposure main effects
+interaction for interaction models}
+
+\item{model}{character indicating one of the following outcome models:
+\itemize{
+\item "m0" (exposure main effects)
+\item "m1" (exposure main effects & covariates)
+\item "m2" (exposure main effects & their interactions)
+\item "m3" (exposure main effects, their interactions, & covariates)
+\item "covs" (covariate only model)
+\item "int" (intercept only model)
+}}
 
 \item{fam}{function specification for svyglm model}
 
-\item{covariates}{list of characters reflecting variable names of covariates for covariate models}
+\item{covariates}{list of characters reflecting variable names of covariates
+for covariate models}
 
 \item{verbose}{TRUE or FALSE indicator for user output}
 }

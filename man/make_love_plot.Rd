@@ -16,7 +16,9 @@ make_love_plot(
   data_type,
   balance_thresh,
   weights_method,
-  imp_conf
+  imp_conf,
+  verbose,
+  save.out
 )
 }
 \arguments{
@@ -41,6 +43,8 @@ make_love_plot(
 \item{weights_method}{method character string of WeightItMSM() balancing method abbreviation}
 
 \item{imp_conf}{list of variable names reflecting important confounders}
+
+\item{save.out}{TRUE or FALSE indicator to save output and intermediary output locally}
 }
 \value{
 none
