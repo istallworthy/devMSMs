@@ -16,37 +16,57 @@ assessBalance(
   weights = NULL,
   balance_thresh = 0.1,
   imp_conf = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  save.out = TRUE
 )
 }
 \arguments{
 \item{home_dir}{path to home directory}
 
-\item{data}{data in wide format as: a data frame, path to folder of imputed .csv files, or mids object}
+\item{data}{data in wide format as: a data frame, list of imputed
+data frames, or mids object}
 
 \item{exposure}{name of exposure variable}
 
-\item{exposure_time_pts}{list of integers at which weights will be created/assessed that correspond to time points when exposure wass measured}
+\item{exposure_time_pts}{list of integers at which weights will be
+created/assessed that correspond to time points when exposure wass measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
-\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+\item{tv_confounders}{list of time-varying confounders with ".timepoint"
+suffix}
 
 \item{type}{type of balance assessment 'prebalance' or 'weighted'}
 
-\item{formulas}{list of balancing formulas at each time point output from createFormulas()}
+\item{formulas}{list of balancing formulas at each time point output from
+createFormulas()}
 
-\item{weights}{list of IPTW weights output from createWeights}
+\item{weights}{list of IPTW weights output from createWeights, required for
+type 'weighted'}
 
-\item{balance_thresh}{one or two numbers between 0 and 1 indicating a single balancingn threshold or thresholds for more and less important confounders, respectively}
+\item{balance_thresh}{(optional) one or two numbers between 0 and 1
+indicating a single balancingn threshold or thresholds for more and less
+important confounders, respectively (default = 0.1)}
 
-\item{imp_conf}{list of variable names reflecting important confounders}
+\item{imp_conf}{(optional) list of variable names reflecting important
+confounders, required if two balance thresholds are supplied}
 
-\item{verbose}{TRUE or FALSE indicator for user output}
+\item{verbose}{(optiona) TRUE or FALSE indicator for user output (default is TRUE)}
+
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)}
 }
 \value{
 a list data frame of balance statistics
 }
 \description{
-Assesses confounder balancing
+Draws on functions from the cobalt package to quantify the relations between
+exposure and confounders at each exposure time point according to the
+guidelines from Jackson, 2016 on how to assess balance for time-varying
+exposures.
+}
+\seealso{
+{\link{cobalt} package, <url1>}
+
+{Jackson, 2016 for more on assessing balance for time-varying
+exposures, <url1>}
 }

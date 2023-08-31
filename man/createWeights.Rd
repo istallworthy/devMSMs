@@ -2,7 +2,7 @@
 % Please edit documentation in R/createWeights.R
 \name{createWeights}
 \alias{createWeights}
-\title{Creates balancing weights for potential confounding covariates in relation to exposure at each time point}
+\title{Creates IPTW balancing weights}
 \usage{
 createWeights(
   home_dir,
@@ -13,31 +13,45 @@ createWeights(
   formulas,
   method = "cbps",
   read_in_from_file = "no",
-  verbose = TRUE
+  verbose = TRUE,
+  save.out = TRUE
 )
 }
 \arguments{
 \item{home_dir}{path to home directory}
 
-\item{data}{data in wide format as: a data frame, path to folder of imputed .csv files, or mids object}
+\item{data}{data in wide format as: a data frame, list of imputed
+data frames, or mids object}
 
 \item{exposure}{name of exposure variable}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
-\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+\item{tv_confounders}{list of time-varying confounders with ".timepoint"
+suffix}
 
-\item{formulas}{list of balancing formulas at each time point output from createFormulas()}
+\item{formulas}{list of balancing formulas at each time point output from
+createFormulas()}
 
-\item{method}{character string of WeightItMSM() balancing method abbreviation}
+\item{method}{(optional) character string of WeightItMSM() balancing method
+abbreviation (default is Covariate Balancing Propensity Score "cbps")}
 
-\item{read_in_from_file}{"yes" or "no" indicator to read in weights that have been previously run and saved locally}
+\item{read_in_from_file}{(optional) "yes" or "no" indicator to read in
+weights that have been previously run and saved locally (default is "no")}
 
-\item{verbose}{TRUE or FALSE indicator for user output}
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
+TRUE)}
+
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)}
 }
 \value{
 list of IPTW balancing weights
 }
 \description{
-Creates balancing weights for potential confounding covariates in relation to exposure at each time point
+Creates IPTW balancing weights at each user-specified exposure time point
+using balancing formulas that relate exposure at each time point to all
+relevant confounders.
+}
+\seealso{
+{\code{\link[WeightIt:WeightItMSM]{WeightIt::WeightItMSM()}}, <url1>}
 }

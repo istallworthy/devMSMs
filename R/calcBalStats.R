@@ -22,6 +22,7 @@
 #' @importFrom ggplot2 ggsave
 #' @importFrom stargazer stargazer
 #' @export
+#' @param home_dir path to home directory
 #' @param data data in wide format as: a data frame, path to folder of imputed
 #'   .csv files, or mids object
 #' @param formulas list of balancing formulas at each time point output from
@@ -37,15 +38,16 @@
 #' @param weights list of IPTW weights output from createWeights
 #' @param imp_conf list of variable names reflecting important confounders
 #' @param verbose TRUE or FALSE indicator for user output
+#' @param save.out TRUE or FALSE indicator to save output and intermediary output locally
 #'
-calcBalStats <- function(data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL, imp_conf = NULL, verbose = TRUE){
+calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL, imp_conf = NULL, verbose = TRUE, save.out = TRUE){
   # library(cobalt)
 
   if(!inherits(formulas, "list")){
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
-  if (!is.null(weights) & !inherits(weights, "list")){
-    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+  if (!is.null(weights) & !inherits(weights, "weightitMSM")){
+    stop("Please supply a list of weights output from the createWeights function (via WeightIt::WeightItMSM).", call. = FALSE)
   }
 
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
@@ -64,8 +66,10 @@ calcBalStats <- function(data, formulas, exposure, exposure_time_pts, outcome, b
     weights_method <- "no weights"
   }
 
-  folder <- ifelse(weighted == 0, "prebalance/", "weighted/")
-  data_type <- ifelse(k == 0, "single", "imputed")
+  if (save.out){
+    folder <- ifelse(weighted == 0, "prebalance/", "weighted/")
+    data_type <- ifelse(k == 0, "single", "imputed")
+  }
 
   if (data_type == "imputed" & verbose){
     cat(paste0("**Imputation ", k, "**"), "\n")
@@ -196,7 +200,7 @@ calcBalStats <- function(data, formulas, exposure, exposure_time_pts, outcome, b
         dplyr::summarize(n = dplyr::n())
 
       # GET BALANCE STATISTICS FOR T>1 (when there is a history to weight on)
-       if (length(lagged_time_pts) > 0) {
+      if (length(lagged_time_pts) > 0) {
         # Merge data with prop_weights by ID
         temp <- merge(data, prop_weights, by = "ID", all.x = TRUE)
 
@@ -380,7 +384,7 @@ calcBalStats <- function(data, formulas, exposure, exposure_time_pts, outcome, b
 
     # Make love plot per exposure time point
     make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k,
-                   form_name, bal_stats, data_type, balance_thresh, weights_method, imp_conf)
+                   form_name, bal_stats, data_type, balance_thresh, weights_method, imp_conf, verbose, save.out)
 
   }     # Ends exp_time_pt loop
 
@@ -403,19 +407,21 @@ calcBalStats <- function(data, formulas, exposure, exposure_time_pts, outcome, b
                      imbalanced_n = sum(balanced == 0), # Tallying imbalanced covariates
                      n = dplyr::n())
 
-  write.csv(bal_summary_exp, paste0(home_dir, "/balance/", folder, form_name, "_", exposure, "_", k, "_",
-                                    weights_method, "_balance_stat_summary.csv"))
-  write.csv(all_prop_weights, paste0(home_dir, "/balance/", folder, "/", form_name, "_form_", exposure, "_", k,
-                                     "_", weights_method, "_history_sample_weight.csv"))
 
-  if (verbose){
-    cat("\n")
-    cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, ", imputation ", k, ", weighting method ",
-               weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
+  if (save.out){
+    write.csv(bal_summary_exp, paste0(home_dir, "/balance/", folder, form_name, "_", exposure, "_", k, "_",
+                                      weights_method, "_balance_stat_summary.csv"))
+    write.csv(all_prop_weights, paste0(home_dir, "/balance/", folder, "/", form_name, "_form_", exposure, "_", k,
+                                       "_", weights_method, "_history_sample_weight.csv"))
+    if (verbose){
+      cat("\n")
+      cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, ", imputation ", k, ", weighting method ",
+                 weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
 
-    cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure, ", imputation ", k,
-               " have been saved in the 'balance/", folder, "' folder"), "\n")
-    cat("\n")
+      cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure, ", imputation ", k,
+                 " have been saved in the 'balance/", folder, "' folder"), "\n")
+      cat("\n")
+    }
   }
 
   # tallies total possible COVARIATES FROM FORM FOR ASSESSING BALANCE
@@ -438,6 +444,7 @@ calcBalStats <- function(data, formulas, exposure, exposure_time_pts, outcome, b
   remaining_avg_abs_corr <- round(median(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
   remaining_corr_range <- paste0(round(min(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2),
                                  "-", round(max(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2))
+
 
 
   if (data_type == "imputed"){

@@ -20,23 +20,26 @@ formatLongData(
 \arguments{
 \item{home_dir}{path to home directory}
 
-\item{data}{data in wide format as: a data frame, path to folder of imputed .csv files, or mids object}
+\item{data}{dataframe in long format}
 
 \item{exposure}{name of exposure variable}
 
-\item{exposure_time_pts}{list of integers at which weights will be created/assessed that correspond to time points when exposure was measured}
+\item{exposure_time_pts}{list of integers at which weights will be
+created/assessed that correspond to time points when exposure was measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
-\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+\item{tv_confounders}{list of time-varying confounders with ".timepoint"
+suffix}
 
-\item{time_var}{variable name in original dataset demarcating time}
+\item{time_var}{(optional) variable name in original dataset demarcating time}
 
-\item{id_var}{variable name in original dataset demarcating ID}
+\item{id_var}{(optional) variable name in original dataset demarcating ID}
 
-\item{missing}{indicator for missing data in original dataset}
+\item{missing}{(optional) indicator for missing data in original dataset}
 
-\item{factor_confounders}{list of variable names that are factors}
+\item{factor_confounders}{(optional) list of variable names that are factors
+(default is numeric)}
 }
 \value{
 formatted long dataset

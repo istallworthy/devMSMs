@@ -27,22 +27,24 @@
 #'   (default is to create automatically according to type)
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @return list of balancing formulas at each exposure time point
 #' @export
 #'
 #' @examples
-#' test <- data.frame(A.1 = 1:10,
-#' A.2 = 21:30,
-#' A.3 = 1:10,
-#' B.1 = 2:11,
-#' B.2 = 1:10,
-#' B.3 = 4:13,
-#' C = 3:12,
-#' D.3 = 4:13)
+#' test <- data.frame(ID = 1:10,
+#'                    A.1 = 1:10,
+#'                    A.2 = 21:30,
+#'                    A.3 = 1:10,
+#'                    B.1 = 2:11,
+#'                    B.2 = 1:10,
+#'                    B.3 = 4:13,
+#'                    C = 3:12,
+#'                    D.3 = 4:13)
 #' createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
 
 
-createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL, keep_conf = NULL, custom = NULL, verbose = TRUE ){
+createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL, keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ){
 
   if (missing(home_dir)){
     stop("Please supply a home directory.", call. = FALSE)
@@ -99,15 +101,17 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
       stop ("Please only provide balance statistics for the type 'update'.", call. = FALSE)
     }
 
-    #create parent directory
-    forms_dir1 <- file.path(home_dir, "formulas")
-    if (!dir.exists(forms_dir1)) {
-      dir.create(forms_dir1)
-    }
-    # Create type directory
-    forms_dir <- file.path(home_dir, "formulas", type)
-    if (!dir.exists(forms_dir)) {
-      dir.create(forms_dir)
+    if(save.out){
+      #create parent directory
+      forms_dir1 <- file.path(home_dir, "formulas")
+      if (!dir.exists(forms_dir1)) {
+        dir.create(forms_dir1)
+      }
+      # Create type directory
+      forms_dir <- file.path(home_dir, "formulas", type)
+      if (!dir.exists(forms_dir)) {
+        dir.create(forms_dir)
+      }
     }
 
     factor_covariates <- colnames(data)[which(sapply(data, class) == "factor")]
@@ -231,13 +235,15 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
       forms[[paste(type, "_form_", exposure, "-", outcome, "-", time, sep = "")]] <- f
     }
 
-    # Writes forms_csv to a CSV file
-    forms_csv_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.csv")
-    writeLines(forms_csv, con = forms_csv_file)
+    if(save.out){
+      # Writes forms_csv to a CSV file
+      forms_csv_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.csv")
+      writeLines(forms_csv, con = forms_csv_file)
 
-    # writes to rds
-    forms_rds_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
-    saveRDS(ls(pattern = type, "_form_", envir = parent.frame()), file = forms_rds_file)
+      # writes to rds
+      forms_rds_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
+      saveRDS(ls(pattern = type, "_form_", envir = parent.frame()), file = forms_rds_file)
+    }
   }
 
   forms

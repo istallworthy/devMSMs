@@ -198,7 +198,7 @@ add_dose <- function(p, dose_level) {
 #'
 #' @examples
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method) {
-  if (any(is.na(reference) & is.na(comp_histories)) | length(comp_histories) > 1) {
+  if (length(comps) > 1) {
     cat("\n")
     cat(paste0("Conducting multiple comparison correction using the ", method, " method."), "\n")
     cat("\n")

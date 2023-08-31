@@ -15,31 +15,41 @@ inspectData(
   epochs = NULL,
   hi_lo_cut = NULL,
   reference = NA,
-  comparison = NULL
+  comparison = NULL,
+  verbose = TRUE,
+  save.out = TRUE
 )
 }
 \arguments{
-\item{data}{data in wide format as: a data frame, path to folder of imputed .csv files, or mids object}
+\item{data}{data in wide format as: a data frame, list of imputed data frames,
+or mids object}
 
 \item{home_dir}{path to home directory}
 
 \item{exposure}{name of exposure variable}
 
-\item{exposure_time_pts}{list of integers at which weights will be created/assessed that correspond to time points when exposure was measured}
+\item{exposure_time_pts}{list of integers at which weights will be
+created/assessed that correspond to time points when exposure was measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
-\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+\item{tv_confounders}{list of time-varying confounders with ".timepoint"
+suffix}
 
 \item{ti_confounders}{list of time invariant confounders}
 
-\item{epochs}{data frame of exposure epoch labels and values}
+\item{epochs}{(optional) data frame of exposure epoch labels and values}
 
-\item{hi_lo_cut}{list of two numbers indicating quantile values that reflect high and low values, respectively, for continuous exposure}
+\item{hi_lo_cut}{(optional) list of two numbers indicating quantile values
+that reflect high and low values, respectively, for continuous exposure
+(default is median split)}
 
-\item{reference}{string of "-"-separated "l" and "h" values indicative of a reference exposure history to which to compare comparison}
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
+TRUE)}
 
-\item{comparison}{list of one or more strings of "-"-separated "l" and "h" values indicative of comparison history/histories to compare to reference}
+\item{(optional)}{comparison list of one or more strings of "-"-separated "l"
+and "h" values indicative of comparison history/histories to compare to
+reference, required if reference is specified}
 }
 \value{
 none

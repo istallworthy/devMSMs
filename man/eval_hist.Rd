@@ -8,25 +8,30 @@ eval_hist(
   data,
   exposure,
   tv_confounders,
-  epochs,
+  epochs = NULL,
   time_pts,
-  hi_lo_cut,
-  ref,
-  comps
+  hi_lo_cut = NULL,
+  ref = NA,
+  comps = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
 \item{exposure}{name of exposure variable}
 
-\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+\item{tv_confounders}{list of time-varying confounders with ".timepoint"
+suffix}
 
-\item{hi_lo_cut}{list of two numbers indicating quantile values that reflect high and low values, respectively, for continuous exposure}
+\item{hi_lo_cut}{list of two numbers indicating quantile values that reflect
+high and low values, respectively, for continuous exposure}
 
-\item{comps}{}
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
+TRUE)}
 }
 \value{
 none
 }
 \description{
-Visualize distribution of sample across exposure histories
+Create customized, user-specified exposure histories and tables displaying
+sample distribution across them for user inspection.
 }

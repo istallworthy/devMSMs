@@ -6,16 +6,34 @@
 #'
 #' @seealso {[WeightIt::trim()], <url1>}
 #' @param home_dir path to home directory
+#' @param exposure name of exposure variable
+#' @param outcome name of outcome variable with ".timepoint" suffix
 #' @param weights list of IPTW weights output from createWeights()
 #' @param quantile (optional) numeric value between 0 and 1 of quantile value at
 #'   which to trim weights (default is 0.95)
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @return list of model output with trimmed weights
 #' @export
-#'
 #' @examples
-trimWeights <- function(home_dir, weights, quantile = 0.95, verbose = TRUE){
+# test <- data.frame(ID = 1:10,
+#                    A.1 = 1:10,
+#                    A.2 = 21:30,
+#                    A.3 = 1:10,
+#                    B.1 = 2:11,
+#                    B.2 = 1:10,
+#                    B.3 = 4:13,
+#                    C = 3:12,
+#                    D.3 = 4:13)
+# test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+# f <- createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
+# w <- createWeights(getwd(), test, "A", "D.3", c("B.1", "B.2", "B.3"), f)
+# b <- assessBalance(getwd(), test, "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "prebalance", f)
+# t <- trimWeights(getwd(), "A", "D.3", w)
+
+
+trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, verbose = TRUE, save.out = TRUE){
 
   if (missing(home_dir)){
     stop("Please supply a home directory.", call. = FALSE)
@@ -39,19 +57,20 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, verbose = TRUE){
     stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
   }
 
-
-  # creating directories
-  weights_dir <- file.path(home_dir, "weights")
-  if (!dir.exists(weights_dir)) {
-    dir.create(weights_dir)
-  }
-  values_dir <- file.path(home_dir, "weights", "values")
-  if (!dir.exists(values_dir)) {
-    dir.create(values_dir)
-  }
-  hist_dir <- file.path(home_dir, "weights", "histograms")
-  if (!dir.exists(hist_dir)) {
-    dir.create(hist_dir)
+  if(save.out){
+    # creating directories
+    weights_dir <- file.path(home_dir, "weights")
+    if (!dir.exists(weights_dir)) {
+      dir.create(weights_dir)
+    }
+    values_dir <- file.path(home_dir, "weights", "values")
+    if (!dir.exists(values_dir)) {
+      dir.create(values_dir)
+    }
+    hist_dir <- file.path(home_dir, "weights", "histograms")
+    if (!dir.exists(hist_dir)) {
+      dir.create(hist_dir)
+    }
   }
 
   #imputed data
@@ -70,11 +89,18 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, verbose = TRUE){
       }
 
       # Save histogram of new weights
-      ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
+      p <- ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
         ggplot2::geom_histogram(color = 'black', bins = 15)
+
+      if(verbose){
+        print(p)
+      }
+
+      if(save.out){
         ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_", weights[[x]]$method, "_weights_trim_",
-                              quantile, "_imp_", x, ".png", sep = ""), path = paste0(home_dir, "/weights/histograms/"),
+                              quantile, "_imp_", x, ".png", sep = ""), path = paste0(home_dir, "/weights/histograms/"), plot = p,
                         height = 8, width = 14)
+      }
 
       # w$weights <- NA
       is.na(w$weights) <- TRUE
@@ -99,10 +125,18 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, verbose = TRUE){
       }
 
       # Save histogram of new weights
-      ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
-        ggplot2::geom_histogram(color = 'black', bins = 15)
-        ggplot2::ggsave(paste("Hist_", exposure, "-", outcome,"_",weights[[x]]$method, "_weights_trim_", quantile, ".png", sep = ""),
+      p <- ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
+        ggplot2::geom_histogram(color = 'black', bins = 15) +
+        ggtitle(paste0("Weights trimmed at the ", quantile, "th value"))
+
+      if(verbose){
+        print(p)
+      }
+
+      if(save.out){
+        ggplot2::ggsave(paste("Hist_", exposure, "-", outcome,"_",weights[[x]]$method, "_weights_trim_", quantile, ".png", sep = ""), plot = p,
                         path = paste0(home_dir, "/weights/histograms/"), height = 8, width = 14)
+      }
 
         w$weights <- NA
         w$weights <- t
@@ -111,8 +145,10 @@ trimWeights <- function(home_dir, weights, quantile = 0.95, verbose = TRUE){
     names(trim_weights) <- "0"
   }
 
-  # Save truncated weight data
-  saveRDS(trim_weights, paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", weights[[1]]$method, "_weights_trim.rds"))
+  if(save.out){
+    # Save truncated weight data
+    saveRDS(trim_weights, paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", weights[[1]]$method, "_weights_trim.rds"))
+  }
 
   trim_weights
 }

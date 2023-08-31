@@ -11,8 +11,8 @@
 #' @importFrom WeightIt weightitMSM
 #' @seealso {[WeightIt::WeightItMSM()], <url1>}
 #' @param home_dir path to home directory
-#' @param data data in wide format as: a data frame, path to folder of imputed
-#'   .csv files, or mids object
+#' @param data data in wide format as: a data frame, list of imputed
+#'   data frames, or mids object
 #' @param exposure name of exposure variable
 #' @param outcome name of outcome variable with ".timepoint" suffix
 #' @param tv_confounders list of time-varying confounders with ".timepoint"
@@ -25,9 +25,23 @@
 #'   weights that have been previously run and saved locally (default is "no")
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @return list of IPTW balancing weights
+#' @examples
+# test <- data.frame(ID = 1:10,
+#                    A.1 = 1:10,
+#                    A.2 = 21:30,
+#                    A.3 = 1:10,
+#                    B.1 = 2:11,
+#                    B.2 = 1:10,
+#                    B.3 = 4:13,
+#                    C = 3:12,
+#                    D.3 = 4:13)
+# f <- createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
+# w <- createWeights(getwd(), test, "A", "D.3", c("B.1", "B.2", "B.3"), f)
 
-createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no", verbose = TRUE) {
+
+createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no", verbose = TRUE, save.out = TRUE) {
 
   if (missing(home_dir)){
     stop("Please supply a home directory.", call. = FALSE)
@@ -60,8 +74,8 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
     stop("Please provide a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.", call. = FALSE)
   }
 
-  if (!mice::is.mids(data) & !is.data.frame(data) & !is.character(data)) {
-    stop("Please provide either a 'mids' object, a data frame, or a directory with imputed csv files in the 'data' field.", call. = FALSE)
+  if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
+    stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.", call. = FALSE)
   }
 
   if(!inherits(formulas, "list")){
@@ -76,18 +90,20 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
   weights_method <- method
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
 
-  # creating directories
-  weights_dir <- file.path(home_dir, "weights")
-  if (!dir.exists(weights_dir)) {
-    dir.create(weights_dir)
-  }
-  values_dir <- file.path(home_dir, "weights", "values")
-  if (!dir.exists(values_dir)) {
-    dir.create(values_dir)
-  }
-  hist_dir <- file.path(home_dir, "weights", "histograms")
-  if (!dir.exists(hist_dir)) {
-    dir.create(hist_dir)
+  if(save.out){
+    # creating directories
+    weights_dir <- file.path(home_dir, "weights")
+    if (!dir.exists(weights_dir)) {
+      dir.create(weights_dir)
+    }
+    values_dir <- file.path(home_dir, "weights", "values")
+    if (!dir.exists(values_dir)) {
+      dir.create(values_dir)
+    }
+    hist_dir <- file.path(home_dir, "weights", "histograms")
+    if (!dir.exists(hist_dir)) {
+      dir.create(hist_dir)
+    }
   }
 
   if (read_in_from_file == "yes") {
@@ -114,7 +130,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
                          data = data,
                          method = weights_method,
                          stabilize = TRUE,
-                         density = "dt_2",
+                         density = "dt_2", #do we want this?
                          use.kernel = TRUE,
                          include.obj = TRUE,
                          over = FALSE)
@@ -140,16 +156,25 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
                    round(max(fit$weights), 2), ")."), "\n")
         cat('\n')
 
-        # Save weights merged with ID variable
-        write.csv(x = d, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", form_name,
-                                       "_", weights_method, "_", i, ".csv"))
+        if(save.out){
+          # Save weights merged with ID variable
+          write.csv(x = d, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", form_name,
+                                         "_", weights_method, "_", i, ".csv"))
+        }
 
         # Writes image of the histogram of weights to assess heavy tails
-        ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
-          geom_histogram(color = 'black', bins = 15)
+        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
+          ggplot2::geom_histogram(color = 'black', bins = 15) +
+          ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
 
-        ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name,
-                      "_", weights_method, "_", i, ".png"), height = 8, width = 14)
+        if(verbose){
+          print(p)
+        }
+
+        if(save.out){
+          ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name,
+                        "_", weights_method, "_", i, ".png"), plot = p, height = 8, width = 14)
+        }
 
         fit
       })
@@ -161,22 +186,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       }
     }
 
-    else if(is.character(data)){
-      if (!dir.exists(data)) {
-        stop("Please provide a valid directory path with imputed datasets, a data frame, or a 'mids' object for the 'data' field.", call. = FALSE)
-      }
-      if (length(dir(data)) < 2) {
-        stop("If you specify data as a directory, please supply more than 1 imputed dataset.", call. = FALSE)
-      }
-
-      files <- list.files(data, full.names = TRUE, pattern = "\\.csv")
-
-      # Read and process imputed datasets
-      data <- lapply(files, function(file) {
-        imp_data <- read.csv(file)
-        imp_data
-      })
-
+    else if(inherits(data, "list")){
       # Cycling through list of imputed datasets
       weights <- lapply(seq_len(length(data)), function(i) {
         d <- data[[i]]
@@ -197,17 +207,26 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
           cat('\n')
         }
 
-        # Save weights merged with ID variable
-        write.csv(x = d, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome,
-                                       "_", form_name, "_", weights_method, "_", i, ".csv"))
+        if(save.out){
+          # Save weights merged with ID variable
+          write.csv(x = d, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome,
+                                         "_", form_name, "_", weights_method, "_", i, ".csv"))
+        }
 
         # Writes image of the histogram of weights to assess heavy tails
-        ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
-          ggplot2::geom_histogram(color = 'black', bins = 15)
+        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
+          ggplot2::geom_histogram(color = 'black', bins = 15) +
+          ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
 
-        ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
-                               "_", form_name, "_", weights_method, "_", i, ".png"),
-                        height = 8, width = 14)
+        if(verbose){
+          print(p)
+        }
+
+        if(save.out){
+          ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
+                                 "_", form_name, "_", weights_method, "_", i, ".png"), plot = p,
+                          height = 8, width = 14)
+        }
 
         fit
       })
@@ -232,24 +251,34 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       data$weights <- weights[[1]]$weights
 
       if (verbose){
-      message(paste0("USER ALERT: for the ", weights_method, " weighting method, the median weight value is ",
-                     round(median(data$weights), 2) , " (SD= ", round(sd(data$weights), 2), "; range= ",
-                     round(min(data$weights), 2), "-", round(max(data$weights), 2), ")."), "\n")
-      cat('\n')
+        message(paste0("USER ALERT: for the ", weights_method, " weighting method, the median weight value is ",
+                       round(median(data$weights), 2) , " (SD= ", round(sd(data$weights), 2), "; range= ",
+                       round(min(data$weights), 2), "-", round(max(data$weights), 2), ")."), "\n")
+        cat('\n')
       }
 
       names(weights) <- "0"
 
-      # Save weights merged with ID variable
-      write.csv(x = data, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome,
-                                        "_", form_name, "_", weights_method, ".csv"))
+      if(save.out){
+        # Save weights merged with ID variable
+        write.csv(x = data, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome,
+                                          "_", form_name, "_", weights_method, ".csv"))
+      }
 
       # Writes image of the histogram of weights to assess heavy tails
-      ggplot2::ggplot(data = as.data.frame(weights[[1]]$weights), aes(x = weights[[1]]$weights)) +
-        ggplot2::geom_histogram(color = 'black', bins = 15)
+      p <- ggplot2::ggplot(data = as.data.frame(weights[[1]]$weights), aes(x = weights[[1]]$weights)) +
+        ggplot2::geom_histogram(color = 'black', bins = 15) +
+        ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
 
-      ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
-                             "_", form_name, "_", weights_method, ".png"), height = 8, width = 14)
+
+      if(verbose){
+        print(p)
+      }
+
+      if(save.out){
+        ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
+                               "_", form_name, "_", weights_method, ".png"), plot = p, height = 8, width = 14)
+      }
 
       if (verbose){
         cat("Weights have now been saved into the 'weights/values/' folder.")
@@ -258,11 +287,12 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       }
     }
 
-    saveRDS(weights, file = paste0(home_dir, "/weights/", exposure, "-", outcome,
-                                   "_", form_name, "_", weights_method, "_fit.rds"))
-
-    if (verbose){
-      message("Weights models have been saved as an .rds object in the 'weights' folder.")
+    if(save.out){
+      saveRDS(weights, file = paste0(home_dir, "/weights/", exposure, "-", outcome,
+                                     "_", form_name, "_", weights_method, "_fit.rds"))
+      if (verbose){
+        message("Weights models have been saved as an .rds object in the 'weights' folder.")
+      }
     }
 
     weights

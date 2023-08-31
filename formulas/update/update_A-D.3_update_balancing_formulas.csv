@@ -1,0 +1,6 @@
+update formula for A-D.3 at A time point 1:
+A ~ C
+update formula for A-D.3 at A time point 2:
+A ~ B.1 + C
+update formula for A-D.3 at A time point 3:
+A ~ B.2 + C
