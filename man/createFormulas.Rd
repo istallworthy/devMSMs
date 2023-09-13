@@ -66,14 +66,59 @@ time invariant confounders at each exposure time point to be used to create
 IPTW weights.
 }
 \examples{
-test <- data.frame(ID = 1:10,
-                   A.1 = 1:10,
-                   A.2 = 21:30,
-                   A.3 = 1:10,
-                   B.1 = 2:11,
-                   B.2 = 1:10,
-                   B.3 = 4:13,
-                   C = 3:12,
-                   D.3 = 4:13)
-createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
+#Full Formulas
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
+                    tv_confounders = c("B.1", "B.2", "B.3"),
+                    ti_confounders = "C",
+                    type = "full",
+                    save.out = FALSE)
+
+#Short Formulas
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
+                    tv_confounders = c("B.1", "B.2", "B.3"),
+                    ti_confounders = "C",
+                    type = "short",
+                    save.out = FALSE)
+
+#Update Formulas
+test <- data.frame(ID = 1:50,
+                   A.1 = rnorm(n = 50),
+                   A.2 = rnorm(n = 50),
+                   A.3 = rnorm(n = 50),
+                   B.1 = rnorm(n = 50),
+                   B.2 = rnorm(n = 50),
+                   B.3 = rnorm(n = 50),
+                   C = rnorm(n = 50),
+                   D.3 = rnorm(n = 50))
+test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+
+w <- createWeights(data = test,
+                   exposure = "A",
+                   outcome = "D.3",
+                   tv_confounders = c("B.1", "B.2", "B.3"),
+                   formulas = f,
+                   save.out = FALSE)
+
+b <- assessBalance(data = test,
+                   exposure = "A",
+                   exposure_time_pts = c(1, 2, 3),
+                   outcome = "D.3",
+                   tv_confounders = c("B.1", "B.2", "B.3"),
+                   type = "weighted",
+                   weights = w,
+                   formulas = f,
+                   save.out = FALSE)
+
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
+                    tv_confounders = c("B.1", "B.2", "B.3"),
+                    ti_confounders = "C",
+                    type = "update",
+                    bal_stats = b,
+                    save.out = FALSE)
 }

@@ -38,6 +38,43 @@ list of model output with trimmed weights
 Trims IPTW balancing weights with heavy right tails by populating all weight
 values above a given quantile with the weight value of that quantile.
 }
+\examples{
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
+                    tv_confounders = c("B.1", "B.2", "B.3"),
+                    ti_confounders = "C",
+                    type = "full",
+                    save.out = FALSE)
+
+test <- data.frame(ID = 1:50,
+                   A.1 = rnorm(n = 50),
+                   A.2 = rnorm(n = 50),
+                   A.3 = rnorm(n = 50),
+                   B.1 = rnorm(n = 50),
+                   B.2 = rnorm(n = 50),
+                   B.3 = rnorm(n = 50),
+                   C = rnorm(n = 50),
+                   D.3 = rnorm(n = 50))
+test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+
+w <- createWeights(data = test,
+                   exposure = "A",
+                   outcome = "D.3",
+                   tv_confounders = c("B.1", "B.2", "B.3"),
+                   formulas = f,
+                   save.out = FALSE)
+
+t <- trimWeights(exposure = "A",
+                 outcome = "D.3",
+                 weights = w,
+                 save.out = FALSE)
+t <- trimWeights(exposure = "A",
+                 outcome = "D.3",
+                 weights = w,
+                 quantile = 0.75,
+                 save.out = FALSE)
+}
 \seealso{
 {\code{\link[WeightIt:trim]{WeightIt::trim()}}, <url1>}
 }

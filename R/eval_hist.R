@@ -56,8 +56,10 @@ eval_hist <- function(data, exposure, tv_confounders, epochs = NULL, time_pts, h
   }
 
   if(verbose){
-    cat("Exposure Main Effects:")
+    cat("Summary of Exposure Main Effects:", "\n")
     print(psych::describe(new %>% select(-c("ID")), fast = TRUE))
+    cat("\n")
+
   }
 
 
@@ -155,11 +157,19 @@ eval_hist <- function(data, exposure, tv_confounders, epochs = NULL, time_pts, h
   his_summ <- his_summ[! grepl("NULL", his_summ$history),]
 
   if(verbose){
-    cat(paste0("USER ALERT: Out of the total of ", nrow(data_wide), " individuals in the sample, below is the distribution of the ", sum(his_summ$n), " (",
-               round((sum(his_summ$n) / nrow(data_wide)) * 100, 2), "%) that fall into ", nrow(his_summ), " out of the ", length(tot_hist),
-               " the total user-defined exposure histories created from ",
-               hi_lo_cut[2] * 100, "th and ", hi_lo_cut[1] * 100, "th percentile values for low and high levels of exposure ", exposure,
-               ", respectively, across ", paste(epochs$epochs, collapse = ", ")), "\n")
+    if(!is.null(hi_lo_cut)){
+      cat(paste0("USER ALERT: Out of the total of ", nrow(data_wide), " individuals in the sample, below is the distribution of the ", sum(his_summ$n), " (",
+                 round((sum(his_summ$n) / nrow(data_wide)) * 100, 2), "%) that fall into ", nrow(his_summ), " out of the ", length(tot_hist),
+                 " the total user-defined exposure histories created from ",
+                 hi_lo_cut[2] * 100, "th and ", hi_lo_cut[1] * 100, "th percentile values for low and high levels of exposure ", exposure,
+                 ", respectively, across ", paste(epochs$epochs, collapse = ", ")), "\n")
+    }
+    else{
+      cat(paste0("USER ALERT: Out of the total of ", nrow(data_wide), " individuals in the sample, below is the distribution of the ", sum(his_summ$n), " (",
+                 round((sum(his_summ$n) / nrow(data_wide)) * 100, 2), "%) that fall into ", nrow(his_summ), " out of the ", length(tot_hist),
+                 " the total user-defined exposure histories created from median split values for low and high levels of exposure ", exposure,
+                 ", respectively, across ", paste(epochs$epochs, collapse = ", ")), "\n")
+    }
 
     cat("Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision:", "\n")
 
@@ -171,10 +181,9 @@ eval_hist <- function(data, exposure, tv_confounders, epochs = NULL, time_pts, h
     }
 
     cat("\n")
-    cat(knitr::kable(his_summ, caption = paste0("Summary of User-Specified Exposure ", exposure,
-                                                " Histories Based on Exposure Epochs ", paste(epochs$epochs, collapse = ", "),
-                                                " containing time points ", paste(epochs$values, collapse = ", "),
-                                                " and the following high/low cutoffs: ", paste(hi_lo_cut, collapse = " & ")),
+    cat(knitr::kable(his_summ, caption = paste0("Summary of user-specified exposure ", exposure,
+                                                " histories based on exposure main effects ", paste(epochs$epochs, collapse = ", "),
+                                                " containing time points ", paste(epochs$values, collapse = ", "), ":"),
                      format = 'pipe', row.names = F), sep = "\n")
   }
 

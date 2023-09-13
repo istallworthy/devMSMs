@@ -28,24 +28,52 @@
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @return list of IPTW balancing weights
 #' @examples
-# test <- data.frame(ID = 1:10,
-#                    A.1 = 1:10,
-#                    A.2 = 21:30,
-#                    A.3 = 1:10,
-#                    B.1 = 2:11,
-#                    B.2 = 1:10,
-#                    B.3 = 4:13,
-#                    C = 3:12,
-#                    D.3 = 4:13)
-# f <- createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
-# w <- createWeights(getwd(), test, "A", "D.3", c("B.1", "B.2", "B.3"), f)
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "short",
+#'                     save.out = FALSE)
+#'
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    method = "cbps",
+#'                    save.out = FALSE)
 
 
 createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no", verbose = TRUE, save.out = TRUE) {
 
-  if (missing(home_dir)){
-    stop("Please supply a home directory.", call. = FALSE)
+  if (save.out) {
+    if (missing(home_dir)) {
+      stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if(!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+    }
   }
+
   if (missing(data)){
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
@@ -61,10 +89,6 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
   }
   if (missing(formulas)){
     stop("Please supply a list of balancing formulas.", call. = FALSE)
-  }
-
-  if (!dir.exists(home_dir)) {
-    stop("Please provide a valid home directory path.", call. = FALSE)
   }
 
   if(!inherits(method, "character")){
@@ -179,7 +203,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         fit
       })
 
-      if (verbose){
+      if (save.out & verbose){
         cat("Weights for each imputation have now been saved into the 'weights/values/' folder.")
         cat("\n")
         cat("Weights histograms for each imputation have now been saved in the 'weights/histograms/' folder --likely have heavy tails.")
@@ -231,7 +255,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         fit
       })
 
-      if (verbose){
+      if (save.out & verbose){
         cat("Weights for each imputation have now been saved into the 'weights/values/' folder.")
         cat("\n")
         cat("Weights histograms for each imputation have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
@@ -270,7 +294,6 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         ggplot2::geom_histogram(color = 'black', bins = 15) +
         ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
 
-
       if(verbose){
         print(p)
       }
@@ -278,12 +301,11 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       if(save.out){
         ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
                                "_", form_name, "_", weights_method, ".png"), plot = p, height = 8, width = 14)
-      }
-
-      if (verbose){
-        cat("Weights have now been saved into the 'weights/values/' folder.")
-        cat("\n")
-        cat("Weights histograms have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
+        if (verbose){
+          cat("Weights have now been saved into the 'weights/values/' folder.")
+          cat("\n")
+          cat("Weights histograms have now been saved in the 'weights/histograms/' folder --likely has heavy tails.")
+        }
       }
     }
 
