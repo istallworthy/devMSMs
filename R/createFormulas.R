@@ -32,23 +32,74 @@
 #' @export
 #'
 #' @examples
-#' test <- data.frame(ID = 1:10,
-#'                    A.1 = 1:10,
-#'                    A.2 = 21:30,
-#'                    A.3 = 1:10,
-#'                    B.1 = 2:11,
-#'                    B.2 = 1:10,
-#'                    B.3 = 4:13,
-#'                    C = 3:12,
-#'                    D.3 = 4:13)
-#' createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
+#' #Full Formulas
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "full",
+#'                     save.out = FALSE)
+#'
+#' #Short Formulas
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "short",
+#'                     save.out = FALSE)
+#'
+#' #Update Formulas
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' b <- assessBalance(data = test,
+#'                    exposure = "A",
+#'                    exposure_time_pts = c(1, 2, 3),
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    type = "weighted",
+#'                    weights = w,
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "update",
+#'                     bal_stats = b,
+#'                     save.out = FALSE)
 
 
 createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL, keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ){
 
-  if (missing(home_dir)){
-    stop("Please supply a home directory.", call. = FALSE)
+  if (save.out) {
+    if (missing(home_dir)) {
+      stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if(!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+    }
   }
+
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)
   }
@@ -81,9 +132,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
   if(!is.null(bal_stats) & !is.data.frame(bal_stats)){
     stop("Please provide a data frame of balance statistics from the assessBalance function.", call. = FALSE)
   }
-  if (!dir.exists(home_dir)) {
-    stop("Please provide a valid home directory path.", call. = FALSE)
-  }
+
 
 
   time_varying_covariates <- tv_confounders
@@ -137,7 +186,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
 
       else if (type == "update"){
         if(is.null(bal_stats)){
-          stop("Please provide balance statistics if you wish to run the update verison of this function", call. = FALSE)
+          stop("Please provide balance statistics if you wish to run the update version of this function", call. = FALSE)
         }
 
         message("Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:")
@@ -220,10 +269,12 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
                             paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
 
       # Prints form for user inspection
+      if (verbose){
       cat(paste0("The ", type, " formula for ", exposure, "-", outcome, " at ", exposure, " time point ",
                  as.character(time), " is:"), "\n")
       print(f)
       cat("\n")
+      }
 
       # Appends the form string to forms_csv
       forms_csv <- c(forms_csv, paste0(type, " formula for ", exposure, "-", outcome, " at ", exposure,
@@ -231,7 +282,6 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
       forms_csv <- c(forms_csv, paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
 
       # Assigns the form to forms list
-      assign(paste(type, "_form_", exposure, "-", outcome, "-", time, sep = ""), f, envir = parent.frame())
       forms[[paste(type, "_form_", exposure, "-", outcome, "-", time, sep = "")]] <- f
     }
 
@@ -242,7 +292,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
 
       # writes to rds
       forms_rds_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
-      saveRDS(ls(pattern = type, "_form_", envir = parent.frame()), file = forms_rds_file)
+
+     saveRDS(forms, file = forms_rds_file)
     }
   }
 
