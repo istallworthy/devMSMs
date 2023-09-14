@@ -59,6 +59,10 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
     stop("Please provide an integer value number of imputations.", call. = FALSE)
   }
 
+  imp_dir <- file.path(home_dir, "imputations")
+  if (!dir.exists(imp_dir)) {
+    dir.create(imp_dir)
+  }
 
   if (read_imps_from_file == "yes") {
     imputed_datasets <- list()
