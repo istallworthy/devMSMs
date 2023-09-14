@@ -24,7 +24,7 @@ inspectData(
 \item{data}{data in wide format as: a data frame, list of imputed data
 frames, or mids object}
 
-\item{home_dir}{path to home directory}
+\item{home_dir}{(optional) path to home directory (required if save.out = TRUE)}
 
 \item{exposure}{name of exposure variable}
 
@@ -59,4 +59,51 @@ none
 }
 \description{
 Inspect long/wide/imputed data
+}
+\examples{
+test <- data.frame(ID = 1:50,
+                   A.1 = rnorm(n = 50),
+                   A.2 = rnorm(n = 50),
+                   A.3 = rnorm(n = 50),
+                   B.1 = rnorm(n = 50),
+                   B.2 = rnorm(n = 50),
+                   B.3 = rnorm(n = 50),
+                   C = rnorm(n = 50),
+                   D.3 = rnorm(n = 50))
+test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+
+inspectData(data = test,
+            exposure = "A",
+            exposure_time_pts = c(1, 2, 3),
+            outcome = "D.3",
+            tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+            ti_confounders = "C",
+            save.out = FALSE)
+inspectData(data = test,
+            exposure = "A",
+            exposure_time_pts = c(1, 2, 3),
+            outcome = "D.3",
+            tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+            ti_confounders = "C",
+            hi_lo_cut = c(0.8, 0.2),
+            save.out = FALSE)
+inspectData(data = test,
+            exposure = "A",
+            exposure_time_pts = c(1, 2, 3),
+            outcome = "D.3",
+            tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+            ti_confounders = "C",
+            hi_lo_cut = c(0.8, 0.2),
+            reference = "l-l-l",
+            comparison = "h-h-h",
+            save.out = FALSE)
+inspectData(data = test,
+            exposure = "A",
+            exposure_time_pts = c(1, 2, 3),
+            outcome = "D.3",
+            tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+            ti_confounders = "C",
+            epochs = data.frame(epochs = c("Infancy", "Toddlerhood"),
+                                values = I(list(c(1, 2), c(3)))),
+            save.out = FALSE)
 }

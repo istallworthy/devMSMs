@@ -48,6 +48,7 @@
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @returns a list data frame of balance statistics
 #' @examples
+#' @export
 #'
 #' test <- data.frame(ID = 1:50,
 #'                    A.1 = rnorm(n = 50),
