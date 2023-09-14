@@ -111,7 +111,7 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
     data_to_impute <- tibble(data_to_impute)
 
     # Conducts imputations using parallelized execution cycling through m
-    imputed_datasets <- foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
+    imputed_datasets <- foreach::foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
       cat("### Started iteration", i, "\n")
       miceout <- mice::mice(data_to_impute, m = 1, method = imp_method, maxit = 0,
                             print = F)

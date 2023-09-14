@@ -7,9 +7,15 @@
 create_custom_contrasts(d, reference, comp_histories, exposure, preds)
 }
 \arguments{
+\item{d}{data frame of high and low values per exposure main effect}
+
+\item{reference}{reference sequence of "h" and/or "l" (e.g., "h-h-h")}
+
+\item{comp_histories}{comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")}
+
 \item{exposure}{name of exposure variable}
 
-\item{preds}{}
+\item{preds}{custom output of marginaleffects::average_predictions()}
 }
 \value{
 contrasts

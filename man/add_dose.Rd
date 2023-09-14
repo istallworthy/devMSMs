@@ -7,6 +7,8 @@
 add_dose(p, dose_level)
 }
 \arguments{
+\item{p}{table output from marginaleffects::avg_predictions() or hypotheses()}
+
 \item{dose_level}{"l" or "h" indicating whether low or high doses should be tallied in tables and plots}
 }
 \value{

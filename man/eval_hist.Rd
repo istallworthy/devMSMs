@@ -17,13 +17,29 @@ eval_hist(
 )
 }
 \arguments{
+\item{data}{data in wide format as: a data frame, list of imputed
+data frames, or mids object}
+
 \item{exposure}{name of exposure variable}
 
 \item{tv_confounders}{list of time-varying confounders with ".timepoint"
 suffix}
 
+\item{epochs}{(optional) data frame of exposure epoch labels and values}
+
+\item{time_pts}{list of integers at which weights will be
+created/assessed that correspond to time points when exposure was measured}
+
 \item{hi_lo_cut}{list of two numbers indicating quantile values that reflect
 high and low values, respectively, for continuous exposure}
+
+\item{ref}{(optional) string of "-"-separated "l" and "h" values
+indicative of a reference exposure history to which to compare comparison,
+required if comparison is supplied}
+
+\item{comps}{(optional) list of one or more strings of "-"-separated "l"
+and "h" values indicative of comparison history/histories to compare to
+reference, required if reference is supplied}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
@@ -34,4 +50,39 @@ none
 \description{
 Create customized, user-specified exposure histories and tables displaying
 sample distribution across them for user inspection.
+}
+\examples{
+test <- data.frame(ID = 1:50,
+                   A.1 = rnorm(n = 50),
+                   A.2 = rnorm(n = 50),
+                   A.3 = rnorm(n = 50),
+                   B.1 = rnorm(n = 50),
+                   B.2 = rnorm(n = 50),
+                   B.3 = rnorm(n = 50),
+                   C = rnorm(n = 50),
+                   D.3 = rnorm(n = 50))
+test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+
+h <- eval_hist(data = test,
+               exposure = "A",
+               tv_confounders = c("B.1", "B.2", "B.3"),
+               time_pts = c(1, 2, 3))
+h <- eval_hist(data = test,
+               exposure = "A",
+               tv_confounders = c("B.1", "B.2", "B.3"),
+               time_pts = c(1, 2, 3),
+               epochs = data.frame(epochs = c("Infancy", "Toddlerhood"),
+                                   values = I(list(c(1, 2), c(3)))))
+h <- eval_hist(data = test,
+               exposure = "A",
+               tv_confounders = c("B.1", "B.2", "B.3"),
+               time_pts = c(1, 2, 3),
+               hi_lo_cut = c(0.6, 0.3))
+h <- eval_hist(data = test,
+               exposure = "A",
+               tv_confounders = c("B.1", "B.2", "B.3"),
+               time_pts = c(1, 2, 3),
+               hi_lo_cut = c(0.6, 0.3),
+               ref = "l-l-l",
+               comps = "h-h-h")
 }

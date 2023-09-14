@@ -53,7 +53,7 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
-#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                     ti_confounders = "C",
 #'                     type = "full",
 #'                     save.out = FALSE)
@@ -72,7 +72,7 @@
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    formulas = f,
 #'                    save.out = FALSE)
 #'
@@ -81,20 +81,20 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m0",
 #'               save.out = FALSE)
 #'
 #' r <- compareHistories(exposure = "A",
 #'                       exposure_time_pts = c(1, 2, 3),
 #'                       outcome = "D.3",
-#'                       tv_confounders = c("B.1", "B.2", "B.3"),
+#'                       tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                       model = m,
 #'                       save.out = FALSE)
 #' r <- compareHistories(exposure = "A",
 #'                       exposure_time_pts = c(1, 2, 3),
 #'                       outcome = "D.3",
-#'                       tv_confounders = c("B.1", "B.2", "B.3"),
+#'                       tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                       model = m,
 #'                       reference = "l-l-l",
 #'                       comparison = "h-h-h",
@@ -102,7 +102,7 @@
 #' r <- compareHistories(exposure = "A",
 #'                       exposure_time_pts = c(1, 2, 3),
 #'                       outcome = "D.3",
-#'                       tv_confounders = c("B.1", "B.2", "B.3"),
+#'                       tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                       model = m,
 #'                       reference = "l-l-l",
 #'                       comparison = c("h-h-h", "h-l-l"),
@@ -270,7 +270,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
                   l = epoch_info$low,
                   h = epoch_info$high)
   d$v <- paste(d$l, d$h, sep=",")
-  d$z <- lapply(seq_len(nrow(d)), function(x) { c(as.numeric(unlist(strsplit(unlist(strsplit(d$v[x], " ")), "\\,")))) })
+  d$z <- lapply(seq_len(nrow(d)), function(x) {
+    c(as.numeric(unlist(strsplit(unlist(strsplit(d$v[x], " ")), "\\,")))) })
   args <- d$z # creating vector of each epoch and each corresponding h/l value
   names(args) <- (c(d$e))
 

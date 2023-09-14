@@ -3,7 +3,7 @@
 #'
 #' @param data data in wide format as: a data frame, list of imputed data
 #'   frames, or mids object
-#' @param home_dir path to home directory
+#' @param home_dir (optional) path to home directory (required if save.out = TRUE)
 #' @param exposure name of exposure variable
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure was measured
@@ -26,13 +26,62 @@
 #' @param save.out (optional) TRUE or FALSE indicator to save output and
 #'   intermediary output locally (default is TRUE)
 #' @return none
-#' @export
-#'
 #' @examples
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' inspectData(data = test,
+#'             exposure = "A",
+#'             exposure_time_pts = c(1, 2, 3),
+#'             outcome = "D.3",
+#'             tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'             ti_confounders = "C",
+#'             save.out = FALSE)
+#' inspectData(data = test,
+#'             exposure = "A",
+#'             exposure_time_pts = c(1, 2, 3),
+#'             outcome = "D.3",
+#'             tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'             ti_confounders = "C",
+#'             hi_lo_cut = c(0.8, 0.2),
+#'             save.out = FALSE)
+#' inspectData(data = test,
+#'             exposure = "A",
+#'             exposure_time_pts = c(1, 2, 3),
+#'             outcome = "D.3",
+#'             tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'             ti_confounders = "C",
+#'             hi_lo_cut = c(0.8, 0.2),
+#'             reference = "l-l-l",
+#'             comparison = "h-h-h",
+#'             save.out = FALSE)
+#' inspectData(data = test,
+#'             exposure = "A",
+#'             exposure_time_pts = c(1, 2, 3),
+#'             outcome = "D.3",
+#'             tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'             ti_confounders = "C",
+#'             epochs = data.frame(epochs = c("Infancy", "Toddlerhood"),
+#'                                 values = I(list(c(1, 2), c(3)))),
+#'             save.out = FALSE)
+
 inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, epochs = NULL, hi_lo_cut = NULL, reference = NA, comparison = NULL, verbose = TRUE, save.out = TRUE){
 
-  if (missing(home_dir)){
-    stop("Please supply a home directory.", call. = FALSE)
+  if (save.out) {
+    if (missing(home_dir)) {
+      stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if(!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+    }
   }
   if (missing(data)){
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
@@ -56,6 +105,10 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
 
   if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.", call. = FALSE)
+  }
+
+  if (!"ID" %in% colnames(data)){
+    stop("Please provide a wide dataset with the subject identifier column as ID.", call. = FALSE)
   }
 
   ID <- "ID"
@@ -84,7 +137,8 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
     data <- data_wide
   }
 
-  exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"), "continuous", "binary")
+  exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])],
+                                   "numeric"), "continuous", "binary")
 
 
   # Exposure summary
@@ -165,8 +219,10 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
   rownames(test) <- time_pts
 
   for (l in seq_len(nrow(test))) {
-    test[l, c(sapply(strsplit(all_potential_covariates[grepl(paste0(".", rownames(test)[l]),
-                                                             all_potential_covariates)], "\\."), "[", 1), time_invar_covars)] <- 1
+    z = c(sapply(strsplit(all_potential_covariates[grepl(paste0(".", rownames(test)[l]),
+                                                        all_potential_covariates)], "\\."), "[", 1), time_invar_covars)
+    z = z[!duplicated(z)]
+    test[l, z ] <- 1
   }
 
   test <- test[, colnames(test)[!(colnames(test) %in% c(ID))]]
@@ -180,11 +236,11 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
               row.names = TRUE)
 
     if(verbose){
-      message(glue::glue("See the home directory for a table and matrix displaying all covariates confounders considered at each exposure time point for {exposure} and {outcome}."), "\n")
+      print(glue::glue("See the home directory for a table and matrix displaying all covariates confounders considered at each exposure time point for {exposure} and {outcome}."), "\n")
       cat("\n")
 
       #-2 to exclude ID and WAVE
-      message(glue::glue("USER ALERT: Below are the {as.character(length(all_potential_covariates) - 2)} variables spanning {unique_vars - 2} unique domains that will be treated as confounding variables for the relation between {exposure} and {outcome}."), "\n",
+      print(glue::glue("USER ALERT: Below are the {as.character(length(all_potential_covariates) - 2)} variables spanning {unique_vars - 2} unique domains that will be treated as confounding variables for the relation between {exposure} and {outcome}."), "\n",
               "Please inspect this list carefully. It should include all time-varying covariates, time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.", "\n")
       cat("\n")
       print(all_potential_covariates[!(all_potential_covariates %in% c(ID))])

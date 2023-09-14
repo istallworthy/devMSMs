@@ -3,13 +3,18 @@
 
 #' Finds custom reference values
 #'
-#' @param d
-#' @param reference
-#'
+#' @param d data frame of high and low values per exposure main effect
+#' @param reference reference sequence of "h" and/or "l" (e.g., "h-h-h")
 #' @return reference values
-#' @export
-#'
 #' @examples
+#' d <- data.frame(e = c("A.1", "A.2", "A.3"),
+#'                l = c(0, 0, 0),
+#'                h = c(1, 1, 1))
+#' r <- get_reference_values(d = d,
+#'                           reference = "l-l-l" )
+#' r <- get_reference_values(d = d,
+#'                           reference = "h-h-h" )
+
 get_reference_values <- function(d, reference) {
   ref_vals <- sapply(seq_len(length(unlist(strsplit(reference, "-")))), function(x) {
     d[x, unlist(strsplit(reference, "-"))[x]]
@@ -20,13 +25,20 @@ get_reference_values <- function(d, reference) {
 
 #' Finds custom comparison values
 #'
-#' @param d
-#' @param comp_histories
-#'
+#' @param d data frame of high and low values per exposure main effect
+#' @param comp_histories comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")
 #' @return comparison values
 #' @export
-#'
 #' @examples
+#' d <- data.frame(e = c("A.1", "A.2", "A.3"),
+#'                l = c(0, 0, 0),
+#'                h = c(1, 1, 1))
+#' r <- get_comparison_values(d = d,
+#'                           comp_histories = "l-l-l" )
+#' r <- get_comparison_values(d = d,
+#'                           comp_histories = "h-h-h" )
+#' r <- get_comparison_values(d = d,
+#'                          comp_histories = c("h-h-h", "h-h-l"))
 get_comparison_values <- function(d, comp_histories) {
   comp_vals <- sapply(comp_histories, function(comp) {
     sapply(seq_len(length(unlist(strsplit(comp, "-")))), function(x) {
@@ -39,16 +51,14 @@ get_comparison_values <- function(d, comp_histories) {
 
 #' Create custom contrasts
 #'
-#' @param d
-#' @param reference
-#' @param comp_histories
+#' @param d data frame of high and low values per exposure main effect
+#' @param reference reference sequence of "h" and/or "l" (e.g., "h-h-h")
+#' @param comp_histories comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")
 #' @param exposure name of exposure variable
-#' @param preds
+#' @param preds custom output of marginaleffects::average_predictions()
 #'
 #' @return contrasts
 #' @export
-#'
-#' @examples
 create_custom_contrasts <- function(d, reference, comp_histories, exposure, preds) {
   if (is.na(reference) | is.null(comp_histories)) {
     return(NULL)  # Invalid input, return early
@@ -66,17 +76,13 @@ create_custom_contrasts <- function(d, reference, comp_histories, exposure, pred
 }
 
 
-#' Title
+#' Creates custom comparisons
 #'
-#' @param preds
-#' @param ref_vals
-#' @param comp_vals
-#' @param exposure
-#'
-#' @return
-#' @export
-#'
-#' @examples
+#' @param preds custom output of marginaleffects::average_predictions()
+#' @param ref_vals reference values
+#' @param comp_vals comparison values
+#' @param exposure name of exposure variable
+#' @return custom comparisons
 create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
   cus_comps <- matrix(ncol = nrow(comp_vals), nrow = nrow(as.data.frame(preds[[1]][[1]])))
 
@@ -107,13 +113,10 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 
 #' Add history labels to table
 #'
-#' @param p
-#' @param d
+#' @param p table output from marginaleffects::avg_predictions() or hypotheses()
+#' @param d data frame of high and low values per exposure main effect
 #'
 #' @return table with histories labeled
-#' @export
-#'
-#' @examples
 add_histories <- function(p, d) {
   if((is.list(p)) & length(p) == 1){
     history <- matrix(data = NA, nrow = nrow(p[[1]]), ncol = 1) # Get histories from the first element
@@ -163,13 +166,9 @@ add_histories <- function(p, d) {
 
 #' Add dose tally to table
 #'
-#' @param p
+#' @param p table output from marginaleffects::avg_predictions() or hypotheses()
 #' @param dose_level "l" or "h" indicating whether low or high doses should be tallied in tables and plots
-#'
 #' @return table with dose level tally
-#' @export
-#'
-#' @examples
 add_dose <- function(p, dose_level) {
   if( length(p$history[1]) == 1 ) {
     if(grepl("vs", p$history[1])) {
@@ -192,14 +191,10 @@ add_dose <- function(p, dose_level) {
 #' Conduct multiple comparison correction
 #'
 #' @param comps
-#' @param reference
-#' @param comp_histories
+#' @param reference reference sequence of "h" and/or "l" (e.g., "h-h-h")
+#' @param comp_histories comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")
 #' @param method character abbreviation for multiple comparison correction method
-#'
 #' @return comparison table with corrected p-values
-#' @export
-#'
-#' @examples
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method) {
   if (nrow(comps) > 1) {
     cat("\n")

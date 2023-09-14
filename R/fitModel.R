@@ -38,7 +38,7 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
-#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                     ti_confounders = "C",
 #'                     type = "full",
 #'                     save.out = FALSE)
@@ -57,7 +57,7 @@
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    formulas = f,
 #'                    save.out = FALSE)
 #'
@@ -66,7 +66,7 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m0",
 #'               save.out = FALSE)
 #' m <- fitModel(data = test,
@@ -74,7 +74,7 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m0",
 #'               family = gaussian,
 #'               link = "identity",
@@ -86,7 +86,7 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m1",
 #'               covariates = "C",
 #'               save.out = FALSE)
@@ -95,7 +95,7 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m2",
 #'               int_order = 3,
 #'               save.out = FALSE)
@@ -104,7 +104,7 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m3",
 #'               int_order = 3,
 #'               covariates = "C",

@@ -2,13 +2,22 @@
 % Please edit documentation in R/compareHelpers.R
 \name{create_custom_comparisons}
 \alias{create_custom_comparisons}
-\title{Title}
+\title{Creates custom comparisons}
 \usage{
 create_custom_comparisons(preds, ref_vals, comp_vals, exposure)
 }
 \arguments{
-\item{exposure}{}
+\item{preds}{custom output of marginaleffects::average_predictions()}
+
+\item{ref_vals}{reference values}
+
+\item{comp_vals}{comparison values}
+
+\item{exposure}{name of exposure variable}
+}
+\value{
+custom comparisons
 }
 \description{
-Title
+Creates custom comparisons
 }
