@@ -7,11 +7,22 @@
 get_reference_values(d, reference)
 }
 \arguments{
-\item{reference}{}
+\item{d}{data frame of high and low values per exposure main effect}
+
+\item{reference}{reference sequence of "h" and/or "l" (e.g., "h-h-h")}
 }
 \value{
 reference values
 }
 \description{
 Finds custom reference values
+}
+\examples{
+d <- data.frame(e = c("A.1", "A.2", "A.3"),
+               l = c(0, 0, 0),
+               h = c(1, 1, 1))
+r <- get_reference_values(d = d,
+                          reference = "l-l-l" )
+r <- get_reference_values(d = d,
+                          reference = "h-h-h" )
 }

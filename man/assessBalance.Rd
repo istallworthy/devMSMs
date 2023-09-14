@@ -21,7 +21,7 @@ assessBalance(
 )
 }
 \arguments{
-\item{home_dir}{path to home directory}
+\item{home_dir}{(optional) path to home directory (required if save.out = TRUE)}
 
 \item{data}{data in wide format as: a data frame, list of imputed
 data frames, or mids object}

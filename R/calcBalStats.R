@@ -21,8 +21,7 @@
 #' @importFrom ggplot2 guide_axis
 #' @importFrom ggplot2 ggsave
 #' @importFrom stargazer stargazer
-#' @export
-#' @param home_dir path to home directory
+#' @param home_dir (optional) path to home directory (required if save.out = TRUE)
 #' @param data data in wide format as: a data frame, path to folder of imputed
 #'   .csv files, or mids object
 #' @param formulas list of balancing formulas at each time point output from
@@ -31,16 +30,64 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param balance_thresh one or two numbers between 0 and 1 indicating a single
+#' @param balance_thresh (optional) one or two numbers between 0 and 1 indicating a single
 #'   balancingn threshold or thresholds for more and less important confounders,
 #'   respectively
-#' @param k imputation number
-#' @param weights list of IPTW weights output from createWeights
-#' @param imp_conf list of variable names reflecting important confounders
-#' @param verbose TRUE or FALSE indicator for user output
-#' @param save.out TRUE or FALSE indicator to save output and intermediary output locally
+#' @param k (optional) imputation number
+#' @param weights (optional) list of IPTW weights output from createWeights
+#' @param imp_conf (optional) list of variable names reflecting important confounders (required if two balance thresholds are provided)
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally
+#' @return data frame of balance statistics
+#' @examples
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
 #'
-calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL, imp_conf = NULL, verbose = TRUE, save.out = TRUE){
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "full",
+#'                     save.out = FALSE)
+#'
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' c <- calcBalStats(data = test,
+#'                   formulas = f,
+#'                   exposure = "A",
+#'                   exposure_time_pts = c(1, 2, 3),
+#'                   outcome = "D.3",
+#'                   balance_thresh = 0.1)
+#' c <- calcBalStats(data = test,
+#'                   formulas = f,
+#'                   exposure = "A",
+#'                   exposure_time_pts = c(1, 2, 3),
+#'                   outcome = "D.3",
+#'                   balance_thresh = c(0.05, 0.1),
+#'                   imp_conf = "B2")
+#' c <- calcBalStats(data = test,
+#'                   formulas = f,
+#'                   exposure = "A",
+#'                   exposure_time_pts = c(1, 2, 3),
+#'                   outcome = "D.3",
+#'                   balance_thresh = 0.1,
+#'                   weights = w[[1]])
+
+calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL, imp_conf = NULL, verbose = TRUE, save.out = TRUE){
   # library(cobalt)
 
   if(!inherits(formulas, "list")){

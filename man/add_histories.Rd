@@ -7,7 +7,9 @@
 add_histories(p, d)
 }
 \arguments{
-\item{d}{}
+\item{p}{table output from marginaleffects::avg_predictions() or hypotheses()}
+
+\item{d}{data frame of high and low values per exposure main effect}
 }
 \value{
 table with histories labeled

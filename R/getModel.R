@@ -20,12 +20,49 @@
 #' @param fam function specification for svyglm model
 #' @param covariates list of characters reflecting variable names of covariates
 #'   for covariate models
-#' @param verbose TRUE or FALSE indicator for user output
+#' @param verbose TRUE or FALSE indicator for user output (default is TRUE)
 #' @return list of fitted model(s)
-#' @export
-#'
 #' @examples
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
 #'
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "full",
+#'                     save.out = FALSE)
+#'
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' epochs = data.frame(epochs = c("Infancy", "Toddlerhood"),
+#'                     values = I(list(c(1, 2), c(3))))
+#' e <- apply(expand.grid("A", as.character(epochs[, 1])), 1,
+#'            paste, sep = "", collapse = ".")
+#' test$weights <- w[[1]]$weights
+#'
+#' g <- getModel(d = test,
+#'               exposure = "A",
+#'               exposure_time_pts = c(1, 2, 3),
+#'               outcome = "D.3",
+#'               epochs = epochs,
+#'               exp_epochs = e,
+#'               fam = gaussian,
+#'               model = "m0")
 
 getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, fam, covariates, verbose){
 

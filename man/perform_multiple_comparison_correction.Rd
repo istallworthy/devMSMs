@@ -12,6 +12,10 @@ perform_multiple_comparison_correction(
 )
 }
 \arguments{
+\item{reference}{reference sequence of "h" and/or "l" (e.g., "h-h-h")}
+
+\item{comp_histories}{comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")}
+
 \item{method}{character abbreviation for multiple comparison correction method}
 }
 \value{

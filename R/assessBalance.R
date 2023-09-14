@@ -25,7 +25,7 @@
 #' @seealso {[cobalt] package, <url1>}
 #' @seealso {Jackson, 2016 for more on assessing balance for time-varying
 #'   exposures, <url1>}
-#' @param home_dir path to home directory
+#' @param home_dir (optional) path to home directory (required if save.out = TRUE)
 #' @param data data in wide format as: a data frame, list of imputed
 #'   data frames, or mids object
 #' @param exposure name of exposure variable
@@ -63,7 +63,7 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
-#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                     ti_confounders = "C",
 #'                     type = "short",
 #'                     save.out = FALSE)
@@ -73,7 +73,7 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "prebalance",
 #'                    formulas = f,
 #'                    save.out = FALSE)
@@ -81,7 +81,7 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "prebalance",
 #'                    formulas = f,
 #'                    balance_thresh = 0.2,
@@ -90,7 +90,7 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "prebalance",
 #'                    formulas = f,
 #'                    balance_thresh = c(0.1, 0.2),
@@ -101,7 +101,7 @@
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    formulas = f,
 #'                    save.out = FALSE)
 #'
@@ -109,7 +109,7 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -118,7 +118,7 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -128,7 +128,7 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
