@@ -189,6 +189,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         # Writes image of the histogram of weights to assess heavy tails
         p <- ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
           ggplot2::geom_histogram(color = 'black', bins = 15) +
+          ggplot2::xlab("Weights") +
           ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
 
         if(verbose){
@@ -240,6 +241,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
         # Writes image of the histogram of weights to assess heavy tails
         p <- ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
           ggplot2::geom_histogram(color = 'black', bins = 15) +
+          ggplot2::xlab("Weights") +
           ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
 
         if(verbose){
@@ -292,6 +294,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       # Writes image of the histogram of weights to assess heavy tails
       p <- ggplot2::ggplot(data = as.data.frame(weights[[1]]$weights), aes(x = weights[[1]]$weights)) +
         ggplot2::geom_histogram(color = 'black', bins = 15) +
+        ggplot2::xlab("Weights") +
         ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
 
       if(verbose){

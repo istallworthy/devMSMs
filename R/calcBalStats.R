@@ -415,11 +415,20 @@ calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, 
                                        "_", weights_method, "_history_sample_weight.csv"))
     if (verbose){
       cat("\n")
-      cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, ", imputation ", k, ", weighting method ",
+      if (data_type == "imputed"){
+      cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, ", imputation ", k, ", using ",
                  weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
 
       cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure, ", imputation ", k,
                  " have been saved in the 'balance/", folder, "' folder"), "\n")
+      }
+      else{
+        cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, "using ",
+                   weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
+
+        cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure,
+                   " have been saved in the 'balance/", folder, "' folder"), "\n")
+      }
       cat("\n")
     }
   }
@@ -453,7 +462,8 @@ calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, 
     cat(paste0("The median absolute value relation between exposure and confounder is ", round(median(abs(all_bal_stats$std_bal_stats)), 2), " (range = ",
                round(min(all_bal_stats$std_bal_stats), 2), "-", round(max(all_bal_stats$std_bal_stats), 2), ")."), "\n")
 
-    cat(paste0("As shown below, ", imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced, "%) covariates across time points, corresponding to ",
+    cat(paste0("As shown below, ", imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced,
+               "%) covariates across time points, corresponding to ",
                remaining_imbalanced_domains, " out of ", total_domains,
                " domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of ",
                remaining_avg_abs_corr, " (range= ", remaining_corr_range, "):"), "\n")
