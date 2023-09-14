@@ -94,6 +94,7 @@ data <- data_mids #'imputed' data
 
 
 ### Preliminary steps (optional)
+#### If you have wide data ....
 ```{r}
 #### P2. Data Formatting
 #optional function to format long data data

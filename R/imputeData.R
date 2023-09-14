@@ -103,6 +103,7 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
     cat("### Using", foreach::getDoParWorkers(), "cores\n")
     cat("### Using", foreach::getDoParName(), "as the backend\n")
 
+    data <- data_to_impute
     data_to_impute <- tibble(data_to_impute)
 
     # Conducts imputations using parallelized execution cycling through m
