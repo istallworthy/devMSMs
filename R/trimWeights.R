@@ -17,35 +17,58 @@
 #' @return list of model output with trimmed weights
 #' @export
 #' @examples
-# test <- data.frame(ID = 1:10,
-#                    A.1 = 1:10,
-#                    A.2 = 21:30,
-#                    A.3 = 1:10,
-#                    B.1 = 2:11,
-#                    B.2 = 1:10,
-#                    B.3 = 4:13,
-#                    C = 3:12,
-#                    D.3 = 4:13)
-# test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
-# f <- createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
-# w <- createWeights(getwd(), test, "A", "D.3", c("B.1", "B.2", "B.3"), f)
-# b <- assessBalance(getwd(), test, "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "prebalance", f)
-# t <- trimWeights(getwd(), "A", "D.3", w)
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "full",
+#'                     save.out = FALSE)
+#'
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' t <- trimWeights(exposure = "A",
+#'                  outcome = "D.3",
+#'                  weights = w,
+#'                  save.out = FALSE)
+#' t <- trimWeights(exposure = "A",
+#'                  outcome = "D.3",
+#'                  weights = w,
+#'                  quantile = 0.75,
+#'                  save.out = FALSE)
+
 
 
 trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, verbose = TRUE, save.out = TRUE){
 
-  if (missing(home_dir)){
-    stop("Please supply a home directory.", call. = FALSE)
+  if (save.out) {
+    if (missing(home_dir)) {
+      stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if(!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+    }
   }
+
   if (missing(weights)){
-    stop("Please supply a list of IPTW weights.", call. = FALSE)
+    stop("Please supply a list of IPTW weights to trim.", call. = FALSE)
   }
-
-  if (!dir.exists(home_dir)) {
-    stop("Please provide a valid home directory path.", call. = FALSE)
-  }
-
   if(!is.numeric(quantile)){
     stop('Please sprovide a numeric quantile value between 0 and 1.', call. = FALSE)
   }

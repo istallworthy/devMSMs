@@ -49,12 +49,77 @@
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @return data frame of history comparisons
+#' @examples
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "full",
+#'                     save.out = FALSE)
+#'
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' m <- fitModel(data = test,
+#'               weights = w,
+#'               exposure = "A",
+#'               exposure_time_pts = c(1, 2, 3),
+#'               outcome = "D.3",
+#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               model = "m0",
+#'               save.out = FALSE)
+#'
+#' r <- compareHistories(exposure = "A",
+#'                       exposure_time_pts = c(1, 2, 3),
+#'                       outcome = "D.3",
+#'                       tv_confounders = c("B.1", "B.2", "B.3"),
+#'                       model = m,
+#'                       save.out = FALSE)
+#' r <- compareHistories(exposure = "A",
+#'                       exposure_time_pts = c(1, 2, 3),
+#'                       outcome = "D.3",
+#'                       tv_confounders = c("B.1", "B.2", "B.3"),
+#'                       model = m,
+#'                       reference = "l-l-l",
+#'                       comparison = "h-h-h",
+#'                       save.out = FALSE)
+#' r <- compareHistories(exposure = "A",
+#'                       exposure_time_pts = c(1, 2, 3),
+#'                       outcome = "D.3",
+#'                       tv_confounders = c("B.1", "B.2", "B.3"),
+#'                       model = m,
+#'                       reference = "l-l-l",
+#'                       comparison = c("h-h-h", "h-l-l"),
+#'                       save.out = FALSE)
+
 
 compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, epochs = NULL, hi_lo_cut = NULL, reference = NA, comparison = NULL, mc_comp_method = "BH", dose_level = "h", exp_lab = NA, out_lab = NA, colors = "Dark2", verbose = TRUE, save.out = TRUE ) {
 
-  if (missing(home_dir)){
-    stop("Please supply a home directory.", call. = FALSE)
+  if (save.out) {
+    if (missing(home_dir)) {
+      stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if(!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+    }
   }
+
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)
   }
@@ -69,10 +134,6 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   }
   if (missing(model)){
     stop("Please supply a list of model output", call. = FALSE)
-  }
-
-  if (!dir.exists(home_dir)) {
-    stop("Please provide a valid home directory path.", call. = FALSE)
   }
   if(!inherits(model, "list")){
     stop("Please provide a list of model output from the fitModel function.", call. = FALSE)
@@ -156,7 +217,6 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
     #finds high and low values for each epoch
     for (t in seq_len(length(eps))) {
-      # var_name <- paste(exposure, eps[t], sep = "_")
       var_name <- paste(exposure, eps[t], sep = ".")
 
       if(is.null(hi_lo_cut)){ #default is median split
@@ -327,15 +387,15 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
         )
       )
       sink()
-
-      if (verbose){
-        cat("\n")
-        cat("Below are the pooled average predictions by user-specified history:") #
-        cat("\n")
-        cat(knitr::kable(preds_pool, format = 'pipe', digits = 2), sep = "\n")
-        cat("\n")
-      }
     }
+
+    if (verbose){
+      cat("\n")
+      cat("Below are the pooled average predictions by user-specified history:") #
+      print(knitr::kable(preds_pool, format = 'pipe', digits = 4), sep = "\n")
+      cat("\n")
+    }
+
 
 
     #STEP 2b: pool comparison values
@@ -349,6 +409,17 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
     #STEP 3: conduct multiple comparison correction
     comps_pool <- perform_multiple_comparison_correction(comps_pool, reference, comp_histories, mc_comp_method)
+
+    #rounding term values
+    comps_pool$term <- unlist(lapply(1:length(comps_pool$term), function(x){
+      x = comps_pool$term[x]
+      a = paste0("(", paste(round(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), "  "))), 3),
+                            collapse = ", ", sep = ", "), ")")
+      b = paste0("(", paste(round(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 2)), "  "))), 3),
+                            collapse = ", ", sep = ", "), ")")
+      new = paste(a, b, sep = " - ")
+      new
+    }))
 
     if (save.out){
       if(is.null(hi_lo_cut)){
@@ -369,13 +440,13 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
                      paste(hi_lo_cut, collapse = "_"), ".html")
       )
       sink()
-      if (verbose){
-        cat("\n")
-        cat(paste0("USER ALERT: please inspect the following pooled comparisons :"), "\n")
-        cat(knitr::kable(comps_pool, format = 'pipe', digits = 2), sep = "\n")
-        cat("\n")
-        cat("\n")
-      }
+    }
+    if (verbose){
+      cat("\n")
+      cat(paste0("USER ALERT: please inspect the following pooled comparisons :"), "\n")
+      print(knitr::kable(comps_pool, format = 'pipe', digits = 4), sep = "\n")
+      cat("\n")
+      cat("\n")
     }
 
 
@@ -419,15 +490,15 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
         )
         sink()
       })
-
-      if (verbose){
-        cat("\n")
-        cat("Below are the average predictions by user-specified history:", "\n") # Not sure if we need to print this?
-        cat("\n")
-        cat(knitr::kable(preds, format = 'pipe', digits = 2), sep = "\n")
-        cat("\n")
-      }
     }
+
+    if (verbose){
+      cat("\n")
+      cat("Below are the average predictions by user-specified history:", "\n") # Not sure if we need to print this?
+      print(knitr::kable(preds, format = 'pipe', digits = 4), sep = "\n")
+      cat("\n")
+    }
+
 
 
     #STEP 3: conduct multiple comparison correction
@@ -439,6 +510,18 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
     comps <- perform_multiple_comparison_correction(comps, reference, comp_histories, mc_comp_method)
 
+    #rounding term values
+    comps$term <- unlist(lapply(1:length(comps$term), function(x){
+      x = comps$term[x]
+      a = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))[
+        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
+                            collapse = ", ", sep = ", "), ")")
+      b = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 2)), " "))[
+        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
+        collapse = ", ", sep = ", "), ")")
+      new = paste(a, b, sep = " - ")
+      new
+    }))
 
     if (save.out){
       if(is.null(hi_lo_cut)){
@@ -460,15 +543,14 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
         )
       )
       sink()
+    }
 
-      if (verbose) {
-        cat("\n")
-        cat(paste0("USER ALERT: please inspect the following comparisons:"), "\n")
-        cat("\n")
-        cat(knitr::kable(comps, format = 'pipe', digits = 2), sep = "\n")
-        cat("\n")
-        cat("\n")
-      }
+    if (verbose) {
+      cat("\n")
+      cat(paste0("USER ALERT: please inspect the following comparisons:"), "\n")
+      print(knitr::kable(comps, format = 'pipe', digits = 2), sep = "\n")
+      cat("\n")
+      cat("\n")
     }
 
   }
@@ -491,63 +573,63 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     out_lab <- outcome
   }
 
-    comparisons <- data.frame(preds)
-    comparisons$low_ci <- comparisons$estimate - (1.96 * comparisons$std.error)
-    comparisons$high_ci <- comparisons$estimate + (1.96 * comparisons$std.error)
-    comparisons$history <- as.factor(comparisons$history)
-    comparisons$dose <- as.factor(comparisons$dose)
+  comparisons <- data.frame(preds)
+  comparisons$low_ci <- comparisons$estimate - (1.96 * comparisons$std.error)
+  comparisons$high_ci <- comparisons$estimate + (1.96 * comparisons$std.error)
+  comparisons$history <- as.factor(comparisons$history)
+  comparisons$dose <- as.factor(comparisons$dose)
 
-    comparisons <- comparisons %>%
-      dplyr::arrange(dose) # Order by dose
+  comparisons <- comparisons %>%
+    dplyr::arrange(dose) # Order by dose
 
-    if (length(colors) > 1) { # If user input a list of colors
-      p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
-        ggplot2::geom_point(size = 5) +
-        ggplot2::scale_color_manual(values = colors) +
-        ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
-        ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
-        ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
-        ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
-        ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci),
-                      max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
-        ggplot2::theme(text = ggplot2::element_text(size = 14)) +
-        ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                       panel.background = element_blank(), axis.line = ggplot2::element_line(colour = "black"))
+  if (length(colors) > 1) { # If user input a list of colors
+    p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
+      ggplot2::geom_point(size = 5) +
+      ggplot2::scale_color_manual(values = colors) +
+      ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
+      ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
+      ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
+      ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
+      ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci),
+                    max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
+      ggplot2::theme(text = ggplot2::element_text(size = 14)) +
+      ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                     panel.background = element_blank(), axis.line = ggplot2::element_line(colour = "black"))
 
-      if (save.out){
-        ggplot2::ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
-        if(verbose){
-          print(p)
-        }
-      }
-
-    } else { # If user lists a palette (default)
-      p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
-        ggplot2::geom_point(size = 5) +
-        ggplot2::scale_colour_brewer(palette = colors) +
-        ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
-        ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
-        ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
-        ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
-        ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci),
-                      max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
-        ggplot2::theme(text = ggplot2::element_text(size = 14)) +
-        ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                       panel.background = element_blank(), axis.line = ggplot2::element_line(colour = "black")) +
-        ggplot2::guides(fill = ggplot2::guide_legend(title="Dosage"))
-
-      if (save.out){
-        ggplot2::ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
-        if(verbose){
-          print(p)
-        }
-      }
+    if (save.out){
+      ggplot2::ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
+    }
+    if(verbose){
+      print(p)
     }
 
-    if (verbose){
-      message("\n")
-      message("See the '/plots/' folder for graphical representations of results.")
+  } else { # If user lists a palette (default)
+    p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
+      ggplot2::geom_point(size = 5) +
+      ggplot2::scale_colour_brewer(palette = colors) +
+      ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
+      ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
+      ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
+      ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
+      ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci),
+                    max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
+      ggplot2::theme(text = ggplot2::element_text(size = 14)) +
+      ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                     panel.background = element_blank(), axis.line = ggplot2::element_line(colour = "black")) +
+      ggplot2::guides(fill = ggplot2::guide_legend(title="Dosage"))
+
+    if (save.out){
+      ggplot2::ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
     }
+    if(verbose){
+      print(p)
+    }
+  }
+
+  if (save.out & verbose){
+    message("\n")
+    message("See the '/plots/' folder for graphical representations of results.")
+  }
 
   comps
 }

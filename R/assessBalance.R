@@ -48,26 +48,107 @@
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @returns a list data frame of balance statistics
 #' @examples
-# test <- data.frame(ID = 1:10,
-#                    A.1 = 1:10,
-#                    A.2 = 21:30,
-#                    A.3 = 1:10,
-#                    B.1 = 2:11,
-#                    B.2 = 1:10,
-#                    B.3 = 4:13,
-#                    C = 3:12,
-#                    D.3 = 4:13)
-# test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
-# f <- createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
-# w <- createWeights(getwd(), test, "A", "D.3", c("B.1", "B.2", "B.3"), f)
-# b <- assessBalance(getwd(), test, "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "prebalance", f)
+#'
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "short",
+#'                     save.out = FALSE)
+#'
+#' #Prebalance
+#' b <- assessBalance(data = test,
+#'                    exposure = "A",
+#'                    exposure_time_pts = c(1, 2, 3),
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    type = "prebalance",
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#' b <- assessBalance(data = test,
+#'                    exposure = "A",
+#'                    exposure_time_pts = c(1, 2, 3),
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    type = "prebalance",
+#'                    formulas = f,
+#'                    balance_thresh = 0.2,
+#'                    save.out = FALSE)
+#' b <- assessBalance(data = test,
+#'                    exposure = "A",
+#'                    exposure_time_pts = c(1, 2, 3),
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    type = "prebalance",
+#'                    formulas = f,
+#'                    balance_thresh = c(0.1, 0.2),
+#'                    imp_conf = "B.1",
+#'                    save.out = FALSE)
+#'
+#' # Weighted
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' b <- assessBalance(data = test,
+#'                    exposure = "A",
+#'                    exposure_time_pts = c(1, 2, 3),
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    type = "weighted",
+#'                    weights = w,
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#' b <- assessBalance(data = test,
+#'                    exposure = "A",
+#'                    exposure_time_pts = c(1, 2, 3),
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    type = "weighted",
+#'                    weights = w,
+#'                    formulas = f,
+#'                    balance_thresh = 0.2,
+#'                    save.out = FALSE)
+#' b <- assessBalance(data = test,
+#'                    exposure = "A",
+#'                    exposure_time_pts = c(1, 2, 3),
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    type = "weighted",
+#'                    weights = w,
+#'                    formulas = f,
+#'                    balance_thresh = c(0.1, 0.2),
+#'                    imp_conf = "B.1",
+#'                    save.out = FALSE)
+
 
 
 assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh = 0.1, imp_conf = NULL, verbose = TRUE, save.out = TRUE){
 
-  if (missing(home_dir)){
-    stop("Please supply a home directory.", call. = FALSE)
+  if (save.out) {
+    if (missing(home_dir)) {
+      stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if(!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+    }
   }
+
   if (missing(data)){
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
@@ -91,9 +172,6 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please supply a list of balancing formulas.", call. = FALSE)
   }
 
-  if (!dir.exists(home_dir)) {
-    stop("Please provide a valid home directory path.", call. = FALSE)
-  }
 
   if (!inherits(type, "character") | length(type) != 1 ){
     stop("Please provide a single type as a character string from the following list: 'prebalance', 'weighted'", call. = FALSE)
@@ -103,6 +181,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   }
   else  if (type == "prebalance" & !is.null(weights)){
     stop("The 'prebalance' mode of this function assesses balance prior to weighting and thus does not take weights.", call. = FALSE)
+  }
+  else  if (type == "weighted" & (is.null(weights) | missing(weights))){
+    stop("The 'weighted' mode of this function requires weights be supplied in the form of output from createWeights.", call. = FALSE)
   }
 
   if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
@@ -121,7 +202,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   }
 
   if (!is.null(imp_conf) & length(balance_thresh) == 1){
-    stop("If you provide a list of important confounders, please provide a list of two balance tresholds for important and less important confounders, respectively", call. = FALSE)
+    stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively", call. = FALSE)
   }
   else if(!is.null(imp_conf) & !is.character(imp_conf)){
     stop("Please provide a list variable names as characters that are important confounders.", call. = FALSE)

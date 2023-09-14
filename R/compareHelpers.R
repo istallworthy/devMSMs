@@ -120,33 +120,36 @@ add_histories <- function(p, d) {
     p <- p[[1]]
   }
 
+  #for preds
   if (sum(d$e %in% colnames(p)) == nrow(d)){
     for (i in seq_len(nrow(p))) {
       vals <- as.data.frame(p)[i, seq_len(nrow(d))]
-      history[i] <- as.data.frame(paste(ifelse(round(vals, 3) == round(d$l, 3), "l", "h"), collapse = "-"))
+      history[i] <- as.data.frame(paste(ifelse(round(as.numeric(as.character(vals)), 3) ==
+                                                 round(as.numeric(as.character(d$l)), 3), "l", "h"), collapse = "-")) #was getting different rounding values due to floaters (i think), so made char first
     }
     history <- unlist(history)
   }
 
-  if("term" %in% colnames(p)) { #preds_pool
+  if("term" %in% colnames(p)) { #preds_pool, comps
     history <- matrix(data = NA, nrow = nrow(p), ncol = 1) # Get histories from the first element
 
     if(grepl("\\=", p$term[1])) {
       for (i in seq_len(nrow(p))){
         vals <- as.numeric(sapply(strsplit(unlist(strsplit(as.character(p$term[i]), "\\,")), "="), "[", 2))
-        history[i] <- as.data.frame(paste(ifelse(round(vals, digits = 2) == round(d$l, digits = 2), "l", "h"), collapse = "-"))
+        history[i] <- as.data.frame(paste(ifelse(round(as.numeric(as.character(vals)), digits = 3) ==
+                                                   round(as.numeric(as.character(d$l)), digits = 3), "l", "h"), collapse = "-"))
       }
       history <- unlist(history)
 
     }
-    else {
+    else { #comps
       for (i in seq_len(nrow(p))) {
         temp <- as.character(p$term[i])
         pair <- lapply(1:2, function(y) {
           a <- sapply(strsplit(temp, " - "), "[", y)
           his <- lapply(seq_len(nrow(d)), function(z) {
-            ifelse(round(as.numeric(gsub("[^0-9.-]", "",
-                                         sapply(strsplit(a, "\\,"), "[", z))), 2) == round(d[z, "l"], 2), "l", "h")
+            ifelse(round(as.numeric(as.character(gsub("[^0-9.-]", "", sapply(strsplit(a, "\\,"), "[", z)))), 3) ==
+                     round(as.numeric(as.character(d[z, "l"])), 3), "l", "h")
           })
         })
         history[i, 1] <- paste(sapply(pair, paste, collapse = "-"), collapse = " vs ")
@@ -198,7 +201,7 @@ add_dose <- function(p, dose_level) {
 #'
 #' @examples
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method) {
-  if (length(comps) > 1) {
+  if (nrow(comps) > 1) {
     cat("\n")
     cat(paste0("Conducting multiple comparison correction using the ", method, " method."), "\n")
     cat("\n")

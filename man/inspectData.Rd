@@ -21,8 +21,8 @@ inspectData(
 )
 }
 \arguments{
-\item{data}{data in wide format as: a data frame, list of imputed data frames,
-or mids object}
+\item{data}{data in wide format as: a data frame, list of imputed data
+frames, or mids object}
 
 \item{home_dir}{path to home directory}
 
@@ -46,6 +46,9 @@ that reflect high and low values, respectively, for continuous exposure
 
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
+
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is TRUE)}
 
 \item{(optional)}{comparison list of one or more strings of "-"-separated "l"
 and "h" values indicative of comparison history/histories to compare to

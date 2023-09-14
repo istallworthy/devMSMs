@@ -35,28 +35,92 @@
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @return list of svyglm model output
 #' @examples
-# test <- data.frame(ID = 1:10,
-#                    A.1 = 1:10,
-#                    A.2 = 21:30,
-#                    A.3 = 1:10,
-#                    B.1 = 2:11,
-#                    B.2 = 1:10,
-#                    B.3 = 4:13,
-#                    C = 3:12,
-#                    D.3 = 4:13)
-# test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
-# f <- createFormulas(getwd(), "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "C", "full")
-# w <- createWeights(getwd(), test, "A", "D.3", c("B.1", "B.2", "B.3"), f)
-# b <- assessBalance(getwd(), test, "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "prebalance", f)
-# t <- trimWeights(getwd(), "A", "D.3", w)
-# m <- fitModel(getwd(), test, w, "A", c(1, 2, 3), "D.3", c("B.1", "B.2", "B.3"), "m0")
-
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "full",
+#'                     save.out = FALSE)
+#'
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' m <- fitModel(data = test,
+#'               weights = w,
+#'               exposure = "A",
+#'               exposure_time_pts = c(1, 2, 3),
+#'               outcome = "D.3",
+#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               model = "m0",
+#'               save.out = FALSE)
+#' m <- fitModel(data = test,
+#'               weights = w,
+#'               exposure = "A",
+#'               exposure_time_pts = c(1, 2, 3),
+#'               outcome = "D.3",
+#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               model = "m0",
+#'               family = gaussian,
+#'               link = "identity",
+#'               epochs = data.frame(epochs = c("Infancy", "Toddlerhood"),
+#'                                   values = I(list(c(1, 2), c(3)))),
+#'               save.out = FALSE)
+#' m <- fitModel(data = test,
+#'               weights = w,
+#'               exposure = "A",
+#'               exposure_time_pts = c(1, 2, 3),
+#'               outcome = "D.3",
+#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               model = "m1",
+#'               covariates = "C",
+#'               save.out = FALSE)
+#' m <- fitModel(data = test,
+#'               weights = w,
+#'               exposure = "A",
+#'               exposure_time_pts = c(1, 2, 3),
+#'               outcome = "D.3",
+#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               model = "m2",
+#'               int_order = 3,
+#'               save.out = FALSE)
+#' m <- fitModel(data = test,
+#'               weights = w,
+#'               exposure = "A",
+#'               exposure_time_pts = c(1, 2, 3),
+#'               outcome = "D.3",
+#'               tv_confounders = c("B.1", "B.2", "B.3"),
+#'               model = "m3",
+#'               int_order = 3,
+#'               covariates = "C",
+#'               save.out = FALSE)
 
 fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model, family = gaussian, link = "identity", int_order = NA, covariates = NULL, epochs = NULL, verbose = TRUE, save.out = TRUE) {
 
-  if (missing(home_dir)){
-    stop("Please supply a home directory.", call. = FALSE)
+  if (save.out) {
+    if (missing(home_dir)) {
+      stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if(!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+    }
   }
+
   if (missing(data)){
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
@@ -78,10 +142,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
   if (missing(model)){
     stop('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)
-  }
-
-  if (!dir.exists(home_dir)) {
-    stop("Please provide a valid home directory path.", call. = FALSE)
   }
   if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.", call. = FALSE)
@@ -247,10 +307,15 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
     names(fits) <- seq_len(length(fits))
 
+    if (verbose){
+      cat(paste0("USER ALERT: the marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
+      print(suppressWarnings(jtools::export_summs(
+        fits, statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
+        model.names = c(paste0("Imp.", seq_len(length(fits))))
+      )))
+    }
+
     if(save.out){
-      if (verbose){
-        cat(paste0("USER ALERT: the marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
-      }
       suppressWarnings(jtools::export_summs(
         fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
         model.names = c(paste0("Imp.", seq_len(length(fits)))),
@@ -261,13 +326,14 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     names(fits) <- NULL
   }
   else{
+    if (verbose){
+      cat(paste0("USER ALERT: the marginal model, ", model, ", is summarized below:"), "\n")
+      print(suppressWarnings(jtools::export_summs(fits, statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"))))
+    }
+
     if (save.out){
       suppressWarnings(jtools::export_summs(fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
                                             file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))))
-
-      if (verbose){
-        cat(paste0("USER ALERT: the marginal model, ", model, ", is summarized below:"), "\n")
-      }
     }
 
   }

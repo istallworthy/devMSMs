@@ -66,10 +66,10 @@ calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, 
     weights_method <- "no weights"
   }
 
-  if (save.out){
-    folder <- ifelse(weighted == 0, "prebalance/", "weighted/")
-    data_type <- ifelse(k == 0, "single", "imputed")
-  }
+
+  folder <- ifelse(weighted == 0, "prebalance/", "weighted/")
+
+  data_type <- ifelse(k == 0, "single", "imputed")
 
   if (data_type == "imputed" & verbose){
     cat(paste0("**Imputation ", k, "**"), "\n")
@@ -389,7 +389,7 @@ calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, 
   }     # Ends exp_time_pt loop
 
 
-  if (verbose) {
+  if (verbose & save.out) {
     if (data_type == "imputed"){
       cat(paste0("For each time point and imputation, ", gsub("/", "", folder), " summary plots for ", form_name, " formulas weighting method ",
                  weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
