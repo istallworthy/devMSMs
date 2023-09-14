@@ -27,6 +27,7 @@
 #'   TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @return list of IPTW balancing weights
+#' @export
 #' @examples
 #' test <- data.frame(ID = 1:50,
 #'                    A.1 = rnorm(n = 50),

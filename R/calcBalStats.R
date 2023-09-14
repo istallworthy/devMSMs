@@ -39,6 +39,7 @@
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally
 #' @return data frame of balance statistics
+#' @export
 #' @examples
 #' test <- data.frame(ID = 1:50,
 #'                    A.1 = rnorm(n = 50),

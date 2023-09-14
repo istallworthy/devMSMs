@@ -83,6 +83,8 @@ create_custom_contrasts <- function(d, reference, comp_histories, exposure, pred
 #' @param comp_vals comparison values
 #' @param exposure name of exposure variable
 #' @return custom comparisons
+#' @export
+
 create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
   cus_comps <- matrix(ncol = nrow(comp_vals), nrow = nrow(as.data.frame(preds[[1]][[1]])))
 
@@ -117,6 +119,8 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 #' @param d data frame of high and low values per exposure main effect
 #'
 #' @return table with histories labeled
+#' @export
+
 add_histories <- function(p, d) {
   if((is.list(p)) & length(p) == 1){
     history <- matrix(data = NA, nrow = nrow(p[[1]]), ncol = 1) # Get histories from the first element
@@ -169,6 +173,8 @@ add_histories <- function(p, d) {
 #' @param p table output from marginaleffects::avg_predictions() or hypotheses()
 #' @param dose_level "l" or "h" indicating whether low or high doses should be tallied in tables and plots
 #' @return table with dose level tally
+#' @export
+
 add_dose <- function(p, dose_level) {
   if( length(p$history[1]) == 1 ) {
     if(grepl("vs", p$history[1])) {
@@ -195,6 +201,8 @@ add_dose <- function(p, dose_level) {
 #' @param comp_histories comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")
 #' @param method character abbreviation for multiple comparison correction method
 #' @return comparison table with corrected p-values
+#' @export
+
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method) {
   if (nrow(comps) > 1) {
     cat("\n")
