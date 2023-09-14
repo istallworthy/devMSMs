@@ -392,7 +392,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     if (verbose){
       cat("\n")
       cat("Below are the pooled average predictions by user-specified history:") #
-      print(knitr::kable(preds_pool, format = 'pipe', digits = 4), sep = "\n")
+      cat(knitr::kable(preds_pool, format = 'pipe', digits = 4), sep = "\n")
       cat("\n")
     }
 
@@ -444,7 +444,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     if (verbose){
       cat("\n")
       cat(paste0("USER ALERT: please inspect the following pooled comparisons :"), "\n")
-      print(knitr::kable(comps_pool, format = 'pipe', digits = 4), sep = "\n")
+      cat(knitr::kable(comps_pool, format = 'pipe', digits = 4), sep = "\n")
       cat("\n")
       cat("\n")
     }
@@ -495,7 +495,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     if (verbose){
       cat("\n")
       cat("Below are the average predictions by user-specified history:", "\n") # Not sure if we need to print this?
-      print(knitr::kable(preds, format = 'pipe', digits = 4), sep = "\n")
+      cat(knitr::kable(preds, format = 'pipe', digits = 4), sep = "\n")
       cat("\n")
     }
 
@@ -548,7 +548,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     if (verbose) {
       cat("\n")
       cat(paste0("USER ALERT: please inspect the following comparisons:"), "\n")
-      print(knitr::kable(comps, format = 'pipe', digits = 2), sep = "\n")
+      cat(knitr::kable(comps, format = 'pipe', digits = 2), sep = "\n")
       cat("\n")
       cat("\n")
     }

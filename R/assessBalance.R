@@ -251,7 +251,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         m = data$m
 
         bal_stats <- lapply(seq_len(m), function(k) {
-          d <- as.data.frame(mice::complete(data,k))
+          d <- as.data.frame(mice::complete(data, k))
           exposure_type <- ifelse(inherits(d[, paste0(exposure, '.',
                                                       exposure_time_pts[1])], "numeric"), "continuous", "binary")
 
@@ -259,7 +259,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
             stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
           }
 
-          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = k, weights = NULL, imp_conf, verbose, save.out)
+          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome,
+                       balance_thresh, k = k, weights = NULL, imp_conf, verbose, save.out)
         })
       }
 
@@ -276,7 +277,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
             stop("Please provide wide imputd datasets with a single row per ID.", call. = FALSE)
           }
 
-          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = k, weights = NULL, imp_conf, verbose, save.out)
+          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome,
+                       balance_thresh, k = k, weights = NULL, imp_conf, verbose, save.out)
         })
       }
 
@@ -332,7 +334,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       }
 
       exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"), "continuous", "binary")
-      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL, imp_conf, verbose, save.out)
+
+      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, exposure_time_pts, outcome,
+                                balance_thresh, k = 0, weights = NULL, imp_conf, verbose, save.out)
 
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       all_bal_stats <- data.frame(
@@ -369,7 +373,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
           w <- weights[[k]]
 
-          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = k, weights = w, imp_conf, verbose, save.out)
+          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome,
+                       balance_thresh, k = k, weights = w, imp_conf, verbose, save.out)
         })
       }
 
@@ -385,7 +390,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
           w <- weights[[k]]
 
-          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = k, weights = w, imp_conf, verbose, save.out)
+          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome,
+                       balance_thresh, k = k, weights = w, imp_conf, verbose, save.out)
         })
       }
 
@@ -442,7 +448,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       }
 
       w <- weights[[1]]
-      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = w, imp_conf, verbose, save.out)
+      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, exposure_time_pts, outcome,
+                                balance_thresh, k = 0, weights = w, imp_conf, verbose, save.out)
 
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       all_bal_stats  <- data.frame(
@@ -472,7 +479,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     exposure_time_pt <- exposure_time_pts[i]
 
     if (mice::is.mids(data)){
-      exposure_type <- ifelse(inherits(mice::complete(data,1)[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"), "continuous", "binary")
+      exposure_type <- ifelse(inherits(mice::complete(data, 1)[, paste0(exposure, '.',
+                                                                        exposure_time_pts[1])], "numeric"), "continuous", "binary")
     }
     else if (inherits(data, "list")){
       exposure_type <- ifelse(inherits(data[[1]][, paste0(exposure, '.', exposure_time_pts[1])], "numeric"), "continuous", "binary")
@@ -512,7 +520,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
   if (save.out){
     # Saving out all pre-balance associations
-    write.csv(all_bal_stats, paste0(home_dir, "/balance/", type, "/", exposure, "_", type, "_", weights_method, "_stat_summary.csv"), row.names = FALSE)
+    write.csv(all_bal_stats, paste0(home_dir, "/balance/", type, "/", exposure, "_", type,
+                                    "_", weights_method, "_stat_summary.csv"), row.names = FALSE)
 
     if (verbose){
       if (mice::is.mids(data) | inherits(data, "list")){
@@ -527,13 +536,6 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   }
 
 
-
-  # if (verbose & save.out){
-  #   message(paste0("All associations between exposure and covariates for ", form_name, " ", exposure, "-",
-  #                  outcome, " have been saved in the '", type, "/' folder"), "\n")
-  #   cat("\n")
-  # }
-
   # Finding all imbalanced variables
   unbalanced_covars <- all_bal_stats %>%
     filter(balanced == 0)
@@ -545,7 +547,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     cat(paste0("USER ALERT: Averaging across all imputed datasets for exposure ", exposure, " using the ",
                form_name, " formulas and ", weights_method, " :"), "\n")
 
-    cat(paste0("The median absolute value relation between exposure and confounder is ", round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
+    cat(paste0("The median absolute value relation between exposure and confounder is ",
+               round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
                round(min(all_bal_stats$avg_ba), 2), "-", round(max(all_bal_stats$avg_ba), 2), ")."), "\n")
 
     if (nrow(unbalanced_covars) > 0){
@@ -562,9 +565,10 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
   }
   else {
-    cat(paste0("USER ALERT: For exposure ", exposure, " using the ",form_name," formulas and ", weights_method, " :"), "\n")
+    cat(paste0("USER ALERT: For exposure ", exposure, " using the ", form_name," formulas and ", weights_method, " :"), "\n")
 
-    cat(paste0("The median absolute value relation between exposure and confounder is ", round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
+    cat(paste0("The median absolute value relation between exposure and confounder is ",
+               round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
                round(min(all_bal_stats$avg_ba), 2), "-", round(max(all_bal_stats$avg_ba), 2), ")."), "\n")
 
     if (nrow(unbalanced_covars) > 0){
