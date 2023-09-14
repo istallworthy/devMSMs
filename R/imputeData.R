@@ -26,7 +26,8 @@
 #' @param ti_confounders list of time invariant confounders
 #' @param read_in_from_file (optional) "yes" or "no" indicatorto read in weights that have been previously run and saved locally (default is "no")
 #' @return mice object of m imputed datasets
-#'
+
+
 imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, tv_confounders, ti_confounders, read_imps_from_file = "no") {
 
   if (missing(home_dir)){

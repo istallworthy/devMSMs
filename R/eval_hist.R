@@ -22,6 +22,7 @@
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
 #' @return none
+#' @export
 #' @examples
 #' test <- data.frame(ID = 1:50,
 #'                    A.1 = rnorm(n = 50),

@@ -34,6 +34,7 @@
 #'   TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @return list of svyglm model output
+#' @export
 #' @examples
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),

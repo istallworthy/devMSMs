@@ -49,6 +49,7 @@
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @return data frame of history comparisons
+#' @export
 #' @examples
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
