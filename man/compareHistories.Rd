@@ -82,6 +82,65 @@ histories (pooling for imputed data), before conducting contrast comparisons
 (pooling for imputed data), correcting for multiple comparisons, and then
 plotting results.
 }
+\examples{
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
+                    tv_confounders = c("B.1", "B.2", "B.3"),
+                    ti_confounders = "C",
+                    type = "full",
+                    save.out = FALSE)
+
+test <- data.frame(ID = 1:50,
+                   A.1 = rnorm(n = 50),
+                   A.2 = rnorm(n = 50),
+                   A.3 = rnorm(n = 50),
+                   B.1 = rnorm(n = 50),
+                   B.2 = rnorm(n = 50),
+                   B.3 = rnorm(n = 50),
+                   C = rnorm(n = 50),
+                   D.3 = rnorm(n = 50))
+test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+
+w <- createWeights(data = test,
+                   exposure = "A",
+                   outcome = "D.3",
+                   tv_confounders = c("B.1", "B.2", "B.3"),
+                   formulas = f,
+                   save.out = FALSE)
+
+m <- fitModel(data = test,
+              weights = w,
+              exposure = "A",
+              exposure_time_pts = c(1, 2, 3),
+              outcome = "D.3",
+              tv_confounders = c("B.1", "B.2", "B.3"),
+              model = "m0",
+              save.out = FALSE)
+
+r <- compareHistories(exposure = "A",
+                      exposure_time_pts = c(1, 2, 3),
+                      outcome = "D.3",
+                      tv_confounders = c("B.1", "B.2", "B.3"),
+                      model = m,
+                      save.out = FALSE)
+r <- compareHistories(exposure = "A",
+                      exposure_time_pts = c(1, 2, 3),
+                      outcome = "D.3",
+                      tv_confounders = c("B.1", "B.2", "B.3"),
+                      model = m,
+                      reference = "l-l-l",
+                      comparison = "h-h-h",
+                      save.out = FALSE)
+r <- compareHistories(exposure = "A",
+                      exposure_time_pts = c(1, 2, 3),
+                      outcome = "D.3",
+                      tv_confounders = c("B.1", "B.2", "B.3"),
+                      model = m,
+                      reference = "l-l-l",
+                      comparison = c("h-h-h", "h-l-l"),
+                      save.out = FALSE)
+}
 \seealso{
 {\code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}}, <url1>}
 

@@ -52,6 +52,41 @@ Creates IPTW balancing weights at each user-specified exposure time point
 using balancing formulas that relate exposure at each time point to all
 relevant confounders.
 }
+\examples{
+test <- data.frame(ID = 1:50,
+                   A.1 = rnorm(n = 50),
+                   A.2 = rnorm(n = 50),
+                   A.3 = rnorm(n = 50),
+                   B.1 = rnorm(n = 50),
+                   B.2 = rnorm(n = 50),
+                   B.3 = rnorm(n = 50),
+                   C = rnorm(n = 50),
+                   D.3 = rnorm(n = 50))
+test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
+                    tv_confounders = c("B.1", "B.2", "B.3"),
+                    ti_confounders = "C",
+                    type = "short",
+                    save.out = FALSE)
+
+w <- createWeights(data = test,
+                   exposure = "A",
+                   outcome = "D.3",
+                   tv_confounders = c("B.1", "B.2", "B.3"),
+                   formulas = f,
+                   save.out = FALSE)
+
+w <- createWeights(data = test,
+                   exposure = "A",
+                   outcome = "D.3",
+                   tv_confounders = c("B.1", "B.2", "B.3"),
+                   formulas = f,
+                   method = "cbps",
+                   save.out = FALSE)
+}
 \seealso{
 {\code{\link[WeightIt:WeightItMSM]{WeightIt::WeightItMSM()}}, <url1>}
 }

@@ -1,0 +1,250 @@
+---
+title: "examplePipeline for the devMSMs package"
+author: "Isa Stallworthy", "Meriah DeJoseph", "Noah Greiffer", "Emily Padrutt", "Daniel Berry"
+date: `r Sys.Date()`
+output: html_document
+---
+
+This code provides a framework for testing the putative causal effects of exposure histories on outcome(s) that measured at a single final time point. 
+The most updated version of this package can be found at: https://github.com/istallworthy/devMSMs 
+Example pipeline running the MSM functions in sequence based on causal questions centered on the Family Life Project (FLP). 
+
+### Load packages and workspace
+```{r}
+install.packages(c("devtools", "roxygen2", "rstudioapi"))
+
+library(devtools)
+library(roxygen2)
+# load_all()
+
+# devtools::document()
+
+#source function
+# source("") #string
+
+#load entire R session 
+load(paste0(dirname(rstudioapi::getSourceEditorContext()$path),'devMSMsRsession6.2.23.RData'))
+
+```
+
+### 1. Identify Exposure, Exposure Epochs, Exposure Histories, & Outcome and all other mandatory user inputs
+Please provide user input for the following fields to create an msm object that will be used in all future functions, format data, and create the required directories.
+```{r}
+object <- msmObject(
+  ##### Directories Information (required) ####
+  home_dir ="/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/",
+  data_file ="merged_tutorial_filtered.csv", #long dataset
+
+  #### Dataset Information (required) ####
+  #individual identifier 
+  ID = "S_ID", #string
+  
+  #time points of interest and name of time variable in long dataset
+  time_pts=c(6, 15, 24, 35, 58), #list of integers
+  time_var="TAge", #string
+  
+  #marker for missing data
+  missing="NA", #string or integer(s)
+  
+  #list out all variables that are time-varying; including ANY variables collected at only a single time point (with missin for other time points )
+  time_varying_variables= c("ALI_Le","SAAmylase", "EARS_TJo", "MDI",  "LESMnPos","LESMnNeg", "pcx_engaged", "pcx_CompTwo", "StrDif_Tot", "RHasSO", "WndNbrhood","EF_avg_perc", "IBRAttn","B18Raw", "HOMEETA1","InRatioCor", "ESETA1", "CORTB"),
+  
+  #list all continuous variables here; all others assumed ordinal for imputation; default is none 
+  continuous_variables=c("PmAge2", "ALI_Le", "SAAmylase", "EARS_Tjo", "IBRAttn", "LESMnPos", "LESMnNeg","B18Raw", "HOMEETA1", "pcx_engaged", "PmMrSt2",
+                         "pcx_CompTwo", "StrDif_Tot", "WndNbrhood", "InRatioCor", "EF_avg_perc", "gov_asst", "mat_health", "peri_health", "ESETA1", "CORTB"),
+  
+  #list any covariates that are factors here; default is none, or that all variables are continuous 
+  factor_covariates=c("state","TcBlac2", "PmBlac2", "RHasSO"), #list of characters
+  
+  #### Imputation Specification (optional) ####
+  #number of imputations for step 4; default is 5 
+  m=5, #integer
+  imp_method= "rf", #imputation method; pmm, midastouch, sample, cart , rf (default)
+  
+  #### Exposure Information (required) ####
+  #exposure of interest that potentially have causal effects on outcome and exposure time point(s) (corresponding to values in time_var)
+  exposure=c("ESETA1"), #list of strings
+  exposure_time_pts=c(6, 15, 24, 35, 58), #list of integers corresponding to values in time variable (long ormat)
+  
+  
+  #### Balancing Information (optional) ###
+  short_form_lag=1, #integer specifying the maximum time lag for time-varying covariates for the short formula 
+  weights_method="bart", #method for calculating weights: cbps, npcbps, bart, ps
+  balance_thresh=0.1, #correlation/SMD value above which covariates are not considered balanced with respect to exposure/outcome;used for finding potential confounds and asessing balance; 
+  
+  weights_percentile_cutoff=0.95, #percentile cutoff value for truncating weights to avoid heavy tails; default is 0.95; 
+  
+  
+  #### History Comparison Information (required & optional) ####
+  #developmental time periods (and their corresponding time points) that constitute regime/history units of interest --these should be meaningful periods of time that may collapse over exposure time points to result in more manageable combinations for exploring effects of exposure histories (e.g, chronically high exposure vs. exposure only in infancy) on outcomes
+  exposure_epochs=data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), #user-created names of epochs as a list of strings
+                             values=I(list(c(6,15), c(24,35), c(58)))), #time point(s) encompassed in each epoch that correspond to data as a list of numeric lists
+  
+  #inspect the following exposure levels denoting all possible histories of high ("h") and low ("l") exposure over the epochs
+  # apply(gtools::permutations(2, nrow(object$exposure_epochs), c("l", "h"), repeats.allowed=TRUE), 1, paste, sep="", collapse="-")
+  #select one of the above histories, or permutations of high ("h") and low ("l") levels of exposure (one level for each of the exposure epochs) as your reference event, or the history/sequence to which you would like to compare the other histories  
+  reference=NA, #optional: set a reference history of high ("h") and low ("l") levels of exposure separate by a "-"; the default is set to the history denoting low ("l") exposure at all time points; character string of "h" and "l" separated by a "-" 
+  comparisons=NA, #optional: set a comparison history from list above; the default is to include all non-reference histories as comparisons; character string of "h" and "l" separated by a "-" 
+  
+  hi_cutoff=.60, #required number value for quantile value constituting the threshold for "high" levels of a continuous exposure for outcome modeling;
+  lo_cutoff=.30, #required number value for quantile value constituting the threshold for "low" levels of a continuous exposure for outcome modeling; 
+  
+  mc_method="BH", #optional method for multiple comparison correction for linear hypothesis tests; default is Benjamini-Hochburg, options are "holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
+  
+  #### Outcome Information (required) ####
+  #outcome of interest and outcome time point
+  outcome=c("StrDif_Tot"), #list of strings 
+  outcome_time_pt=58, #integer value
+  
+  #### Inclusion Information (optional) ####
+  #list any time-varying variables that you wish to include concurrently in the balancing forms (over-riding default of excluding concurrent time-varying variables as they cannot be distinguished from colliders)
+  keep_concurrent_tv_vars=NULL, 
+  
+  #### Exclusion Information (optional) ####
+  #list any time-varying variables that may get imputed but should NOT be present in the final dataset after imputation because hey were not collected at certain times 
+  time_var_exclude=c("ALI_Le.6", "ALI_Le.15","ALI_Le.24","ALI_Le.58","SAAmylase.35", "SAAmylase.58","CORTB.58",
+                     "EARS_TJo.6","EARS_TJo.15", "EARS_TJo.58", "IBRAttn.35", "IBRAttn.58", "MDI.24", "MDI.35", "MDI.58", "LESMnPos.6", 
+                     "LESMnPos.15","LESMnPos.58", "LESMnNeg.6", "LESMnNeg.15", "LESMnNeg.58", "B18Raw.35","pcx_engaged.58", "pcx_CompTwo.6", "pcx_CompTwo.15",
+                     "pcx_CompTwo.24", "pcx_CompTwo.35","StrDif_Tot.6", "StrDif_Tot.15","StrDif_Tot.24", "WndNbrhood.15", "EF_avg_perc.6", "EF_avg_perc.15", 
+                     "EF_avg_perc.24"), #default set to none
+  
+  
+  ### Plotting Information (optional) ###
+  #optional list of alternative labels for exposures that will be used only for plotting
+  exposure_labels=c("Economic Strain"), 
+  #optional list of alternative labels for outcomes that will be used only for plotting
+  outcome_labels=c("Behavioral Problems"),
+  #optional string ("h" or "l") denoting which level of exposure at each exposure epoch to use when calculating dose (default is "h")
+  dose_level="l",
+  #the plots color data by dose (i.e., number of epochs) of high exposure; optional list of colors (equal to number of epochs +1) or brewer palette (see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) 
+  colors=(c("Dark2")) #list of string(s); default is 'Dark2'); c("blue4", "darkgreen", "darkgoldenrod", "red2")
+)
+
+
+#Creates the necessary directories in your home directory and formats your dataset --coudl embed this in msmObject
+data <- formatDataStruct(object) #this function is in the AssessDataStruct.R file
+```
+
+### 2. Identify and Visually Inspect all Measured Covariate Confounders at All Time Points
+When creating the msm object, the user must specify which covariates are time-varying ('time_varying covariates'). This code identifies all measured confounding variables and creates a dataset for imputation.
+```{r}
+#identifies the total number covariates available in the dataset and prints them for user inspection
+all_potential_covariates <- identifyCovariates(object, data) #this function is in the selectCovariates.R file
+```
+
+### 3. Impute Data to Account for Missingness
+Imputing data often takes a long time to run. 
+The parameter 'read_imps_from_file' will allow you to read imputed data in from local storage (="yes") so as not to have to re-run this imputation code or impute data (="no"; default). 
+```{r}
+#create final dataset for imputations with only the necessary variables
+data_to_impute <- dataToImpute(object, all_potential_covariates) #this function is in the selectCovariates.R file
+
+#creates imputed datasets and saves them out
+imputed_datasets <- imputeData(object, data_to_impute, read_imps_from_file="yes")
+```
+
+### 4. Create Full Balancing Formulas & Conduct Pre-Balance Checking
+To view the sample distribution across the histories used to conduct pre-balance checking (via the Jackson method), set "histories=1" in the preBalanceChecking function. 
+```{r}
+#creates wide/long datasets for each imputation
+wide_long_datasets <- formatForWeights(object, data, imputed_datasets)
+
+#creates formulas for each exposure-outcome pairing at each time point and saves and prints them for user inspection
+full_forms <- createForms(object, wide_long_datasets, all_potential_covariates)
+
+#does pre balance checking on full forms to examine initial imbalance; set histories=1 to avoid seeing histories used to weight bal stsats printed
+preBalanceChecking(object, wide_long_datasets, full_forms, histories=0)
+```
+
+### 5. Create Simplified Balancing Formulas & Iterate Through Weighting Methods to Identify Optimal Weighting Method
+The weights creation code takes a little while to run, especially for npcbps. The parameter, 'read_in_from_file', allows you to instead read in weights that have already been saved locally (="yes") or to create weights (="no"; default).
+To view the sample distribution across the histories used to conduct balance assessment (via the Jackson method), set "histories=1" in the asssessBalance function. 
+
+```{r}
+#create short forms with time-varying covariates only at t-1 for initial weights creation
+# short_forms <- createShortForms(object, full_forms, keep=list(exposure=c("ESETA1"),time=c(24), tv_covar=c("HOMEETA1.6")))
+short_forms <- createShortForms(object, full_forms, keep=NULL)
+
+#creates balancing weights using short forms
+#options:cbps, npcbps, bart, ps --currently allowing entropy balancing but not sure if we should given it has not been validated for longitudinal exposures 
+object$weights_method="npcbps" #iterate through different weights methods and re-run
+data_for_model_with_weights<- createWeights(object, wide_long_datasets, short_forms, read_in_from_file="yes") 
+
+#assesses balance using short forms
+balance_stats <- assessBalance(object, short_forms, data_for_model_with_weights, histories=0)
+```
+Once you have iterated through the different weighitng methods and assessed them to identify the best performing one, re-run the above code chunk with the best performing weights method before moving on. (note: we could automatically cycle through all weighting methods --would likely take a long time --and then have user select best one.)
+
+### 6. Assess Balnce with Full Balancing Formulas, Update Simplified Formulas, & Create Final Weights
+Run the following code after you have run the previous code with the best performing weights method. 
+This code evaluates which covariates are still imbalanced after averaging across imputed datasets and saves out this list.  
+To view the sample distribution across the histories used to conduct balance assessment (via the Jackson method), set "histories=1" in the asssessBalance function. 
+```{r}
+#assesses balance using full forms
+balance_stats_full <- assessBalance(object, full_forms, data_for_model_with_weights, histories=0)
+
+#update forms to include any imbalanced time-varying covariates >t-1
+new_short_forms <- updateForms(object, short_forms, data_for_model_with_weights, balance_stats_full)
+
+#re-create weights with updated forms
+data_for_model_with_weights<- createWeights(object, wide_long_datasets, new_short_forms, read_in_from_file="yes") 
+
+#final balance assessment using full forms
+balance_stats_final <- assessBalance(object, full_forms, data_for_model_with_weights, histories=0)
+```
+
+
+### 7. Truncate Final Weights to Reduce Heavy Right Tails
+This code cycles through 2 additional cutoff values adjacent to the one specified by the user in order to conduct recommended sensitivity analyses with subsequent models. 
+```{r}
+#truncate weights 
+data_for_model_with_weights_cutoff <- truncateWeights(object, data_for_model_with_weights)
+```
+
+
+### 8. Select and Fit a Marginal Outcome Model Relating Exposure to Outcome
+Please select a model from one of the following to provide the 'model' parameter below: 
+*m0:Baseline model regressing the outcome on the main effects of exposure at each exposure epoch (e.g., infancy, toddlerhood, childhood)
+*m1: Covariate model regressing the outcome on the main effects of exposure at each exposure epoch as well as any covariate confounders measured at baseline that remained imbalanced after weighting
+*m2: Interaction model regressing the outcome on the main effects of exposure at each exposure epoch as well as all interactions between exposure epochs (e.g., infancy:toddlerhood)
+*m3: Full model regressing the outcome on the main effects of exposure at each exposure epoch, all baseline covariate confounders that remained imbalanced, as well as all exposure epoch interactions (default).
+```{r}
+#code to fit baseline, covariates, or interaction weighted models to determine which is best fitting
+all_models <- fitModel(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m1")
+
+#this will NOT be in the workflow ---is just for us to compare
+# all_models_uw <- fitModel_uw(object, data_for_model_with_weights_cutoff, balance_stats_final, model="m1")
+```
+
+
+### 9. Estimate, Compare, & Plot Counterfactual Predicted Outcome Values as a Function of Exposure History
+Because we use a continuous approach to modeling exposures, the user has the option to specify cutoffs for values of the exposures that will be considered high ("hi_cutoff") and low ("lo_cutoff") in the msm object. 
+The user also has the option to specify a reference history ("reference") and an optional comparison history ("comparisons") on which to base comparisons, and which multiple comparison correction method ('method') to implement. 
+
+Plots display outcome on the x-axis and exposure history on the y-axis, colored by dose (0-n(length of epochs)).The user has the option to provide more formal labels for the exposure(s) ('exposure_labels') and outcome ('outcome_labels') in the msm object to be used for plotting.  
+
+```{r}
+#conducts linear hypothesis testing using the best-fitting model for each exposure-outcome pairing
+# object$reference="l-l-l"
+# object$comparisons=c("h-h-h")
+history_estimates <- compareHistories(object, data_for_model_with_weights_cutoff, all_models)
+
+#this will NOT be in the workflow --just for us to compare
+# history_estimates <- compareHistories(object, data_for_model_with_weights_cutoff, all_models_uw)
+
+#plots predicted value 
+plotResults(object, history_estimates)
+```
+
+
+
+References --need to complete this list
+```{r}
+print(citation("survey"))
+print(citation("WeightIt"))
+print(citation("mice"))
+print(citation("cobalt"))
+print(citation("marginaleffects"))
+
+```
+

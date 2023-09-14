@@ -8,11 +8,29 @@ output: html_document
 
 Recommended workflow for using the devMSMs package with longitudinal data.
 
+### Getting started
+```{r}
+
+#install devtools
+install.packages("devtools")
+library(devtools)
+
+#get devMSMs from github
+install_github("istallworthy/devMSMs")
+library(devMSMs)
+
+```
+
+
 ### Core inputs
 ```{r}
 
+# Github: https://github.com/istallworthy/devMSMs
+
 library(devtools)
 library(roxygen2)
+load_all()
+
 
 home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing' #no / after
 
@@ -49,10 +67,10 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 
 ### Testing data
 ```{r}
-data_orig <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", header = TRUE)
-
-data_orig <- data_orig %>%
-  select(-c(contains(":")))
+# data_orig <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", header = TRUE)
+# 
+# data_orig <- data_orig %>%
+#   select(-c(contains(":")))
 
 #example mids imputed data
 # saveRDS(imputed_data, file = file.path(home_dir, "imputed_data.rds"))
@@ -64,8 +82,8 @@ data_mids <- readRDS(paste0(home_dir, "/imputed_data.rds"))
 data_df <- data_mids[[1]]
 data_df <- data_df %>% select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx"))))
 
-data <- data_df
-data <- data_mids
+data <- data_df #single df
+data <- data_mids #'imputed' data
 ```
 
 
@@ -119,10 +137,6 @@ data <- lapply(files, function(file) {
 })
 
 
-
-#testing
-data <- data_wide
-data <- imputed_data
 ```
 
 
@@ -151,8 +165,8 @@ comparison <- "h-h-h" #single
 comparison <- c("h-h-h", "h-h-l") #multiple
 
 #all inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, 
-            epochs, hi_lo_cut, reference, comparison, verbose = TRUE, save.out = TRUE)
+inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, #required input
+            epochs, hi_lo_cut, reference, comparison, verbose = TRUE, save.out = TRUE) #optional input
 
 #minimum inputs
 inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders)
@@ -161,7 +175,6 @@ inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders
 
 
 ### Pre-balance checking
-
 #### Create full formulas
 ```{r}
 
@@ -190,7 +203,6 @@ full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, 
 ```{r}
 
 #optional balance threshold specification
-rm(balance_thresh) #don't specify 
 balance_thresh <- 0.1 
 balance_thresh <- c(0.05, 0.1) 
 
@@ -213,7 +225,6 @@ prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, o
 
 
 ### Determine optimal weighting method
-
 #### Create short formulas
 ```{r}
 
@@ -324,12 +335,10 @@ weights <- weights.super
 balance_stats.super <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
                                      balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
-
 ```
 
 
 ### Re-specify weights using optimal weighting method
-
 #### Assess balance using full formulas
 ```{r}
 
@@ -425,7 +434,6 @@ trim_weights.s2 <- trimWeights(home_dir, exposure, outcome, weights, quantile,
 ```
 
 
-
 ### Final balance assessment
 ```{r}
 
@@ -462,7 +470,6 @@ final_balance_stats.s2 <- assessBalance(home_dir, data, exposure, exposure_time_
 
 
 ### Fit marginal structural model & summarize results
-
 #### Fit marginal structural model
 ```{r}
 
