@@ -64,6 +64,95 @@ exposure and confounders at each exposure time point according to the
 guidelines from Jackson, 2016 on how to assess balance for time-varying
 exposures.
 }
+\examples{
+
+test <- data.frame(ID = 1:50,
+                   A.1 = rnorm(n = 50),
+                   A.2 = rnorm(n = 50),
+                   A.3 = rnorm(n = 50),
+                   B.1 = rnorm(n = 50),
+                   B.2 = rnorm(n = 50),
+                   B.3 = rnorm(n = 50),
+                   C = rnorm(n = 50),
+                   D.3 = rnorm(n = 50))
+test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
+                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                    ti_confounders = "C",
+                    type = "short",
+                    save.out = FALSE)
+
+#Prebalance
+b <- assessBalance(data = test,
+                   exposure = "A",
+                   exposure_time_pts = c(1, 2, 3),
+                   outcome = "D.3",
+                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                   type = "prebalance",
+                   formulas = f,
+                   save.out = FALSE)
+b <- assessBalance(data = test,
+                   exposure = "A",
+                   exposure_time_pts = c(1, 2, 3),
+                   outcome = "D.3",
+                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                   type = "prebalance",
+                   formulas = f,
+                   balance_thresh = 0.2,
+                   save.out = FALSE)
+b <- assessBalance(data = test,
+                   exposure = "A",
+                   exposure_time_pts = c(1, 2, 3),
+                   outcome = "D.3",
+                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                   type = "prebalance",
+                   formulas = f,
+                   balance_thresh = c(0.1, 0.2),
+                   imp_conf = "B.1",
+                   save.out = FALSE)
+
+# Weighted
+w <- createWeights(data = test,
+                   exposure = "A",
+                   outcome = "D.3",
+                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                   formulas = f,
+                   save.out = FALSE)
+
+b <- assessBalance(data = test,
+                   exposure = "A",
+                   exposure_time_pts = c(1, 2, 3),
+                   outcome = "D.3",
+                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                   type = "weighted",
+                   weights = w,
+                   formulas = f,
+                   save.out = FALSE)
+b <- assessBalance(data = test,
+                   exposure = "A",
+                   exposure_time_pts = c(1, 2, 3),
+                   outcome = "D.3",
+                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                   type = "weighted",
+                   weights = w,
+                   formulas = f,
+                   balance_thresh = 0.2,
+                   save.out = FALSE)
+b <- assessBalance(data = test,
+                   exposure = "A",
+                   exposure_time_pts = c(1, 2, 3),
+                   outcome = "D.3",
+                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                   type = "weighted",
+                   weights = w,
+                   formulas = f,
+                   balance_thresh = c(0.1, 0.2),
+                   imp_conf = "B.1",
+                   save.out = FALSE)
+}
 \seealso{
 {\link{cobalt} package, <url1>}
 

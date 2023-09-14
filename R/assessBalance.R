@@ -47,8 +47,8 @@
 #' @param verbose (optiona) TRUE or FALSE indicator for user output (default is TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
 #' @returns a list data frame of balance statistics
-#' @examples
 #' @export
+#' @examples
 #'
 #' test <- data.frame(ID = 1:50,
 #'                    A.1 = rnorm(n = 50),
