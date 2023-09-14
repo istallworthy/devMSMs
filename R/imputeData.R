@@ -109,7 +109,7 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
     # Conducts imputations using parallelized execution cycling through m
     imputed_datasets <- foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
       cat("### Started iteration", i, "\n")
-      miceout <- mice::mice(data_to_impute_full, m = 1, method = imp_method, maxit = 0,
+      miceout <- mice::mice(data_to_impute, m = 1, method = imp_method, maxit = 0,
                             print = F)
       cat("### Completed iteration", i, "\n")
       miceout
