@@ -65,22 +65,22 @@ test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.nume
 
 h <- eval_hist(data = test,
                exposure = "A",
-               tv_confounders = c("B.1", "B.2", "B.3"),
+               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                time_pts = c(1, 2, 3))
 h <- eval_hist(data = test,
                exposure = "A",
-               tv_confounders = c("B.1", "B.2", "B.3"),
+               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                time_pts = c(1, 2, 3),
                epochs = data.frame(epochs = c("Infancy", "Toddlerhood"),
                                    values = I(list(c(1, 2), c(3)))))
 h <- eval_hist(data = test,
                exposure = "A",
-               tv_confounders = c("B.1", "B.2", "B.3"),
+               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                time_pts = c(1, 2, 3),
                hi_lo_cut = c(0.6, 0.3))
 h <- eval_hist(data = test,
                exposure = "A",
-               tv_confounders = c("B.1", "B.2", "B.3"),
+               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                time_pts = c(1, 2, 3),
                hi_lo_cut = c(0.6, 0.3),
                ref = "l-l-l",

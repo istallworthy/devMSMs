@@ -16,6 +16,67 @@
 #' @return none
 #' @export
 #'
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "full",
+#'                     save.out = FALSE)
+#'
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' b <- assessBalance(data = test,
+#'                    exposure = "A",
+#'                    exposure_time_pts = c(1, 2, 3),
+#'                    outcome = "D.3",
+#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                    type = "weighted",
+#'                    weights = w,
+#'                    formulas = f,
+#'                    save.out = FALSE)
+#'
+#' p <- make_love_plot(folder = "prebalance/",
+#'                     exposure = "A",
+#'                     exposure_time_pt = 1,
+#'                     exposure_type = "continuous",
+#'                     form_name = "form_name",
+#'                     balance_stats = b,
+#'                     data_type = "single",
+#'                     balance_thresh = 0.1,
+#'                     imp_conf = NULL,
+#'                     weights_method = w[[1]]$method,
+#'                     save.out = FALSE,
+#'                     verbose = TRUE)
+#' p <- make_love_plot(folder = "weighted/",
+#'                     exposure = "A",
+#'                     exposure_time_pt = 2,
+#'                     exposure_type = "continuous",
+#'                     form_name = "form_name",
+#'                     balance_stats = b,
+#'                     data_type = "single",
+#'                     balance_thresh = c(0.05, 0.1),
+#'                     imp_conf = "A.2",
+#'                     weights_method = w[[1]]$method,
+#'                     save.out = FALSE,
+#'                     verbose = TRUE)
+
 
 make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, balance_stats, data_type, balance_thresh, weights_method, imp_conf, verbose, save.out) {
 
