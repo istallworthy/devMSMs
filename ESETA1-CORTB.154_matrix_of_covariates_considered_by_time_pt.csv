@@ -1,9 +1,0 @@
-"","AMYB","B18Raw","BioDadInHH2","caregiv_health","CCTHrs","Chaos_HomEnv","Chaos_Unstable","CORTB","CTSETA1","DrnkFreq","ESETA1","gov_assist","HOMEETA1","HomeOwnd","IBRAfct","IBRApro","IBRAttn","IBRIrit","IBRReac","InRatioCor","KFASTScr","LESMnNeg","LESMnPos","pcx_CompTwo","pcx_engaged","pcx_neg","pcx_pos","pcx_sensitive","PEmply","peri_health","PmBlac2","PmEd2","PmMrSt2","QSSOverallMe","RHasSO","RHealth","RMomAgeU","SEmply","SmokTotl","state","StrDif_CP","StrDif_ES","StrDif_HY","StrDif_PP","StrDif_PR","StrDif_Tot","SurpPreg","SWghtLB","TcBlac2","WndNbrhood","NumVars"
-"15",1,1,1,1,1,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,1,1,1,1,1,1,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,44
-"154",1,NA,1,1,NA,NA,NA,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,1,1,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,33
-"24",1,1,1,1,1,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,1,1,1,1,41
-"35",NA,NA,1,1,1,1,1,NA,1,1,1,1,1,1,NA,NA,NA,NA,NA,1,1,1,1,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,41
-"58",NA,1,1,1,1,1,1,NA,1,1,1,1,1,1,NA,NA,NA,NA,NA,1,1,NA,NA,1,NA,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,37
-"6",1,1,1,1,1,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,NA,1,1,1,1,39
-"90",NA,1,1,1,NA,1,1,NA,1,1,1,1,1,1,NA,NA,NA,NA,NA,1,1,NA,NA,NA,NA,NA,NA,NA,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,35
-"NumTimePts",4,5,7,7,5,3,3,4,7,7,7,7,7,7,3,3,3,3,3,7,7,2,2,1,4,4,4,4,7,7,7,7,7,5,7,7,7,7,7,7,5,5,5,5,5,5,7,7,7,7,270
