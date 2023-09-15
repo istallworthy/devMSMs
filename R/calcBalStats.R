@@ -138,7 +138,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     lagged_time_pts <- exposure_time_pts[exposure_time_pts<exposure_time_pt]
 
     # GETS COVARIATES FROM FORM FOR ASSESSING BALANCE
-    full_form <- formulas[[names(formulas)[grepl(paste0("form_", exposure, "-", outcome, "-", exposure_time_pt), names(formulas))]]]
+    full_form <- formulas[[names(formulas)[grepl(paste0("form_", exposure, "-", outcome, "-", exposure_time_pt),
+                                                 names(formulas))]]]
     covars <- paste(deparse(full_form[[3]], width.cutoff = 500), collapse = "") # gets covariates
     covar_time <- sapply(strsplit(unlist(strsplit(as.character(covars), "\\+")), "\\."), "[", 2)
     covars <- as.character(unlist(strsplit(covars, "\\+")))
@@ -162,7 +163,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       }
 
       # Weighted balance checking
-      if (weighted) {
+      else if (weighted) {
         if (exposure_type == "continuous") {
           bal_stats <- cobalt::col_w_cov(temp[, c(covars)], temp[, paste0(exposure, ".",
                                                                           exposure_time_pt)], std = TRUE, # finding cor
@@ -290,9 +291,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
             # standardizing balance statistics after weighting by history
             bal_stats <- bal_stats %>%
-              dplyr::mutate(std_bal_stats = weighted_bal_stats / (sapply(seq(ncol(data[, covars])), function(x) {
-                sd(as.numeric(data[, covars][, x]), na.rm = TRUE) # unweighted covar sd
-              }) * sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
+              dplyr::mutate(std_bal_stats = weighted_bal_stats /
+                              (sapply(seq(ncol(data[, covars])), function(x) {
+                                sd(as.numeric(data[, covars][, x]), na.rm = TRUE) }) *# unweighted covar sd
+                                 sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
 
             bal_stats <- bal_stats %>%
               dplyr::select(contains(c("std")))
@@ -316,7 +318,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # standardizing balance statistics after finding weighted balance stats
 
             bal_stats <- bal_stats %>%
-              dplyr::mutate(std_bal_stats = weighted_bal_stats/sapply(seq(ncol(data[,covars])), function(x){
+              dplyr::mutate(std_bal_stats = weighted_bal_stats/sapply(seq(ncol(data[, covars])), function(x){
                 sqrt(mean( #dividing by pool SD estimate (unadjusted)
                   var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 1, covars[x]])), #treated var
                   var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 0, covars[x]]))))})) #untreated var
@@ -464,11 +466,11 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     if (verbose){
       cat("\n")
       if (data_type == "imputed"){
-      cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, ", imputation ", k, ", using ",
-                 weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
+        cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, ", imputation ", k, ", using ",
+                   weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
 
-      cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure, ", imputation ", k,
-                 " have been saved in the 'balance/", folder, "' folder"), "\n")
+        cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure, ", imputation ", k,
+                   " have been saved in the 'balance/", folder, "' folder"), "\n")
       }
       else{
         cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, "using ",
