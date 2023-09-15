@@ -282,7 +282,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
       forms_csv <- c(forms_csv, paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
 
       # Assigns the form to forms list
-      forms[[paste(type, "_form_", exposure, "-", outcome, "-", time, sep = "")]] <- f
+      forms[[paste(type, "_form", "-", time, sep = "")]] <- f
     }
 
     if(save.out){
