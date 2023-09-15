@@ -108,9 +108,7 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.", call. = FALSE)
   }
 
-  if (!"ID" %in% colnames(data)){
-    stop("Please provide a wide dataset with the subject identifier column as ID.", call. = FALSE)
-  }
+
 
   ID <- "ID"
   time_invar_covars <- ti_confounders
@@ -125,6 +123,9 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
     data <- data[[1]]
   }
 
+  if (!"ID" %in% colnames(data)){
+    stop("Please provide a wide dataset with the subject identifier column as ID.", call. = FALSE)
+  }
 
   # long format to wide
   if("WAVE" %in% colnames(data)){
