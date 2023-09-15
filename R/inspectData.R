@@ -137,7 +137,7 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
   }
 
 
-  if(!inherits(data, data.frame)){
+  if(!inherits(data, "data.frame")){
     warning(paste0("Your data is a ", class(data), ". Convert to data frame before running devMSMs."),
             call. = FALSE)
   }
@@ -147,8 +147,16 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
                                    "numeric"), "continuous", "binary")
 
   # Data type
-  cat("Please inspect the following table of data types to ensure they are correct for each variable:")
-  print(str(data))
+  cat("The following variables are designated as numeric:", "\n")
+  print(paste(colnames(data)[sapply(data, class) == "numeric"], sep = ",", collapse = ", "))
+
+  cat("The following variables are designated as factors:", "\n")
+  print(paste(colnames(data)[sapply(data, class) == "factor"], sep = ",", collapse = ", "))
+
+  oth <- data.frame(variable = names(sapply(data, class)) [!sapply(data, class) %in% c("numeric", "factor")],
+                    type = sapply(data, class) [!sapply(data, class) %in% c("numeric", "factor")])
+  cat(knitr::kable(oth, caption = "Other variable types",
+                   format = 'pipe'), sep = "\n")
 
 
   # Exposure summary
