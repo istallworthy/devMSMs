@@ -253,7 +253,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
         bal_stats <- lapply(seq_len(m), function(k) {
           d <- as.data.frame(mice::complete(data, k))
-          if (which(is.na(d)) > 0){
+          if (length(which(is.na(d))) > 0){
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                  call. = FALSE)
           }
@@ -274,7 +274,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
         bal_stats <- lapply(seq_len(m), function(k) {
           d <- data[[k]]
-          if (which(is.na(d)) > 0){
+          if (length(which(is.na(d))) > 0){
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                  call. = FALSE)
           }
@@ -340,7 +340,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
       }
-      if (which(is.na(data)) > 0){
+      if (length(which(is.na(data))) > 0){
         stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
              call. = FALSE)
       }
@@ -377,7 +377,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
         bal_stats <- lapply(seq_len(m), function(k) {
           d <- as.data.frame(mice::complete(data, k))
-          if (which(is.na(d)) > 0){
+          if (length(which(is.na(d))) > 0){
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                  call. = FALSE)
           }
@@ -397,7 +397,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         m = length(data)
         bal_stats <- lapply(seq_len(m), function(k) {
           d <- data[[k]]
-          if (which(is.na(d)) > 0){
+          if (length(which(is.na(d))) > 0){
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                  call. = FALSE)
           }
