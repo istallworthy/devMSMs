@@ -146,7 +146,8 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
   else {
 
     # List of formulas for each time point
-    form <- formulas[grepl(paste("form_", exposure, "-", outcome, sep = ""), names(formulas))]
+    # form <- formulas[grepl(paste("form_", exposure, "-", outcome, sep = ""), names(formulas))]
+    form <- formulas
     form <- unname(form)
 
     # Helper function to calculate weights
@@ -168,6 +169,10 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       weights <- lapply(seq_len(data$m), function(i) {
         d <- as.data.frame(mice::complete(data, i))
 
+        if (length(which(is.na(d))) > 0){
+          stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
+               call. = FALSE)
+        }
         if (sum(duplicated(d$"ID")) > 0){
           stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
@@ -217,6 +222,10 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       weights <- lapply(seq_len(length(data)), function(i) {
         d <- data[[i]]
 
+        if (length(which(is.na(d))) > 0){
+          stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
+               call. = FALSE)
+        }
         if (sum(duplicated(d$"ID")) > 0){
           stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
@@ -269,6 +278,10 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
       if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
       }
+      if (length(which(is.na(data))) > 0){
+        stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
+             call. = FALSE)
+      }
 
       # Creating weights
       weights <-  lapply(1, function(i) {
@@ -279,7 +292,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
 
       if (verbose){
         message(paste0("USER ALERT: for the ", weights_method, " weighting method, the median weight value is ",
-                       round(median(data$weights), 2) , " (SD= ", round(sd(data$weights), 2), "; range= ",
+                       round(median(data$weights), 2) , " (SD = ", round(sd(data$weights), 2), "; range = ",
                        round(min(data$weights), 2), "-", round(max(data$weights), 2), ")."), "\n")
         cat('\n')
       }

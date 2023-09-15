@@ -85,11 +85,7 @@ data_mids <- readRDS(paste0(home_dir, "/imputed_data.rds"))
 
 #MD data
 data <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv")
-factor_confounders = c("state","TcBlac2", "PmBlac2")
-
-data[, factor_confounders] <- lapply(data[, factor_confounders], as.factor)
-numeric_vars <- colnames(data)[!colnames(data) %in% c(factor_confounders, "ID")]
-data[, numeric_vars] <- lapply(data[, numeric_vars], as.numeric)
+data <- as.data.frame(data)
 
 library(dplyr)
 data_df <- data_mids[[1]]
@@ -100,49 +96,51 @@ data <- data_mids #'imputed' data
 ```
 
 
-### Preliminary steps (optional)
-#### If you have wide data ....
+### STEP P: Preliminary Steps (optional --all helper functions)
+#### P2. For long data with wrong variable names
 ```{r}
 #### P2. Data Formatting
 #optional function to format long data data
 data_long <- formatLongData(home_dir, data_orig, exposure, exposure_time_pts, outcome, tv_confounders, 
-                            time_var = "TAge", 
-                            id_var = "S_ID", 
-                            missing = NA, 
-                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO"))
+                            time_var = "TAge", #list original time variable here if it's not "WAVE"
+                            id_var = "S_ID", #list original id variable here if it's not "ID"
+                            missing = NA, #list missing value here
+                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO")) #list factor variables here
+```
 
-  
-
+#### For formatted long data that needs to be made wide
+```{r}
 #format data from long to wide
 v <- sapply(strsplit(tv_confounders, "\\."), "[",1)
 v <- v[!duplicated(v)]
 data_wide <- stats::reshape(data = data_long, 
-                            idvar = "ID", 
+                            idvar = "ID", #list ID variable
                             v.names = v, 
-                            timevar = "WAVE", 
-                            times = c(6, 15, 24, 35, 58), 
+                            timevar = "WAVE", # list time variable
+                            times = c(6, 15, 24, 35, 58), # exhaustive list of all time points in data 
                             direction = "wide")
 data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 
+```
 
-
-
+#### For formatted wide data that needs imputing
+```{r}
 #### P5 Optional Imputation
-
 #impute wide data to account for missingness
-data_wide = data_wide[, !colnames(data_wide) %in% c("RHasSO.6","RHasSO.15", "RHasSO.24")]
+# data_wide = data_wide[, !colnames(data_wide) %in% c("RHasSO.6","RHasSO.15", "RHasSO.24")]
 m <- 1
 method <- "pmm"; #pmm, midastouch, sample, cart , rf (default)
 imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, tv_confounders, ti_confounders, 
                            para_proc = TRUE, read_imps_from_file = "no")
 
 data = complete(imputed_data, 1)
+```
 
-
+#### For imputed datasets that are saved locally as .csv files
+```{r}
 #read in imputed csv files to list
-
 # List imputed files
-folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/imputations/"
+folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/imputations/" #change this to match your local folder
 files <- list.files(folder, full.names = TRUE, pattern = "\\.csv")
 # Read and process imputed datasets as list
 data <- lapply(files, function(file) {
@@ -150,11 +148,10 @@ data <- lapply(files, function(file) {
   imp_data
 })
 
-
 ```
 
 
-### Preliminary recommended data inspection
+### STEP 0: Preliminary Recommended Data Inspection
 ```{r}
 #### P3, P4 Optional Inputs and Inspecting Data
 set.seed(1234)
@@ -200,9 +197,11 @@ concur_conf = "B18Raw.15"
 
 #optional custom formulas
 custom <- NULL
-#note: below is an example of just one of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimicks the output of createFormulas. <--Run that to see what it looks like.
-custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr +  mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
-names(custom) <-c("full_form_ESETA1-EF_avg_perc.58-6")
+#note: below is an example of just one of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run that to see what it looks like.
+custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr + ...
+                                     mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth +...
+                                     RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
+names(custom) <-c("full_form-6")
 custom <- full_formulas
 
 
@@ -254,8 +253,10 @@ keep_conf  <-  NULL
 keep_conf <- "InRatioCor.6"
 
 #optional custom formulas
-custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr +  mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
-names(custom) <-c("short_form_ESETA1-EF_avg_perc.58-6")
+custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr + ...
+                                     mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth +...
+                                     RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
+names(custom) <-c("full_form-6")
 custom <- short_formulas
 custom <- NULL
 
@@ -327,7 +328,7 @@ weights <- weights.cbps
 
 #all inputs
 balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
-                                  balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
+                                    balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 #minimum inputs
 balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights)
@@ -335,7 +336,7 @@ balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts,
 
 weights <- weights.ps 
 balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
-                                    balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
+                                  balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 weights <- weights.glm 
 balance_stats.glm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
@@ -387,7 +388,7 @@ balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outc
 
 #optional custom formulas
 custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr +  mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
-names(custom) <-c("update_form_ESETA1-EF_avg_perc.58-6")
+names(custom) <-c("full_form-6")
 custom <- updated_formulas
 custom <- NULL
 
@@ -438,8 +439,8 @@ trim_weights <- trimWeights(home_dir, exposure, outcome, weights,
 
 #minimum inputs
 trim_weights <- trimWeights(home_dir, exposure, outcome, weights)
-                            
-                            
+
+
 #sensitivity tests   
 quantile <- 0.92 #optional quantile of weights above which weights are trimmed (default is 0.95)
 trim_weights.s1 <- trimWeights(home_dir, exposure, outcome, weights, quantile, 
@@ -473,7 +474,7 @@ final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts
 
 #minimum input
 final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights)
-                                     
+
 
 #sensitivity tests
 weights <- trim_weights.s1
@@ -507,7 +508,7 @@ covariates = NULL
 
 #optional specification of epochs
 epochs <- data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), 
-                             values=I(list(c(6,15), c(24,35), c(58)))) 
+                     values=I(list(c(6,15), c(24,35), c(58)))) 
 
 
 weights <- trim_weights
@@ -538,7 +539,7 @@ models.s2 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outc
 
 #optional specification of epochs; only specify this if you did in model fitting (5a) --must be identical
 epochs <- data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"), 
-                             values=I(list(c(6,15), c(24,35), c(58)))) 
+                     values=I(list(c(6,15), c(24,35), c(58)))) 
 
 #optional list of quantiles specifying high and low cutoff values for continuous exposures; 
 hi_lo_cut <- c(0.6, 0.3) #default are median split
@@ -554,7 +555,7 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 
 #optional multiple comparion method
 mc_comp_method<- "bonferroni" # default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
-  
+
 #optional specification of dose level (high or low) for dose count
 dose_level <- "h" #(default is "h")
 

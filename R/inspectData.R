@@ -121,10 +121,7 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
 
   else if (inherits(data, "list")) { #just inspects frist imputed dataset
     data <- data[[1]]
-  }
 
-  if (!"ID" %in% colnames(data)){
-    stop("Please provide a wide dataset with the subject identifier column as ID.", call. = FALSE)
   }
 
   # long format to wide
@@ -139,8 +136,19 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
     data <- data_wide
   }
 
+
+  if(!inherits(data, data.frame)){
+    warning(paste0("Your data is a ", class(data), ". Convert to data frame before running devMSMs."),
+            call. = FALSE)
+  }
+
+
   exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])],
                                    "numeric"), "continuous", "binary")
+
+  # Data type
+  cat("Please inspect the following table of data types to ensure they are correct for each variable:")
+  print(str(data))
 
 
   # Exposure summary
