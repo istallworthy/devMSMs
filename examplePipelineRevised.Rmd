@@ -88,7 +88,7 @@ data <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/
 data <- as.data.frame(data)
 
 library(dplyr)
-data_df <- data_mids[[1]]
+data_df <- complete(data_mids, 1)
 data_df <- data_df %>% dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx"))))
 
 data <- data_df #single df
