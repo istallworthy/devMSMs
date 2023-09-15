@@ -140,7 +140,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     # GETS COVARIATES FROM FORM FOR ASSESSING BALANCE
     # full_form <- formulas[[names(formulas)[grepl(paste0("-", exposure_time_pt),
     #                                              names(formulas))]]]
-    full_form <- formulas[[names(formulas)[as.numeric(sapply(strsplit(names(formulas), "-"), "[",2)) == exposure_time_pt]]]
+    full_form <- formulas[[names(formulas)[as.numeric(sapply(strsplit(names(formulas), "-"), "[", 2)) == exposure_time_pt]]]
 
     covars <- paste(deparse(full_form[[3]], width.cutoff = 500), collapse = "") # gets covariates
     covar_time <- sapply(strsplit(unlist(strsplit(as.character(covars), "\\+")), "\\."), "[", 2)
