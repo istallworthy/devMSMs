@@ -83,6 +83,14 @@ data_mids <- readRDS(paste0(home_dir, "/imputed_data.rds"))
 #example path to imputed data
 # data_path <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/imputations/"
 
+#MD data
+data <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv")
+factor_confounders = c("state","TcBlac2", "PmBlac2")
+
+data[, factor_confounders] <- lapply(data[, factor_confounders], as.factor)
+numeric_vars <- colnames(data)[!colnames(data) %in% c(factor_confounders, "ID")]
+data[, numeric_vars] <- lapply(data[, numeric_vars], as.numeric)
+
 library(dplyr)
 data_df <- data_mids[[1]]
 data_df <- data_df %>% dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx"))))
@@ -126,7 +134,7 @@ data_wide = data_wide[, !colnames(data_wide) %in% c("RHasSO.6","RHasSO.15", "RHa
 m <- 1
 method <- "pmm"; #pmm, midastouch, sample, cart , rf (default)
 imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, tv_confounders, ti_confounders, 
-                           para_proc = FALSE, read_imps_from_file = "no")
+                           para_proc = TRUE, read_imps_from_file = "no")
 
 data = complete(imputed_data, 1)
 
