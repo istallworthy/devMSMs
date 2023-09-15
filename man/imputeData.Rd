@@ -13,6 +13,7 @@ imputeData(
   outcome,
   tv_confounders,
   ti_confounders,
+  para_proc = TRUE,
   read_imps_from_file = "no"
 )
 }
@@ -32,6 +33,8 @@ imputeData(
 \item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
 
 \item{ti_confounders}{list of time invariant confounders}
+
+\item{para_proc}{(optional) TRUE/FALSE whether to do parallel processing using multiple cores to speed up process (default = TRUE)}
 
 \item{read_in_from_file}{(optional) "yes" or "no" indicatorto read in weights that have been previously run and saved locally (default is "no")}
 }
