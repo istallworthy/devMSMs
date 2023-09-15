@@ -74,8 +74,7 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 ```{r}
 data_orig <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", header = TRUE)
 # 
-# data_orig <- data_orig %>%
-#   select(-c(contains(":")))
+data_orig <- data_orig %>%   select(-c(contains(":")))
 
 #example mids imputed data
 # saveRDS(imputed_data, file = file.path(home_dir, "imputed_data.rds"))
@@ -113,7 +112,7 @@ data_wide <- stats::reshape(data = data_long,
                             idvar = "ID", 
                             v.names = v, 
                             timevar = "WAVE", 
-                            times = c(6,15,24,35,58), 
+                            times = c(6, 15, 24, 35, 58), 
                             direction = "wide")
 data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 
