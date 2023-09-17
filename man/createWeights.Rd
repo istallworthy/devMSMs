@@ -12,6 +12,7 @@ createWeights(
   tv_confounders,
   formulas,
   method = "cbps",
+  SL.library = NA,
   read_in_from_file = "no",
   verbose = TRUE,
   save.out = TRUE

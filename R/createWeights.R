@@ -11,8 +11,8 @@
 #' @importFrom WeightIt weightitMSM
 #' @seealso {[WeightIt::WeightItMSM()], <url1>}
 #' @param home_dir path to home directory
-#' @param data data in wide format as: a data frame, list of imputed
-#'   data frames, or mids object
+#' @param data data in wide format as: a data frame, list of imputed data
+#'   frames, or mids object
 #' @param exposure name of exposure variable
 #' @param outcome name of outcome variable with ".timepoint" suffix
 #' @param tv_confounders list of time-varying confounders with ".timepoint"
@@ -21,11 +21,14 @@
 #'   createFormulas()
 #' @param method (optional) character string of WeightItMSM() balancing method
 #'   abbreviation (default is Covariate Balancing Propensity Score "cbps")
+#' @param SL.library required for superLearner weighting method; see
+#'   SuperLearner::listWrappers() for options
 #' @param read_in_from_file (optional) "yes" or "no" indicator to read in
 #'   weights that have been previously run and saved locally (default is "no")
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
-#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and
+#'   intermediary output locally (default is TRUE)
 #' @return list of IPTW balancing weights
 #' @export
 #' @examples
@@ -64,7 +67,8 @@
 #'                    save.out = FALSE)
 
 
-createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps", read_in_from_file = "no", verbose = TRUE, save.out = TRUE) {
+createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps",
+                          SL.library = NA, read_in_from_file = "no", verbose = TRUE, save.out = TRUE) {
 
   if (save.out) {
     if (missing(home_dir)) {
@@ -133,13 +137,15 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
 
   if (read_in_from_file == "yes") {
     tryCatch({
-      weights <- readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_", weights_method, "_fit.rds"))
+      weights <- readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_",
+                                weights_method, "_fit.rds"))
 
       if (verbose){
         message("Reading in balancing weights from the local folder.")
       }
     }, error = function(x) {
-      stop("These weights have not previously been saved locally. Please re-run with read_in_from_file='no'", call. = FALSE)
+      stop("These weights have not previously been saved locally. Please re-run with read_in_from_file='no'",
+           call. = FALSE)
     })
     weights
   }
@@ -151,15 +157,29 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
     form <- unname(form)
 
     # Helper function to calculate weights
-    calculate_weights <- function(data, form, weights_method) {
-      fit <- weightitMSM(form,
-                         data = data,
-                         method = weights_method,
-                         stabilize = TRUE,
-                         density = "dt_2", #do we want this?
-                         use.kernel = TRUE,
-                         include.obj = TRUE,
-                         over = FALSE)
+    calculate_weights <- function(data, form, weights_method, SL.library) {
+
+      if(weights_method == "super"){
+        fit <- weightitMSM(form,
+                           data = data,
+                           method = weights_method,
+                           stabilize = TRUE,
+                           density = "dt_2", #do we want this?
+                           use.kernel = TRUE,
+                           include.obj = TRUE,
+                           SL.library = SL.library,
+                           over = FALSE)
+      }
+      else{
+        fit <- weightitMSM(form,
+                           data = data,
+                           method = weights_method,
+                           stabilize = TRUE,
+                           density = "dt_2", #do we want this?
+                           use.kernel = TRUE,
+                           include.obj = TRUE,
+                           over = FALSE)
+      }
       fit
     }
 
@@ -177,7 +197,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
           stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
 
-        fit <- calculate_weights(d, form, weights_method)
+        fit <- calculate_weights(d, form, weights_method, SL.library)
 
         d$weights <- fit$weights
 
@@ -230,7 +250,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
           stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
 
-        fit <- calculate_weights(d, form, weights_method)
+        fit <- calculate_weights(d, form, weights_method, SL.library)
 
         d$weights <- fit$weights
 
@@ -285,7 +305,7 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
 
       # Creating weights
       weights <-  lapply(1, function(i) {
-        calculate_weights(data, form, weights_method)
+        calculate_weights(data, form, weights_method, SL.library)
       })
 
       data$weights <- weights[[1]]$weights

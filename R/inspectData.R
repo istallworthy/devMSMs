@@ -146,58 +146,6 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
   exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])],
                                    "numeric"), "continuous", "binary")
 
-  # Data type
-  cat("The following variables are designated as numeric:", "\n")
-  print(paste(colnames(data)[sapply(data, class) == "numeric"], sep = ",", collapse = ", "))
-
-  cat("The following variables are designated as factors:", "\n")
-  print(paste(colnames(data)[sapply(data, class) == "factor"], sep = ",", collapse = ", "))
-
-  oth <- data.frame(variable = names(sapply(data, class)) [!sapply(data, class) %in% c("numeric", "factor")],
-                    type = sapply(data, class) [!sapply(data, class) %in% c("numeric", "factor")])
-  cat(knitr::kable(oth, caption = "Other variable types",
-                   format = 'pipe'), sep = "\n")
-
-
-  # Exposure summary
-  exposure_summary <- data %>%
-    dplyr:: select(colnames(data)[grepl(exposure, colnames(data))])
-  exposure_summary <- psych::describe(exposure_summary, fast = TRUE)
-
-
-  if (save.out){
-    knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'html') %>%
-      kableExtra::kable_styling() %>%
-      kableExtra::save_kable(file = file.path(home_dir, paste0("/", exposure, "_exposure_info.html")))
-    if(verbose){
-      cat(knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'pipe'), sep = "\n")
-      cat(paste0(exposure, " exposure descriptive statistics have now been saved in the home directory"), "\n")
-      cat("\n")
-    }
-  }
-
-
-  # Outcome summary
-  outcome_summary <- data %>%
-    dplyr:: select(contains(sapply(strsplit(outcome, "\\."), "[", 1)))
-  outcome_summary <- psych::describe(outcome_summary, fast = TRUE)
-
-  if(save.out){
-    knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
-                                                   sapply(strsplit(outcome, "\\."), "[", 1), " Information"), format = 'html') %>%
-      kableExtra::kable_styling() %>%
-      kableExtra::save_kable(file = file.path(home_dir, paste0("/", sapply(strsplit(outcome, "\\."), "[", 1), "_outcome_info.html")))
-
-    if (verbose){
-      cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
-                                                         sapply(strsplit(outcome, "\\."), "[", 1), " Information"),
-                       format = 'pipe'), sep = "\n")
-
-      cat(paste0(sapply(strsplit(outcome, "\\."), "[", 1), " outcome descriptive statistics have now been saved in the home directory"), "\n")
-    }
-  }
-
-
 
   # Confounder summary
   potential_covariates <- colnames(data)[!(colnames(data) %in% c(ID))]
@@ -238,7 +186,7 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
 
   for (l in seq_len(nrow(test))) {
     z = c(sapply(strsplit(all_potential_covariates[grepl(paste0(".", rownames(test)[l]),
-                                                        all_potential_covariates)], "\\."), "[", 1), time_invar_covars)
+                                                         all_potential_covariates)], "\\."), "[", 1), time_invar_covars)
     z = z[!duplicated(z)]
     test[l, z ] <- 1
   }
@@ -255,16 +203,37 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
 
     if(verbose){
       print(glue::glue("See the home directory for a table and matrix displaying all covariates confounders considered at each exposure time point for {exposure} and {outcome}."), "\n")
-      cat("\n")
 
       #-2 to exclude ID and WAVE
-      print(glue::glue("USER ALERT: Below are the {as.character(length(all_potential_covariates) - 2)} variables spanning {unique_vars - 2} unique domains that will be treated as confounding variables for the relation between {exposure} and {outcome}."), "\n",
-              "Please inspect this list carefully. It should include all time-varying covariates, time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.", "\n")
-      cat("\n")
+      print(glue::glue("USER ALERT: Below are the {as.character(length(all_potential_covariates) - 2)} variables spanning {unique_vars - 2} unique domains that will be treated as confounding variables for the relation between {exposure} and {outcome}."),
+            "Please inspect this list carefully. It should include all time-varying covariates, time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.", "\n")
       print(all_potential_covariates[!(all_potential_covariates %in% c(ID))])
     }
   }
 
+
+  # Data type
+  cat("\n")
+  cat("The following variables are designated as numeric:", "\n")
+  print(paste(colnames(data)[sapply(data, class) == "numeric"], sep = ",", collapse = ", "))
+  cat("\n")
+
+  cat("The following variables are designated as factors:", "\n")
+  print(paste(colnames(data)[sapply(data, class) == "factor"], sep = ",", collapse = ", "))
+  cat("\n")
+
+  oth <- data.frame(variable = names(sapply(data, class)) [!sapply(data, class) %in% c("numeric", "factor")],
+                    type = sapply(data, class) [!sapply(data, class) %in% c("numeric", "factor")])
+  if(nrow(oth) > 0 ){
+    cat(knitr::kable(oth, caption = "Other variable types",
+                     format = 'pipe'), sep = "\n")
+    cat("\n")
+  }
+
+  if(sum(sapply(data, is.character)) > 0){
+    warning(paste0(paste(names(data)[sapply(data, is.character)], sep = ", ", collapse = ", "),
+                   " are of class character.", " The package cannot accept character variables."), call. = FALSE)
+  }
   #covariate correlations
   covariates_to_include <- all_potential_covariates
 
@@ -298,6 +267,26 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
   }
 
 
+  # Exposure summary
+  exposure_summary <- data %>%
+    dplyr:: select(colnames(data)[grepl(exposure, colnames(data))])
+  exposure_summary <- psych::describe(exposure_summary, fast = TRUE)
+
+
+  if (save.out){
+    knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"),
+                 format = 'html') %>%
+      kableExtra::kable_styling() %>%
+      kableExtra::save_kable(file = file.path(home_dir, paste0("/", exposure, "_exposure_info.html")))
+    if(verbose){
+      cat(knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"),
+                       format = 'pipe'), sep = "\n")
+      cat(paste0(exposure, " exposure descriptive statistics have now been saved in the home directory"), "\n")
+      cat("\n")
+    }
+  }
+
+
   # Exposure history summary
   if( is.null(epochs)){ #making epochs time pts if not specified by user
     epochs <- data.frame(epochs = as.character(time_pts),
@@ -315,4 +304,26 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
 
   eval_hist(data = data2, exposure, tv_confounders, epochs,
             exposure_time_pts, hi_lo_cut, ref = reference, comps = comparison, verbose)
+
+
+
+  # Outcome summary
+  outcome_summary <- data[, grepl(sapply(strsplit(outcome, "\\."),
+                                         "[", 1), colnames(data))]
+  outcome_summary <- psych::describe(outcome_summary, fast = TRUE)
+
+  if(save.out){
+    knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
+                                                   sapply(strsplit(outcome, "\\."), "[", 1), " Information"), format = 'html') %>%
+      kableExtra::kable_styling() %>%
+      kableExtra::save_kable(file = file.path(home_dir, paste0("/", sapply(strsplit(outcome, "\\."), "[", 1), "_outcome_info.html")))
+
+    if (verbose){
+      cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ",
+                                                         sapply(strsplit(outcome, "\\."), "[", 1), " Information"),
+                       format = 'pipe'), sep = "\n")
+
+      cat(paste0(sapply(strsplit(outcome, "\\."), "[", 1), " outcome descriptive statistics have now been saved in the home directory"), "\n")
+    }
+  }
 }
