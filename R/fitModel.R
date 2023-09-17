@@ -9,8 +9,8 @@
 #' @seealso {[survey::svyglm()] for more on family/link specifications, <url1>}
 #' @seealso {[createWeights()], <url1>}
 #' @param home_dir path to home directory
-#' @param data data in wide format as: a data frame, list of imputed
-#'   data frames, or mids object
+#' @param data data in wide format as: a data frame, list of imputed data
+#'   frames, or mids object
 #' @param weights list of IPTW weights output from createWeights()
 #' @param exposure name of exposure variable
 #' @param exposure_time_pts list of integers at which weights will be
@@ -32,7 +32,8 @@
 #' @param epochs (optional) data frame of exposure epoch labels and values
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
-#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and
+#'   intermediary output locally (default is TRUE)
 #' @return list of svyglm model output
 #' @export
 #' @examples
@@ -111,7 +112,9 @@
 #'               covariates = "C",
 #'               save.out = FALSE)
 
-fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model, family = gaussian, link = "identity", int_order = NA, covariates = NULL, epochs = NULL, verbose = TRUE, save.out = TRUE) {
+fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model,
+                     family = gaussian, link = "identity", int_order = NA, covariates = NULL, epochs = NULL,
+                     verbose = TRUE, save.out = TRUE) {
 
   if (save.out) {
     if (missing(home_dir)) {
@@ -333,8 +336,11 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     }
 
     if (save.out){
+      require(officer) #is there another way to do this? required for writing to word
+      require(flextable) # " "
       suppressWarnings(jtools::export_summs(fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
-                                            file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))))
+                                            file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model,
+                                                                                             "_table_mod_ev.docx"))))
     }
 
   }

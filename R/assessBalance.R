@@ -337,6 +337,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     }
 
     else if (is.data.frame(data)){
+      if(!inherits(data, "data.frame")){
+        stop("Please provide data as a data frame.", call. = FALSE)
+      }
       if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
       }
