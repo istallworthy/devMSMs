@@ -103,9 +103,8 @@ At this stage, data can be in long or wide format, complete or incomplete.
 
 data <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv") #change this to match your folder
 
-# data_orig <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", header = TRUE)
-# # 
-# data_orig <- data_orig %>%   select(-c(contains(":")))
+# data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", header = TRUE)
+# data_wide <- data_wide %>%  select(-c(contains(":")))
 
 ```
 
@@ -631,34 +630,37 @@ comparison <- "h-h-h" #single
 comparison <- c("h-h-h", "h-h-l") #multiple
 
 #optional multiple comparion method
-mc_comp_method<- "bonferroni" # default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
+mc_comp_method <- "bonferroni" # default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
 
 #optional specification of dose level (high or low) for dose count
 dose_level <- "h" #(default is "h")
 
 #optional exposure label for plotting
 exp_lab <- "Economic Strain" 
-rm(exp_lab)
 
 #optional outcome label for plotting 
 out_lab <- "Executive Functioning" 
 
 # optional list of colors (equal to number of epochs +1) or brewer palette for plotting
 colors <- c("Dark2")  #(see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) for plotting default is 'Dark2'); 
-colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2")
+colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2") #list number-of-epochs-+1 colors
 
 
+#required
 model <- models #output from fitModel
+
 
 #all inputs
 results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
                             epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
+
 
 #minimum inputs
 reference <- "l-l-l-l-l"
 comparison <- c("h-h-h-h-h", "l-h-h-h-h") #multiple
 results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model,
                             reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
+
 
 #sensitivity tests
 model <- models.s1 #output from fitModel

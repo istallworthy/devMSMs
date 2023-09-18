@@ -46,8 +46,10 @@
 #'   (default is variable name)
 #' @param colors (optional) character specifying Brewer palette or list of
 #'   colors (n(epochs)+1) for plotting (default is "Dark2" palette)
-#' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
-#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
+#'   TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and
+#'   intermediary output locally (default is TRUE)
 #' @return data frame of history comparisons
 #' @export
 #' @examples
@@ -110,7 +112,9 @@
 #'                       save.out = FALSE)
 
 
-compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, epochs = NULL, hi_lo_cut = NULL, reference = NA, comparison = NULL, mc_comp_method = "BH", dose_level = "h", exp_lab = NA, out_lab = NA, colors = "Dark2", verbose = TRUE, save.out = TRUE ) {
+compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, epochs = NULL, hi_lo_cut = NULL,
+                             reference = NA, comparison = NULL, mc_comp_method = "BH", dose_level = "h", exp_lab = NA, out_lab = NA,
+                             colors = "Dark2", verbose = TRUE, save.out = TRUE ) {
 
   if (save.out) {
     if (missing(home_dir)) {
@@ -191,16 +195,19 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     if(sum(is.na(epochs$values)) > 0){
       stop("Please provide one or a list of several values for each epoch.", call. = FALSE)
     }
-
-    terms  <- model[[1]]$formula
-    terms <- gsub(" ", "", as.character(unlist(strsplit(as.character(unlist(terms[3])), "\\+"))))
-    exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, paste, sep = "", collapse = ".")
-
-    if (sum(exp_epochs %in% terms) != length(exp_epochs)){
-      stop("Please only specify exposure epochs if you did so in the previous fitModel step, and if so, ensure the epochs are identical.",
-           call. = FALSE)
-    }
   }
+
+  terms  <- model[[1]]$formula
+  terms <- gsub(" ", "", as.character(unlist(strsplit(as.character(unlist(terms[3])), "\\+"))))
+  exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, paste, sep = "", collapse = ".")
+
+  if (sum(exp_epochs %in% terms) != length(exp_epochs)){
+    stop("The use of exposure epochs must be consistent across fitModel and compareHistories, given that the fitted model output is used as the basis of histories.
+         If you specified exposure epochs in fitModel, please specify the same ones at this step.
+         If you did not, please do not specify them at this step.",
+         call. = FALSE)
+  }
+
 
   # creates permutations of high ("h") and low ("l") levels of exposure for each exposure epoch
   exposure_levels <- apply(gtools::permutations(2, nrow(epochs), c("l", "h"),
@@ -221,7 +228,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
       var_name <- paste(exposure, eps[t], sep = ".")
 
       if(is.null(hi_lo_cut)){ #default is median split
-        epoch_info$low[t] <- as.numeric(median(data[, var_name] - 0.001, na.rm = T))
+        epoch_info$low[t] <- as.numeric(median(data[, var_name] - 0.001, na.rm = T)) #padded with -.001 bc otherwise breaks hypotheses()
         epoch_info$high[t] <- as.numeric(median(data[, var_name] + 0.001 , na.rm = T))
 
       } else if (!inherits(hi_lo_cut, "numeric")){
@@ -296,29 +303,34 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
   if (!is.na(reference)) {
     if (!inherits(reference, "character")){
-      stop("Please provide as a character a valid reference history made up of combinations of 'h' and 'l'", call. = FALSE)
+      stop("Please provide as a character a valid reference history made up of combinations of 'h' and 'l'",
+           call. = FALSE)
     }
     if (sum(exposure_levels %in% reference) == 0) {
       stop(paste0('If you wish to conduct custom comparisons, please select a valid reference history from the following list:
                   ',
                   paste(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), repeats.allowed = TRUE), 1,
-                              paste, sep = ",", collapse = "-"), sep = ", ", collapse = ", ")), call. = FALSE)
+                              paste, sep = ",", collapse = "-"), sep = ", ", collapse = ", ")),
+           call. = FALSE)
     }
     if (is.null(comparison)) {
       stop(paste0("If you wish to conduct custom comparisons, please specify at least one valid comparison history from the following list:
                   ",
                   paste0(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), repeats.allowed = TRUE), 1,
                                paste, sep = ",", collapse = "-"), sep = " ", collapse = " "),
-                  " otherwise, do not specify reference and comparison events to conduct all comparisons."), call. = FALSE)
+                  " otherwise, do not specify reference and comparison events to conduct all comparisons."),
+           call. = FALSE)
     }
     else if (reference %in% comparison) {
-      stop("If you wish to make a custom comparison, please provide unique reference and comparison events.", call. = FALSE)
+      stop("If you wish to make a custom comparison, please provide unique reference and comparison events.",
+           call. = FALSE)
     }
   }
 
   if (!is.null(comparison)) {
     if (!inherits(comparison, "character")){
-      stop("Please provide as a character a valid comparison history/histories made up of combinations of 'h' and 'l'", call. = FALSE)
+      stop("Please provide as a character a valid comparison history/histories made up of combinations of 'h' and 'l'",
+           call. = FALSE)
     }
     if (sum(exposure_levels %in% comparison) == 0) {
       stop(paste0('If you wish to specify comparison(s), please provide at least one comparison history from the following list ',
@@ -331,6 +343,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   else {
     comp_histories <- NULL
   }
+
   #conduct all pairwise comparisons if no ref/comparisons were specified by user
   if (is.na(reference) & is.null(comp_histories)){
     # Pairwise comparisons; don't need to use custom class
@@ -365,7 +378,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
     # If the user specified reference and comparison groups, subset pred_pool for inspection and plotting
     if (!is.na(reference) & !is.null(comp_histories)) {
-      preds_pool <- preds_pool %>% dplyr::filter(history %in% c(reference, comp_histories))
+      preds_pool <- preds_pool %>%
+        dplyr::filter(history %in% c(reference, comp_histories))
     }
 
 
@@ -414,14 +428,19 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
     #rounding term values
     comps_pool$term <- unlist(lapply(1:length(comps_pool$term), function(x){
-      x = comps_pool$term[x]
-      a = paste0("(", paste(round(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), "  "))), 3),
-                            collapse = ", ", sep = ", "), ")")
-      b = paste0("(", paste(round(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 2)), "  "))), 3),
-                            collapse = ", ", sep = ", "), ")")
+      x = as.character(comps_pool$term[x])
+      a = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))[
+        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
+        collapse = ", ", sep = ", "), ")")
+      b = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 2)), " "))[
+        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
+        collapse = ", ", sep = ", "), ")")
       new = paste(a, b, sep = " - ")
       new
     }))
+
+
+
 
     if (save.out){
       if(is.null(hi_lo_cut)){
@@ -517,7 +536,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
       x = comps$term[x]
       a = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))[
         !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
-                            collapse = ", ", sep = ", "), ")")
+        collapse = ", ", sep = ", "), ")")
       b = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 2)), " "))[
         !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
         collapse = ", ", sep = ", "), ")")

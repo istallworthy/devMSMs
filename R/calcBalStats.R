@@ -139,11 +139,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   #cycles through user-specified exposure time points
   for (z in seq_len(length(exposure_time_pts))){
     exposure_time_pt <- exposure_time_pts[z]
-    lagged_time_pts <- exposure_time_pts[exposure_time_pts<exposure_time_pt]
+    lagged_time_pts <- exposure_time_pts[exposure_time_pts < exposure_time_pt]
 
     # GETS COVARIATES FROM FORM FOR ASSESSING BALANCE
     full_form <- formulas[[names(formulas)[as.numeric(sapply(strsplit(names(formulas), "-"), "[", 2)) == exposure_time_pt]]]
-
     covars <- paste(deparse(full_form[[3]], width.cutoff = 500), collapse = "") # gets covariates
     covar_time <- sapply(strsplit(unlist(strsplit(as.character(covars), "\\+")), "\\."), "[", 2)
     covars <- as.character(unlist(strsplit(covars, "\\+")))
@@ -171,12 +170,12 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
         if (exposure_type == "continuous") {
           bal_stats <- cobalt::col_w_cov(temp[, c(covars)], temp[, paste0(exposure, ".",
                                                                           exposure_time_pt)], std = TRUE, # finding cor
-                                         weights = temp[, "weights"])
+                                         weights = temp[, "weights"]) #IPTW weights
         }
         else if (exposure_type == "binary") {
           bal_stats <- cobalt::col_w_smd(temp[, c(covars)], temp[, paste0(exposure, ".",
                                                                           exposure_time_pt)], std = TRUE, # finding smd
-                                         weights = temp[, "weights"])
+                                         weights = temp[, "weights"]) #IPTW weights
         }
       }
       bal_stats <- as.data.frame(bal_stats)
@@ -203,7 +202,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
         his <- as.character(unlist(his[1, ]))
 
         # get wide data variable names for exposures at each time in each history
-        exps_time <- apply(expand.grid(exposure, as.character(lagged_time_pts)), 1, paste, collapse = ".", sep = ".")
+        exps_time <- apply(expand.grid(exposure, as.character(lagged_time_pts)), 1,
+                           paste, collapse = ".", sep = ".")
 
         # initiate flag marking whether each individual falls into the given history at 0 (t(1)-1)
         data$flag <- 0
@@ -445,10 +445,12 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   if (verbose & save.out) {
     if (data_type == "imputed"){
-      cat(paste0("For each time point and imputation, ", gsub("/", "", folder), " summary plots for ", form_name, " formulas weighting method ",
+      cat(paste0("For each time point and imputation, ", gsub("/", "", folder), " summary plots for ",
+                 form_name, " formulas weighting method ",
                  weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
     }
-    else {cat(paste0(" For each time point, ", gsub("/", "", folder), " summary plots for ", form_name, " formulas and weighting method ",
+    else {cat(paste0(" For each time point, ", gsub("/", "", folder), " summary plots for ",
+                     form_name, " formulas and weighting method ",
                      weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
     }
   }
