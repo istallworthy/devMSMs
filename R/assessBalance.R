@@ -243,6 +243,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
   ### Getting balance statistics
   if (type == "prebalance"){
+
     if (verbose){
       message(paste0("USER ALERT: The following statistics display covariate imbalance at each exposure time point prior to weighting,
             using ", form_name, " formulas."), "\n")
@@ -257,10 +258,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
         bal_stats <- lapply(seq_len(m), function(k) {
           d <- as.data.frame(mice::complete(data, k))
+
           if (length(which(is.na(d))) > 0){
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                  call. = FALSE)
           }
+
           exposure_type <- ifelse(inherits(d[, paste0(exposure, '.',
                                                       exposure_time_pts[1])], "numeric"), "continuous", "binary")
 
@@ -278,10 +281,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
         bal_stats <- lapply(seq_len(m), function(k) {
           d <- data[[k]]
+
           if (length(which(is.na(d))) > 0){
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                  call. = FALSE)
           }
+
           exposure_type <- ifelse(inherits(d[, paste0(exposure, '.',
                                                       exposure_time_pts[1])], "numeric"), "continuous", "binary")
 
@@ -341,8 +346,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     }
 
     else if (is.data.frame(data)){
+
       if(!inherits(data, "data.frame")){
-        stop("Please provide data as a data frame.", call. = FALSE)
+        stop("Please provide data as a data frame, mids object, or list.", call. = FALSE)
       }
       if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
@@ -351,6 +357,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
              call. = FALSE)
       }
+
       exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"), "continuous", "binary")
 
       bal_stats <- calcBalStats(home_dir, data, formulas, exposure, exposure_time_pts, outcome,
@@ -387,6 +394,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
         bal_stats <- lapply(seq_len(m), function(k) {
           d <- as.data.frame(mice::complete(data, k))
+
           if (length(which(is.na(d))) > 0){
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                  call. = FALSE)
@@ -407,6 +415,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         m = length(data)
         bal_stats <- lapply(seq_len(m), function(k) {
           d <- data[[k]]
+
           if (length(which(is.na(d))) > 0){
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                  call. = FALSE)
@@ -469,7 +478,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
 
     if (is.data.frame(data)){
-      #error checking
+
       if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
       }
@@ -626,6 +635,11 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       stargazer(unbalanced_covars, type = "html", digits = 2, column.labels = colnames(unbalanced_covars), summary = FALSE, rownames = FALSE, header = FALSE,
                 out = paste0(home_dir, "/balance/", type, "/", exposure, "-", outcome, "_", type, "_", weights_method, "_all_covariates_imbalanced.html"))
       sink()
+    }
+  }
+  else{
+    if(verbose){
+      cat("There are no imbalanced covariates.")
     }
   }
 
