@@ -27,15 +27,45 @@
 #' @param outcome name of outcome variable with ".timepoint" suffix
 #' @param para_proc (optional) TRUE/FALSE whether to do parallel processing
 #'   using multiple cores to speed up process (default = TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and
+#'   intermediary output locally (default is TRUE)
 #' @param read_in_from_file (optional) "yes" or "no" indicatorto read in weights
 #'   that have been previously run and saved locally (default is "no")
 #' @return mice object of m imputed datasets
+#' @examples
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' test_miss <- missMethods::delete_MAR_1_to_x(as.data.frame(test), p = 0.20,
+#'                                             cols_mis = c("A.1", "B.2", "C"), cols_ctrl = c("B.1", "B.1", "B.1"), 3)
+#' test_i <- imputeData(data = test_miss,
+#'                      m = 3,
+#'                      method = "rf",
+#'                      exposure = "A",
+#'                      outcome = "D.3",
+#'                      para_proc = TRUE,
+#'                      read_imps_from_file = "no",
+#'                      save.out = FALSE)
 
 
-imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, para_proc = TRUE, read_imps_from_file = "no") {
+imputeData <- function(data, m = 5, method = "rf", home_dir = NA, exposure, outcome, para_proc = TRUE,
+                       read_imps_from_file = "no", save.out = TRUE) {
 
-  if (missing(home_dir)){
-    stop("Please supply a home directory.", call. = FALSE)
+  if (save.out | read_imps_from_file == "yes"){
+    if (missing(home_dir)){
+      stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if (!dir.exists(home_dir)) {
+      stop('Please provide a valid home directory.', call. = FALSE)
+    }
   }
   if (missing(data)){
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
@@ -48,9 +78,7 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
     stop("Please supply a single outcome.", call. = FALSE)
   }
 
-  if (!dir.exists(home_dir)) {
-    stop('Please provide a valid home directory.', call. = FALSE)
-  }
+
   if(!is.character(method)){
     stop("Please provide as a character a valid imputation method abbreviation.", call. = FALSE)
   }
@@ -58,9 +86,11 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
     stop("Please provide an integer value number of imputations.", call. = FALSE)
   }
 
-  imp_dir <- file.path(home_dir, "imputations")
-  if (!dir.exists(imp_dir)) {
-    dir.create(imp_dir)
+  if (save.out | read_imps_from_file == "yes"){
+    imp_dir <- file.path(home_dir, "imputations")
+    if (!dir.exists(imp_dir)) {
+      dir.create(imp_dir)
+    }
   }
 
 
@@ -116,19 +146,23 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
                                      print = F)
     }
 
-    saveRDS(imputed_datasets, glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))
+    if(save.out){
+      saveRDS(imputed_datasets, glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))
+    }
 
     # Print warnings
     cat("USER ALERT: Please view any logged events from the imputation below:", "\n")
     cat(knitr::kable(imputed_datasets$loggedEvents, caption = "Logged Events from mice", format = 'pipe'), sep = "\n")
     cat("\n")
 
-    # Save out individual imputed datasets
-    for (k in seq_len(m)) {
-      write.csv(mice::complete(imputed_datasets, k),
-                file = glue::glue("{home_dir}/imputations/{exposure}-{outcome}_imp{k}.csv"))
+    if(save.out){
+      # Save out individual imputed datasets
+      for (k in seq_len(m)) {
+        write.csv(mice::complete(imputed_datasets, k),
+                  file = glue::glue("{home_dir}/imputations/{exposure}-{outcome}_imp{k}.csv"))
+      }
+      cat("See the 'imputations/' folder for a .csv file of each imputed dataset and an .rds file of all imputed datasets", "\n")
     }
-    cat("See the 'imputations/' folder for a .csv file of each imputed dataset and an .rds file of all imputed datasets", "\n")
 
     imputed_datasets
   }

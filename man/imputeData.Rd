@@ -9,11 +9,12 @@ imputeData(
   data,
   m = 5,
   method = "rf",
-  home_dir,
+  home_dir = NA,
   exposure,
   outcome,
   para_proc = TRUE,
-  read_imps_from_file = "no"
+  read_imps_from_file = "no",
+  save.out = TRUE
 )
 }
 \arguments{
@@ -33,6 +34,9 @@ imputeData(
 \item{para_proc}{(optional) TRUE/FALSE whether to do parallel processing
 using multiple cores to speed up process (default = TRUE)}
 
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is TRUE)}
+
 \item{read_in_from_file}{(optional) "yes" or "no" indicatorto read in weights
 that have been previously run and saved locally (default is "no")}
 }
@@ -42,6 +46,29 @@ mice object of m imputed datasets
 \description{
 Imputes dataset so there is no missing at each time point using parallel
 processing to speed up
+}
+\examples{
+test <- data.frame(ID = 1:50,
+                   A.1 = rnorm(n = 50),
+                   A.2 = rnorm(n = 50),
+                   A.3 = rnorm(n = 50),
+                   B.1 = rnorm(n = 50),
+                   B.2 = rnorm(n = 50),
+                   B.3 = rnorm(n = 50),
+                   C = rnorm(n = 50),
+                   D.3 = rnorm(n = 50))
+test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+
+test_miss <- missMethods::delete_MAR_1_to_x(as.data.frame(test), p = 0.20,
+                                            cols_mis = c("A.1", "B.2", "C"), cols_ctrl = c("B.1", "B.1", "B.1"), 3)
+test_i <- imputeData(data = test_miss,
+                     m = 3,
+                     method = "rf",
+                     exposure = "A",
+                     outcome = "D.3",
+                     para_proc = TRUE,
+                     read_imps_from_file = "no",
+                     save.out = FALSE)
 }
 \seealso{
 {\code{\link[mice:mice]{mice::mice()}},

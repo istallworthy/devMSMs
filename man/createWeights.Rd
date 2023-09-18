@@ -87,6 +87,6 @@ w <- createWeights(data = test,
                    save.out = FALSE)
 }
 \seealso{
-{\code{\link[WeightIt:WeightItMSM]{WeightIt::WeightItMSM()}},
+{\code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}},
 \url{https://ngreifer.github.io/WeightIt/reference/weightitMSM.html}}
 }

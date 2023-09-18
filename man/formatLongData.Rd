@@ -14,7 +14,8 @@ formatLongData(
   time_var = NA,
   id_var = NA,
   missing = NA,
-  factor_confounders = NULL
+  factor_confounders = NULL,
+  save.out = TRUE
 )
 }
 \arguments{
@@ -40,10 +41,41 @@ suffix}
 
 \item{factor_confounders}{(optional) list of variable names that are factors
 (default is numeric)}
+
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is TRUE)}
 }
 \value{
 formatted long dataset
 }
 \description{
 Formats long data
+}
+\examples{
+test <- data.frame(ID = 1:50,
+                   A.1 = rnorm(n = 50),
+                   A.2 = rnorm(n = 50),
+                   A.3 = rnorm(n = 50),
+                   B.1 = rnorm(n = 50),
+                   B.2 = rnorm(n = 50),
+                   B.3 = rnorm(n = 50),
+                   C = rnorm(n = 50),
+                   D.3 = rnorm(n = 50))
+test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+
+test_long <- stats::reshape(data = test,
+                            idvar = "ID", #'list ID variable
+                            varying = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                            direction = "long")
+
+test_long_format <- formatLongData(data = test_long,
+                                   exposure = "A",
+                                   exposure_time_pts = c(1, 2, 3),
+                                   outcome = "D.3",
+                                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                                   time_var = "time",
+                                   id_var = NA,
+                                   missing = NA,
+                                   factor_confounders = "C",
+                                   save.out = FALSE)
 }

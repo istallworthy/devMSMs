@@ -14,15 +14,50 @@
 #' @param missing (optional) indicator for missing data in original dataset
 #' @param factor_confounders (optional) list of variable names that are factors
 #'   (default is numeric)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and
+#'   intermediary output locally (default is TRUE)
 #' @return formatted long dataset
 #' @export
 #'
 #' @examples
-formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, time_var = NA, id_var = NA, missing = NA,
-                           factor_confounders = NULL){
+#' test <- data.frame(ID = 1:50,
+#'                    A.1 = rnorm(n = 50),
+#'                    A.2 = rnorm(n = 50),
+#'                    A.3 = rnorm(n = 50),
+#'                    B.1 = rnorm(n = 50),
+#'                    B.2 = rnorm(n = 50),
+#'                    B.3 = rnorm(n = 50),
+#'                    C = rnorm(n = 50),
+#'                    D.3 = rnorm(n = 50))
+#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+#'
+#' test_long <- stats::reshape(data = test,
+#'                             idvar = "ID", #'list ID variable
+#'                             varying = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                             direction = "long")
+#'
+#' test_long_format <- formatLongData(data = test_long,
+#'                                    exposure = "A",
+#'                                    exposure_time_pts = c(1, 2, 3),
+#'                                    outcome = "D.3",
+#'                                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                                    time_var = "time",
+#'                                    id_var = NA,
+#'                                    missing = NA,
+#'                                    factor_confounders = "C",
+#'                                    save.out = FALSE)
 
-  if (missing(home_dir)){
-    stop("Please supply a home directory.", call. = FALSE)
+
+formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, time_var = NA, id_var = NA, missing = NA,
+                           factor_confounders = NULL, save.out = TRUE){
+
+  if(save.out){
+    if (missing(home_dir)){
+      stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if (!dir.exists(home_dir)) {
+      stop('Please provide a valid home directory.', call. = FALSE)
+    }
   }
   if (missing(data)){
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
@@ -44,9 +79,6 @@ formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome,
   time_varying_covariates <- tv_confounders
   options(readr.num_columns = 0)
 
-  if (!dir.exists(home_dir)) {
-    stop('Please provide a valid home directory.', call. = FALSE)
-  }
 
 
   # Reading and formatting LONG dataset
@@ -76,28 +108,33 @@ formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome,
 
   cat(knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure,
                                                       " Exposure Information"), format = 'pipe'), sep = "\n")
-  knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'html') %>%
-    kableExtra::kable_styling() %>%
-    kableExtra::save_kable(file = file.path(home_dir, paste0(exposure, "_exposure_info.html")))
 
-  cat(paste0(exposure, " exposure descriptive statistics have now been saved in the home directory"), "\n")
-  cat("\n")
+  if(save.out){
+    knitr::kable(exposure_summary, caption = paste0("Summary of ", exposure, " Exposure Information"), format = 'html') %>%
+      kableExtra::kable_styling() %>%
+      kableExtra::save_kable(file = file.path(home_dir, paste0(exposure, "_exposure_info.html")))
+
+    cat(paste0(exposure, " exposure descriptive statistics have now been saved in the home directory"), "\n")
+    cat("\n")
+  }
 
 
   # Outcome summary
-  outcome <- sapply(strsplit(outcome, "\\."), "[",1)
-  outcome_summary <- data %>%
-    dplyr::group_by(WAVE) %>%
-    dplyr::summarize_at(dplyr::vars(all_of(outcome)),
-                        list(mean = mean, sd = sd, min = min, max = max), na.rm = TRUE)
+  outcome_summary <- data[, !colnames(data) %in% "ID"]
+  outcome_summary <- outcome_summary %>% select(contains(sapply(strsplit(outcome, "\\."),
+                                                               "[", 1)))
+  outcome_summary <- psych::describe(outcome_summary, fast = TRUE)
 
-  cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ", outcome, " Information"), format = 'pipe'), sep = "\n")
+  cat(knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ", outcome, " Information"),
+                   format = 'pipe'), sep = "\n")
 
-  knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ", outcome, " Information"), format = 'html') %>%
-    kableExtra::kable_styling() %>%
-    kableExtra::save_kable(file = file.path(home_dir, paste0(outcome, "_outcome_info.html")))
+  if(save.out){
+    knitr::kable(outcome_summary, caption = paste0("Summary of Outcome ", outcome, " Information"), format = 'html') %>%
+      kableExtra::kable_styling() %>%
+      kableExtra::save_kable(file = file.path(home_dir, paste0(outcome, "_outcome_info.html")))
 
-  cat(paste0(outcome, " outcome descriptive statistics have now been saved in the home directory"), "\n")
+    cat(paste0(outcome, " outcome descriptive statistics have now been saved in the home directory"), "\n")
+  }
 
 
   data$ID <- as.factor(data$ID)

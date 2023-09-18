@@ -125,7 +125,8 @@ data_long <- formatLongData(home_dir, data_orig, exposure, exposure_time_pts, ou
                             time_var = "TAge", #list original time variable here if it's not "WAVE"
                             id_var = "S_ID", #list original id variable here if it's not "ID"
                             missing = NA, #list missing value here
-                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO")) #list factor variables here
+                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO"),
+                            save.out = TRUE) #list factor variables here
 
 ```
 
@@ -153,7 +154,8 @@ data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 m <- 1 #provide an imputation number
 method <- "pmm"; # provide an imputation method pmm, midastouch, sample, cart , rf (default)
 
-imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, para_proc = TRUE, read_imps_from_file = "no")
+imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, 
+                           para_proc = TRUE, read_imps_from_file = "no", save.out = TRUE)
 
 
 #OR, read in a saved mids object
@@ -499,6 +501,7 @@ final_weights <- createWeights(home_dir, data, exposure, outcome, formulas)
 ```
 
 #### 3d. Truncate weights
+##### Main
 ```{r}
 
 # optional quantile of weights above which weights are trimmed (default is 0.95)
@@ -514,6 +517,9 @@ trim_weights <- trimWeights(home_dir, exposure, outcome, weights,
 #minimum inputs
 trim_weights <- trimWeights(home_dir, exposure, outcome, weights)
 
+```
+##### Sensitvity analyses
+```{r}
 
 #sensitivity tests   
 quantile <- 0.92 #optional quantile of weights above which weights are trimmed (default is 0.95)
@@ -528,6 +534,7 @@ trim_weights.s2 <- trimWeights(home_dir, exposure, outcome, weights, quantile,
 
 
 ### STEP 4: Final Balance Assessment
+#### Main
 ```{r}
 
 #optional balance threshold specification
@@ -549,6 +556,9 @@ final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts
 #minimum input
 final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights)
 
+```
+#### Sensitvity analyses
+```{r}
 
 #sensitivity tests
 weights <- trim_weights.s1
@@ -566,6 +576,7 @@ final_balance_stats.s2 <- assessBalance(home_dir, data, exposure, exposure_time_
 
 ### STEP 5: Fit marginal structural model & summarize results
 #### 5a. Fit marginal structural model
+##### Main
 ```{r}
 
 #optional family/link information for glm
@@ -598,6 +609,9 @@ models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome
 model <- "m0"
 models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model)
 
+```
+##### Sensitvity analyses
+```{r}
 
 #sensitivity tests
 weights <- trim_weights.s1
@@ -611,6 +625,7 @@ models.s2 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outc
 ```
 
 #### 5b. Estimate, compare, & visualize histories
+##### Main
 ```{r}
 
 #optional specification of epochs; only specify this if you did in model fitting (5a) --must be identical
@@ -661,17 +676,21 @@ comparison <- c("h-h-h-h-h", "l-h-h-h-h") #multiple
 results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model,
                             reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
 
+```
+##### Sensitvity analyses
+```{r}
 
 #sensitivity tests
-model <- models.s1 #output from fitModel
+model <- models.s1 
 results.s1 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
                                epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
 
-model <- models.s2 #output from fitModel
+model <- models.s2 
 results.s2 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
                                epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
 
 ```
+
 
 ## Package citations :) 
 ```{r}

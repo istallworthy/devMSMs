@@ -37,7 +37,7 @@ created/assessed that correspond to time points when exposure wass measured}
 \item{tv_confounders}{list of time-varying confounders with ".timepoint"
 suffix}
 
-\item{type}{type of balance assessment 'prebalance' or 'weighted'}
+\item{type}{type of balance assessment; 'prebalance' or 'weighted'}
 
 \item{formulas}{list of balancing formulas at each time point output from
 createFormulas()}
@@ -46,7 +46,7 @@ createFormulas()}
 type 'weighted'}
 
 \item{balance_thresh}{(optional) one or two numbers between 0 and 1
-indicating a single balancingn threshold or thresholds for more and less
+indicating a single balancing threshold or thresholds for more and less
 important confounders, respectively (default = 0.1)}
 
 \item{imp_conf}{(optional) list of variable names reflecting important
@@ -59,7 +59,7 @@ TRUE)}
 intermediary output locally (default is TRUE)}
 }
 \value{
-a list data frame of balance statistics
+a data frame of balance statistics
 }
 \description{
 Draws on functions from the cobalt package to quantify the relations between
@@ -156,8 +156,9 @@ b <- assessBalance(data = test,
                    save.out = FALSE)
 }
 \seealso{
-{\link{cobalt} package, <url1>}
+{\link{cobalt} package,
+\url{https://cran.r-project.org/web/packages/cobalt/index.html}}
 
 {Jackson, 2016 for more on assessing balance for time-varying
-exposures, <url1>}
+exposures, \url{https://pubmed.ncbi.nlm.nih.gov/27479649/}}
 }
