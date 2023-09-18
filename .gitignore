@@ -6,3 +6,4 @@ docs
 .Rdata
 .httr-oauth
 .DS_Store
+!Archive
