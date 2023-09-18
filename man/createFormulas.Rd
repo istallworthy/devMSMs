@@ -55,7 +55,8 @@ always retain in formulas (default depends on type)}
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)}
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is TRUE)}
 }
 \value{
 list of balancing formulas at each exposure time point

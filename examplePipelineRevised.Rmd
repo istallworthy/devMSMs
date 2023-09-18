@@ -5,7 +5,6 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-
 Recommended workflow for using the devMSMs package with longitudinal data.
 
 Step-by-step guidance in the Supplement: 
@@ -155,8 +154,7 @@ data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 m <- 1 #provide an imputation number
 method <- "pmm"; # provide an imputation method pmm, midastouch, sample, cart , rf (default)
 
-imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, tv_confounders, ti_confounders, 
-                           para_proc = TRUE, read_imps_from_file = "no")
+imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, para_proc = TRUE, read_imps_from_file = "no")
 
 
 #OR, read in a saved mids object
@@ -164,7 +162,8 @@ imputed_data <- readRDS(paste0(home_dir, "/imputed_data.rds")) #place your .rds 
 
 data <- imputed_data
 
-#extract first imputed dataset for testing
+
+#optional: extract first imputed dataset for testing
 library(mice)
 data <- mice::complete(imputed_data, 1) #just for testing purposes
 # library(dplyr)

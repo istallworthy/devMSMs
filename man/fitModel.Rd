@@ -25,8 +25,8 @@ fitModel(
 \arguments{
 \item{home_dir}{path to home directory}
 
-\item{data}{data in wide format as: a data frame, list of imputed
-data frames, or mids object}
+\item{data}{data in wide format as: a data frame, list of imputed data
+frames, or mids object}
 
 \item{weights}{list of IPTW weights output from createWeights()}
 
@@ -63,7 +63,8 @@ required for covariate models ("m1", "m3")}
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)}
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is TRUE)}
 }
 \value{
 list of svyglm model output

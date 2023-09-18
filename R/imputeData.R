@@ -1,4 +1,5 @@
-#' Imputes dataset so there is no missing at each time point using parallel processing to speed up
+#' Imputes dataset so there is no missing at each time point using parallel
+#' processing to speed up
 #'
 #' @export
 #' @importFrom mice mice
@@ -15,21 +16,23 @@
 #' @importFrom purrr map_dfr
 #' @importFrom foreach getDoParWorkers
 #' @importFrom foreach getDoParName
-#' @seealso {[mice::mice()], <url1>}
+#' @seealso {[mice::mice()],
+#'   <https://cran.r-project.org/web/packages/mice/index.html>}
 #' @param data data in wide format
 #' @param m (optional) integer number of imputed datasets (default is 5)
-#' @param method (optional) character string of imputation method from mice() (default is random forest "rf")
+#' @param method (optional) character string of imputation method from mice()
+#'   (default is random forest "rf")
 #' @param home_dir path to home directory
 #' @param exposure name of exposure variable
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint" suffix
-#' @param ti_confounders list of time invariant confounders
-#' @param para_proc (optional) TRUE/FALSE whether to do parallel processing using multiple cores to speed up process (default = TRUE)
-#' @param read_in_from_file (optional) "yes" or "no" indicatorto read in weights that have been previously run and saved locally (default is "no")
+#' @param para_proc (optional) TRUE/FALSE whether to do parallel processing
+#'   using multiple cores to speed up process (default = TRUE)
+#' @param read_in_from_file (optional) "yes" or "no" indicatorto read in weights
+#'   that have been previously run and saved locally (default is "no")
 #' @return mice object of m imputed datasets
 
 
-imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, tv_confounders, ti_confounders, para_proc = TRUE, read_imps_from_file = "no") {
+imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, para_proc = TRUE, read_imps_from_file = "no") {
 
   if (missing(home_dir)){
     stop("Please supply a home directory.", call. = FALSE)
@@ -43,12 +46,6 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
   }
   if (missing(outcome)){
     stop("Please supply a single outcome.", call. = FALSE)
-  }
-  if (missing(tv_confounders)){
-    stop("Please supply a list of time-varying confounders.", call. = FALSE)
-  }
-  if (missing(ti_confounders)){
-    stop("Please supply a list of time invariant confounders.", call. = FALSE)
   }
 
   if (!dir.exists(home_dir)) {
@@ -65,6 +62,7 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
   if (!dir.exists(imp_dir)) {
     dir.create(imp_dir)
   }
+
 
   if (read_imps_from_file == "yes") {
     imputed_datasets <- list()
@@ -88,17 +86,8 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
       stop("Please provide a wide dataset with a single row per ID.", call. = FALSE)
     }
 
-    # library(mice)
-    # library(doParallel)
-    # library(doRNG)
-    # library(purrr)
-    # library(tibble)
-
     imp_method <- method
-    time_varying_covariates <- tv_confounders
-    time_invar <- ti_confounders
-    data_to_impute <- data
-    data_to_impute <- tibble(data_to_impute)
+    data_to_impute <- tibble::tibble(data)
 
     cat(glue::glue("Creating {m} imputed datasets using the {imp_method} imputation method in mice. This may take some time to run."))
     cat("\n")
@@ -109,22 +98,22 @@ imputeData <- function(data, m = 5, method = "rf", home_dir, exposure, outcome, 
       options(mc.cores = nCores)
       options(cores = nCores)
       doParallel::registerDoParallel(cores = nCores)
+
       cat("### Using", foreach::getDoParWorkers(), "cores\n")
       cat("### Using", foreach::getDoParName(), "as the backend\n")
 
       # Conducts imputations using parallelized execution cycling through m
       imputed_datasets <- foreach::foreach(i = seq_len(m), .combine = mice::ibind) %dorng% {
         cat("### Started iteration", i, "\n")
-        miceout <- mice::mice(data_to_impute, m = 1, method = imp_method, maxit = 0,
+        miceout <- mice::mice(data_to_impute, m = 1, method = imp_method, maxit = 0, #change maxit to default 5 after testing!!!
                               print = F)
         cat("### Completed iteration", i, "\n")
         miceout
       }
     }
     else{
-      imputed_datasets <- mice::mice(data_to_impute, m = m, method = imp_method, maxit = 0,
-                            print = F)
-
+      imputed_datasets <- mice::mice(data_to_impute, m = m, method = imp_method, maxit = 0, #change maxit to default 5 after testing!!!
+                                     print = F)
     }
 
     saveRDS(imputed_datasets, glue::glue("{home_dir}/imputations/{exposure}-{outcome}_all_imp.rds"))
