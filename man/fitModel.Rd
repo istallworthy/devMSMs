@@ -11,7 +11,6 @@ fitModel(
   exposure,
   exposure_time_pts,
   outcome,
-  tv_confounders,
   model,
   family = gaussian,
   link = "identity",
@@ -23,7 +22,7 @@ fitModel(
 )
 }
 \arguments{
-\item{home_dir}{path to home directory}
+\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
 
 \item{data}{data in wide format as: a data frame, list of imputed data
 frames, or mids object}
@@ -36,9 +35,6 @@ frames, or mids object}
 created/assessed that correspond to time points when exposure was measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
-
-\item{tv_confounders}{list of time-varying confounders with ".timepoint"
-suffix}
 
 \item{model}{character indicating one of the following outcome models:
 \itemize{
@@ -97,7 +93,6 @@ test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.nume
 w <- createWeights(data = test,
                    exposure = "A",
                    outcome = "D.3",
-                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                    formulas = f,
                    save.out = FALSE)
 
@@ -106,7 +101,6 @@ m <- fitModel(data = test,
               exposure = "A",
               exposure_time_pts = c(1, 2, 3),
               outcome = "D.3",
-              tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
               model = "m0",
               save.out = FALSE)
 m <- fitModel(data = test,
@@ -114,7 +108,6 @@ m <- fitModel(data = test,
               exposure = "A",
               exposure_time_pts = c(1, 2, 3),
               outcome = "D.3",
-              tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
               model = "m0",
               family = gaussian,
               link = "identity",
@@ -126,7 +119,6 @@ m <- fitModel(data = test,
               exposure = "A",
               exposure_time_pts = c(1, 2, 3),
               outcome = "D.3",
-              tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
               model = "m1",
               covariates = "C",
               save.out = FALSE)
@@ -135,7 +127,6 @@ m <- fitModel(data = test,
               exposure = "A",
               exposure_time_pts = c(1, 2, 3),
               outcome = "D.3",
-              tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
               model = "m2",
               int_order = 3,
               save.out = FALSE)
@@ -144,7 +135,6 @@ m <- fitModel(data = test,
               exposure = "A",
               exposure_time_pts = c(1, 2, 3),
               outcome = "D.3",
-              tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
               model = "m3",
               int_order = 3,
               covariates = "C",
@@ -153,6 +143,4 @@ m <- fitModel(data = test,
 \seealso{
 {\code{\link[survey:svyglm]{survey::svyglm()}} for more on family/link specifications,
 \url{https://www.rdocumentation.org/packages/survey/versions/4.2-1/topics/svyglm}}
-
-{\code{\link[=createWeights]{createWeights()}}, <url1>}
 }

@@ -14,10 +14,13 @@
 #' @importFrom mice pool
 #' @importFrom stats p.adjust
 #' @importFrom knitr kable
-#' @seealso {[marginaleffects::avg_predictions()], <url1>}
-#' @seealso {[marginaleffects::hypotheses()], <url1>}
-#' @seealso {[stats::p.adjust()], <url1>}
-#' @param home_dir path to home directory
+#' @seealso {[marginaleffects::avg_predictions()],
+#'   <https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf>}
+#' @seealso {[marginaleffects::hypotheses()],
+#'   <https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf>}
+#' @seealso {[stats::p.adjust()],
+#'   <https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust>}
+#' @param home_dir path to home directory (required if 'save.out' = TRUE)
 #' @param exposure name of exposure variable
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
@@ -75,7 +78,6 @@
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    formulas = f,
 #'                    save.out = FALSE)
 #'
@@ -84,7 +86,6 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m0",
 #'               save.out = FALSE)
 #'

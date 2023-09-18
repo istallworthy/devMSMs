@@ -8,8 +8,7 @@
 #' @importFrom dplyr mutate filter select
 #' @seealso {[survey::svyglm()] for more on family/link specifications,
 #'   <https://www.rdocumentation.org/packages/survey/versions/4.2-1/topics/svyglm>}
-#' @seealso {[createWeights()], <url1>}
-#' @param home_dir path to home directory
+#' @param home_dir path to home directory (required if 'save.out' = TRUE)
 #' @param data data in wide format as: a data frame, list of imputed data
 #'   frames, or mids object
 #' @param weights list of IPTW weights output from createWeights()
@@ -17,8 +16,6 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure was measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint"
-#'   suffix
 #' @param model character indicating one of the following outcome models:
 #'  * "m0" (exposure main effects)
 #'  * "m1" (exposure main effects & covariates)
@@ -60,7 +57,6 @@
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    formulas = f,
 #'                    save.out = FALSE)
 #'
@@ -69,7 +65,6 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m0",
 #'               save.out = FALSE)
 #' m <- fitModel(data = test,
@@ -77,7 +72,6 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m0",
 #'               family = gaussian,
 #'               link = "identity",
@@ -89,7 +83,6 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m1",
 #'               covariates = "C",
 #'               save.out = FALSE)
@@ -98,7 +91,6 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m2",
 #'               int_order = 3,
 #'               save.out = FALSE)
@@ -107,13 +99,12 @@
 #'               exposure = "A",
 #'               exposure_time_pts = c(1, 2, 3),
 #'               outcome = "D.3",
-#'               tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'               model = "m3",
 #'               int_order = 3,
 #'               covariates = "C",
 #'               save.out = FALSE)
 
-fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model,
+fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
                      family = gaussian, link = "identity", int_order = NA, covariates = NULL, epochs = NULL,
                      verbose = TRUE, save.out = TRUE) {
 
@@ -141,9 +132,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
   if (missing(exposure_time_pts)){
     stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
-  }
-  if (missing(tv_confounders)){
-    stop("Please supply a list of time-varying confounders.", call. = FALSE)
   }
   if (missing(model)){
     stop('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)

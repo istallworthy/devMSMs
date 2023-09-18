@@ -18,7 +18,8 @@
 #' @export
 #'
 #' @examples
-formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, time_var = NA, id_var = NA, missing = NA, factor_confounders = NULL){
+formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, time_var = NA, id_var = NA, missing = NA,
+                           factor_confounders = NULL){
 
   if (missing(home_dir)){
     stop("Please supply a home directory.", call. = FALSE)
@@ -103,7 +104,8 @@ formatLongData <- function(home_dir, data, exposure, exposure_time_pts, outcome,
 
   if(!is.null(factor_confounders)){
     if (sum(factor_confounders %in% colnames(data)) < length(factor_confounders)) {
-      stop('Please provide factor covariates that correspond to columns in your data when creating the msm object', call. = FALSE)
+      stop('Please provide factor covariates that correspond to columns in your data when creating the msm object',
+           call. = FALSE)
     }
     # Formatting factor covariates
     data[, factor_confounders] <- lapply(data[, factor_confounders], as.factor)
