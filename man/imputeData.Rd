@@ -2,7 +2,8 @@
 % Please edit documentation in R/imputeData.R
 \name{imputeData}
 \alias{imputeData}
-\title{Imputes dataset so there is no missing at each time point using parallel processing to speed up}
+\title{Imputes dataset so there is no missing at each time point using parallel
+processing to speed up}
 \usage{
 imputeData(
   data,
@@ -11,8 +12,6 @@ imputeData(
   home_dir,
   exposure,
   outcome,
-  tv_confounders,
-  ti_confounders,
   para_proc = TRUE,
   read_imps_from_file = "no"
 )
@@ -22,7 +21,8 @@ imputeData(
 
 \item{m}{(optional) integer number of imputed datasets (default is 5)}
 
-\item{method}{(optional) character string of imputation method from mice() (default is random forest "rf")}
+\item{method}{(optional) character string of imputation method from mice()
+(default is random forest "rf")}
 
 \item{home_dir}{path to home directory}
 
@@ -30,20 +30,20 @@ imputeData(
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
-\item{tv_confounders}{list of time-varying confounders with ".timepoint" suffix}
+\item{para_proc}{(optional) TRUE/FALSE whether to do parallel processing
+using multiple cores to speed up process (default = TRUE)}
 
-\item{ti_confounders}{list of time invariant confounders}
-
-\item{para_proc}{(optional) TRUE/FALSE whether to do parallel processing using multiple cores to speed up process (default = TRUE)}
-
-\item{read_in_from_file}{(optional) "yes" or "no" indicatorto read in weights that have been previously run and saved locally (default is "no")}
+\item{read_in_from_file}{(optional) "yes" or "no" indicatorto read in weights
+that have been previously run and saved locally (default is "no")}
 }
 \value{
 mice object of m imputed datasets
 }
 \description{
-Imputes dataset so there is no missing at each time point using parallel processing to speed up
+Imputes dataset so there is no missing at each time point using parallel
+processing to speed up
 }
 \seealso{
-{\code{\link[mice:mice]{mice::mice()}}, <url1>}
+{\code{\link[mice:mice]{mice::mice()}},
+\url{https://cran.r-project.org/web/packages/mice/index.html}}
 }

@@ -21,8 +21,8 @@ createWeights(
 \arguments{
 \item{home_dir}{path to home directory}
 
-\item{data}{data in wide format as: a data frame, list of imputed
-data frames, or mids object}
+\item{data}{data in wide format as: a data frame, list of imputed data
+frames, or mids object}
 
 \item{exposure}{name of exposure variable}
 
@@ -37,13 +37,17 @@ createFormulas()}
 \item{method}{(optional) character string of WeightItMSM() balancing method
 abbreviation (default is Covariate Balancing Propensity Score "cbps")}
 
+\item{SL.library}{required for superLearner weighting method; see
+SuperLearner::listWrappers() for options}
+
 \item{read_in_from_file}{(optional) "yes" or "no" indicator to read in
 weights that have been previously run and saved locally (default is "no")}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)}
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is TRUE)}
 }
 \value{
 list of IPTW balancing weights

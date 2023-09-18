@@ -20,7 +20,8 @@ calcBalStats(
 )
 }
 \arguments{
-\item{home_dir}{(optional) path to home directory (required if save.out = TRUE)}
+\item{home_dir}{(optional) path to home directory (required if save.out =
+TRUE)}
 
 \item{data}{data in wide format as: a data frame, path to folder of imputed
 .csv files, or mids object}
@@ -35,28 +36,31 @@ created/assessed that correspond to time points when exposure wass measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
-\item{balance_thresh}{(optional) one or two numbers between 0 and 1 indicating a single
-balancingn threshold or thresholds for more and less important confounders,
-respectively}
+\item{balance_thresh}{(optional) one or two numbers between 0 and 1
+indicating a single balancingn threshold or thresholds for more and less
+important confounders, respectively}
 
 \item{k}{(optional) imputation number}
 
 \item{weights}{(optional) list of IPTW weights output from createWeights}
 
-\item{imp_conf}{(optional) list of variable names reflecting important confounders (required if two balance thresholds are provided)}
+\item{imp_conf}{(optional) list of variable names reflecting important
+confounders (required if two balance thresholds are provided)}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is TRUE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
+TRUE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally}
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally}
 }
 \value{
 data frame of balance statistics
 }
 \description{
-Calculate weighted or unweighted standardized balance statistics for a given exposure time point,
-using all relevant confounders. Draws on Jackson, 2016 approaches to
-assessing balance for time-varying exposures by weighting statistics based on
-sample distribution in exposure histories.
+Calculate weighted or unweighted standardized balance statistics for a given
+exposure time point, using all relevant confounders. Draws on Jackson, 2016
+approaches to assessing balance for time-varying exposures by weighting
+statistics based on sample distribution in exposure histories.
 }
 \examples{
 test <- data.frame(ID = 1:50,
