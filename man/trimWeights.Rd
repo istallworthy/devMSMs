@@ -29,7 +29,8 @@ which to trim weights (default is 0.95)}
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)}
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is TRUE)}
 }
 \value{
 list of model output with trimmed weights
@@ -76,5 +77,6 @@ t <- trimWeights(exposure = "A",
                  save.out = FALSE)
 }
 \seealso{
-{\code{\link[WeightIt:trim]{WeightIt::trim()}}, <url1>}
+{\code{\link[WeightIt:trim]{WeightIt::trim()}},
+\url{https://search.r-project.org/CRAN/refmans/WeightIt/html/trim.html}}
 }

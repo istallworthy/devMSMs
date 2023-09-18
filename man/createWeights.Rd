@@ -9,7 +9,6 @@ createWeights(
   data,
   exposure,
   outcome,
-  tv_confounders,
   formulas,
   method = "cbps",
   SL.library = NA,
@@ -19,7 +18,7 @@ createWeights(
 )
 }
 \arguments{
-\item{home_dir}{path to home directory}
+\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
 
 \item{data}{data in wide format as: a data frame, list of imputed data
 frames, or mids object}
@@ -27,9 +26,6 @@ frames, or mids object}
 \item{exposure}{name of exposure variable}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
-
-\item{tv_confounders}{list of time-varying confounders with ".timepoint"
-suffix}
 
 \item{formulas}{list of balancing formulas at each time point output from
 createFormulas()}
@@ -93,5 +89,6 @@ w <- createWeights(data = test,
                    save.out = FALSE)
 }
 \seealso{
-{\code{\link[WeightIt:WeightItMSM]{WeightIt::WeightItMSM()}}, <url1>}
+{\code{\link[WeightIt:WeightItMSM]{WeightIt::WeightItMSM()}},
+\url{https://ngreifer.github.io/WeightIt/reference/weightitMSM.html}}
 }

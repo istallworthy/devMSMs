@@ -200,10 +200,12 @@ add_dose <- function(p, dose_level) {
 #' @param reference reference sequence of "h" and/or "l" (e.g., "h-h-h")
 #' @param comp_histories comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")
 #' @param method character abbreviation for multiple comparison correction method
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
+#'   TRUE)
 #' @return comparison table with corrected p-values
 #' @export
 
-perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method) {
+perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method, verbose) {
   if (nrow(comps) > 1) {
     cat("\n")
     cat(paste0("Conducting multiple comparison correction using the ", method, " method."), "\n")

@@ -424,7 +424,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
 
     #STEP 3: conduct multiple comparison correction
-    comps_pool <- perform_multiple_comparison_correction(comps_pool, reference, comp_histories, mc_comp_method)
+    comps_pool <- perform_multiple_comparison_correction(comps_pool, reference, comp_histories, mc_comp_method, verbose)
 
     #rounding term values
     comps_pool$term <- unlist(lapply(1:length(comps_pool$term), function(x){
@@ -529,7 +529,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
 
     comps <- add_dose(comps, dose_level)
 
-    comps <- perform_multiple_comparison_correction(comps, reference, comp_histories, mc_comp_method)
+    comps <- perform_multiple_comparison_correction(comps, reference, comp_histories, mc_comp_method, verbose)
 
     #rounding term values
     comps$term <- unlist(lapply(1:length(comps$term), function(x){
