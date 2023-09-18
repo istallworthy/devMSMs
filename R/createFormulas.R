@@ -27,7 +27,8 @@
 #'   (default is to create automatically according to type)
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
-#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and
+#'   intermediary output locally (default is TRUE)
 #' @return list of balancing formulas at each exposure time point
 #' @export
 #'
@@ -89,7 +90,8 @@
 #'                     save.out = FALSE)
 
 
-createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL, keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ){
+createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL,
+                           keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ){
 
   if (save.out) {
     if (missing(home_dir)) {
@@ -174,12 +176,16 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
 
       #identifying lagged tv confounders relative to time point based on formula type
       if (type == "full"){
-        message("Please manually inspect the full balancing formula below:")
+        if(verbose){
+          message("Please manually inspect the full balancing formula below:")
+        }
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) < time]
       }
 
       else if (type == "short"){
-        message("Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:")
+        if(verbose){
+          message("Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:")
+        }
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
                                                       exposure_time_pts[x-1]]
       }
@@ -189,7 +195,9 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
           stop("Please provide balance statistics if you wish to run the update version of this function", call. = FALSE)
         }
 
-        message("Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:")
+        if(verbose){
+          message("Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:")
+        }
 
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
                                                       exposure_time_pts[x-1]]
@@ -270,10 +278,10 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
 
       # Prints form for user inspection
       if (verbose){
-      cat(paste0("The ", type, " formula for ", exposure, "-", outcome, " at ", exposure, " time point ",
-                 as.character(time), " is:"), "\n")
-      print(f)
-      cat("\n")
+        cat(paste0("The ", type, " formula for ", exposure, "-", outcome, " at ", exposure, " time point ",
+                   as.character(time), " is:"), "\n")
+        print(f)
+        cat("\n")
       }
 
       # Appends the form string to forms_csv
@@ -293,7 +301,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
       # writes to rds
       forms_rds_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
 
-     saveRDS(forms, file = forms_rds_file)
+      saveRDS(forms, file = forms_rds_file)
     }
   }
 

@@ -25,9 +25,10 @@
 #' @seealso {[cobalt] package, <url1>}
 #' @seealso {Jackson, 2016 for more on assessing balance for time-varying
 #'   exposures, <url1>}
-#' @param home_dir (optional) path to home directory (required if save.out = TRUE)
-#' @param data data in wide format as: a data frame, list of imputed
-#'   data frames, or mids object
+#' @param home_dir (optional) path to home directory (required if save.out =
+#'   TRUE)
+#' @param data data in wide format as: a data frame, list of imputed data
+#'   frames, or mids object
 #' @param exposure name of exposure variable
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
@@ -44,8 +45,10 @@
 #'   important confounders, respectively (default = 0.1)
 #' @param imp_conf (optional) list of variable names reflecting important
 #'   confounders, required if two balance thresholds are supplied
-#' @param verbose (optiona) TRUE or FALSE indicator for user output (default is TRUE)
-#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)
+#' @param verbose (optiona) TRUE or FALSE indicator for user output (default is
+#'   TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and
+#'   intermediary output locally (default is TRUE)
 #' @returns a list data frame of balance statistics
 #' @export
 #' @examples
@@ -139,7 +142,8 @@
 
 
 
-assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh = 0.1, imp_conf = NULL, verbose = TRUE, save.out = TRUE){
+assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh = 0.1,
+                          imp_conf = NULL, verbose = TRUE, save.out = TRUE){
 
   if (save.out) {
     if (missing(home_dir)) {
@@ -369,9 +373,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
   # Weighted
   else if (type == "weighted"){
-    message(paste0("USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting,
+
+    if(verbose){
+      message(paste0("USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting,
             using ", form_name, " formulas."), "\n")
-    cat("\n")
+      cat("\n")
+    }
 
     if (mice::is.mids(data) | inherits(data, "list")){
       # Running balance stats function, unweighted, on each imputed dataset w/ no weights
@@ -563,52 +570,56 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
                                    "[", 1)[!duplicated(sapply(strsplit(unbalanced_covars$covariate, "\\."), "[", 1))]
 
 
-  if (mice::is.mids(data) | inherits(data, "list")){
-    cat(paste0("USER ALERT: Averaging across all imputed datasets for exposure ", exposure, " using the ",
-               form_name, " formulas and ", weights_method, " :"), "\n")
+  if (verbose){
+    if (mice::is.mids(data) | inherits(data, "list")){
+      cat(paste0("USER ALERT: Averaging across all imputed datasets for exposure ", exposure, " using the ",
+                 form_name, " formulas and ", weights_method, " :"), "\n")
 
-    cat(paste0("The median absolute value relation between exposure and confounder is ",
-               round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
-               round(min(all_bal_stats$avg_ba), 2), "-", round(max(all_bal_stats$avg_ba), 2), ")."), "\n")
+      cat(paste0("The median absolute value relation between exposure and confounder is ",
+                 round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
+                 round(min(all_bal_stats$avg_ba), 2), "-", round(max(all_bal_stats$avg_ba), 2), ")."), "\n")
 
-    if (nrow(unbalanced_covars) > 0){
-      cat(paste0("As shown below, the following ", nrow(unbalanced_covars), " covariates across time points out of ",
-                 length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), "%) spanning ",
-                 length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
-                 "%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ",
-                 exposure, " of ", round(median(abs(as.numeric(unlist(unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
-                                                                        dplyr:: select(avg_bal))))), 2), " (range=",
-                 round(min(unbalanced_covars$avg_bal), 2), "-", round(max(unbalanced_covars$avg_bal), 2), ") : "), "\n")
+      if (nrow(unbalanced_covars) > 0){
+        cat(paste0("As shown below, the following ", nrow(unbalanced_covars), " covariates across time points out of ",
+                   length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), "%) spanning ",
+                   length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
+                   "%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ",
+                   exposure, " of ", round(median(abs(as.numeric(unlist(unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
+                                                                          dplyr:: select(avg_bal))))), 2), " (range=",
+                   round(min(unbalanced_covars$avg_bal), 2), "-", round(max(unbalanced_covars$avg_bal), 2), ") : "), "\n")
+      }
+      else{ cat("There are no imbalanced covariates.", "\n")
+      }
+
     }
-    else{ cat("There are no imbalanced covariates.", "\n")
-    }
+    else {
+      cat(paste0("USER ALERT: For exposure ", exposure, " using the ", form_name," formulas and ", weights_method, " :"), "\n")
 
-  }
-  else {
-    cat(paste0("USER ALERT: For exposure ", exposure, " using the ", form_name," formulas and ", weights_method, " :"), "\n")
+      cat(paste0("The median absolute value relation between exposure and confounder is ",
+                 round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
+                 round(min(all_bal_stats$avg_ba), 2), "-", round(max(all_bal_stats$avg_ba), 2), ")."), "\n")
 
-    cat(paste0("The median absolute value relation between exposure and confounder is ",
-               round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
-               round(min(all_bal_stats$avg_ba), 2), "-", round(max(all_bal_stats$avg_ba), 2), ")."), "\n")
-
-    if (nrow(unbalanced_covars) > 0){
-      cat(paste0("As shown below, the following ", nrow(unbalanced_covars), " covariates across time points out of ",
-                 length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), "%) spanning ",
-                 length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
-                 "%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ",
-                 exposure, " of ", round(median(abs(as.numeric(unlist(unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
-                                                                        dplyr:: select(avg_bal))))), 2), " (range=",
-                 round(min(unbalanced_covars$avg_bal), 2), "-", round(max(unbalanced_covars$avg_bal), 2), ") : "), "\n")
-    }
-    else{ cat("There are no imbalanced covariates.", "\n")
+      if (nrow(unbalanced_covars) > 0){
+        cat(paste0("As shown below, the following ", nrow(unbalanced_covars), " covariates across time points out of ",
+                   length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), "%) spanning ",
+                   length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
+                   "%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ",
+                   exposure, " of ", round(median(abs(as.numeric(unlist(unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
+                                                                          dplyr:: select(avg_bal))))), 2), " (range=",
+                   round(min(unbalanced_covars$avg_bal), 2), "-", round(max(unbalanced_covars$avg_bal), 2), ") : "), "\n")
+      }
+      else{ cat("There are no imbalanced covariates.", "\n")
+      }
     }
   }
 
   if (nrow(unbalanced_covars) > 0){
-    cat("\n")
-    cat("\n")
-    cat(knitr::kable(unbalanced_covars, caption = "Imbalanced Covariates", format = 'pipe'), sep = "\n")
-    cat("\n")
+    if(verbose){
+      cat("\n")
+      cat("\n")
+      cat(knitr::kable(unbalanced_covars, caption = "Imbalanced Covariates", format = 'pipe'), sep = "\n")
+      cat("\n")
+    }
     if (save.out){
       # Save out only imbalanced covariates
       sink(paste0(home_dir, "/balance/", type, "/", exposure, "-", outcome, "_",type,"_", weights_method, "_all_covariates_imbalanced.html"))
