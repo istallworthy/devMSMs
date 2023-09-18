@@ -196,7 +196,7 @@ add_dose <- function(p, dose_level) {
 
 #' Conduct multiple comparison correction
 #'
-#' @param comps
+#' @param comps table
 #' @param reference reference sequence of "h" and/or "l" (e.g., "h-h-h")
 #' @param comp_histories comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")
 #' @param method character abbreviation for multiple comparison correction method

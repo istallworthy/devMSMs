@@ -347,8 +347,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     }
   }
 
-
-
   fits
 
 }

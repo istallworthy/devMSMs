@@ -9,7 +9,7 @@
 #' @importFrom ggplot2 geom_histogram
 #' @importFrom ggplot2 ggsave
 #' @importFrom WeightIt weightitMSM
-#' @seealso {[WeightIt::WeightItMSM()],
+#' @seealso {[WeightIt::weightitMSM()],
 #'   <https://ngreifer.github.io/WeightIt/reference/weightitMSM.html>}
 #' @param home_dir path to home directory (required if 'save.out' = TRUE)
 #' @param data data in wide format as: a data frame, list of imputed data
@@ -145,7 +145,6 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   else {
 
     # List of formulas for each time point
-    # form <- formulas[grepl(paste("form_", exposure, "-", outcome, sep = ""), names(formulas))]
     form <- formulas
     form <- unname(form)
 

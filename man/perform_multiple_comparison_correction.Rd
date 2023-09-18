@@ -13,6 +13,8 @@ perform_multiple_comparison_correction(
 )
 }
 \arguments{
+\item{comps}{table}
+
 \item{reference}{reference sequence of "h" and/or "l" (e.g., "h-h-h")}
 
 \item{comp_histories}{comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")}

@@ -74,7 +74,8 @@
 #'                                 values = I(list(c(1, 2), c(3)))),
 #'             save.out = FALSE)
 
-inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, epochs = NULL, hi_lo_cut = NULL, reference = NA, comparison = NULL, verbose = TRUE, save.out = TRUE){
+inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, epochs = NULL,
+                        hi_lo_cut = NULL, reference = NA, comparison = NULL, verbose = TRUE, save.out = TRUE){
 
   if (save.out) {
     if (missing(home_dir)) {

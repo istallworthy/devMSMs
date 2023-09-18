@@ -22,9 +22,10 @@
 #' @importFrom ggplot2 ggsave
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr %>%
-#' @seealso {[cobalt] package, <url1>}
+#' @seealso {[cobalt] package,
+#'   <https://cran.r-project.org/web/packages/cobalt/index.html>}
 #' @seealso {Jackson, 2016 for more on assessing balance for time-varying
-#'   exposures, <url1>}
+#'   exposures, <https://pubmed.ncbi.nlm.nih.gov/27479649/>}
 #' @param home_dir (optional) path to home directory (required if save.out =
 #'   TRUE)
 #' @param data data in wide format as: a data frame, list of imputed data
@@ -39,9 +40,9 @@
 #'   createFormulas()
 #' @param weights list of IPTW weights output from createWeights, required for
 #'   type 'weighted'
-#' @param type type of balance assessment 'prebalance' or 'weighted'
+#' @param type type of balance assessment; 'prebalance' or 'weighted'
 #' @param balance_thresh (optional) one or two numbers between 0 and 1
-#'   indicating a single balancingn threshold or thresholds for more and less
+#'   indicating a single balancing threshold or thresholds for more and less
 #'   important confounders, respectively (default = 0.1)
 #' @param imp_conf (optional) list of variable names reflecting important
 #'   confounders, required if two balance thresholds are supplied
@@ -49,7 +50,7 @@
 #'   TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and
 #'   intermediary output locally (default is TRUE)
-#' @returns a list data frame of balance statistics
+#' @returns a data frame of balance statistics
 #' @export
 #' @examples
 #'

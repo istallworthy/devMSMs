@@ -125,7 +125,8 @@ data_long <- formatLongData(home_dir, data_orig, exposure, exposure_time_pts, ou
                             time_var = "TAge", #list original time variable here if it's not "WAVE"
                             id_var = "S_ID", #list original id variable here if it's not "ID"
                             missing = NA, #list missing value here
-                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO")) #list factor variables here
+                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO"),
+                            save.out = TRUE) #list factor variables here
 
 ```
 
@@ -153,7 +154,8 @@ data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 m <- 1 #provide an imputation number
 method <- "pmm"; # provide an imputation method pmm, midastouch, sample, cart , rf (default)
 
-imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, para_proc = TRUE, read_imps_from_file = "no")
+imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, 
+                           para_proc = TRUE, read_imps_from_file = "no", save.out = TRUE)
 
 
 #OR, read in a saved mids object

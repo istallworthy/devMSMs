@@ -156,10 +156,12 @@ eval_hist <- function(data, exposure, tv_confounders, epochs = NULL, time_pts, h
           if (is.na(new[x, y + 1])) {
             return(NA)
           }
-          if (unname(new[x, y + 1]) >= as.numeric(quantile(unname(new[, y + 1]), probs = hi_lo_cut[1], na.rm = TRUE))) {
+          if (unname(new[x, y + 1]) >= as.numeric(quantile(unname(new[, y + 1]),
+                                                           probs = hi_lo_cut[1], na.rm = TRUE))) {
             return("h")
           }
-          if (unname(new[x, y + 1]) <= as.numeric(quantile(unname(new[, y + 1]), probs =  hi_lo_cut[2], na.rm = TRUE))) {
+          if (unname(new[x, y + 1]) <= as.numeric(quantile(unname(new[, y + 1]),
+                                                           probs =  hi_lo_cut[2], na.rm = TRUE))) {
             return("l")
           }
         }), collapse = "-")
