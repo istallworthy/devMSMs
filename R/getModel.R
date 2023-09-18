@@ -7,7 +7,7 @@
 #'   created/assessed that correspond to time points when exposure was measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
 #' @param epochs data frame of exposure epoch labels and values
-#' @param exp_epochs
+#' @param exp_epochs list of exposure epochs
 #' @param int_order integer specification of highest order exposure main effects
 #'   interaction for interaction models
 #' @param model character indicating one of the following outcome models:
@@ -78,7 +78,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
   }
   else { #add epochs by averaging exposure time points
     #adds exposure epochs
-    #calculates the mean value for each exposure for each exposure epoch
+    #calculates the mean value for each exposure epoch
     for (e in seq_len(nrow(epochs))){
       epoch <- epochs[e, 1]
       temp <- data.frame(row.names = seq_len(nrow(d)))
@@ -101,7 +101,8 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
   # Covariate models checking
   if (model == "m1" | model == "m3" | model == "covs") {
     if (sum(covariates %in% colnames(d)) < length(covariates)){
-      stop("Please only include covariates that correspond to variables in the wide dataset.", call. = FALSE)
+      stop("Please only include covariates that correspond to variables in the wide dataset.",
+           call. = FALSE)
     }
     covariate_list <- paste(as.character(covariates), sep = "", collapse = " + ")
   } else{
@@ -112,7 +113,8 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
   # interaction model checking
   if (model == "m2" | model == "m3"){
     if (int_order > nrow(epochs)){
-      stop("Please provide an interaction order equal to or less than the total number of epochs/time points.", call. = FALSE)
+      stop("Please provide an interaction order equal to or less than the total number of epochs/time points.",
+           call. = FALSE)
     }
     interactions <- paste(
       lapply(2:int_order, function(z) {
@@ -125,7 +127,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
       name <- gsub(" ", "", unlist(strsplit(interactions, "\\+"))[x])
       if (! name %in% colnames(d)){
         temp <- d[, c(gsub(" ", "", as.character(unlist(strsplit(unlist(strsplit(interactions, "\\+"))[x], "\\:"))))) ]
-        d  <- d %>% dplyr::mutate(!! name := matrixStats::rowProds(as.matrix(temp), na.rm=T))
+        d  <- d %>% dplyr::mutate(!! name := matrixStats::rowProds(as.matrix(temp), na.rm = T))
       }
     }
   }
@@ -141,7 +143,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
   )
 
 
-  #Null models
+  #Null models for omnibus testing
   # Fitting intercept-only model
   if (model == "int"){
     fi <- paste(outcome, "~ 1")

@@ -8,7 +8,8 @@ perform_multiple_comparison_correction(
   comps,
   reference,
   comp_histories,
-  method
+  method,
+  verbose
 )
 }
 \arguments{
@@ -17,6 +18,9 @@ perform_multiple_comparison_correction(
 \item{comp_histories}{comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")}
 
 \item{method}{character abbreviation for multiple comparison correction method}
+
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
+TRUE)}
 }
 \value{
 comparison table with corrected p-values

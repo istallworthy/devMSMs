@@ -8,14 +8,18 @@
 #' @param k imputation number
 #' @param form_name formula name
 #' @param balance_stats data frame of balance statistics
-#' @param data_type
-#' @param balance_thresh one or two numbers between 0 and 1 indicating a single balancing threshold or thresholds for more and less important confounders, respectively
-#' @param weights_method method character string of WeightItMSM() balancing method abbreviation
+#' @param data_type single or imputed data type
+#' @param balance_thresh one or two numbers between 0 and 1 indicating a single
+#'   balancing threshold or thresholds for more and less important confounders,
+#'   respectively
+#' @param weights_method method character string of WeightItMSM() balancing
+#'   method abbreviation
 #' @param imp_conf list of variable names reflecting important confounders
-#' @param save.out TRUE or FALSE indicator to save output and intermediary output locally
+#' @param save.out TRUE or FALSE indicator to save output and intermediary
+#'   output locally
 #' @return none
 #' @export
-#'
+#' @examples
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
@@ -78,7 +82,8 @@
 #'                     verbose = TRUE)
 
 
-make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, balance_stats, data_type, balance_thresh, weights_method, imp_conf, verbose, save.out) {
+make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, balance_stats, data_type,
+                           balance_thresh, weights_method, imp_conf, verbose, save.out) {
 
   stat_var <- colnames(balance_stats)[grepl("_bal", colnames(balance_stats))]
   colnames(balance_stats)[colnames(balance_stats) == stat_var] <- "avg_bal"

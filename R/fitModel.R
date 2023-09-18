@@ -6,7 +6,8 @@
 #' @importFrom survey svydesign svyglm
 #' @importFrom jtools export_summs
 #' @importFrom dplyr mutate filter select
-#' @seealso {[survey::svyglm()] for more on family/link specifications, <url1>}
+#' @seealso {[survey::svyglm()] for more on family/link specifications,
+#'   <https://www.rdocumentation.org/packages/survey/versions/4.2-1/topics/svyglm>}
 #' @seealso {[createWeights()], <url1>}
 #' @param home_dir path to home directory
 #' @param data data in wide format as: a data frame, list of imputed data

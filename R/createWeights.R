@@ -9,14 +9,13 @@
 #' @importFrom ggplot2 geom_histogram
 #' @importFrom ggplot2 ggsave
 #' @importFrom WeightIt weightitMSM
-#' @seealso {[WeightIt::WeightItMSM()], <url1>}
-#' @param home_dir path to home directory
+#' @seealso {[WeightIt::WeightItMSM()],
+#'   <https://ngreifer.github.io/WeightIt/reference/weightitMSM.html>}
+#' @param home_dir path to home directory (required if 'save.out' = TRUE)
 #' @param data data in wide format as: a data frame, list of imputed data
 #'   frames, or mids object
 #' @param exposure name of exposure variable
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint"
-#'   suffix
 #' @param formulas list of balancing formulas at each time point output from
 #'   createFormulas()
 #' @param method (optional) character string of WeightItMSM() balancing method
@@ -54,21 +53,19 @@
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    formulas = f,
 #'                    save.out = FALSE)
 #'
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    formulas = f,
 #'                    method = "cbps",
 #'                    save.out = FALSE)
 
 
-createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, formulas, method = "cbps",
-                          SL.library = NA, read_in_from_file = "no", verbose = TRUE, save.out = TRUE) {
+createWeights <- function(home_dir, data, exposure, outcome, formulas, method = "cbps", SL.library = NA, read_in_from_file = "no",
+                          verbose = TRUE, save.out = TRUE) {
 
   if (save.out) {
     if (missing(home_dir)) {
@@ -89,33 +86,29 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
   if (missing(outcome)){
     stop("Please supply a single outcome.", call. = FALSE)
   }
-  if (missing(tv_confounders)){
-    stop("Please supply a list of time-varying confounders.", call. = FALSE)
-  }
+
   if (missing(formulas)){
     stop("Please supply a list of balancing formulas.", call. = FALSE)
   }
 
   if(!inherits(method, "character")){
-    stop("Please provide as a character string a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.", call. = FALSE)
+    stop("Please provide as a character string a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.",
+         call. = FALSE)
   }
   if(! method %in% c("ps", "glm", "gbm", "bart", "super", "cbps")){
-    stop("Please provide a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.", call. = FALSE)
+    stop("Please provide a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.",
+         call. = FALSE)
   }
 
   if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
-    stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.", call. = FALSE)
+    stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.",
+         call. = FALSE)
   }
 
   if(!inherits(formulas, "list")){
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
 
-  # Load required libraries
-  # library(cobalt)
-
-  # exposure_time_pts <- as.numeric(sapply(strsplit(tv_confounders[grepl(exposure, tv_confounders)], "\\."), "[", 2))
-  time_varying_covariates <- tv_confounders
   weights_method <- method
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
 

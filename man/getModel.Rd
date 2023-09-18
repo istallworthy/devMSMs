@@ -30,6 +30,8 @@ created/assessed that correspond to time points when exposure was measured}
 
 \item{epochs}{data frame of exposure epoch labels and values}
 
+\item{exp_epochs}{list of exposure epochs}
+
 \item{int_order}{integer specification of highest order exposure main effects
 interaction for interaction models}
 

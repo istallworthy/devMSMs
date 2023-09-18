@@ -69,9 +69,11 @@ should be tallied in tables and plots (default is high "h")}
 \item{colors}{(optional) character specifying Brewer palette or list of
 colors (n(epochs)+1) for plotting (default is "Dark2" palette)}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is TRUE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
+TRUE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and intermediary output locally (default is TRUE)}
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is TRUE)}
 }
 \value{
 data frame of history comparisons

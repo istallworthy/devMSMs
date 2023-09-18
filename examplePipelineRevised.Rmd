@@ -341,33 +341,33 @@ method = "ps";
 
 
 #all input
-weights.ps <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
+weights.ps <- createWeights(home_dir, data, exposure, outcome, formulas, 
                             method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 #minimum input
-weights.ps <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas)
+weights.ps <- createWeights(home_dir, data, exposure, outcome, formulas)
 
 
 
 method = "cbps"
-weights.cbps <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
+weights.cbps <- createWeights(home_dir, data, exposure, outcome, formulas, 
                               method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 method = "glm"
-weights.glm <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
+weights.glm <- createWeights(home_dir, data, exposure, outcome, formulas, 
                              method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 method = "gbm"
-weights.gbm <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
+weights.gbm <- createWeights(home_dir, data, exposure, outcome, formulas, 
                              method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 method = "bart"
-weights.bart <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
+weights.bart <- createWeights(home_dir, data, exposure, outcome, formulas, 
                               method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 method = "super"
 SL.library = "SL.glm" #required for superLearner method; see SuperLearner::listWrappers() for options
-weights.super <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
+weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, 
                                method, read_in_from_file = "no", SL.library = SL.library, verbose = FALSE, save.out = TRUE)
 
 ```
@@ -490,11 +490,11 @@ formulas <- updated_formulas
 method <- "ps"
 
 #all inputs
-final_weights <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
+final_weights <- createWeights(home_dir, data, exposure, outcome, formulas, 
                                method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 #minimum inputs
-final_weights <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas)
+final_weights <- createWeights(home_dir, data, exposure, outcome, formulas)
 
 ```
 
@@ -652,7 +652,7 @@ model <- models #output from fitModel
 
 #all inputs
 results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
-                            epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
+                            epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = FALSE, save.out = TRUE) 
 
 
 #minimum inputs
