@@ -85,7 +85,6 @@ f <- createFormulas(exposure = "A",
 w <- createWeights(data = test,
                    exposure = "A",
                    outcome = "D.3",
-                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                    formulas = f,
                    save.out = FALSE)
 

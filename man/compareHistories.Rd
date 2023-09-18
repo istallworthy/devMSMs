@@ -25,7 +25,7 @@ compareHistories(
 )
 }
 \arguments{
-\item{home_dir}{path to home directory}
+\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
 
 \item{exposure}{name of exposure variable}
 
@@ -107,7 +107,6 @@ test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.nume
 w <- createWeights(data = test,
                    exposure = "A",
                    outcome = "D.3",
-                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                    formulas = f,
                    save.out = FALSE)
 
@@ -116,7 +115,6 @@ m <- fitModel(data = test,
               exposure = "A",
               exposure_time_pts = c(1, 2, 3),
               outcome = "D.3",
-              tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
               model = "m0",
               save.out = FALSE)
 
@@ -144,9 +142,12 @@ r <- compareHistories(exposure = "A",
                       save.out = FALSE)
 }
 \seealso{
-{\code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}}, <url1>}
+{\code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}},
+\url{https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf}}
 
-{\code{\link[marginaleffects:hypotheses]{marginaleffects::hypotheses()}}, <url1>}
+{\code{\link[marginaleffects:hypotheses]{marginaleffects::hypotheses()}},
+\url{https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf}}
 
-{\code{\link[stats:p.adjust]{stats::p.adjust()}}, <url1>}
+{\code{\link[stats:p.adjust]{stats::p.adjust()}},
+\url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust}}
 }

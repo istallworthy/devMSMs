@@ -591,21 +591,21 @@ weights <- trim_weights
 # all inputs
 #required
 model <- "m3"
-models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model, 
+models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
                    family, link, int_order, covariates, epochs, verbose = TRUE, save.out = TRUE)   
 
 #minimum inputs
 model <- "m0"
-models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model)
+models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model)
 
 
 #sensitivity tests
 weights <- trim_weights.s1
-models.s1 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model, 
+models.s1 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
                       family, link, int_order, covariates, epochs, verbose = TRUE, save.out = TRUE) 
 
 weights <- trim_weights.s2
-models.s2 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model, 
+models.s2 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
                       family, link, int_order, covariates, epochs, verbose = TRUE, save.out = TRUE) 
 
 ```
