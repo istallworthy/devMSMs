@@ -201,10 +201,12 @@ createWeights <- function(home_dir, data, exposure, outcome, tv_confounders, for
 
         d$weights <- fit$weights
 
-        cat(paste0("USER ALERT: For imputation ", i, " and the ", weights_method, " weighting method, the median weight value is ",
-                   round(median(fit$weights), 2) ," (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
-                   round(max(fit$weights), 2), ")."), "\n")
-        cat('\n')
+        if (verbose){
+          cat(paste0("USER ALERT: For imputation ", i, " and the ", weights_method, " weighting method, the median weight value is ",
+                     round(median(fit$weights), 2) ," (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
+                     round(max(fit$weights), 2), ")."), "\n")
+          cat('\n')
+        }
 
         if(save.out){
           # Save weights merged with ID variable

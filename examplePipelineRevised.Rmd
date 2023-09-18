@@ -152,8 +152,8 @@ data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 ```{r}
 
 #impute wide data w/ mice
-m <- 1
-method <- "pmm"; #pmm, midastouch, sample, cart , rf (default)
+m <- 1 #provide an imputation number
+method <- "pmm"; # provide an imputation method pmm, midastouch, sample, cart , rf (default)
 
 imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, tv_confounders, ti_confounders, 
                            para_proc = TRUE, read_imps_from_file = "no")
@@ -178,11 +178,11 @@ data <- mice::complete(imputed_data, 1) #just for testing purposes
 ```{r}
 
 #read in imputed csv files to list
-folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/imputations/" #change this to match your local folder
+folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa/imputations/" #change this to match your local folder
 files <- list.files(folder, full.names = TRUE, pattern = "\\.csv")
 
 data <- lapply(files, function(file) {
-  imp_data <- readr::read.csv(file)
+  imp_data <- read.csv(file)
   imp_data
 })
 
@@ -192,10 +192,14 @@ data <- lapply(files, function(file) {
 ### P3. Optional: Identify Exposure Epochs
 ```{r}
 
+#change this to match your data/theory 
 epochs <- data.frame(epochs=c("Infancy", 
                               "Toddlerhood", 
                               "Childhood"), 
-                     values=I(list(c(6,15), c(24,35), c(58)))) 
+                     values=I(list(c(6,15), 
+                                   c(24,35), 
+                                   c(58)
+                     ))) 
 
 ```
 
@@ -204,7 +208,7 @@ epochs <- data.frame(epochs=c("Infancy",
 #### P4a. Create cutoff values for continuous exposures
 ```{r}
 
-#optional list of quantiles specifying high and low cutoff values for continuous expsures; default is median
+#optional list of quantiles specifying high and low cutoff values for continuous exposures; default is median
 hi_lo_cut <- c(0.6, 0.3)
 
 ```
@@ -279,7 +283,7 @@ balance_thresh <- c(0.05, 0.1)
 imp_conf <- NULL
 imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 
-
+#required
 type <- "prebalance"
 formulas <- full_formulas
 
@@ -314,6 +318,7 @@ custom <- short_formulas
 custom <- NULL
 
 
+#required
 type <- "short" 
 
 #all inputs
@@ -329,9 +334,13 @@ short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome,
 ```{r}
 
 ## Create balancing weights with simplified formulas
+
+#required
 formulas <- short_formulas
 
-method = "ps"; # optional weighting method "ps", "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
+# optional weighting method "ps", "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
+method = "ps"; 
+
 
 #all input
 weights.ps <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
@@ -361,7 +370,7 @@ weights.bart <- createWeights(home_dir, data, exposure, outcome, tv_confounders,
 method = "super"
 SL.library = "SL.glm" #required for superLearner method; see SuperLearner::listWrappers() for options
 weights.super <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
-                               method, read_in_from_file = "no", SL.library = SL.library, verbose = TRUE, save.out = TRUE)
+                               method, read_in_from_file = "no", SL.library = SL.library, verbose = FALSE, save.out = TRUE)
 
 ```
 
@@ -377,21 +386,23 @@ imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58")
 imp_conf <- NULL
 
 
+#required
 type <- "weighted"
 formulas <- short_formulas
 
-weights <- weights.cbps 
+weights <- weights.ps 
+
 
 #all inputs
-balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
                                     balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 #minimum inputs
-balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights)
+balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights)
 
 
-weights <- weights.ps 
-balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+weights <- weights.cbps 
+balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
                                   balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 weights <- weights.glm 
@@ -426,9 +437,11 @@ imp_conf <- NULL
 imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 
 
+#required
 type <- "weighted"
 formulas <- full_formulas
-weights <- weights.cbps
+
+weights <- weights.ps
 
 #all inputs
 balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
@@ -456,6 +469,8 @@ concur_conf <- "B18Raw.15"
 keep_conf <- NULL 
 keep_conf <- "InRatioCor.6"
 
+
+#required
 type <- "update"
 bal_stats <- balance_stats
 
@@ -471,8 +486,10 @@ updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcom
 #### 3c. Re-create weights
 ```{r}
 
+#required
 formulas <- updated_formulas
-method <- "cbps"
+
+method <- "ps"
 
 #all inputs
 final_weights <- createWeights(home_dir, data, exposure, outcome, tv_confounders, formulas, 
@@ -489,6 +506,7 @@ final_weights <- createWeights(home_dir, data, exposure, outcome, tv_confounders
 # optional quantile of weights above which weights are trimmed (default is 0.95)
 quantile <- 0.95 
 
+#required
 weights <- final_weights
 
 #all inputs
@@ -569,9 +587,11 @@ epochs <- data.frame(epochs=c("Infancy", "Toddlerhood", "Childhood"),
                      values=I(list(c(6,15), c(24,35), c(58)))) 
 
 
+#required
 weights <- trim_weights
 
 # all inputs
+#required
 model <- "m3"
 models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, tv_confounders, model, 
                    family, link, int_order, covariates, epochs, verbose = TRUE, save.out = TRUE)   

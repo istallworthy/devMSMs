@@ -213,26 +213,28 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
 
 
   # Data type
-  cat("\n")
-  cat("The following variables are designated as numeric:", "\n")
-  print(paste(colnames(data)[sapply(data, class) == "numeric"], sep = ",", collapse = ", "))
-  cat("\n")
-
-  cat("The following variables are designated as factors:", "\n")
-  print(paste(colnames(data)[sapply(data, class) == "factor"], sep = ",", collapse = ", "))
-  cat("\n")
-
-  oth <- data.frame(variable = names(sapply(data, class)) [!sapply(data, class) %in% c("numeric", "factor")],
-                    type = sapply(data, class) [!sapply(data, class) %in% c("numeric", "factor")])
-  if(nrow(oth) > 0 ){
-    cat(knitr::kable(oth, caption = "Other variable types",
-                     format = 'pipe'), sep = "\n")
+  if(verbose){
     cat("\n")
-  }
+    cat("The following variables are designated as numeric:", "\n")
+    print(paste(colnames(data)[sapply(data, class) == "numeric"], sep = ",", collapse = ", "))
+    cat("\n")
 
-  if(sum(sapply(data, is.character)) > 0){
-    warning(paste0(paste(names(data)[sapply(data, is.character)], sep = ", ", collapse = ", "),
-                   " are of class character.", " The package cannot accept character variables."), call. = FALSE)
+    cat("The following variables are designated as factors:", "\n")
+    print(paste(colnames(data)[sapply(data, class) == "factor"], sep = ",", collapse = ", "))
+    cat("\n")
+
+    oth <- data.frame(variable = names(sapply(data, class)) [!sapply(data, class) %in% c("numeric", "factor")],
+                      type = sapply(data, class) [!sapply(data, class) %in% c("numeric", "factor")])
+    if(nrow(oth) > 0 ){
+      cat(knitr::kable(oth, caption = "Other variable types",
+                       format = 'pipe'), sep = "\n")
+      cat("\n")
+    }
+
+    if(sum(sapply(data, is.character)) > 0){
+      warning(paste0(paste(names(data)[sapply(data, is.character)], sep = ", ", collapse = ", "),
+                     " are of class character.", " The package cannot accept character variables."), call. = FALSE)
+    }
   }
   #covariate correlations
   covariates_to_include <- all_potential_covariates

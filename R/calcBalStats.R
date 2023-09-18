@@ -1,9 +1,9 @@
 #' Calculate balance stats based on Jackson paper
 #'
-#' Calculate weighted or unweighted standardized balance statistics for a given exposure time point,
-#' using all relevant confounders. Draws on Jackson, 2016 approaches to
-#' assessing balance for time-varying exposures by weighting statistics based on
-#' sample distribution in exposure histories.
+#' Calculate weighted or unweighted standardized balance statistics for a given
+#' exposure time point, using all relevant confounders. Draws on Jackson, 2016
+#' approaches to assessing balance for time-varying exposures by weighting
+#' statistics based on sample distribution in exposure histories.
 #'
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 theme
@@ -21,7 +21,8 @@
 #' @importFrom ggplot2 guide_axis
 #' @importFrom ggplot2 ggsave
 #' @importFrom stargazer stargazer
-#' @param home_dir (optional) path to home directory (required if save.out = TRUE)
+#' @param home_dir (optional) path to home directory (required if save.out =
+#'   TRUE)
 #' @param data data in wide format as: a data frame, path to folder of imputed
 #'   .csv files, or mids object
 #' @param formulas list of balancing formulas at each time point output from
@@ -30,14 +31,17 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param balance_thresh (optional) one or two numbers between 0 and 1 indicating a single
-#'   balancingn threshold or thresholds for more and less important confounders,
-#'   respectively
+#' @param balance_thresh (optional) one or two numbers between 0 and 1
+#'   indicating a single balancingn threshold or thresholds for more and less
+#'   important confounders, respectively
 #' @param k (optional) imputation number
 #' @param weights (optional) list of IPTW weights output from createWeights
-#' @param imp_conf (optional) list of variable names reflecting important confounders (required if two balance thresholds are provided)
-#' @param verbose (optional) TRUE or FALSE indicator for user output (default is TRUE)
-#' @param save.out (optional) TRUE or FALSE indicator to save output and intermediary output locally
+#' @param imp_conf (optional) list of variable names reflecting important
+#'   confounders (required if two balance thresholds are provided)
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
+#'   TRUE)
+#' @param save.out (optional) TRUE or FALSE indicator to save output and
+#'   intermediary output locally
 #' @return data frame of balance statistics
 #' @export
 #' @examples
@@ -88,8 +92,8 @@
 #'                   balance_thresh = 0.1,
 #'                   weights = w[[1]])
 
-calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL, imp_conf = NULL, verbose = TRUE, save.out = TRUE){
-  # library(cobalt)
+calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL,
+                         imp_conf = NULL, verbose = TRUE, save.out = TRUE){
 
   if(!inherits(formulas, "list")){
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
@@ -138,8 +142,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     lagged_time_pts <- exposure_time_pts[exposure_time_pts<exposure_time_pt]
 
     # GETS COVARIATES FROM FORM FOR ASSESSING BALANCE
-    # full_form <- formulas[[names(formulas)[grepl(paste0("-", exposure_time_pt),
-    #                                              names(formulas))]]]
     full_form <- formulas[[names(formulas)[as.numeric(sapply(strsplit(names(formulas), "-"), "[", 2)) == exposure_time_pt]]]
 
     covars <- paste(deparse(full_form[[3]], width.cutoff = 500), collapse = "") # gets covariates
@@ -507,35 +509,35 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                                  "-", round(max(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2))
 
 
+  if (verbose){
+    if (data_type == "imputed"){
 
-  if (data_type == "imputed"){
+      cat(paste0("USER ALERT: For exposure ", exposure, " imputation ", k, " using ", weights_method, " and ", form_name, " formulas: "), "\n")
+      cat(paste0("The median absolute value relation between exposure and confounder is ", round(median(abs(all_bal_stats$std_bal_stats)), 2), " (range = ",
+                 round(min(all_bal_stats$std_bal_stats), 2), "-", round(max(all_bal_stats$std_bal_stats), 2), ")."), "\n")
 
-    cat(paste0("USER ALERT: For exposure ", exposure, " imputation ", k, " using ", weights_method, " and ", form_name, " formulas: "), "\n")
-    cat(paste0("The median absolute value relation between exposure and confounder is ", round(median(abs(all_bal_stats$std_bal_stats)), 2), " (range = ",
-               round(min(all_bal_stats$std_bal_stats), 2), "-", round(max(all_bal_stats$std_bal_stats), 2), ")."), "\n")
-
-    cat(paste0("As shown below, ", imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced,
-               "%) covariates across time points, corresponding to ",
-               remaining_imbalanced_domains, " out of ", total_domains,
-               " domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of ",
-               remaining_avg_abs_corr, " (range= ", remaining_corr_range, "):"), "\n")
-    cat("\n")
-    cat(knitr::kable(bal_summary_exp, caption = paste0("Imbalanced Covariates for imputation ", k, " using ",
-                                                       weights_method, " and ", form_name, " formulas"), format = 'pipe'), sep = "\n")
-    cat("\n")
-    cat("\n")
-  } else {
-    cat(paste0("As shown below, for exposure ", exposure, " using ", weights_method, ", and ", form_name, " formulas, ",
-               imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced, "%) covariates across time points corresponding to ",
-               remaining_imbalanced_domains, " out of ", total_domains,
-               " domains remain imbalanced with a remaining average absolute value correlation/std mean difference of ",
-               remaining_avg_abs_corr, " (range= ", remaining_corr_range, ") :"), "\n")
-    cat("\n")
-    cat(knitr::kable(bal_summary_exp, caption = paste0("Imbalanced covariates using ",
-                                                       weights_method, " and ", form_name, " formulas"), format = 'pipe'), sep = "\n")
-    cat("\n")
-    cat("\n")
-
+      cat(paste0("As shown below, ", imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced,
+                 "%) covariates across time points, corresponding to ",
+                 remaining_imbalanced_domains, " out of ", total_domains,
+                 " domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of ",
+                 remaining_avg_abs_corr, " (range= ", remaining_corr_range, "):"), "\n")
+      cat("\n")
+      cat(knitr::kable(bal_summary_exp, caption = paste0("Imbalanced Covariates for imputation ", k, " using ",
+                                                         weights_method, " and ", form_name, " formulas"), format = 'pipe'), sep = "\n")
+      cat("\n")
+      cat("\n")
+    } else {
+      cat(paste0("As shown below, for exposure ", exposure, " using ", weights_method, ", and ", form_name, " formulas, ",
+                 imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced, "%) covariates across time points corresponding to ",
+                 remaining_imbalanced_domains, " out of ", total_domains,
+                 " domains remain imbalanced with a remaining average absolute value correlation/std mean difference of ",
+                 remaining_avg_abs_corr, " (range= ", remaining_corr_range, ") :"), "\n")
+      cat("\n")
+      cat(knitr::kable(bal_summary_exp, caption = paste0("Imbalanced covariates using ",
+                                                         weights_method, " and ", form_name, " formulas"), format = 'pipe'), sep = "\n")
+      cat("\n")
+      cat("\n")
+    }
   }
 
   rownames(all_bal_stats) <- NULL
