@@ -135,7 +135,6 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
   }
 
 
-
   time_varying_covariates <- tv_confounders
   all_covars <- c(tv_confounders, ti_confounders)
 
@@ -176,14 +175,14 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
       #identifying lagged tv confounders relative to time point based on formula type
       if (type == "full"){
         if(verbose){
-          message("Please manually inspect the full balancing formula below:")
+          message("USER ALERT: Please manually inspect the full balancing formula below:")
         }
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) < time]
       }
 
       else if (type == "short"){
         if(verbose){
-          message("Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:")
+          message("USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:")
         }
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
                                                       exposure_time_pts[x-1]]
@@ -195,7 +194,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
         }
 
         if(verbose){
-          message("Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:")
+          message("USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:")
         }
 
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==

@@ -295,9 +295,21 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # standardizing balance statistics after weighting by history
             bal_stats <- bal_stats %>%
               dplyr::mutate(std_bal_stats = weighted_bal_stats /
-                              (sapply(seq(ncol(data[, covars])), function(x) {
+                              (sapply(seq(ncol(data[, covars])), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
                                 sd(as.numeric(data[, covars][, x]), na.rm = TRUE) }) *# unweighted covar sd
                                  sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
+
+            # bal_stats <- bal_stats %>%
+            #   dplyr::mutate(std_bal_stats = weighted_bal_stats /
+            #                   (sapply(seq(nrow(bal_stats)), function(x) {
+            #                     sd(as.numeric(data[, covars][, x]), na.rm = TRUE) }) *# unweighted covar sd
+            #                      sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
+
+            #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
+            if(inherits(bal_stats, "list")){
+              stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
+                   call. = FALSE)
+            }
 
             bal_stats <- bal_stats %>%
               dplyr::select(contains(c("std")))
@@ -325,6 +337,13 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                 sqrt(mean( #dividing by pool SD estimate (unadjusted)
                   var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 1, covars[x]])), #treated var
                   var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 0, covars[x]]))))})) #untreated var
+
+            #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
+            if(inherits(bal_stats, "list")){
+              stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
+                   call. = FALSE)
+            }
+
             bal_stats <- bal_stats %>%
               dplyr::select(contains(c("std")))
           } #ends binary
@@ -344,6 +363,12 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                                 subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[, "weights"]) # adding IPTW weights
             })
+
+            #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
+            if(inherits(bal_stats, "list")){
+              stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
+                   call. = FALSE)
+            }
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
@@ -376,6 +401,12 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                                 subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[, "weights"]) # adding IPTW weights
             })
+
+            #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
+            if(inherits(bal_stats, "list")){
+              stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
+                   call. = FALSE)
+            }
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {

@@ -649,8 +649,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   }
 
   if (save.out & verbose){
-    message("\n")
-    message("See the '/plots/' folder for graphical representations of results.")
+    cat("\n")
+    cat("See the '/plots/' folder for graphical representations of results.")
   }
 
   comps

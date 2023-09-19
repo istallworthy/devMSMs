@@ -74,7 +74,9 @@ eval_hist <- function(data, exposure, tv_confounders, epochs = NULL, time_pts, h
     epochs <- data.frame(epochs = as.character(time_pts),
                          values = time_pts)
     new <- data[, c("ID", paste(exposure, time_pts, sep = "."))]
+
   } else{
+
     #new will have cols for epochs
     new <- data.frame(ID = data_wide[, "ID"])
     colnames(new) <- "ID"
@@ -212,7 +214,7 @@ eval_hist <- function(data, exposure, tv_confounders, epochs = NULL, time_pts, h
                  ", respectively, across ", paste(epochs$epochs, collapse = ", ")), "\n")
     }
 
-    cat("Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision:", "\n")
+    cat("USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision:", "\n")
 
     if (nrow(his_summ) != length(tot_hist)) {
       cat(paste0("USER ALERT: There are no individuals in your sample that fall into ",

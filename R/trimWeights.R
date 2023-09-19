@@ -82,7 +82,6 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
   }
 
   if(save.out){
-    # creating directories
     weights_dir <- file.path(home_dir, "weights")
     if (!dir.exists(weights_dir)) {
       dir.create(weights_dir)
@@ -106,7 +105,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
 
       if (verbose){
       cat('\n')
-      cat(paste0("USER ALERT: For imputation ", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
+      cat(paste0("For imputation ", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
                      quantile, " quantile, the median weight value is ", round(median(t), 2) ,
                      " (SD= ", round(sd(t), 2), "; range= ", round(min(t), 2), "-", round(max(t), 2), ")."), "\n")
       cat('\n')
@@ -142,7 +141,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
 
       if (verbose){
       cat('\n')
-      cat(paste0("USER ALERT: For the ", exposure, "-", outcome, " relation, following trimming at the ",
+      cat(paste0("For the ", exposure, "-", outcome, " relation, following trimming at the ",
                      quantile, " quantile, the median weight value is ", round(median(t), 2) ,
                      " (SD= ", round(sd(t), 2), "; range= ", round(min(t), 2), "-", round(max(t), 2), ")."), "\n")
       cat('\n')

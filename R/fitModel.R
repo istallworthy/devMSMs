@@ -172,7 +172,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   weights_method <- weights[[1]]$method
 
   if(save.out){
-    #create models directory
     models_dir <- file.path(home_dir, "models")
     if (!dir.exists(models_dir)) {
       dir.create(models_dir)
@@ -230,9 +229,9 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     })
 
     if (verbose){
-      cat("Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
+      message("USER ALERT: Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
       cat("\n")
-      cat("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
+      message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
       cat("\n")
     }
 
@@ -257,9 +256,9 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     })
 
     if (verbose){
-      cat("Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
+      message("Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
       cat("\n")
-      cat("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
+      message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
       cat("\n")
     }
 
@@ -283,9 +282,9 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     })
 
     if (verbose){
-      cat("Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
+      message("Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
       cat("\n")
-      cat("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
+      message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
       cat("\n")
     }
 
@@ -301,7 +300,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     names(fits) <- seq_len(length(fits))
 
     if (verbose){
-      cat(paste0("USER ALERT: the marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
+      cat(paste0("The marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
       print(suppressWarnings(jtools::export_summs(
         fits, statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
         model.names = c(paste0("Imp.", seq_len(length(fits))))
@@ -320,7 +319,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
   else{
     if (verbose){
-      cat(paste0("USER ALERT: the marginal model, ", model, ", is summarized below:"), "\n")
+      cat(paste0("The marginal model, ", model, ", is summarized below:"), "\n")
       print(suppressWarnings(jtools::export_summs(fits, statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"))))
     }
 

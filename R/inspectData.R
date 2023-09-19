@@ -224,6 +224,10 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
     print(paste(colnames(data)[sapply(data, class) == "factor"], sep = ",", collapse = ", "))
     cat("\n")
 
+    #temporary warning re: factor levels
+    cat("*temp: please inspect the levels of your factors below. at present, excluding ID, the code can only accept 2-level factors. set rest to numeric", "\n")
+    print(sapply(data[,colnames(data)[sapply(data, class) == "factor"]], nlevels))
+
     oth <- data.frame(variable = names(sapply(data, class)) [!sapply(data, class) %in% c("numeric", "factor")],
                       type = sapply(data, class) [!sapply(data, class) %in% c("numeric", "factor")])
     if(nrow(oth) > 0 ){

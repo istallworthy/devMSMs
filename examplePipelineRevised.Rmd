@@ -116,6 +116,8 @@ Choose from the following preliminary steps to assign to 'data' one of the follo
 - a mids object (output from mice::mice()) of data imputed in wide format
 - a list of data imputed in wide format
 
+Data columns shoudl be either numeric or factor form. Note that at present, the code can only take factors with 2 levels. 
+
 ### P1. Format Data
 #### P1a. Format single data frame of long data 
 ```{r}
@@ -261,6 +263,7 @@ names(custom) <-c("full_form-6")
 custom <- full_formulas
 
 
+#required
 type = "full"
 
 #all inputs
@@ -340,7 +343,6 @@ formulas <- short_formulas
 
 # optional weighting method "ps", "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
 method = "ps"; 
-
 
 #all input
 weights.ps <- createWeights(home_dir, data, exposure, outcome, formulas, 
