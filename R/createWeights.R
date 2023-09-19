@@ -113,7 +113,6 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
 
   if(save.out){
-    # creating directories
     weights_dir <- file.path(home_dir, "weights")
     if (!dir.exists(weights_dir)) {
       dir.create(weights_dir)
@@ -194,7 +193,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         d$weights <- fit$weights
 
         if (verbose){
-          cat(paste0("USER ALERT: For imputation ", i, " and the ", weights_method, " weighting method, the median weight value is ",
+          cat(paste0("For imputation ", i, " and the ", weights_method, " weighting method, the median weight value is ",
                      round(median(fit$weights), 2) ," (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
                      round(max(fit$weights), 2), ")."), "\n")
           cat('\n')
@@ -249,7 +248,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         d$weights <- fit$weights
 
         if (verbose){
-          message(paste0("USER ALERT: For imputation", i, " and ", weights_method,
+          cat(paste0("For imputation", i, " and ", weights_method,
                          ", weighting method, the median weight value is ", round(median(fit$weights), 2) ,
                          " (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
                          round(max(fit$weights), 2), ")."), "\n")
@@ -305,7 +304,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       data$weights <- weights[[1]]$weights
 
       if (verbose){
-        message(paste0("USER ALERT: for the ", weights_method, " weighting method, the median weight value is ",
+        cat(paste0("For the ", weights_method, " weighting method, the median weight value is ",
                        round(median(data$weights), 2) , " (SD = ", round(sd(data$weights), 2), "; range = ",
                        round(min(data$weights), 2), "-", round(max(data$weights), 2), ")."), "\n")
         cat('\n')
@@ -344,7 +343,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       saveRDS(weights, file = paste0(home_dir, "/weights/", exposure, "-", outcome,
                                      "_", form_name, "_", weights_method, "_fit.rds"))
       if (verbose){
-        message("Weights models have been saved as an .rds object in the 'weights' folder.")
+        cat("Weights models have been saved as an .rds object in the 'weights' folder.")
       }
     }
 

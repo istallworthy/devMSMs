@@ -308,7 +308,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         write.csv(bal_stats_all_imp, paste0(home_dir, "/balance/", type, "/",
                                             exposure, "_all_imps_balance_stat_summary.csv"), row.names = FALSE)
         if (verbose ){
-          message("Pre balance statistics for each imputed dataset have now been saved in the 'balance/prebalance/' folder", "\n")
+          cat("Pre balance statistics for each imputed dataset have now been saved in the 'balance/prebalance/' folder", "\n")
         }
 
       }
@@ -440,7 +440,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         write.csv(bal_stats_all_imp, paste0(home_dir, "/balance/", type, "/", exposure,
                                             "_all_imps_balance_stat_summary.csv"), row.names = FALSE)
         if (verbose){
-          message("Weighted balance statistics for each imputed dataset have now been saved in the 'balance/weighted/' folder", "\n")
+          cat("Weighted balance statistics for each imputed dataset have now been saved in the 'balance/weighted/' folder", "\n")
         }
       }
 
@@ -542,12 +542,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
     if (verbose){
       if (mice::is.mids(data) | inherits(data, "list")){
-        cat(paste0("USER ALERT: Summary plots for ", form_name, " ", exposure,
+        cat(paste0("Summary plots for ", form_name, " ", exposure,
                    " averaged across all imputations have been saved out for each time point in the 'balance/",
                    type, "/plots/' folder."), "\n")
       }
       else{
-        message(paste0("USER ALERT: Summary plots for ", form_name, " ", exposure,
+        cat(paste0("Summary plots for ", form_name, " ", exposure,
                        " have now been saved out for each time point in the 'balance/", type, "/plots/' folder."), "\n")
       }
     }
@@ -561,11 +561,11 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
     if (verbose){
       if (mice::is.mids(data) | inherits(data, "list")){
-        message(paste0("USER ALERT: Check 'balance/", type, "/' folder for a table of all ", type, " correlations or
+        cat(paste0("Check 'balance/", type, "/' folder for a table of all ", type, " correlations or
                    standardized mean differences averaged across imputed datasets."), "\n")
       }
       else {
-        message(paste0("USER ALERT: Check 'balance/", type, "/' folder for a table of all ", type, " correlations or
+        cat(paste0("Check 'balance/", type, "/' folder for a table of all ", type, " correlations or
                    standardized mean differences."), "\n")
       }
     }
