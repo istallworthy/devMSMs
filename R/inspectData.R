@@ -277,6 +277,7 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
   # Exposure summary
   exposure_summary <- data %>%
     dplyr:: select(colnames(data)[grepl(exposure, colnames(data))])
+  exposure_summary <- sapply(exposure_summary, as.numeric)
   exposure_summary <- psych::describe(exposure_summary, fast = TRUE)
 
 
@@ -293,6 +294,8 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
     }
   }
 
+  eval_hist(data = data2, exposure, tv_confounders, epochs,
+            exposure_time_pts, hi_lo_cut, ref = reference, comps = comparison, verbose)
 
   # Exposure history summary
   if( is.null(epochs)){ #making epochs time pts if not specified by user
@@ -308,11 +311,6 @@ inspectData <- function(data, home_dir, exposure, exposure_time_pts, outcome, tv
       stop("Please provide one or a list of several values for each epoch.", call. = FALSE)
     }
   }
-
-  eval_hist(data = data2, exposure, tv_confounders, epochs,
-            exposure_time_pts, hi_lo_cut, ref = reference, comps = comparison, verbose)
-
-
 
   # Outcome summary
   outcome_summary <- data[, grepl(sapply(strsplit(outcome, "\\."),

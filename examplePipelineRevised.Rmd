@@ -75,7 +75,8 @@ outcome <- "EF_avg_perc.58"
 
 tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "MDI.6", "MDI.15",                                            
-                    "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58",                                         
+                    # "RHasSO.6", "RHasSO.15", "RHasSO.24", 
+                    "RHasSO.35", "RHasSO.58",                                         
                     "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
                     "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
                     "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
@@ -101,10 +102,11 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 At this stage, data can be in long or wide format, complete or incomplete. 
 ```{r}
 
-data <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv") #change this to match your folder
+# data <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv") #change this to match your folder
 
-# data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", header = TRUE)
-# data_wide <- data_wide %>%  select(-c(contains(":")))
+data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", header = TRUE)
+
+
 
 ```
 
@@ -123,27 +125,34 @@ Data columns shoudl be either numeric or factor form. Note that at present, the 
 ```{r}
 
 # if you have long data with wrong time, id, and/or missing indicators
-data_long <- formatLongData(home_dir, data_orig, exposure, exposure_time_pts, outcome, tv_confounders, 
+data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, outcome, tv_confounders, 
                             time_var = "TAge", #list original time variable here if it's not "WAVE"
                             id_var = "S_ID", #list original id variable here if it's not "ID"
                             missing = NA, #list missing value here
                             factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO"),
                             save.out = TRUE) #list factor variables here
 
+#making exposure binary for testing purposes only 
+a <- as.numeric(unlist(data_long_f %>% select(contains(exposure))))
+data_long_f[, colnames(data_long_f) %in% exposure] <- as.factor(ifelse(a > median(a, na.rm = TRUE), 1, 0))
+
 ```
 
 #### P1b. Convert single data frame from long to wide format
 ```{r}
 
-v <- sapply(strsplit(tv_confounders, "\\."), "[",1)
+v <- sapply(strsplit(tv_confounders, "\\."), "[", 1)
 v <- v[!duplicated(v)]
-data_wide <- stats::reshape(data = data_long, 
+data_wide <- stats::reshape(data = data_long_f, 
                             idvar = "ID", #list ID variable
                             v.names = v, 
                             timevar = "WAVE", # list time variable
                             times = c(6, 15, 24, 35, 58), # exhaustive list of all time points in data 
                             direction = "wide")
 data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
+
+#removing vars w/no variablity
+data_wide <- data_wide %>% dplyr::select(-c(RHasSO.6, RHasSO.15 ,RHasSO.24))
 
 ```
 
@@ -158,6 +167,9 @@ method <- "pmm"; # provide an imputation method pmm, midastouch, sample, cart , 
 
 imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, 
                            para_proc = TRUE, read_imps_from_file = "no", save.out = TRUE)
+
+data <- imputed_data
+
 
 
 #OR, read in a saved mids object
@@ -610,6 +622,9 @@ models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome
 #minimum inputs
 model <- "m0"
 models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model)
+
+models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
+                   int_order = int_order)
 
 ```
 ##### Sensitvity analyses

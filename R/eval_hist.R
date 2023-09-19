@@ -88,7 +88,7 @@ eval_hist <- function(data, exposure, tv_confounders, epochs = NULL, time_pts, h
       # Finds data from each time point in each epoch, horizontally aligns all exposure values within the epoch for averaging
       for (l in seq_len(length(as.numeric(unlist(epochs[e, 2]))))) {
         level <- as.numeric(unlist(epochs[e, 2]))[l]
-        z <- data_wide[, which(grepl(paste0(exposure, ".", level), names(data_wide)))]
+        z <- as.numeric(as.character(unlist(data_wide[, which(grepl(paste0(exposure, ".", level), names(data_wide)))])))
         temp <- cbind(temp, z)
       }
       new <- new %>%
@@ -184,7 +184,8 @@ eval_hist <- function(data, exposure, tv_confounders, epochs = NULL, time_pts, h
           return("l")
         }
       }), collapse = "-")
-    })}
+    })
+  }
 
   # Summarizing n's by history
   his_summ <- new %>%

@@ -330,19 +330,28 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             })
 
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
-            # standardizing balance statistics after finding weighted balance stats
 
+            # standardizing balance statistics after finding weighted balance stats
             bal_stats <- bal_stats %>%
-              dplyr::mutate(std_bal_stats = weighted_bal_stats/sapply(seq(ncol(data[, covars])), function(x){
-                sqrt(mean( #dividing by pool SD estimate (unadjusted)
-                  var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 1, covars[x]])), #treated var
-                  var(as.numeric(data[paste0(exposure, ".", exposure_time_pts[1]) == 0, covars[x]]))))})) #untreated var
+              dplyr::mutate(std_bal_stats = weighted_bal_stats/
+                              sapply(seq(ncol(data[, covars])), function(x){
+                                sqrt(mean( #dividing by pool SD estimate (unadjusted)
+                                  var(as.numeric(data[data[, (colnames(data) %in% paste0(exposure, ".",
+                                                                                         exposure_time_pts[1]))] == 1 , colnames(data) %in% covars[x]])), #treated var
+                                  var(as.numeric(data[data[, (colnames(data) == paste0(exposure, ".",
+                                                                                       exposure_time_pts[1]))] == 0 , colnames(data) %in% covars[x]])) #untreated var
+                                ))
+                              }))
 
             #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
             if(inherits(bal_stats, "list")){
               stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
                    call. = FALSE)
             }
+
+            # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
+            bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
+
 
             bal_stats <- bal_stats %>%
               dplyr::select(contains(c("std")))
@@ -414,18 +423,26 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             })
 
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
-            # standardizing balance statistics after finding weighted balance stats
 
+            # standardizing balance statistics after finding weighted balance stats
             bal_stats <- bal_stats %>%
-              dplyr::mutate(std_bal_stats=weighted_bal_stats/ sapply(seq(ncol(data[, covars])), function(x){
-                sqrt(mean( #dividing by pool SD estimate (unadjusted)
-                  var(as.numeric(data[paste0(exposure, ".",
-                                             exposure_time_pts[1]) == 1, covars[x]])), #treated var
-                  var(as.numeric(data[paste0(exposure, ".",
-                                             exposure_time_pts[1]) == 0, covars[x]]))))}))  #untreated var
+              dplyr::mutate(std_bal_stats = weighted_bal_stats/
+                              sapply(seq(ncol(data[, covars])), function(x){
+                                sqrt(mean( #dividing by pool SD estimate (unadjusted)
+                                  var(as.numeric(data[data[, (colnames(data) %in% paste0(exposure, ".",
+                                                                                         exposure_time_pts[1]))] == 1 , colnames(data) %in% covars[x]])), #treated var
+                                  var(as.numeric(data[data[, (colnames(data) == paste0(exposure, ".",
+                                                                                       exposure_time_pts[1]))] == 0 , colnames(data) %in% covars[x]])) #untreated var
+                                ))
+                              }))
 
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
+
+            # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
+            bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
+
+
             bal_stats <- bal_stats %>%
               dplyr::select(contains(c("std")))
           } #ends binary
