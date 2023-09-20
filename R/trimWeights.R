@@ -4,8 +4,9 @@
 #' Trims IPTW balancing weights with heavy right tails by populating all weight
 #' values above a given quantile with the weight value of that quantile.
 #'
-#' @seealso {[WeightIt::trim()],
-#'   <https://search.r-project.org/CRAN/refmans/WeightIt/html/trim.html>}
+#' @seealso [WeightIt::trim()],
+#'   <https://search.r-project.org/CRAN/refmans/WeightIt/html/trim.html> which
+#'   this function wraps
 #' @param home_dir path to home directory
 #' @param exposure name of exposure variable
 #' @param outcome name of outcome variable with ".timepoint" suffix

@@ -324,8 +324,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     }
 
     if (save.out){
-      require(officer) #is there another way to do this? required for writing to word
-      require(flextable) # " "
+      requireNamespace(officer) #is there another way to do this? required for writing to word
+      requireNamespace(flextable) # " "
       suppressWarnings(jtools::export_summs(fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
                                             file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model,
                                                                                              "_table_mod_ev.docx"))))

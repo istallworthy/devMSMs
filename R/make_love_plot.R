@@ -15,6 +15,8 @@
 #' @param weights_method method character string of WeightItMSM() balancing
 #'   method abbreviation
 #' @param imp_conf list of variable names reflecting important confounders
+#' @param verbose TRUE or FALSE indicator for user output (default is
+#'   TRUE)
 #' @param save.out TRUE or FALSE indicator to save output and intermediary
 #'   output locally
 #' @return none

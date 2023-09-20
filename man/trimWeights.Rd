@@ -76,6 +76,7 @@ t <- trimWeights(exposure = "A",
                  save.out = FALSE)
 }
 \seealso{
-{\code{\link[WeightIt:trim]{WeightIt::trim()}},
-\url{https://search.r-project.org/CRAN/refmans/WeightIt/html/trim.html}}
+\code{\link[WeightIt:trim]{WeightIt::trim()}},
+\url{https://search.r-project.org/CRAN/refmans/WeightIt/html/trim.html} which
+this function wraps
 }

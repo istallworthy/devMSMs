@@ -44,15 +44,19 @@ suffix}
 that reflect high and low values, respectively, for continuous exposure
 (default is median split)}
 
+\item{reference}{(optional)string of "-"-separated "l" and "h" values
+indicative of a reference exposure history to which to compare comparison,
+required if comparison is specified}
+
+\item{comparison}{(optional)list of one or more strings of "-"-separated "l"
+and "h" values indicative of comparison history/histories to compare to
+reference, required if reference is specified}
+
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is TRUE)}
-
-\item{(optional)}{comparison list of one or more strings of "-"-separated "l"
-and "h" values indicative of comparison history/histories to compare to
-reference, required if reference is specified}
 }
 \value{
 none
