@@ -170,17 +170,17 @@ exposures, <a href="https://pubmed.ncbi.nlm.nih.gov/27479649/" class="external-l
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A-D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x556fc91f5fd0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e78b8c4490&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A-D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x556fc91f5fd0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e78b8c4490&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A-D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.2 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x556fc91f5fd0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e78b8c4490&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#Prebalance</span></span></span>
@@ -198,35 +198,31 @@ exposures, <a href="https://pubmed.ncbi.nlm.nih.gov/27479649/" class="external-l
 <span class="r-plt img"><img src="assessBalance-1.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-2.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-3.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, for exposure A using no weights, and short formulas, 6 out of 7 (86%) covariates across time points corresponding to 4 out of 2 domains remain imbalanced with a remaining average absolute value correlation/std mean difference of 0.12 (range= -0.17-0.17) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, for exposure A using no weights, and short formulas, 2 out of 7 (29%) covariates across time points corresponding to 1 out of 2 domains remain imbalanced with a remaining average absolute value correlation/std mean difference of 0.24 (range= -0.3-0.19) : </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced covariates using no weights and short formulas</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | exp_time| balanced_n| imbalanced_n|  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |--------:|----------:|------------:|--:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          0|            1|  1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          1|            2|  3|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          0|            3|  3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          1|            0|  1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          2|            1|  3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          2|            1|  3|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="assessBalance-4.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-5.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-6.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: For exposure A using the short formulas and no weights : </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The median absolute value relation between exposure and confounder is 0.12 (range = -0.17-0.17). </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, the following 6 covariates across time points out of 7 total (85.71%) spanning 4 domains out of 4 (100%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to A of 0.12 (range=-0.17-0.17) :  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The median absolute value relation between exposure and confounder is 0.07 (range = -0.3-0.19). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, the following 2 covariates across time points out of 7 total (28.57%) spanning 1 domains out of 4 (25%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to A of 0.24 (range=-0.3-0.19) :  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced Covariates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |exposure | exp_time|covar_time |covariate |    avg_bal| bal_thresh| balanced|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:--------|--------:|:----------|:---------|----------:|----------:|--------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        1|0          |1         | -0.1074328|        0.1|        0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        2|1          |A.1       | -0.1189210|        0.1|        0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        2|0          |C         | -0.1248901|        0.1|        0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        3|2          |A.2       | -0.1683644|        0.1|        0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        3|2          |B.2       | -0.1054779|        0.1|        0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        3|0          |C         |  0.1704255|        0.1|        0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        2|0          |C         |  0.1871461|        0.1|        0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        3|0          |C         | -0.3008956|        0.1|        0|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu">assessBalance</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
 <span class="r-in"><span>                   exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
@@ -242,10 +238,8 @@ exposures, <a href="https://pubmed.ncbi.nlm.nih.gov/27479649/" class="external-l
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="assessBalance-7.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-8.png" alt="" width="700" height="433"></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to min; returning Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
 <span class="r-plt img"><img src="assessBalance-9.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, for exposure A using no weights, and short formulas, 0 out of 7 (0%) covariates across time points corresponding to 0 out of 2 domains remain imbalanced with a remaining average absolute value correlation/std mean difference of NA (range= Inf--Inf) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, for exposure A using no weights, and short formulas, 1 out of 7 (14%) covariates across time points corresponding to 1 out of 2 domains remain imbalanced with a remaining average absolute value correlation/std mean difference of 0.3 (range= -0.3--0.3) : </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced covariates using no weights and short formulas</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -253,16 +247,23 @@ exposures, <a href="https://pubmed.ncbi.nlm.nih.gov/27479649/" class="external-l
 <span class="r-out co"><span class="r-pr">#&gt;</span> |--------:|----------:|------------:|--:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          1|            0|  1|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          3|            0|  3|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          3|            0|  3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          2|            1|  3|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="assessBalance-10.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-11.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-12.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: For exposure A using the short formulas and no weights : </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The median absolute value relation between exposure and confounder is 0.12 (range = -0.17-0.17). </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> There are no imbalanced covariates. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> There are no imbalanced covariates.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The median absolute value relation between exposure and confounder is 0.07 (range = -0.3-0.19). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, the following 1 covariates across time points out of 7 total (14.29%) spanning 1 domains out of 4 (25%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to A of 0.3 (range=-0.3--0.3) :  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced Covariates</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |exposure | exp_time|covar_time |covariate |    avg_bal| bal_thresh| balanced|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:--------|--------:|:----------|:---------|----------:|----------:|--------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        3|0          |C         | -0.3008956|        0.2|        0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu">assessBalance</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
 <span class="r-in"><span>                   exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
 <span class="r-in"><span>                   exposure_time_pts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
@@ -278,10 +279,8 @@ exposures, <a href="https://pubmed.ncbi.nlm.nih.gov/27479649/" class="external-l
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="assessBalance-13.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-14.png" alt="" width="700" height="433"></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to min; returning Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
 <span class="r-plt img"><img src="assessBalance-15.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, for exposure A using no weights, and short formulas, 0 out of 7 (0%) covariates across time points corresponding to 0 out of 2 domains remain imbalanced with a remaining average absolute value correlation/std mean difference of NA (range= Inf--Inf) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, for exposure A using no weights, and short formulas, 1 out of 7 (14%) covariates across time points corresponding to 1 out of 2 domains remain imbalanced with a remaining average absolute value correlation/std mean difference of 0.3 (range= -0.3--0.3) : </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced covariates using no weights and short formulas</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -289,16 +288,23 @@ exposures, <a href="https://pubmed.ncbi.nlm.nih.gov/27479649/" class="external-l
 <span class="r-out co"><span class="r-pr">#&gt;</span> |--------:|----------:|------------:|--:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          1|            0|  1|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          3|            0|  3|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          3|            0|  3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          2|            1|  3|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="assessBalance-16.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-17.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="assessBalance-18.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: For exposure A using the short formulas and no weights : </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The median absolute value relation between exposure and confounder is 0.12 (range = -0.17-0.17). </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> There are no imbalanced covariates. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> There are no imbalanced covariates.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The median absolute value relation between exposure and confounder is 0.07 (range = -0.3-0.19). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, the following 1 covariates across time points out of 7 total (14.29%) spanning 1 domains out of 4 (25%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to A of 0.3 (range=-0.3--0.3) :  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced Covariates</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |exposure | exp_time|covar_time |covariate |    avg_bal| bal_thresh| balanced|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:--------|--------:|:----------|:---------|----------:|----------:|--------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |A        |        3|0          |C         | -0.3008956|        0.2|        0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Weighted</span></span></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>

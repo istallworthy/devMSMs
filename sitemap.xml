@@ -43,9 +43,6 @@
     <loc>/reference/fitModel.html</loc>
   </url>
   <url>
-    <loc>/reference/formatLongData.html</loc>
-  </url>
-  <url>
     <loc>/reference/getModel.html</loc>
   </url>
   <url>
@@ -55,13 +52,7 @@
     <loc>/reference/get_reference_values.html</loc>
   </url>
   <url>
-    <loc>/reference/imputeData.html</loc>
-  </url>
-  <url>
     <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/inspectData.html</loc>
   </url>
   <url>
     <loc>/reference/make_love_plot.html</loc>
