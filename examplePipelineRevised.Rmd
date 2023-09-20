@@ -52,10 +52,10 @@ install_github("istallworthy/devMSMsHelpers")
 library(devMSMsHelpers)
 
 #note: if I update Github to fix something, you may need to first uninstall deveMSMs by running the following code:
-# remove.packages("devMSMs")
+# remove.packages("devMSMs") or remove.packages("devMSMsHelpers")
 #prior to re-installing using the code above. Sorry, this is annoying!
 
-#conducting package checks & tests from documentation
+#conducting package checks & tests from documentation --just for IS to run; comment out when testing the workflow
 devtools::check()
 ```
 

@@ -3,7 +3,7 @@
 #' Fits weighted marginal outcome model as a generalized linear model of the
 #' user's choosing, relating exposure main effects to outcome using IPTW
 #' weights.
-#' @importFrom survey svydesign svyglm
+#' @importFrom survey svyglm
 #' @importFrom jtools export_summs
 #' @importFrom dplyr mutate filter select
 #' @seealso {[survey::svyglm()] for more on family/link specifications,
@@ -319,6 +319,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
   else{
     if (verbose){
+      require(survey)
       cat(paste0("The marginal model, ", model, ", is summarized below:"), "\n")
       print(suppressWarnings(jtools::export_summs(fits, statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"))))
     }
