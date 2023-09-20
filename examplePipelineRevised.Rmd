@@ -152,7 +152,7 @@ data_wide <- stats::reshape(data = data_long_f,
 data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 
 #removing vars w/no variablity
-data_wide <- data_wide %>% dplyr::select(-c(RHasSO.6, RHasSO.15 ,RHasSO.24))
+data_wide <- data_wide %>% dplyr::select(-c(RHasSO.6, RHasSO.15 , RHasSO.24))
 
 ```
 
