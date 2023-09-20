@@ -6,6 +6,7 @@
 #' @param d data frame of high and low values per exposure main effect
 #' @param reference reference sequence of "h" and/or "l" (e.g., "h-h-h")
 #' @return reference values
+#' @export
 #' @examples
 #' d <- data.frame(e = c("A.1", "A.2", "A.3"),
 #'                l = c(0, 0, 0),
@@ -56,7 +57,6 @@ get_comparison_values <- function(d, comp_histories) {
 #' @param comp_histories comparison sequence(s) of "h" and/or "l" (e.g., "h-h-h")
 #' @param exposure name of exposure variable
 #' @param preds custom output of marginaleffects::average_predictions()
-#'
 #' @return contrasts
 #' @export
 create_custom_contrasts <- function(d, reference, comp_histories, exposure, preds) {
@@ -117,7 +117,6 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 #'
 #' @param p table output from marginaleffects::avg_predictions() or hypotheses()
 #' @param d data frame of high and low values per exposure main effect
-#'
 #' @return table with histories labeled
 #' @export
 
