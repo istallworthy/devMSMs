@@ -49,6 +49,9 @@ method abbreviation}
 
 \item{imp_conf}{list of variable names reflecting important confounders}
 
+\item{verbose}{TRUE or FALSE indicator for user output (default is
+TRUE)}
+
 \item{save.out}{TRUE or FALSE indicator to save output and intermediary
 output locally}
 }

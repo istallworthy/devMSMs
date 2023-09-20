@@ -15,10 +15,10 @@
 #' @param hi_lo_cut (optional) list of two numbers indicating quantile values
 #'   that reflect high and low values, respectively, for continuous exposure
 #'   (default is median split)
-#' @param (optional) reference string of "-"-separated "l" and "h" values
+#' @param reference (optional)string of "-"-separated "l" and "h" values
 #'   indicative of a reference exposure history to which to compare comparison,
 #'   required if comparison is specified
-#' @param (optional) comparison list of one or more strings of "-"-separated "l"
+#' @param comparison (optional)list of one or more strings of "-"-separated "l"
 #'   and "h" values indicative of comparison history/histories to compare to
 #'   reference, required if reference is specified
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is

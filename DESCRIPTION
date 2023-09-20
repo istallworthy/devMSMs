@@ -2,7 +2,21 @@ Package: devMSMs
 Type: Package
 Title: Tools for Conducting Marginal Structural Models with Developmental Data
 Version: 0.0.0.9000
-Authors: Isabella Stallworthy
+Authors@R: c(person("Isabella", "Stallworthy",
+            email = "istall@seas.upenn.edu",
+            role = c("aut", "cre")),
+            person("Meriah", "DeJoseph",
+            email = "meriahd@stanford.edu",
+            role = c("aut")),
+            person("Emily", "Padrutt",
+            email = "padru004@umn.edu",
+            role = c("aut")),
+            person("Noah", "Greifer",
+            email = "ngreifer@iq.harvard.edu",
+            role = c("aut")),
+            person("Daniel", "Berry",
+            email = "dberry@umn.edu",
+            role = c("aut")))
 Description: Functions for preparing, assessing, and implementing MSMS.
 License: GPL-3
 Encoding: UTF-8
@@ -10,17 +24,11 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Imports:
-    readr,
-    readxl,
     tidyr,
     dplyr,
     WeightIt,
-    MatchThem,
     marginaleffects,
-    ranger,
-    data.table,
     tidyr,
-    Hmisc,
     stats,
     ggplot2,
     matrixStats,
@@ -33,12 +41,13 @@ Imports:
     doRNG,
     foreach,
     mice,
-    sjPlot,
     stargazer,
     gtools,
-    RColorBrewer,
     cobalt,
-    dbarts
+    purrr,
+    stringr,
+    missMethods,
+    tibble
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

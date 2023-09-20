@@ -51,6 +51,8 @@ library(devMSMs)
 # remove.packages("devMSMs")
 #prior to re-installing using the code above. Sorry, this is annoying!
 
+#conducting package checks & tests from documentation
+devtools::check()
 ```
 
 

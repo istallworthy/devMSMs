@@ -16,6 +16,7 @@
 #' @importFrom purrr map_dfr
 #' @importFrom foreach getDoParWorkers
 #' @importFrom foreach getDoParName
+#' @importFrom missMethods delete_MAR_1_to_x
 #' @seealso {[mice::mice()],
 #'   <https://cran.r-project.org/web/packages/mice/index.html>}
 #' @param data data in wide format
@@ -29,7 +30,7 @@
 #'   using multiple cores to speed up process (default = TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and
 #'   intermediary output locally (default is TRUE)
-#' @param read_in_from_file (optional) "yes" or "no" indicatorto read in weights
+#' @param read_imps_from_file (optional) "yes" or "no" indicatorto read in weights
 #'   that have been previously run and saved locally (default is "no")
 #' @return mice object of m imputed datasets
 #' @examples
@@ -45,7 +46,8 @@
 #' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
 #'
 #' test_miss <- missMethods::delete_MAR_1_to_x(as.data.frame(test), p = 0.20,
-#'                                             cols_mis = c("A.1", "B.2", "C"), cols_ctrl = c("B.1", "B.1", "B.1"), 3)
+#'                                             cols_mis = c("A.1", "B.2", "C"),
+#'                                             cols_ctrl = c("B.1", "B.1", "B.1"), 3)
 #' test_i <- imputeData(data = test_miss,
 #'                      m = 3,
 #'                      method = "rf",
