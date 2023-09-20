@@ -47,6 +47,10 @@ library(devtools)
 install_github("istallworthy/devMSMs")
 library(devMSMs)
 
+#get helper files from github
+install_github("istallworthy/devMSMsHelpers")
+library(devMSMsHelpers)
+
 #note: if I update Github to fix something, you may need to first uninstall deveMSMs by running the following code:
 # remove.packages("devMSMs")
 #prior to re-installing using the code above. Sorry, this is annoying!
