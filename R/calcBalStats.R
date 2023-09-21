@@ -126,6 +126,9 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     cat(paste0("**Imputation ", k, "**"), "\n")
   }
 
+  #split factors
+  data$"ID" = as.numeric(data$"ID")
+  data2 <- cobalt::splitfactor(data, names(data)[sapply(data, class ) == "factor"], drop.first = FALSE )
 
   #creating initial data frames
   #data frame with all sampling weights for all exposures at all exposure time points for all histories
@@ -147,10 +150,16 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     covars <- as.character(unlist(strsplit(covars, "\\+")))
     covars <- gsub(" ", "", covars)
 
+    #making factor covars separate variables
+    data_cov <- data[, covars]
+    data_cov <- cobalt::splitfactor(data_cov, names(data_cov)[sapply(data_cov, class ) == "factor"], drop.first = FALSE )
+    covars <- colnames(data_cov)
+
 
     # GETTING BALANCE STATS FOR T=1 W/ NO EXPOSURE HISTORY (ok to standardize immediately)
     if (length(lagged_time_pts) == 0) {
-      temp <- data
+      # temp <- data
+      temp <- data2
 
       # Unweighted pre-balance checking
       if (!weighted) {
@@ -253,8 +262,11 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
       # GET BALANCE STATISTICS FOR T>1 (when there is a history to weight on)
       if (length(lagged_time_pts) > 0) {
+
         # Merge data with prop_weights by ID
-        temp <- merge(data, prop_weights, by = "ID", all.x = TRUE)
+        # temp <- merge(data, prop_weights, by = "ID", all.x = TRUE)
+        temp <- merge(data2, prop_weights, by = "ID", all.x = TRUE) #data with factors split up
+
 
         # Removing any histories that only have 1 or 0 person contributing (cannot calc bal stats)
         if (sum(prop_sum$n == 1) > 0 | sum(prop_sum$n == 0) > 0) {
@@ -281,6 +293,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               temp2 <- temp %>%
                 dplyr::filter(history == i)
 
+              #should be same length as covars (already have factors split up)
               cobalt::col_w_cov(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding covariance
                                 subset = temp2$history[temp2$history == i] == i) # subsetting by that history
             })
@@ -293,17 +306,19 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
 
             # standardizing balance statistics after weighting by history
-            bal_stats <- bal_stats %>%
-              dplyr::mutate(std_bal_stats = weighted_bal_stats /
-                              (sapply(seq(ncol(data[, covars])), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
-                                sd(as.numeric(data[, covars][, x]), na.rm = TRUE) }) *# unweighted covar sd
-                                 sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
-
             # bal_stats <- bal_stats %>%
             #   dplyr::mutate(std_bal_stats = weighted_bal_stats /
-            #                   (sapply(seq(nrow(bal_stats)), function(x) {
+            #                   (sapply(seq(ncol(data[, covars])), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
             #                     sd(as.numeric(data[, covars][, x]), na.rm = TRUE) }) *# unweighted covar sd
             #                      sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
+
+            bal_stats <- bal_stats %>%
+              dplyr::mutate(std_bal_stats = weighted_bal_stats /
+                              (sapply(seq(nrow(bal_stats)), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
+                                sd(as.numeric(data2[, rownames(bal_stats)[x]]), na.rm = TRUE) }) *# unweighted covar sd
+                                 sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
+
+
 
             #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
             if(inherits(bal_stats, "list")){
@@ -389,9 +404,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # standardizing balance statistics after weighting by history
             bal_stats <- bal_stats %>%
               dplyr::mutate(std_bal_stats = weighted_bal_stats /
-                              (sapply(seq(ncol(data[, covars])), function(x) {
-                                sd(as.numeric(data[, covars][, x]), na.rm = TRUE) # unweighted covar sd
-                              }) * sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))
+                              (sapply(seq(nrow(bal_stats)), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
+                                sd(as.numeric(data2[, rownames(bal_stats)[x]]), na.rm = TRUE) }) *# unweighted covar sd
+                                 sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
+
 
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
@@ -458,9 +474,22 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     bal_stats <- as.data.frame(bal_stats)
     bal_stats$covariate <- rownames(bal_stats)
 
-    # Renames factor covariates
-    bal_stats$covariate[sapply(strsplit(bal_stats$covariate, "_"), "[", 1) %in% factor_covariates] <-
-      sapply(strsplit(bal_stats$covariate, "_"), "[", 1)[sapply(strsplit(bal_stats$covariate, "_"), "[", 1) %in% factor_covariates]
+    # # Renames factor covariates
+    # bal_stats$covariate[sapply(strsplit(bal_stats$covariate, "_"), "[", 1) %in% factor_covariates] <-
+    #   sapply(strsplit(bal_stats$covariate, "_"), "[", 1)[sapply(strsplit(bal_stats$covariate, "_"), "[", 1) %in% factor_covariates]
+
+    #averages across factor levels to create one bal stat per factor variable?
+    data$ID <- as.numeric(data$ID)
+    f_vars <- colnames(data)[sapply(data, is.factor)]
+    f_stats <- bal_stats[rownames(bal_stats)[sapply(strsplit(rownames(bal_stats), "_"), "[", 1) %in% f_vars], ]
+    f_stats$name <- sapply(strsplit(rownames(f_stats), "_"), "[", 1)
+    test <- f_stats %>% dplyr::group_by(name) %>% dplyr::summarize(new = mean(std_bal_stats))
+    colnames(test) <- c("covariate", "std_bal_stats")
+    new <- data.frame(std_bal_stats = test$std_bal_stats,
+                      covariate = test$covariate)
+    rownames(new) <- new$covariate
+    bal_stats <- rbind(bal_stats[rownames(bal_stats)[!sapply(strsplit(rownames(bal_stats), "_"), "[", 1) %in% f_vars], ],
+                       new)
 
     #adds custom bal thresh info
     if (!is.null(imp_conf)){
