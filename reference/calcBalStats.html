@@ -155,17 +155,17 @@ intermediary output locally</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A-D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5633f0e5fc78&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x556e3dec12a8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A-D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5633f0e5fc78&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x556e3dec12a8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A-D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.1 + A.2 + B.1 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5633f0e5fc78&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x556e3dec12a8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -181,8 +181,25 @@ intermediary output locally</p></dd>
 <span class="r-in"><span>                  exposure_time_pts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                  balance_thresh <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are no factor variables to split in `data`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `[.data.frame`(temp, , c(covars)):</span> undefined columns selected</span>
+<span class="r-plt img"><img src="calcBalStats-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="calcBalStats-2.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="calcBalStats-3.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  For each time point, prebalance summary plots for full formulas and weighting method no weights have now been saved in the 'prebalance/plots/' folder. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Balance statistics using full formulas for Ausing no weights have been saved in the 'balance/prebalance/' folder </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling weights using the full for A have been saved in the 'balance/prebalance/' folder </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, for exposure A using no weights, and full formulas, 4 out of 9 (44%) covariates across time points corresponding to 3 out of 3 domains remain imbalanced with a remaining average absolute value correlation/std mean difference of 0.16 (range= -0.12-0.2) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced covariates using no weights and full formulas</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | exp_time| balanced_n| imbalanced_n|  n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |--------:|----------:|------------:|--:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          0|            1|  1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          2|            1|  3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          3|            2|  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">c</span> <span class="op">&lt;-</span> <span class="fu">calcBalStats</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
 <span class="r-in"><span>                  formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                  exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
@@ -190,8 +207,25 @@ intermediary output locally</p></dd>
 <span class="r-in"><span>                  outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                  balance_thresh <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.1</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  imp_conf <span class="op">=</span> <span class="st">"B2"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are no factor variables to split in `data`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `[.data.frame`(temp, , c(covars)):</span> undefined columns selected</span>
+<span class="r-plt img"><img src="calcBalStats-4.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="calcBalStats-5.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="calcBalStats-6.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  For each time point, prebalance summary plots for full formulas and weighting method no weights have now been saved in the 'prebalance/plots/' folder. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Balance statistics using full formulas for Ausing no weights have been saved in the 'balance/prebalance/' folder </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sampling weights using the full for A have been saved in the 'balance/prebalance/' folder </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, for exposure A using no weights, and full formulas, 4 out of 9 (44%) covariates across time points corresponding to 3 out of 3 domains remain imbalanced with a remaining average absolute value correlation/std mean difference of 0.16 (range= -0.12-0.2) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced covariates using no weights and full formulas</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | exp_time| balanced_n| imbalanced_n|  n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |--------:|----------:|------------:|--:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          0|            1|  1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          2|            1|  3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          3|            2|  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">c</span> <span class="op">&lt;-</span> <span class="fu">calcBalStats</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
 <span class="r-in"><span>                  formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                  exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
