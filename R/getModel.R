@@ -1,8 +1,6 @@
 
 #' Fits outcome model
 #'
-#' @importFrom survey svyglm
-#' @importFrom survey svydesign
 #' @param d wide data frame
 #' @param exposure name of exposure variable
 #' @param exposure_time_pts list of integers at which weights will be

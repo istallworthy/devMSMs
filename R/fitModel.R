@@ -3,9 +3,7 @@
 #' Fits weighted marginal outcome model as a generalized linear model of the
 #' user's choosing, relating exposure main effects to outcome using IPTW
 #' weights.
-#' @importFrom survey svyglm
-#' @importFrom jtools export_summs
-#' @importFrom dplyr mutate filter select
+#' @importFrom dplyr mutate select
 #' @seealso {[survey::svyglm()] for more on family/link specifications,
 #'   <https://www.rdocumentation.org/packages/survey/versions/4.2-1/topics/svyglm>}
 #' @param home_dir path to home directory (required if 'save.out' = TRUE)
@@ -136,7 +134,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   if (missing(model)){
     stop('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)
   }
-  if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
+  if (!inherits(data, "mids") & !is.data.frame(data) & !inherits(data, "list")) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.", call. = FALSE)
   }
 
@@ -211,7 +209,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   # fam <- family(link = l)
   # }
 
-  if (mice::is.mids(data)){ #imputed dataset
+  if (inherits(data, "mids")){ #imputed dataset
     fits <- lapply(seq_len(data$m), function(y) {
       d <- complete(data, y)
       d$weights <- NULL
@@ -295,7 +293,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
 
 
-  if (mice::is.mids(data) | inherits(data, "list")){
+  if (inherits(data, "mids") | inherits(data, "list")){
 
     names(fits) <- seq_len(length(fits))
 

@@ -5,9 +5,6 @@
 #' relevant confounders.
 #'
 #' @export
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 geom_histogram
-#' @importFrom ggplot2 ggsave
 #' @importFrom WeightIt weightitMSM
 #' @seealso {[WeightIt::weightitMSM()],
 #'   <https://ngreifer.github.io/WeightIt/reference/weightitMSM.html>}
@@ -91,7 +88,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     stop("Please supply a list of balancing formulas.", call. = FALSE)
   }
 
-  if(!inherits(method, "character")){
+  if(!is.character(method)){
     stop("Please provide as a character string a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.",
          call. = FALSE)
   }
@@ -100,12 +97,12 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
          call. = FALSE)
   }
 
-  if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
+  if (!inherits(data, "mids") && !is.data.frame(data) && !is.list(data)) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.",
          call. = FALSE)
   }
 
-  if(!inherits(formulas, "list")){
+  if(!is.list(formulas)) {
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
 
@@ -150,7 +147,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     # Helper function to calculate weights
     calculate_weights <- function(data, form, weights_method, SL.library) {
 
-      if(weights_method == "super"){
+      if (weights_method == "super") {
         fit <- weightitMSM(form,
                            data = data,
                            method = weights_method,
@@ -161,7 +158,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
                            SL.library = SL.library,
                            over = FALSE)
       }
-      else{
+      else {
         fit <- weightitMSM(form,
                            data = data,
                            method = weights_method,
@@ -175,7 +172,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     }
 
 
-    if(mice::is.mids(data)){
+    if (inherits(data, "mids")) {
       # Cycling through imputed datasets
       weights <- lapply(seq_len(data$m), function(i) {
         d <- as.data.frame(mice::complete(data, i))
