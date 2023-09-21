@@ -127,8 +127,13 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   }
 
   #split factors
-  data$"ID" = as.numeric(data$"ID")
-  data2 <- cobalt::splitfactor(data, names(data)[sapply(data, class ) == "factor"], drop.first = FALSE )
+  if(length(names(data)[sapply(data, class ) == "factor"]) > 0){
+    data$"ID" = as.numeric(data$"ID")
+    data2 <- cobalt::splitfactor(data, names(data)[sapply(data, class ) == "factor"], drop.first = FALSE )
+  }
+  else{
+    data2 <- data
+  }
 
   #creating initial data frames
   #data frame with all sampling weights for all exposures at all exposure time points for all histories
@@ -150,10 +155,14 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     covars <- as.character(unlist(strsplit(covars, "\\+")))
     covars <- gsub(" ", "", covars)
 
-    #making factor covars separate variables
-    data_cov <- data[, covars]
-    data_cov <- cobalt::splitfactor(data_cov, names(data_cov)[sapply(data_cov, class ) == "factor"], drop.first = FALSE )
-    covars <- colnames(data_cov)
+
+    if(length(names(data)[sapply(data, class ) == "factor"]) > 0){
+
+      #making factor covars separate variables
+      data_cov <- data[, covars]
+      data_cov <- cobalt::splitfactor(data_cov, names(data_cov)[sapply(data_cov, class ) == "factor"], drop.first = FALSE )
+      covars <- colnames(data_cov)
+    }
 
 
     # GETTING BALANCE STATS FOR T=1 W/ NO EXPOSURE HISTORY (ok to standardize immediately)
