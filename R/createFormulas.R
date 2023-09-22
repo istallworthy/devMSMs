@@ -10,9 +10,9 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint"
+#' @param tv_confounders (optional) list of time-varying confounders with ".timepoint"
 #'   suffix
-#' @param ti_confounders list of time invariant confounders
+#' @param ti_confounders (optional) list of time invariant confounders
 #' @param type type of formula to create from 'full' (includes all lagged
 #'   time-varying confounders), 'short' (includes time-varying confounders at
 #'   t-1 lag only), or 'update' (adds to 'short' formulas any imbalanced
@@ -73,7 +73,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -89,7 +88,7 @@
 #'                     save.out = FALSE)
 
 
-createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats = NULL, concur_conf = NULL,
+createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = NULL,  bal_stats = NULL, concur_conf = NULL,
                            keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ){
 
   if (save.out) {
@@ -111,10 +110,12 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
     stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
   }
   if (missing(tv_confounders)){
-    stop("Please supply a list of time-varying confounders.", call. = FALSE)
+    warning("You have not specified any time-varying confounders. If you have time-varying exposure, please list all wide exposure variables as tv_confounders.", call. = FALSE)
+    tv_confounders <- character(0)
   }
   if (missing(ti_confounders)){
-    stop("Please supply a list of time invariant confounders.", call. = FALSE)
+    stop("You have not specified time invariant confounders.", call. = FALSE)
+    # ti_confounders <- NULL
   }
   if (missing(type)){
     stop("Please supply a 'full', 'short', or 'update' type", call. = FALSE)
@@ -151,12 +152,10 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
     }
 
     if(save.out){
-      #create parent directory
       forms_dir1 <- file.path(home_dir, "formulas")
       if (!dir.exists(forms_dir1)) {
         dir.create(forms_dir1)
       }
-      # Create type directory
       forms_dir <- file.path(home_dir, "formulas", type)
       if (!dir.exists(forms_dir)) {
         dir.create(forms_dir)
@@ -178,14 +177,17 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
           message("USER ALERT: Please manually inspect the full balancing formula below:")
         }
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) < time]
+
       }
 
       else if (type == "short"){
         if(verbose){
           message("USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:")
         }
+
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
                                                       exposure_time_pts[x-1]]
+
       }
 
       else if (type == "update"){
@@ -208,10 +210,10 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, tv_co
             dplyr::select(covariate)
 
 
-          # Renames factors (that were appended w/ level)
+          # # Renames factors (that were appended w/ level)
           if (nrow(new) > 0) {
-            new$covariate[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates] <-
-              sapply(strsplit(new$covariate, "_"), `[`, 1)[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates]
+            # new$covariate[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates] <-
+            #   sapply(strsplit(new$covariate, "_"), `[`, 1)[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates]
 
             new <- as.character(unlist(new))
 
