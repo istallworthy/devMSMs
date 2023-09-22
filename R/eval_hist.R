@@ -58,13 +58,11 @@
 #'                ref = "l-l-l",
 #'                comps = "h-h-h")
 
-eval_hist <- function(data, exposure, tv_confounders, epochs = NULL, time_pts, hi_lo_cut = NULL, ref = NA, comps = NULL, verbose = TRUE){
+eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL, ref = NA, comps = NULL, verbose = TRUE){
 
   exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', time_pts[1])], "numeric"), "continuous", "binary")
 
-  time_varying_wide <- tv_confounders
-  time_varying_wide <- sort(time_varying_wide)
-  time_varying_wide <- c("ID", time_varying_wide)
+
   data_wide <- data
 
 

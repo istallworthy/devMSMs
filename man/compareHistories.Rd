@@ -9,7 +9,6 @@ compareHistories(
   exposure,
   exposure_time_pts,
   outcome,
-  tv_confounders,
   model,
   epochs = NULL,
   hi_lo_cut = NULL,
@@ -33,9 +32,6 @@ compareHistories(
 created/assessed that correspond to time points when exposure wass measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
-
-\item{tv_confounders}{list of time-varying confounders with ".timepoint"
-suffix}
 
 \item{model}{list of model outputs from fitModel()}
 
@@ -121,13 +117,11 @@ m <- fitModel(data = test,
 r <- compareHistories(exposure = "A",
                       exposure_time_pts = c(1, 2, 3),
                       outcome = "D.3",
-                      tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                       model = m,
                       save.out = FALSE)
 r <- compareHistories(exposure = "A",
                       exposure_time_pts = c(1, 2, 3),
                       outcome = "D.3",
-                      tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                       model = m,
                       reference = "l-l-l",
                       comparison = "h-h-h",
@@ -135,7 +129,6 @@ r <- compareHistories(exposure = "A",
 r <- compareHistories(exposure = "A",
                       exposure_time_pts = c(1, 2, 3),
                       outcome = "D.3",
-                      tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                       model = m,
                       reference = "l-l-l",
                       comparison = c("h-h-h", "h-l-l"),
