@@ -127,7 +127,7 @@ Data columns should be either numeric or factor form.
 ```{r}
 
 # if you have long data with wrong time, id, and/or missing indicators and need to format
-data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, outcome, tv_confounders, 
+data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, outcome, 
                             time_var = "TAge", #list original time variable here if it's not "WAVE"
                             id_var = "S_ID", #list original id variable here if it's not "ID"
                             missing = NA, #list missing value here
@@ -263,7 +263,7 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 ```{r}
 
 #all inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, #required input
+inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, #required input
             epochs, hi_lo_cut, reference, comparison, verbose = TRUE, save.out = TRUE) #optional input
 
 
@@ -715,14 +715,14 @@ model <- models #output from fitModel
 
 
 #all inputs
-results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
+results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, 
                             epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = FALSE, save.out = TRUE) 
 
 
 #minimum inputs
 reference <- "l-l-l-l-l"
 comparison <- c("h-h-h-h-h", "l-h-h-h-h") #multiple
-results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model,
+results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model,
                             reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
 
 ```
@@ -731,11 +731,11 @@ results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_c
 
 #sensitivity tests
 model <- models.s1 
-results.s1 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
+results.s1 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, 
                                epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
 
 model <- models.s2 
-results.s2 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
+results.s2 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, 
                                epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
 
 ```

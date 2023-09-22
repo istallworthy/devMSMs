@@ -25,8 +25,6 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint"
-#'   suffix
 #' @param model list of model outputs from fitModel()
 #' @param epochs (optional) data frame of exposure epoch labels and values
 #' @param hi_lo_cut (optional) list of two numbers indicating quantile values
@@ -92,13 +90,11 @@
 #' r <- compareHistories(exposure = "A",
 #'                       exposure_time_pts = c(1, 2, 3),
 #'                       outcome = "D.3",
-#'                       tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                       model = m,
 #'                       save.out = FALSE)
 #' r <- compareHistories(exposure = "A",
 #'                       exposure_time_pts = c(1, 2, 3),
 #'                       outcome = "D.3",
-#'                       tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                       model = m,
 #'                       reference = "l-l-l",
 #'                       comparison = "h-h-h",
@@ -106,14 +102,13 @@
 #' r <- compareHistories(exposure = "A",
 #'                       exposure_time_pts = c(1, 2, 3),
 #'                       outcome = "D.3",
-#'                       tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                       model = m,
 #'                       reference = "l-l-l",
 #'                       comparison = c("h-h-h", "h-l-l"),
 #'                       save.out = FALSE)
 
 
-compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, epochs = NULL, hi_lo_cut = NULL,
+compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, model, epochs = NULL, hi_lo_cut = NULL,
                              reference = NA, comparison = NULL, mc_comp_method = "BH", dose_level = "h", exp_lab = NA, out_lab = NA,
                              colors = "Dark2", verbose = TRUE, save.out = TRUE ) {
 
@@ -135,9 +130,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   if (missing(exposure_time_pts)){
     stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
   }
-  if (missing(tv_confounders)){
-    stop("Please supply a list of time-varying confounders.", call. = FALSE)
-  }
+
   if (missing(model)){
     stop("Please supply a list of model output", call. = FALSE)
   }
@@ -168,7 +161,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   #history inspection --done early bc function deals with epochs, etc.
   #print history sample distribution
   if (verbose){
-    eval_hist(data = model[[1]]$data, exposure, tv_confounders, epochs,
+    eval_hist(data = model[[1]]$data, exposure, epochs,
               exposure_time_pts, hi_lo_cut, reference, comparison, verbose)
   }
 
