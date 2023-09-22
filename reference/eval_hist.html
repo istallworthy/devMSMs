@@ -49,7 +49,6 @@ sample distribution across them for user inspection.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">eval_hist</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">exposure</span>,</span>
-<span>  <span class="va">tv_confounders</span>,</span>
 <span>  epochs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">time_pts</span>,</span>
 <span>  hi_lo_cut <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -68,11 +67,6 @@ data frames, or mids object</p></dd>
 
 <dt>exposure</dt>
 <dd><p>name of exposure variable</p></dd>
-
-
-<dt>tv_confounders</dt>
-<dd><p>list of time-varying confounders with ".timepoint"
-suffix</p></dd>
 
 
 <dt>epochs</dt>
@@ -105,6 +99,11 @@ reference, required if reference is supplied</p></dd>
 <dd><p>(optional) TRUE or FALSE indicator for user output (default is
 TRUE)</p></dd>
 
+
+<dt>tv_confounders</dt>
+<dd><p>list of time-varying confounders with ".timepoint"
+suffix</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -130,23 +129,20 @@ TRUE)</p></dd>
 <span class="r-in"><span>               exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
 <span class="r-in"><span>               tv_confounders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A.1"</span>, <span class="st">"A.2"</span>, <span class="st">"A.3"</span>, <span class="st">"B.1"</span>, <span class="st">"B.2"</span>, <span class="st">"B.3"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               time_pts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects: </span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘psych’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval_hist(data = test, exposure = "A", tv_confounders = c("A.1",     "A.2", "A.3", "B.1", "B.2", "B.3"), time_pts = c(1, 2, 3)):</span> unused argument (tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"))</span>
 <span class="r-in"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu">eval_hist</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
 <span class="r-in"><span>               exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
 <span class="r-in"><span>               tv_confounders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A.1"</span>, <span class="st">"A.2"</span>, <span class="st">"A.3"</span>, <span class="st">"B.1"</span>, <span class="st">"B.2"</span>, <span class="st">"B.3"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               time_pts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               epochs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>epochs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Infancy"</span>, <span class="st">"Toddlerhood"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                                   values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects: </span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘psych’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval_hist(data = test, exposure = "A", tv_confounders = c("A.1",     "A.2", "A.3", "B.1", "B.2", "B.3"), time_pts = c(1, 2, 3),     epochs = data.frame(epochs = c("Infancy", "Toddlerhood"),         values = I(list(c(1, 2), c(3))))):</span> unused argument (tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"))</span>
 <span class="r-in"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu">eval_hist</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
 <span class="r-in"><span>               exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
 <span class="r-in"><span>               tv_confounders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A.1"</span>, <span class="st">"A.2"</span>, <span class="st">"A.3"</span>, <span class="st">"B.1"</span>, <span class="st">"B.2"</span>, <span class="st">"B.3"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               time_pts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               hi_lo_cut <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects: </span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘psych’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval_hist(data = test, exposure = "A", tv_confounders = c("A.1",     "A.2", "A.3", "B.1", "B.2", "B.3"), time_pts = c(1, 2, 3),     hi_lo_cut = c(0.6, 0.3)):</span> unused argument (tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"))</span>
 <span class="r-in"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu">eval_hist</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
 <span class="r-in"><span>               exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
 <span class="r-in"><span>               tv_confounders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A.1"</span>, <span class="st">"A.2"</span>, <span class="st">"A.3"</span>, <span class="st">"B.1"</span>, <span class="st">"B.2"</span>, <span class="st">"B.3"</span><span class="op">)</span>,</span></span>
@@ -154,8 +150,7 @@ TRUE)</p></dd>
 <span class="r-in"><span>               hi_lo_cut <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               ref <span class="op">=</span> <span class="st">"l-l-l"</span>,</span></span>
 <span class="r-in"><span>               comps <span class="op">=</span> <span class="st">"h-h-h"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects: </span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘psych’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval_hist(data = test, exposure = "A", tv_confounders = c("A.1",     "A.2", "A.3", "B.1", "B.2", "B.3"), time_pts = c(1, 2, 3),     hi_lo_cut = c(0.6, 0.3), ref = "l-l-l", comps = "h-h-h"):</span> unused argument (tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"))</span>
 </code></pre></div>
     </div>
   </div>
