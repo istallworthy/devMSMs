@@ -9,9 +9,9 @@ createFormulas(
   exposure,
   exposure_time_pts,
   outcome,
-  tv_confounders,
-  ti_confounders,
   type,
+  ti_confounders,
+  tv_confounders = NULL,
   bal_stats = NULL,
   concur_conf = NULL,
   keep_conf = NULL,
@@ -30,15 +30,15 @@ created/assessed that correspond to time points when exposure wass measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
 
-\item{tv_confounders}{list of time-varying confounders with ".timepoint"
-suffix}
-
-\item{ti_confounders}{list of time invariant confounders}
-
 \item{type}{type of formula to create from 'full' (includes all lagged
 time-varying confounders), 'short' (includes time-varying confounders at
 t-1 lag only), or 'update' (adds to 'short' formulas any imbalanced
 time-varying confounders at lags great than t-1)}
+
+\item{ti_confounders}{(optional) list of time invariant confounders}
+
+\item{tv_confounders}{(optional) list of time-varying confounders with ".timepoint"
+suffix}
 
 \item{bal_stats}{list of balance statistics from assessBalance(), required
 for 'update' type}
@@ -107,7 +107,6 @@ b <- assessBalance(data = test,
                    exposure = "A",
                    exposure_time_pts = c(1, 2, 3),
                    outcome = "D.3",
-                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                    type = "weighted",
                    weights = w,
                    formulas = f,

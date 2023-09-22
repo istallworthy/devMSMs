@@ -34,8 +34,6 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint"
-#'   suffix
 #' @param formulas list of balancing formulas at each time point output from
 #'   createFormulas()
 #' @param weights list of IPTW weights output from createWeights, required for
@@ -78,7 +76,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "prebalance",
 #'                    formulas = f,
 #'                    save.out = FALSE)
@@ -86,7 +83,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "prebalance",
 #'                    formulas = f,
 #'                    balance_thresh = 0.2,
@@ -95,7 +91,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "prebalance",
 #'                    formulas = f,
 #'                    balance_thresh = c(0.1, 0.2),
@@ -113,7 +108,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -122,7 +116,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -132,7 +125,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -142,7 +134,7 @@
 
 
 
-assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh = 0.1,
+assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights = NULL, balance_thresh = 0.1,
                           imp_conf = NULL, verbose = TRUE, save.out = TRUE){
 
   if (save.out) {
@@ -167,9 +159,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   if (missing(exposure_time_pts)){
     stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
   }
-  if (missing(tv_confounders)){
-    stop("Please supply a list of time-varying confounders.", call. = FALSE)
-  }
+
   if (missing(type)){
     stop("Please supply a 'weighted', 'prebalance' type", call. = FALSE)
   }
