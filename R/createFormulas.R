@@ -120,13 +120,13 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   if (missing(type)){
     stop("Please supply a 'full', 'short', or 'update' type", call. = FALSE)
   }
-
-  if(!is.character(type)){
+  else  if(!is.character(type)){
     stop("Please provide a character string type from the following list: 'short', 'full', or 'update'", call. = FALSE)
   }
-  if(! type %in% c("short", "full", "update")){
-    stop("Please provide a type from the following list: 'short', 'full', or 'update'", call. = FALSE)
+  else if(! type %in% c("short", "full", "update") | length(type) != 1){
+    stop("Please provide a single type from the following list: 'short', 'full', or 'update'", call. = FALSE)
   }
+
   if (type != "update" & !is.null(bal_stats)){
     stop ("Please only provide balance statistics for the type 'update'.", call. = FALSE)
   }
@@ -203,17 +203,20 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
                                                       exposure_time_pts[x-1]]
 
         if (x > 1) {
-          new <- bal_stats %>%
-            dplyr::filter(balanced == 0) %>%
-            dplyr::filter(exp_time == time, as.numeric(covar_time) < exposure_time_pts[x - 1],
-                          as.numeric(covar_time) > 0) %>% # Finds any lagged imbalanced covars
-            dplyr::select(covariate)
+          # new <- bal_stats %>%
+          #   dplyr::filter(balanced == 0) %>%
+          #   dplyr::filter(exp_time == time, as.numeric(covar_time) < exposure_time_pts[x - 1],
+          #                 as.numeric(covar_time) > 0) %>% # Finds any lagged imbalanced covars
+          #   dplyr::select(covariate)
+
+          new <- bal_stats[bal_stats$balanced ==0 &
+                             bal_stats$exp_time == time &
+                             as.numeric(bal_stats$covar_time) < exposure_time_pts[x-1] &
+                             as.numeric(bal_stats$covar_time) > 0, ]
+          new <- new[, "covariate"]
 
 
-          # # Renames factors (that were appended w/ level)
           if (nrow(new) > 0) {
-            # new$covariate[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates] <-
-            #   sapply(strsplit(new$covariate, "_"), `[`, 1)[sapply(strsplit(new$covariate, "_"), `[`, 1) %in% factor_covariates]
 
             new <- as.character(unlist(new))
 

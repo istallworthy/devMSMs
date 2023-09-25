@@ -5,23 +5,6 @@
 #' guidelines from Jackson, 2016 on how to assess balance for time-varying
 #' exposures.
 #'
-#' @importFrom knitr kable
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 theme
-#' @importFrom ggplot2 geom_text
-#' @importFrom ggplot2 geom_vline
-#' @importFrom ggplot2 geom_point
-#' @importFrom ggplot2 xlab
-#' @importFrom ggplot2 xlim
-#' @importFrom ggplot2 ggtitle
-#' @importFrom ggplot2 scale_y_discrete
-#' @importFrom ggplot2 element_text
-#' @importFrom ggplot2 element_rect
-#' @importFrom ggplot2 element_blank
-#' @importFrom ggplot2 guide_axis
-#' @importFrom ggplot2 ggsave
-#' @importFrom dplyr bind_rows
-#' @importFrom dplyr %>%
 #' @seealso {[cobalt] package,
 #'   <https://cran.r-project.org/web/packages/cobalt/index.html>}
 #' @seealso {Jackson, 2016 for more on assessing balance for time-varying
@@ -315,15 +298,24 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
       #adds custom bal thresh info
       if (!is.null(imp_conf)){
-        all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = ifelse(all_bal_stats$covariate %in% imp_conf,
-                                                                             balance_thresh[1], balance_thresh[2]))
-        all_bal_stats <- all_bal_stats %>%   dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
-                                                                                all_bal_stats$bal_thresh, 1, 0) )
+        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = ifelse(all_bal_stats$covariate %in% imp_conf,
+        #                                                                      balance_thresh[1], balance_thresh[2]))
+        all_bal_stats$bal_thresh <- ifelse(all_bal_stats$covariate %in% imp_conf,
+                                           balance_thresh[1], balance_thresh[2])
+
+        # all_bal_stats <- all_bal_stats %>%   dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
+        #                                                                         all_bal_stats$bal_thresh, 1, 0) )
+        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
+                                           all_bal_stats$bal_thresh, 1, 0)
       }
       else{
-        all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = balance_thresh)
-        all_bal_stats <- all_bal_stats %>% dplyr::mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
-                                                                             all_bal_stats$bal_thresh, 1, 0) )
+        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = balance_thresh)
+        all_bal_stats$bal_thresh <- balance_thresh
+        #
+        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
+        #                                                                      all_bal_stats$bal_thresh, 1, 0) )
+        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
+                                           all_bal_stats$bal_thresh, 1, 0)
       }
 
       cat("\n")
@@ -447,15 +439,24 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
       # #adds custom bal thresh info
       if (!is.null(imp_conf)){
-        all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = ifelse(all_bal_stats$covariate %in% imp_conf,
-                                                                             balance_thresh[1], balance_thresh[2]))
-        all_bal_stats <- all_bal_stats %>%dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
-                                                                             all_bal_stats$bal_thresh, 1, 0) )
+        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = ifelse(all_bal_stats$covariate %in% imp_conf,
+        #                                                                      balance_thresh[1], balance_thresh[2]))
+        all_bal_stas$bal_thresh <-ifelse(all_bal_stats$covariate %in% imp_conf,
+                                         balance_thresh[1], balance_thresh[2])
+
+        # all_bal_stats <- all_bal_stats %>%dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
+        #                                                                      all_bal_stats$bal_thresh, 1, 0) )
+        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
+                                           all_bal_stats$bal_thresh, 1, 0)
       }
       else{
-        all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = balance_thresh)
-        all_bal_stats <- all_bal_stats %>% dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
-                                                                              all_bal_stats$bal_thresh, 1, 0) )
+        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = balance_thresh)
+        all_bal_stats$bal_thresh <- balance_thresh
+
+        # all_bal_stats <- all_bal_stats %>% dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
+        #                                                                       all_bal_stats$bal_thresh, 1, 0) )
+        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
+                                           all_bal_stats$bal_thresh, 1, 0)
       }
 
       cat("\n")
@@ -515,7 +516,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"), "continuous", "binary")
     }
 
-    temp <- all_bal_stats %>% filter(exp_time == exposure_time_pt)
+    # temp <- all_bal_stats %>% filter(exp_time == exposure_time_pt)
+    temp <- all_bal_stats[all_bal_stats$exp_time == exposure_time_pt, ]
 
     make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, temp,
                    data_type, balance_thresh, weights_method, imp_conf, verbose, save.out)
@@ -538,7 +540,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       }
       else{
         cat(paste0("Summary plots for ", form_name, " ", exposure,
-                       " have now been saved out for each time point in the 'balance/", type, "/plots/' folder."), "\n")
+                   " have now been saved out for each time point in the 'balance/", type, "/plots/' folder."), "\n")
       }
     }
   }
@@ -563,8 +565,10 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
 
   # Finding all imbalanced variables
-  unbalanced_covars <- all_bal_stats %>%
-    filter(balanced == 0)
+  # unbalanced_covars <- all_bal_stats %>%
+  #   filter(balanced == 0)
+  unbalanced_covars <- all_bal_stats[all_bal_stats$balanced == 0, ]
+
   unbalanced_constructs  <- sapply(strsplit(unbalanced_covars$covariate, "\\."),
                                    "[", 1)[!duplicated(sapply(strsplit(unbalanced_covars$covariate, "\\."), "[", 1))]
 
@@ -583,8 +587,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
                    length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), "%) spanning ",
                    length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
                    "%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ",
-                   exposure, " of ", round(median(abs(as.numeric(unlist(unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
-                                                                          dplyr:: select(avg_bal))))), 2), " (range=",
+                   exposure, " of ", round(median(abs(as.numeric(unlist(
+                     # unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
+                     #   dplyr:: select(avg_bal)
+
+                     unbalanced_covars[unbalanced_covars$balanced == 0, ][, "avg_bal"]
+                   )))), 2), " (range=",
                    round(min(unbalanced_covars$avg_bal), 2), "-", round(max(unbalanced_covars$avg_bal), 2), ") : "), "\n")
       }
       else{ cat("There are no imbalanced covariates.", "\n")
@@ -603,8 +611,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
                    length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), "%) spanning ",
                    length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
                    "%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ",
-                   exposure, " of ", round(median(abs(as.numeric(unlist(unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
-                                                                          dplyr:: select(avg_bal))))), 2), " (range=",
+                   exposure, " of ", round(median(abs(as.numeric(unlist(
+                     # unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
+                     #                                                      dplyr:: select(avg_bal)
+                     unbalanced_covars[unbalanced_covars$balanced == 0, ][, "avg_bal"]
+
+                     )))), 2), " (range=",
                    round(min(unbalanced_covars$avg_bal), 2), "-", round(max(unbalanced_covars$avg_bal), 2), ") : "), "\n")
       }
       else{ cat("There are no imbalanced covariates.", "\n")

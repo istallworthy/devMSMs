@@ -75,6 +75,7 @@ exposure_time_pts <- c(6, 15, 24, 35, 58)
 
 outcome <- "EF_avg_perc.58"
 
+#these are now optional 
 tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "MDI.6", "MDI.15",                                            
                     # "RHasSO.6", "RHasSO.15", "RHasSO.24", #removed for low variability 
@@ -303,13 +304,11 @@ custom <- full_formulas
 type = "full"
 
 #all inputs
-full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, 
+full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
                                 concur_conf = concur_conf, keep_conf = NULL, custom = custom, verbose = TRUE, save.out = TRUE)
 
 #or minimum inputs
-full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type)
-
-full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders)
+full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
 
 
 ```
@@ -364,11 +363,11 @@ custom <- NULL
 type <- "short" 
 
 #all inputs
-short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, 
+short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
                                  concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, verbose = TRUE, save.out = TRUE)
 
 #or minimum inputs
-short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type)
+short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
 
 ```
 
@@ -516,11 +515,12 @@ type <- "update"
 bal_stats <- balance_stats
 
 #all inputs
-updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats, 
+updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
                                    concur_conf, keep_conf, verbose = TRUE, save.out = TRUE)
 
 #minimum inputs
-updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats)
+updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
+                                   bal_stats = bal_stats)
 
 ```
 
@@ -652,7 +652,7 @@ models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome
 
 #minimum inputs
 model <- "m0"
-models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model)
+models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, epochs = epochs)
 
 #some optional inputs
 models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
@@ -722,8 +722,8 @@ results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, mode
 #minimum inputs
 reference <- "l-l-l-l-l"
 comparison <- c("h-h-h-h-h", "l-h-h-h-h") #multiple
-results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model,
-                            reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
+results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, epochs = epochs)
+                            # reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
 
 ```
 ##### Sensitvity analyses

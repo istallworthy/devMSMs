@@ -209,7 +209,7 @@ perform_multiple_comparison_correction <- function(comps, reference, comp_histor
     cat("\n")
     cat(paste0("Conducting multiple comparison correction using the ", method, " method."), "\n")
     cat("\n")
-    corr_p <-stats::p.adjust(comps$p.value, method = method)
+    corr_p <- stats::p.adjust(comps$p.value, method = method)
     comps <- cbind(comps, p.value_corr = corr_p)
   }
   else {

@@ -61,8 +61,6 @@
 eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL, ref = NA, comps = NULL, verbose = TRUE){
 
   exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', time_pts[1])], "numeric"), "continuous", "binary")
-
-
   data_wide <- data
 
 
@@ -86,18 +84,24 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
       # Finds data from each time point in each epoch, horizontally aligns all exposure values within the epoch for averaging
       for (l in seq_len(length(as.numeric(unlist(epochs[e, 2]))))) {
         level <- as.numeric(unlist(epochs[e, 2]))[l]
-        z <- data_wide[, names(data_wide)[grepl(exposure, names(data_wide))]] #finds exposure vars
-        z <- as.numeric(as.character(unlist(z[, sapply(strsplit(names(z), "\\."), "[", 2) == as.character(level)])))
+        z <- as.data.frame(data_wide[, names(data_wide)[grepl(exposure, names(data_wide))]]) #finds exposure vars
+        cols <- colnames(z)[as.logical(sapply(strsplit(names(z), "\\."), "[", 2) == as.character(level))]
+        cols <- cols[!is.na(cols)]
+        z <- as.numeric(as.character(unlist(z[, cols])))
         temp <- cbind(temp, z)
       }
-      new <- new %>%
-        dplyr::mutate(!!new_var := rowMeans(temp, na.rm = TRUE))
+      # new <- new %>%
+      x <- as.data.frame(rowMeans(temp, na.rm = TRUE))
+      colnames(x) <- c(new_var)
+      new <- cbind(new, x)
+        # dplyr::mutate(!!new_var := rowMeans(temp, na.rm = TRUE))
     }
   }
 
   if(verbose){
     cat("Summary of Exposure Main Effects:", "\n")
-    print(psych::describe(new %>% select(-c("ID")), fast = TRUE))
+    summary(new[, !colnames(new) %in% "ID"])
+    # print(psych::describe(new %>% select(-c("ID")), fast = TRUE))
     cat("\n")
 
   }
@@ -187,13 +191,17 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
   }
 
   # Summarizing n's by history
-  his_summ <- new %>%
-    dplyr::group_by(history) %>%
-    dplyr::summarize(n = dplyr::n())
+  # his_summ <- new %>%
+  #   dplyr::group_by(history) %>%
+  #   dplyr::summarize(n = dplyr::n())
+  new$history <- unlist(new$history)
+  his_summ <- aggregate( ID ~ history, data = new,
+                         FUN = function(x) n = length(x))
 
   if( !is.na(ref) & !is.null(comps)){
-    his_summ <- his_summ %>%
-      dplyr::filter(history %in% c(ref, comps))
+    # his_summ <- his_summ %>%
+    #   dplyr::filter(history %in% c(ref, comps))
+    his_sum <- his_summ[his_summ$history %in% c(ref, comps), ]
   }
 
   his_summ <- his_summ[! grepl("NA", his_summ$history),]

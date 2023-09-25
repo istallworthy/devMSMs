@@ -51,7 +51,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -88,7 +87,8 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
 
   stat_var <- colnames(balance_stats)[grepl("_bal", colnames(balance_stats))]
   colnames(balance_stats)[colnames(balance_stats) == stat_var] <- "avg_bal"
-  balance_stats <- balance_stats %>% dplyr::arrange(avg_bal)
+  # balance_stats <- balance_stats %>% dplyr::arrange(avg_bal)
+  balance_stats <- balance_stats[order(balance_stats$avg_bal), ]
 
   x_lab <- ifelse(exposure_type == "continuous", "Correlation with Exposure", "Standardized Mean Difference Between Exposures")
 
