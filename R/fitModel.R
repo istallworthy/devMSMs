@@ -3,9 +3,6 @@
 #' Fits weighted marginal outcome model as a generalized linear model of the
 #' user's choosing, relating exposure main effects to outcome using IPTW
 #' weights.
-#' @importFrom survey svyglm
-#' @importFrom jtools export_summs
-#' @importFrom dplyr mutate filter select
 #' @seealso {[survey::svyglm()] for more on family/link specifications,
 #'   <https://www.rdocumentation.org/packages/survey/versions/4.2-1/topics/svyglm>}
 #' @param home_dir path to home directory (required if 'save.out' = TRUE)
@@ -213,7 +210,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   if (mice::is.mids(data)){ #imputed dataset
     fits <- lapply(seq_len(data$m), function(y) {
-      d <- complete(data, y)
+      d <- mice::complete(data, y)
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
 
@@ -221,7 +218,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     })
 
     fits.null <- lapply(seq_len(data$m), function(y) {
-      d <- complete(data, y)
+      d <- mice::complete(data, y)
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
 
@@ -325,8 +322,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     }
 
     if (save.out){
-      requireNamespace(officer) #is there another way to do this? required for writing to word
-      requireNamespace(flextable) # " "
+      # requireNamespace(officer) #is there another way to do this? required for writing to word
+      # requireNamespace(flextable) # " "
       suppressWarnings(jtools::export_summs(fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
                                             file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model,
                                                                                              "_table_mod_ev.docx"))))

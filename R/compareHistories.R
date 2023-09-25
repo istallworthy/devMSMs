@@ -4,16 +4,6 @@
 #' histories (pooling for imputed data), before conducting contrast comparisons
 #' (pooling for imputed data), correcting for multiple comparisons, and then
 #' plotting results.
-
-#' @importFrom gtools permutations
-#' @importFrom marginaleffects avg_predictions
-#' @importFrom marginaleffects hypotheses
-#' @importFrom stringr str_count
-#' @importFrom dplyr filter
-#' @importFrom stargazer stargazer
-#' @importFrom mice pool
-#' @importFrom stats p.adjust
-#' @importFrom knitr kable
 #' @seealso {[marginaleffects::avg_predictions()],
 #'   <https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf>}
 #' @seealso {[marginaleffects::hypotheses()],
@@ -372,8 +362,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
     # If the user specified reference and comparison groups, subset pred_pool for inspection and plotting
     if (!is.na(reference) & !is.null(comp_histories)) {
-      preds_pool <- preds_pool %>%
-        dplyr::filter(history %in% c(reference, comp_histories))
+      # preds_pool <- preds_pool %>%
+      #   dplyr::filter(history %in% c(reference, comp_histories))
+      preds_pool <- preds_pool[preds_pool$history %in% c(reference, comp_histories), ]
     }
 
 
@@ -434,8 +425,6 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     }))
 
 
-
-
     if (save.out){
       if(is.null(hi_lo_cut)){
         hi_lo_cut <- "median+-.1"
@@ -479,8 +468,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
     # If the user specified reference and comparison groups, subset preds for inspection and plotting
     if (!is.na(reference) & !is.null(comp_histories)) {
-      preds <- preds %>%
-        dplyr::filter(history %in% c(reference, comp_histories))
+      # preds <- preds %>%
+      #   dplyr::filter(history %in% c(reference, comp_histories))
+      preds <- preds[preds$history %in% c(reference, comp_histories), ]
     }
 
 
@@ -594,8 +584,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   comparisons$history <- as.factor(comparisons$history)
   comparisons$dose <- as.factor(comparisons$dose)
 
-  comparisons <- comparisons %>%
-    dplyr::arrange(dose) # Order by dose
+  # comparisons <- comparisons %>%
+  #   dplyr::arrange(dose) # Order by dose
+  comparisons <- comparisons[order(comparisons$dose), ]
 
   if (length(colors) > 1) { # If user input a list of colors
     p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +

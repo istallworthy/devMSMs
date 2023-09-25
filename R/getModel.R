@@ -1,8 +1,6 @@
 
 #' Fits outcome model
 #'
-#' @importFrom survey svyglm
-#' @importFrom survey svydesign
 #' @param d wide data frame
 #' @param exposure name of exposure variable
 #' @param exposure_time_pts list of integers at which weights will be
@@ -89,11 +87,17 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
         for (l in seq_len(length(as.numeric(unlist(epochs[e, 2]))))){
           level <- as.numeric(unlist(epochs[e, 2]))[l]
           z <- d[, names(d)[grepl(exposure, names(d))]] #finds exposure vars
-          z <- as.numeric(as.character(unlist(z[, sapply(strsplit(names(z), "\\."), "[", 2) == as.character(level)])))
+          cols <- colnames(z)[as.logical(sapply(strsplit(names(z), "\\."), "[", 2) == as.character(level))]
+          cols <- cols[!is.na(cols)]
+          z <- as.numeric(as.character(unlist(z[, cols])))
           temp <- cbind(temp, z)
         }
         #adds a new variable of the exposure averaged within epoch
-        d  <- d %>% dplyr::mutate(!!new_var := rowMeans(temp, na.rm=T))
+        # d  <- d %>% dplyr::mutate(!!new_var := rowMeans(temp, na.rm=T))
+
+        x <- as.data.frame(rowMeans(temp, na.rm = TRUE))
+        colnames(x) <- c(new_var)
+        d <- cbind(d, x)
         d[, new_var] <- as.numeric(d[, new_var])
       }
     }
@@ -129,7 +133,10 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
       name <- gsub(" ", "", unlist(strsplit(interactions, "\\+"))[x])
       if (! name %in% colnames(d)){
         temp <- d[, c(gsub(" ", "", as.character(unlist(strsplit(unlist(strsplit(interactions, "\\+"))[x], "\\:"))))) ]
-        d  <- d %>% dplyr::mutate(!! name := matrixStats::rowProds(as.matrix(temp), na.rm = T))
+        # d  <- d %>% dplyr::mutate(!! name := matrixStats::rowProds(as.matrix(temp), na.rm = T))
+        new <- matrixStats::rowProds(as.matrix(temp), na.rm = T)
+        names(new) <- name
+        d <- cbind(d, new)
       }
     }
   }
