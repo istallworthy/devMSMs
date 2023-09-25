@@ -5,22 +5,6 @@
 #' approaches to assessing balance for time-varying exposures by weighting
 #' statistics based on sample distribution in exposure histories.
 #'
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 theme
-#' @importFrom ggplot2 geom_text
-#' @importFrom ggplot2 geom_vline
-#' @importFrom ggplot2 geom_point
-#' @importFrom ggplot2 xlab
-#' @importFrom ggplot2 aes
-#' @importFrom ggplot2 xlim
-#' @importFrom ggplot2 ggtitle
-#' @importFrom ggplot2 scale_y_discrete
-#' @importFrom ggplot2 element_text
-#' @importFrom ggplot2 element_rect
-#' @importFrom ggplot2 element_blank
-#' @importFrom ggplot2 guide_axis
-#' @importFrom ggplot2 ggsave
-#' @importFrom stargazer stargazer
 #' @param home_dir (optional) path to home directory (required if save.out =
 #'   TRUE)
 #' @param data data in wide format as: a data frame, path to folder of imputed
@@ -111,7 +95,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   if (weighted == 1){
     weights_method = weights$method
     w <- weights$weights #IPTW weights
-    # data <- data %>% dplyr::mutate(weights = as.numeric(w))
     data$weights <- as.numeric(w)
   }
   else{
@@ -319,14 +302,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
 
-            # standardizing balance statistics after weighting by history
-            # bal_stats <- bal_stats %>%
-            #   dplyr::mutate(std_bal_stats = weighted_bal_stats /
-            #                   (sapply(seq(ncol(data[, covars])), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
-            #                     sd(as.numeric(data[, covars][, x]), na.rm = TRUE) }) *# unweighted covar sd
-            #                      sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
-
-
             # bal_stats <- bal_stats %>%
             bal_stats$std_bal_stats <- weighted_bal_stats /
               (sapply(seq(nrow(bal_stats)), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
@@ -500,10 +475,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     # ADDS INFO TO BAL STATS
     bal_stats <- as.data.frame(bal_stats)
     bal_stats$covariate <- rownames(bal_stats)
-
-    # # Renames factor covariates
-    # bal_stats$covariate[sapply(strsplit(bal_stats$covariate, "_"), "[", 1) %in% factor_covariates] <-
-    #   sapply(strsplit(bal_stats$covariate, "_"), "[", 1)[sapply(strsplit(bal_stats$covariate, "_"), "[", 1) %in% factor_covariates]
 
     #averages across factor levels to create one bal stat per factor variable?
     data$ID <- as.numeric(data$ID)

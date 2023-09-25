@@ -109,6 +109,9 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     if (missing(home_dir)) {
       stop("Please supply a home directory.", call. = FALSE)
     }
+    else if(!is.character(home_dir)){
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+    }
     else if(!dir.exists(home_dir)) {
       stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
     }
@@ -118,27 +121,43 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
   }
-  if (missing(exposure)){
-    stop("Please supply a single exposure.", call. = FALSE)
-  }
-  if (missing(outcome)){
-    stop("Please supply a single outcome.", call. = FALSE)
-  }
-  if (missing(weights)){
-    stop("Please supply a list of IPTW weights.", call. = FALSE)
-  }
-  if (missing(exposure_time_pts)){
-    stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
-  }
-  if (missing(model)){
-    stop('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)
-  }
-  if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
+  else if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.", call. = FALSE)
   }
 
-  if (!is.character(model)){
-    stop('Please provide as a character string a valid model "m" from 0-3 (e.g., "m1")', call. = FALSE)
+  if (missing(exposure)){
+    stop("Please supply a single exposure.", call. = FALSE)
+  }
+  else if(!is.character(exposure) | length(exposure) != 1){
+    stop("Please supply a single exposure as a character.", call. = FALSE)
+  }
+
+  if (missing(outcome)){
+    stop("Please supply a single outcome.", call. = FALSE)
+  }
+  else if(!is.character(outcome) | length(outcome) != 1){
+    stop("Please supply a single outcome as a character.", call. = FALSE)
+  }
+
+  if (missing(weights)){
+    stop("Please supply a list of IPTW weights.", call. = FALSE)
+  }
+  else if (!inherits(weights, "list")){
+    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+  }
+
+  if (missing(exposure_time_pts)){
+    stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
+  }
+  else if(!is.numeric(exposure_time_pts)){
+    stop("Please supply a list of exposure time points as integers.", call. = FALSE)
+  }
+
+  if (missing(model)){
+    stop('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)
+  }
+  else if (!is.character(model) | length(model) != 1){
+    stop('Please provide a single outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)
   }
   if (!(model %in% c("m0", "m1", "m2", "m3"))) {
     stop('Please provide a valid model "m" from 0-3 (e.g., "m1")', call. = FALSE)
@@ -153,16 +172,38 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   if(!inherits(family, "function")){
     stop("Please provide a valid family in the form of a function (without quotations).", call. = FALSE)
   }
+  if(length(family) != 1){
+    stop("Please provide a single valid family in the form of a function (without quotations).", call. = FALSE)
+  }
+
   if(!inherits(link, "character")){
     stop("Please provide as a character a valid link function.", call. = FALSE)
   }
+  else if(length(link) != 1){
+    stop("Please provide as a character a valid link function.", call. = FALSE)
+  }
+
   if (!is.null(covariates)){
+    if(!is.character(covariates)){
+      stop("Please provide a list of character strings for covariates.", call. = FALSE)
+    }
     if (sum(as.numeric(sapply(strsplit(covariates, "\\."), "[", 2)) > exposure_time_pts[1], na.rm = T) > 0){
       warning("Please only include covariates that are time invariant or measured at the first exposure time point.")
     }
   }
-  if (!inherits(weights, "list")){
-    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+
+  if(!is.logical(verbose)){
+    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(verbose) != 1){
+    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+  }
+
+  if(!is.logical(save.out)){
+    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(save.out) != 1){
+    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
   }
 
 

@@ -95,6 +95,9 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
     if (missing(home_dir)) {
       stop("Please supply a home directory.", call. = FALSE)
     }
+    else if(!is.character(home_dir)){
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+    }
     else if(!dir.exists(home_dir)) {
       stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
     }
@@ -103,20 +106,37 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)
   }
+  else if(!is.character(exposure) | length(exposure) != 1){
+    stop("Please supply a single exposure as a character.", call. = FALSE)
+  }
+
   if (missing(outcome)){
     stop("Please supply a single outcome.", call. = FALSE)
   }
+  else if(!is.character(outcome) | length(outcome) != 1){
+    stop("Please supply a single outcome as a character.", call. = FALSE)
+  }
+
   if (missing(exposure_time_pts)){
     stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
   }
+  else if(!is.numeric(exposure_time_pts)){
+    stop("Please supply a list of exposure time points as integers.", call. = FALSE)
+  }
+
   if (missing(tv_confounders)){
     warning("You have not specified any time-varying confounders. If you have time-varying exposure, please list all wide exposure variables as tv_confounders.", call. = FALSE)
     tv_confounders <- character(0)
   }
+  else if(!is.character(tv_confounders)){
+    stop("Please provide a list of time-varying confounders as character strings.")
+  }
+
   if (missing(ti_confounders)){
     stop("You have not specified time invariant confounders.", call. = FALSE)
     # ti_confounders <- NULL
   }
+
   if (missing(type)){
     stop("Please supply a 'full', 'short', or 'update' type", call. = FALSE)
   }
@@ -133,6 +153,20 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
 
   if(!is.null(bal_stats) & !is.data.frame(bal_stats)){
     stop("Please provide a data frame of balance statistics from the assessBalance function.", call. = FALSE)
+  }
+
+  if(!is.logical(verbose)){
+    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(verbose) != 1){
+    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+  }
+
+  if(!is.logical(save.out)){
+    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(save.out) != 1){
+    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
   }
 
 
@@ -192,7 +226,11 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
 
       else if (type == "update"){
         if(is.null(bal_stats)){
-          stop("Please provide balance statistics if you wish to run the update version of this function", call. = FALSE)
+          stop("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function", call. = FALSE)
+        }
+        else if (!is.data.frame(bal_stats)){
+          stop("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function", call. = FALSE)
+
         }
 
         if(verbose){
