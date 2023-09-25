@@ -124,6 +124,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     if (missing(home_dir)) {
       stop("Please supply a home directory.", call. = FALSE)
     }
+    else if(!is.character(home_dir)){
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+    }
     else if(!dir.exists(home_dir)) {
       stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
     }
@@ -133,24 +136,45 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
   }
+  else if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
+    stop("Please provide wide data as a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.", call. = FALSE)
+  }
+
+
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)
   }
+  else if(!is.character(exposure) | length(exposure) != 1){
+    stop("Please supply a single exposure as a character.", call. = FALSE)
+  }
+
   if (missing(outcome)){
     stop("Please supply a single outcome.", call. = FALSE)
   }
+  else if(!is.character(outcome) | length(outcome) != 1){
+    stop("Please supply a single outcome as a character.", call. = FALSE)
+  }
+
   if (missing(exposure_time_pts)){
     stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
+  }
+  else if(!is.numeric(exposure_time_pts)){
+    stop("Please supply a list of exposure time points as integers.", call. = FALSE)
+  }
+
+  if (missing(formulas)){
+    stop("Please supply a list of balancing formulas.", call. = FALSE)
+  }
+  else if(!inherits(formulas, "list")){
+    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
+  }
+  else if(length(formulas) != length(exposure_time_pts)){
+    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
 
   if (missing(type)){
     stop("Please supply a 'weighted', 'prebalance' type", call. = FALSE)
   }
-  if (missing(formulas)){
-    stop("Please supply a list of balancing formulas.", call. = FALSE)
-  }
-
-
   if (!inherits(type, "character") | length(type) != 1 ){
     stop("Please provide a single type as a character string from the following list: 'prebalance', 'weighted'", call. = FALSE)
   }
@@ -162,10 +186,6 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   }
   else  if (type == "weighted" & (is.null(weights) | missing(weights))){
     stop("The 'weighted' mode of this function requires weights be supplied in the form of output from createWeights.", call. = FALSE)
-  }
-
-  if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
-    stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.", call. = FALSE)
   }
 
   if (!is.null(weights) & ! inherits(weights, "list")){
@@ -186,8 +206,18 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please provide a list variable names as characters that are important confounders.", call. = FALSE)
   }
 
-  if(!inherits(formulas, "list")){
-    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
+  if(!is.logical(verbose)){
+    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(verbose) != 1){
+    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+  }
+
+  if(!is.logical(save.out)){
+    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(save.out) != 1){
+    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
   }
 
 
