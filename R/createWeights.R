@@ -79,7 +79,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
   }
-  else if (!mice::is.mids(data) & !is.data.frame(data) & !inherits(data, "list")) {
+  else if (!mice::is.mids(data) && !is.data.frame(data) && !inherits(data, "list")) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.",
          call. = FALSE)
   }
@@ -87,14 +87,14 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)
   }
-  else if(!is.character(exposure) | length(exposure) != 1){
+  else if(!is.character(exposure) || length(exposure) != 1){
     stop("Please supply a single exposure as a character.", call. = FALSE)
   }
 
   if (missing(outcome)){
     stop("Please supply a single outcome.", call. = FALSE)
   }
-  else if(!is.character(outcome) | length(outcome) != 1){
+  else if(!is.character(outcome) || length(outcome) != 1){
     stop("Please supply a single outcome as a character.", call. = FALSE)
   }
 
@@ -149,9 +149,12 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   }
 
   if (read_in_from_file == "yes") {
+
     tryCatch({
-      weights <- readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_",
-                                weights_method, "_fit.rds"))
+      # weights <- readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_",
+      #                           weights_method, "_fit.rds"))
+      weights <- readRDS(sprintf("%s/weights/%s-%s_%s_%s_fit.rds",
+                                 home_dir, exposure, outcome, form_name, weights_method))
 
       if (verbose){
         message("Reading in balancing weights from the local folder.")
@@ -173,24 +176,24 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
 
       if(weights_method == "super"){
         fit <- WeightIt::weightitMSM(form,
-                           data = data,
-                           method = weights_method,
-                           stabilize = TRUE,
-                           density = "dt_2", #do we want this?
-                           use.kernel = TRUE,
-                           include.obj = TRUE,
-                           SL.library = SL.library,
-                           over = FALSE)
+                                     data = data,
+                                     method = weights_method,
+                                     stabilize = TRUE,
+                                     density = "dt_2", #do we want this?
+                                     use.kernel = TRUE,
+                                     include.obj = TRUE,
+                                     SL.library = SL.library,
+                                     over = FALSE)
       }
       else{
         fit <- WeightIt::weightitMSM(form,
-                           data = data,
-                           method = weights_method,
-                           stabilize = TRUE,
-                           density = "dt_2", #do we want this?
-                           use.kernel = TRUE,
-                           include.obj = TRUE,
-                           over = FALSE)
+                                     data = data,
+                                     method = weights_method,
+                                     stabilize = TRUE,
+                                     density = "dt_2", #do we want this?
+                                     use.kernel = TRUE,
+                                     include.obj = TRUE,
+                                     over = FALSE)
       }
       fit
     }
@@ -214,31 +217,48 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         d$weights <- fit$weights
 
         if (verbose){
-          cat(paste0("For imputation ", i, " and the ", weights_method, " weighting method, the median weight value is ",
-                     round(median(fit$weights), 2) ," (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
-                     round(max(fit$weights), 2), ")."), "\n")
+
+          cat(sprintf("For imputation %s and the %s weighting method, the median weight value is %s
+                     (SD= %s; range= %s-%s ). \n",
+                      i,
+                      weights_method,
+                      round(median(fit$weights), 2),
+                      round(sd(fit$weights), 2),
+                      round(min(fit$weights), 2),
+                      round(max(fit$weights), 2)))
+
           cat('\n')
         }
 
         if(save.out){
           # Save weights merged with ID variable
-          write.csv(x = d, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", form_name,
-                                         "_", weights_method, "_", i, ".csv"))
+          write.csv(x = d, file =
+                      # paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", form_name,
+                      #                    "_", weights_method, "_", i, ".csv"))
+                      sprintf("%s/weights/values/%s-%s_%s_%s_%s.csv",
+                              home_dir, exposure, outcome, form_name, weights_method, i))
         }
 
         # Writes image of the histogram of weights to assess heavy tails
         p <- ggplot2::ggplot(data = as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
           ggplot2::geom_histogram(color = 'black', bins = 15) +
           ggplot2::xlab("Weights") +
-          ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
+          ggplot2::ggtitle(
+            # paste0("Distribution of ", weights_method, " weights"))
+            sprintf("Distribution of %s weights",
+                    weights_method))
 
         if(verbose){
           print(p)
         }
 
         if(save.out){
-          ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name,
-                        "_", weights_method, "_", i, ".png"), plot = p, height = 8, width = 14)
+          ggsave(
+            # paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name,
+            #             "_", weights_method, "_", i, ".png"),
+            sprintf("%s/weights/histograms/Hist_%s-%s_%s_%s_%s.png",
+                    home_dir, exposure, outcome, form_name, weights_method, i),
+            plot = p, height = 8, width = 14)
         }
 
         fit
@@ -269,17 +289,29 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         d$weights <- fit$weights
 
         if (verbose){
-          cat(paste0("For imputation", i, " and ", weights_method,
-                     ", weighting method, the median weight value is ", round(median(fit$weights), 2) ,
-                     " (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
-                     round(max(fit$weights), 2), ")."), "\n")
+          # cat(paste0("For imputation", i, " and ", weights_method,
+          #            ", weighting method, the median weight value is ", round(median(fit$weights), 2) ,
+          #            " (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
+          #            round(max(fit$weights), 2), ")."), "\n")
+          cat(sprintf("For imputation %s and the %s weighting method, the median weight value is %s
+                     (SD= %s; range= %s-%s ). \n",
+                      i,
+                      weights_method,
+                      round(median(fit$weights), 2),
+                      round(sd(fit$weights), 2),
+                      round(min(fit$weights), 2),
+                      round(max(fit$weights), 2)))
           cat('\n')
         }
 
         if(save.out){
           # Save weights merged with ID variable
-          write.csv(x = d, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome,
-                                         "_", form_name, "_", weights_method, "_", i, ".csv"))
+          write.csv(x = d,
+                    file =
+                      # paste0(home_dir, "/weights/values/", exposure, "-", outcome,
+                      #                    "_", form_name, "_", weights_method, "_", i, ".csv"))
+                      sprintf("%s/weights/values/%s-%s_%s_%s_%s.csv",
+                              home_dir, exposure, outcome, form_name, weights_method, i))
         }
 
         # Writes image of the histogram of weights to assess heavy tails
@@ -293,9 +325,12 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         }
 
         if(save.out){
-          ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
-                                 "_", form_name, "_", weights_method, "_", i, ".png"), plot = p,
-                          height = 8, width = 14)
+          ggplot2::ggsave(
+            # paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
+            #                      "_", form_name, "_", weights_method, "_", i, ".png"),
+            sprintf("%s/weights/histograms/Hist_%s-%s_%s_%s_%s.png",
+                    home_dir, exposure, outcome, form_name, weights_method, i),
+            plot = p, height = 8, width = 14)
         }
 
         fit
@@ -325,9 +360,17 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       data$weights <- weights[[1]]$weights
 
       if (verbose){
-        cat(paste0("For the ", weights_method, " weighting method, the median weight value is ",
-                   round(median(data$weights), 2) , " (SD = ", round(sd(data$weights), 2), "; range = ",
-                   round(min(data$weights), 2), "-", round(max(data$weights), 2), ")."), "\n")
+        # cat(paste0("For the ", weights_method, " weighting method, the median weight value is ",
+        #            round(median(data$weights), 2) , " (SD = ", round(sd(data$weights), 2), "; range = ",
+        #            round(min(data$weights), 2), "-", round(max(data$weights), 2), ")."), "\n")
+        cat(sprintf("For the %s weighting method, the median weight value is %s
+                    (SD = %s; range = %s-%s. \n",
+                    weights_method,
+                    round(median(data$weights), 2),
+                    round(sd(data$weights), 2),
+                    round(min(data$weights), 2),
+                    round(max(data$weights))))
+
         cat('\n')
       }
 
@@ -335,23 +378,34 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
 
       if(save.out){
         # Save weights merged with ID variable
-        write.csv(x = data, file = paste0(home_dir, "/weights/values/", exposure, "-", outcome,
-                                          "_", form_name, "_", weights_method, ".csv"))
+        write.csv(x = data, file =
+                    # paste0(home_dir, "/weights/values/", exposure, "-", outcome,
+                    #                       "_", form_name, "_", weights_method, ".csv"))
+                    sprintf("%s/weights/values/%s-%s_%s_%s.csv",
+                            home_dir, exposure, outcome, form_name, weights_method))
       }
 
       # Writes image of the histogram of weights to assess heavy tails
       p <- ggplot2::ggplot(data = as.data.frame(weights[[1]]$weights), ggplot2::aes(x = weights[[1]]$weights)) +
         ggplot2::geom_histogram(color = 'black', bins = 15) +
         ggplot2::xlab("Weights") +
-        ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
+        ggplot2::ggtitle(
+          # paste0("Distribution of ", weights_method, " weights"))
+          sprintf("Distribution of %s weights",
+                  weights_method))
 
       if(verbose){
         print(p)
       }
 
       if(save.out){
-        ggplot2::ggsave(paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
-                               "_", form_name, "_", weights_method, ".png"), plot = p, height = 8, width = 14)
+        ggplot2::ggsave(
+          # paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
+          #                      "_", form_name, "_", weights_method, ".png"),
+          sprintf("%s/weights/histograms/Hist_%s-%s_%s_%s.png",
+                  home_dir, exposure, outcome, form_name, weights_method),
+          plot = p, height = 8, width = 14)
+
         if (verbose){
           cat("Weights have now been saved into the 'weights/values/' folder.")
           cat("\n")
@@ -361,10 +415,14 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     }
 
     if(save.out){
-      saveRDS(weights, file = paste0(home_dir, "/weights/", exposure, "-", outcome,
-                                     "_", form_name, "_", weights_method, "_fit.rds"))
+      saveRDS(weights, file =
+                # paste0(home_dir, "/weights/", exposure, "-", outcome,
+                #                      "_", form_name, "_", weights_method, "_fit.rds"))
+                sprintf("%s/weights/%s-%s_%s_%s_fit.rds",
+                        home_dir, exposure, outcome, form_name, weights_method))
       if (verbose){
-        cat("Weights models have been saved as an .rds object in the 'weights' folder.")
+        cat("\n")
+        cat("Weights models have been saved as an .rds object in the 'weights' folder.", "\n")
       }
     }
 

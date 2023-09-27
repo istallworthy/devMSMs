@@ -81,13 +81,13 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   if(!inherits(formulas, "list")){
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
-  if (!is.null(weights) & !inherits(weights, "weightitMSM")){
+  if (!is.null(weights) && !inherits(weights, "weightitMSM")){
     stop("Please supply a list of weights output from the createWeights function (via WeightIt::WeightItMSM).", call. = FALSE)
   }
 
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
-  exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"), "continuous", "binary")
-  weighted = ifelse(!is.null(weights), 1, 0)
+  exposure_type <- if(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric")) "continuous" else "binary"
+  weighted <- if(!is.null(weights)) 1 else 0
 
   factor_covariates <- colnames(data)[which(sapply(data, class) == "factor")]
   factor_covariates <- factor_covariates[!factor_covariates %in% "ID"]
@@ -106,7 +106,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   data_type <- if (k == 0) "single" else "imputed"
 
-  if (data_type == "imputed" & verbose){
+  if (data_type == "imputed" && verbose){
     cat(paste0("**Imputation ", k, "**"), "\n")
   }
 
@@ -218,10 +218,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           if (exp == 0) { # low levels/absent
             if (exposure_type == "continuous") {
               data$flag <- ifelse(data[, exps_time[t]] <= median(data[, paste0(exposure, ".", exposure_time_pt)])
-                                  & data$flag == flag, t, NA) # finding those w/ vals <= median exp @ time pt & flagged at prev t's
+                                  && data$flag == flag, t, NA) # finding those w/ vals <= median exp @ time pt & flagged at prev t's
             }
             else { # for binary exp
-              data$flag <- ifelse(data[, exps_time[t]] == 0 & data$flag == flag, t, NA) # if exposure is absent & flagged at prev t's
+              data$flag <- ifelse(data[, exps_time[t]] == 0 && data$flag == flag, t , NA) # if exposure is absent & flagged at prev t's
             }
 
           }
@@ -229,10 +229,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           if (exp == 1) { # hi levels/present
             if (exposure_type == "continuous") {
               data$flag <- ifelse(data[, exps_time[t]] > median(data[, paste0(exposure, ".", exposure_time_pt)])
-                                  & data$flag == flag, t, NA) # finding those w/ vals > median exp @ time pt & flagged at prev t's
+                                  && data$flag == flag, t, NA) # finding those w/ vals > median exp @ time pt & flagged at prev t's
             }
             else { # binary exp
-              data$flag <- ifelse(data[, exps_time[t]] == 1 & data$flag == flag, t, NA) # if exposure is present & flagged at prev t's
+              data$flag <- ifelse(data[, exps_time[t]] == 1 && data$flag == flag, t , NA) # if exposure is present & flagged at prev t's
             }
 
           }
@@ -486,7 +486,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     }
     else{
       bal_stats$bal_thresh <- balance_thresh
-      bal_stats$balanced <- ifelse(abs(bal_stats$std_bal_stats) < bal_stats$bal_thresh, 1, 0)
+      bal_stats$balanced <- ifelse(abs(bal_stats$std_bal_stats) < bal_stats$bal_thresh, 1 , 0)
     }
 
     bal_stats$exposure <- exposure
@@ -505,9 +505,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   if (verbose & save.out) {
     if (data_type == "imputed"){
-      # cat(paste0("For each time point and imputation, ", gsub("/", "", folder), " summary plots for ",
-      #            form_name, " formulas weighting method ",
-      #            weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
 
       cat(paste0("For each time point and imputation, %s summary plots for  %s
                  formulas weighting method %s have now been saved in the %s plots/' folder.\n",
@@ -515,9 +512,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
     }
     else {
-      # cat(paste0(" For each time point, ", gsub("/", "", folder), " summary plots for ",
-      #                form_name, " formulas and weighting method ",
-      #                weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
+
       cat(paste0("For each time point, %s summary plots for  %s
                  formulas weighting method %s have now been saved in the %s plots/' folder.\n",
                  gsub("/", "", folder), form_name, weights_method, folder))
@@ -536,14 +531,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   if (save.out){
     write.csv(bal_summary_exp,
-              # paste0(home_dir, "/balance/", folder, form_name, "_", exposure, "_", k, "_",
-              # weights_method, "_balance_stat_summary.csv"))
               sprintf("%s/balance/%s%s_%s_%s_%s_balance_stat_summary.csv",
                       home_dir,folder, form_name, exposure, k, weights_method))
 
     write.csv(all_prop_weights,
-              # paste0(home_dir, "/balance/", folder, "/", form_name, "_form_", exposure, "_", k,
-              #                          "_", weights_method, "_history_sample_weight.csv"))
               sprintf("%s/balance/%s/%s_form_%s_%s_%s_history_sample_weight.csv",
                       home_dir, folder, form_name, exposure, k, weights_method))
 
@@ -555,20 +546,15 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                    %s have been saved in the 'balance/%s' folder. \n",
                     form_name, exposure, k, weights_method, folder))
 
-        # cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure, ", imputation ", k,
-        #            " have been saved in the 'balance/", folder, "' folder"), "\n")
         cat(sprintf("Sampling weights using the %s for %s imputation %s have been saved in the 'balance/%s' folder., \n",
                     form_name, exposure, k, folder))
       }
       else{
-        # cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, "using ",
-        #            weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
+
         cat(sprintf("Balance statistics using %s formulas for %s using
                    %s have been saved in the 'balance/%s' folder. \n",
                     form_name, exposure, weights_method, folder))
 
-        # cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure,
-        #            " have been saved in the 'balance/", folder, "' folder"), "\n")
         cat(sprintf("Sampling weights using the %s for %s have been saved in the 'balance/%s' folder., \n",
                     form_name, exposure, folder))
       }
@@ -579,9 +565,11 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   # tallies total possible COVARIATES FROM FORM FOR ASSESSING BALANCE
   all_form <- as.data.frame(do.call(rbind, formulas))
   tot_covars <- deparse(all_form[, 3], width.cutoff = 300)
-  tot_covars <- as.character(unlist(strsplit(tot_covars, "\\+")))[!grepl("form", as.character(unlist(strsplit(tot_covars, "\\+"))))]
+  tot_covars <- as.character(unlist(strsplit(tot_covars, "\\+")))[
+    !grepl("form", as.character(unlist(strsplit(tot_covars, "\\+"))))]
   tot_covars <- gsub(" ", "", tot_covars)
-  tot_covars <- na.omit(sapply(strsplit(tot_covars, "\\."), "[", 1)[!duplicated(sapply(strsplit(tot_covars, "\\."), "[", 1))])
+  tot_covars <- na.omit(sapply(strsplit(tot_covars, "\\."), "[", 1)[
+    !duplicated(sapply(strsplit(tot_covars, "\\."), "[", 1))])
 
   imbalanced_covars <- sum(bal_summary_exp$imbalanced_n, na.rm = TRUE)
   total_covars <- sum(bal_summary_exp$n, na.rm = TRUE)
@@ -601,23 +589,14 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   if (verbose){
     if (data_type == "imputed"){
 
-      # cat(paste0("USER ALERT: For exposure ", exposure, " imputation ", k, " using ", weights_method, " and ", form_name, " formulas: "), "\n")
       cat(sprintf("USER ALERT: For exposure %s imputation %s using %s and %s formulas: \n",
                   exposure, k, weights_method, form_name))
 
-      # cat(paste0("The median absolute value relation between exposure and confounder is ", round(median(abs(all_bal_stats$std_bal_stats)), 2), " (range = ",
-      #            round(min(all_bal_stats$std_bal_stats), 2), "-", round(max(all_bal_stats$std_bal_stats), 2), ")."), "\n")
       cat(sprintf("The median absolute value relation between exposure and confounder is %s (range = %s - %s).\n",
                   round(median(abs(all_bal_stats$std_bal_stats)), 2),
                   round(min(all_bal_stats$std_bal_stats), 2),
                   round(max(all_bal_stats$std_bal_stats), 2)))
 
-      # cat(paste0("As shown below, ", imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced,
-      #            "%) covariates across time points, corresponding to ",
-      #            remaining_imbalanced_domains, " out of ", total_domains,
-      #            " domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of ",
-      #            remaining_avg_abs_corr, " (range= ", remaining_corr_range, "):"), "\n")
-
       cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %sout of %s domains,
                   remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
                   imbalanced_covars,
@@ -629,21 +608,14 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                   remaining_corr_range))
 
       cat("\n")
-      cat(knitr::kable(bal_summary_exp, caption =
-                         # paste0("Imbalanced Covariates for imputation ", k, " using ",
-                         #                                 weights_method, " and ", form_name, " formulas"),
-                         sprintf("Imbalanced Covariates for imputation %s using %s and %s formulas",
-                                 k, weights_method, form_name),
+      cat(knitr::kable(bal_summary_exp,
+                       caption = sprintf("Imbalanced Covariates for imputation %s using %s and %s formulas",
+                                                          k, weights_method, form_name),
                        format = 'pipe'), sep = "\n")
 
       cat("\n")
       cat("\n")
     } else {
-      # cat(paste0("As shown below, for exposure ", exposure, " using ", weights_method, ", and ", form_name, " formulas, ",
-      #            imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced, "%) covariates across time points corresponding to ",
-      #            remaining_imbalanced_domains, " out of ", total_domains,
-      #            " domains remain imbalanced with a remaining average absolute value correlation/std mean difference of ",
-      #            remaining_avg_abs_corr, " (range= ", remaining_corr_range, ") :"), "\n")
 
       cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %sout of %s domains,
                   remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
@@ -656,10 +628,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                   remaining_corr_range))
 
       cat("\n")
-      cat(knitr::kable(bal_summary_exp, caption =
-                         # paste0("Imbalanced covariates using ",
-                         #                                 weights_method, " and ", form_name, " formulas"),
-                         sprintf("Imbalanced covariates using %s and %s formulas", weights_method, form_name),
+      cat(knitr::kable(bal_summary_exp,
+                       caption = sprintf("Imbalanced covariates using %s and %s formulas", weights_method, form_name),
                        format = 'pipe'), sep = "\n")
       cat("\n")
       cat("\n")
@@ -670,3 +640,4 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   all_bal_stats
 }
+f

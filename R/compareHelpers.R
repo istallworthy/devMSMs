@@ -127,7 +127,7 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 
 add_histories <- function(p, d) {
 
-  if((is.list(p)) & length(p) == 1){
+  if((is.list(p)) && length(p) == 1){
     history <- matrix(data = NA, nrow = nrow(p[[1]]), ncol = 1) # Get histories from the first element
     p <- p[[1]]
   }

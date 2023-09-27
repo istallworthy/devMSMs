@@ -1,6 +1,6 @@
 #' Create love plots showing balancing statistics
 #'
-#' @param home_dir path to home directory
+#' @param home_dir path to home directory (required if save.out = TRUE)
 #' @param folder folder path for saving
 #' @param exposure name of exposure variable
 #' @param exposure_time_pt exposure time point integer
@@ -92,7 +92,7 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
 
   x_lab <- if(exposure_type == "continuous") "Correlation with Exposure" else "Standardized Mean Difference Between Exposures"
 
-  labels <- if(sum(balance_stats$balanced == 0) > 0) balance_stats$covariate else ""
+  labels <- ifelse(balance_stats$balanced == 0, balance_stats$covariate, "")
 
   min_val <- if(min(balance_stats[, "avg_bal"]) < 0) min(balance_stats[, "avg_bal"]) - 0.05 else min(balance_thresh) - 0.05
   if (min_val > -(max(balance_thresh))){

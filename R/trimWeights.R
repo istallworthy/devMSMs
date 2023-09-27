@@ -74,7 +74,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)
   }
-  else if(!is.character(exposure) | length(exposure) != 1){
+  else if(!is.character(exposure) || length(exposure) != 1){
     stop("Please supply a single exposure as a character.", call. = FALSE)
   }
 
@@ -88,7 +88,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
   if (missing(outcome)){
     stop("Please supply a single outcome.", call. = FALSE)
   }
-  else if(!is.character(outcome) | length(outcome) != 1){
+  else if(!is.character(outcome) || length(outcome) != 1){
     stop("Please supply a single outcome as a character.", call. = FALSE)
   }
 
@@ -150,9 +150,8 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
       # Save histogram of new weights
       p <- ggplot2::ggplot(as.data.frame(t), ggplot2::aes(x = t)) +
         ggplot2::geom_histogram(color = 'black', bins = 15) +
-        ggplot2::ggtitle(
-          # paste0("Weights trimmed at the ", quantile, "th value"))
-          sprintf("Weights trimmed at the %s th value", quantile))
+        ggplot2::ggtitle(sprintf("Weights trimmed at the %s th value",
+                                 quantile))
 
       if(verbose){
         print(p)
@@ -165,7 +164,8 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
                   exposure, outcome, weights[[x]]$method, quantile, x),
           path =
             # paste0(home_dir, "/weights/histograms/"),
-            sprintf("%s/weights/histograms/", home_dir),
+            sprintf("%s/weights/histograms/",
+                    home_dir),
           plot = p,
           height = 8, width = 14)
       }

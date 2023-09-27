@@ -126,6 +126,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
       }),
       collapse = " + "
     )
+
     #create interactions in data
     for (x in seq_len(length(unlist(strsplit(interactions, "\\+"))))) {
       name <- gsub(" ", "", unlist(strsplit(interactions, "\\+"))[x])
