@@ -56,7 +56,7 @@ library(devMSMsHelpers)
 #prior to re-installing using the code above. Sorry, this is annoying!
 
 #conducting package checks & tests from documentation --just for IS to run; comment out when testing the workflow
-# devtools::check()
+devtools::check()
 ```
 
 
@@ -198,9 +198,9 @@ data <- mice::complete(imputed_data, 1) #just for testing purposes
 #IS testing multi-level factors
 data$"PmMrSt2" = as.factor(data$"PmMrSt2")
 data$HomeOwnd = as.factor(data$HomeOwnd)
-# library(dplyr)
-# data <- data %>%
-#   dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx")))) #removing these --came from old dataset
+library(dplyr)
+data <- data %>%
+  dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx")))) #removing these --came from old dataset
 
 ```
 

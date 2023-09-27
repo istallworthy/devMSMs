@@ -145,7 +145,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
       }
 
       # Save histogram of new weights
-      p <- ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
+      p <- ggplot2::ggplot(as.data.frame(t), ggplot2::aes(x = t)) +
         ggplot2::geom_histogram(color = 'black', bins = 15)
 
       if(verbose){
@@ -181,9 +181,9 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
       }
 
       # Save histogram of new weights
-      p <- ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
+      p <- ggplot2::ggplot(as.data.frame(t), ggplot2::aes(x = t)) +
         ggplot2::geom_histogram(color = 'black', bins = 15) +
-        ggtitle(paste0("Weights trimmed at the ", quantile, "th value"))
+        ggplot2::ggtitle(paste0("Weights trimmed at the ", quantile, "th value"))
 
       if(verbose){
         print(p)

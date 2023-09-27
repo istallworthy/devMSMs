@@ -618,18 +618,18 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   comparisons <- comparisons[order(comparisons$dose), ]
 
   if (length(colors) > 1) { # If user input a list of colors
-    p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
+    p <- ggplot2::ggplot(data = comparisons, ggplot2::aes(x = estimate, y = history, color = dose)) +
       ggplot2::geom_point(size = 5) +
       ggplot2::scale_color_manual(values = colors) +
       ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
-      ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
+      ggplot2::geom_errorbarh(ggplot2::aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
       ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
       ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
       ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci),
                     max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
       ggplot2::theme(text = ggplot2::element_text(size = 14)) +
-      ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                     panel.background = element_blank(), axis.line = ggplot2::element_line(colour = "black"))
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = element_blank(),
+                     panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
 
     if (save.out){
       ggplot2::ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
@@ -639,18 +639,18 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     }
 
   } else { # If user lists a palette (default)
-    p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
+    p <- ggplot2::ggplot(data = comparisons, ggplot2::aes(x = estimate, y = history, color = dose)) +
       ggplot2::geom_point(size = 5) +
       ggplot2::scale_colour_brewer(palette = colors) +
       ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
-      ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
+      ggplot2::geom_errorbarh(ggplot2::aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
       ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
       ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
       ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci),
                     max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
       ggplot2::theme(text = ggplot2::element_text(size = 14)) +
-      ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                     panel.background = element_blank(), axis.line = ggplot2::element_line(colour = "black")) +
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black")) +
       ggplot2::guides(fill = ggplot2::guide_legend(title="Dosage"))
 
     if (save.out){

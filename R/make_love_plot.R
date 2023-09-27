@@ -105,9 +105,9 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
   }
 
   # Make love plot per exposure time point
-  lp <- ggplot2::ggplot(aes(x = avg_bal, y = reorder(as.factor(covariate), avg_bal)), data = balance_stats) +
-    ggplot2::geom_point(aes(y = reorder(as.factor(covariate), avg_bal), x = avg_bal, fill = "white", alpha = 1)) +
-    ggplot2::geom_text(aes(label = labels, hjust = -0.2, vjust = 0.2), size = 1.5, color = "red") +
+  lp <- ggplot2::ggplot(ggplot2::aes(x = avg_bal, y = reorder(as.factor(covariate), avg_bal)), data = balance_stats) +
+    ggplot2::geom_point(ggplot2::aes(y = reorder(as.factor(covariate), avg_bal), x = avg_bal, fill = "white", alpha = 1)) +
+    ggplot2::geom_text(ggplot2::aes(label = labels, hjust = -0.2, vjust = 0.2), size = 1.5, color = "red") +
     ggplot2::xlab(x_lab) +
     ggplot2::ylab("Covariate") +
     ggplot2::xlim(min_val, max_val) +

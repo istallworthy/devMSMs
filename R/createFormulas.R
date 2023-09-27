@@ -247,14 +247,15 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
           #                 as.numeric(covar_time) > 0) %>% # Finds any lagged imbalanced covars
           #   dplyr::select(covariate)
 
-          new <- bal_stats[bal_stats$balanced ==0 &
+          new <- bal_stats[bal_stats$balanced == 0 &
                              bal_stats$exp_time == time &
                              as.numeric(bal_stats$covar_time) < exposure_time_pts[x-1] &
                              as.numeric(bal_stats$covar_time) > 0, ]
-          new <- new[, "covariate"]
 
 
           if (nrow(new) > 0) {
+
+            new <- new[, "covariate"]
 
             new <- as.character(unlist(new))
 
