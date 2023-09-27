@@ -5,6 +5,7 @@
 #' weights.
 #' @seealso {[survey::svyglm()] for more on family/link specifications,
 #'   <https://www.rdocumentation.org/packages/survey/versions/4.2-1/topics/svyglm>}
+#' @importFrom survey svyglm
 #' @param home_dir path to home directory (required if 'save.out' = TRUE)
 #' @param data data in wide format as: a data frame, list of imputed data
 #'   frames, or mids object

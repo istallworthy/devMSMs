@@ -172,7 +172,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     calculate_weights <- function(data, form, weights_method, SL.library) {
 
       if(weights_method == "super"){
-        fit <- weightitMSM(form,
+        fit <- WeightIt::weightitMSM(form,
                            data = data,
                            method = weights_method,
                            stabilize = TRUE,
@@ -183,7 +183,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
                            over = FALSE)
       }
       else{
-        fit <- weightitMSM(form,
+        fit <- WeightIt::weightitMSM(form,
                            data = data,
                            method = weights_method,
                            stabilize = TRUE,
@@ -227,7 +227,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         }
 
         # Writes image of the histogram of weights to assess heavy tails
-        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
+        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
           ggplot2::geom_histogram(color = 'black', bins = 15) +
           ggplot2::xlab("Weights") +
           ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
@@ -283,7 +283,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         }
 
         # Writes image of the histogram of weights to assess heavy tails
-        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), aes(x = fit$weight)) +
+        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
           ggplot2::geom_histogram(color = 'black', bins = 15) +
           ggplot2::xlab("Weights") +
           ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
@@ -340,7 +340,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       }
 
       # Writes image of the histogram of weights to assess heavy tails
-      p <- ggplot2::ggplot(data = as.data.frame(weights[[1]]$weights), aes(x = weights[[1]]$weights)) +
+      p <- ggplot2::ggplot(data = as.data.frame(weights[[1]]$weights), ggplot2::aes(x = weights[[1]]$weights)) +
         ggplot2::geom_histogram(color = 'black', bins = 15) +
         ggplot2::xlab("Weights") +
         ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
