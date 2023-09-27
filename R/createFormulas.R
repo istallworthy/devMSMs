@@ -207,49 +207,50 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
 
       #identifying lagged tv confounders relative to time point based on formula type
       if (type == "full"){
+
         if(verbose){
           message("USER ALERT: Please manually inspect the full balancing formula below:")
         }
+
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) < time]
 
       }
 
       else if (type == "short"){
+
         if(verbose){
           message("USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:")
         }
 
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
-                                                      exposure_time_pts[x-1]]
+                                                      exposure_time_pts[x - 1]]
 
       }
 
       else if (type == "update"){
+
         if(is.null(bal_stats)){
-          stop("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function", call. = FALSE)
+          stop("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function",
+               call. = FALSE)
         }
         else if (!is.data.frame(bal_stats)){
-          stop("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function", call. = FALSE)
-
+          stop("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function",
+               call. = FALSE)
         }
 
         if(verbose){
-          message("USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:")
+          message("USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and
+                  those greater at further lags that remained imbalanced:")
         }
 
         time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
-                                                      exposure_time_pts[x-1]]
+                                                      exposure_time_pts[x - 1]]
 
         if (x > 1) {
-          # new <- bal_stats %>%
-          #   dplyr::filter(balanced == 0) %>%
-          #   dplyr::filter(exp_time == time, as.numeric(covar_time) < exposure_time_pts[x - 1],
-          #                 as.numeric(covar_time) > 0) %>% # Finds any lagged imbalanced covars
-          #   dplyr::select(covariate)
 
           new <- bal_stats[bal_stats$balanced == 0 &
                              bal_stats$exp_time == time &
-                             as.numeric(bal_stats$covar_time) < exposure_time_pts[x-1] &
+                             as.numeric(bal_stats$covar_time) < exposure_time_pts[x - 1] &
                              as.numeric(bal_stats$covar_time) > 0, ]
 
 
@@ -262,15 +263,20 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
             time_var_include <- c(time_var_include, new)
 
             if (verbose){
-              cat(paste0("For ", exposure, " at exposure time point ", time ,
-                         ", the following covariate(s) will be added to the short balancing formula: "), paste(new, collapse = ", "), "\n")
+              # cat(paste0("For ", exposure, " at exposure time point ", time ,
+              #            ", the following covariate(s) will be added to the short balancing formula: "), paste(new, collapse = ", "), "\n")
+              cat(sprintf("For %s at exposure time point %s the following covariate(s) will be added to the short balancing formula: %s \n",
+                          exposure, time, paste(new, collapse = ", ")))
+
               cat("\n")
             }
           }
           else{
             if (verbose) {
-              cat(paste0("For ", exposure, " at exposure time point ", time ,
-                         " no time-varying confounders at additional lags were added."), "\n")
+              # cat(paste0("For ", exposure, " at exposure time point ", time ,
+              #            " no time-varying confounders at additional lags were added."), "\n")
+              cat(sprintf("For %s at exposure time point %s no time-varying confounders at additional lags were added. \n",
+                          exposure, time ))
               cat("\n")
             }
           }
@@ -320,15 +326,17 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
 
       # Prints form for user inspection
       if (verbose){
-        cat(paste0("The ", type, " formula for ", exposure, "-", outcome, " at ", exposure, " time point ",
-                   as.character(time), " is:"), "\n")
+        cat(sprintf("The %s formula for %s - %s at %s time point %s is: \n",
+                    type, exposure, outcome, exposure, as.character(time)))
         print(f)
         cat("\n")
       }
 
       # Appends the form string to forms_csv
-      forms_csv <- c(forms_csv, paste0(type, " formula for ", exposure, "-", outcome, " at ", exposure,
-                                       " time point ", as.character(time), ":"))
+      forms_csv <- c(forms_csv,
+                     sprintf("%s formula for %s-%s at %s time point %s:",
+                             type, exposure, outcome, exposure, as.character(time)))
+
       forms_csv <- c(forms_csv, paste(exposure, "~", paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
 
       # Assigns the form to forms list
@@ -337,11 +345,17 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
 
     if(save.out){
       # Writes forms_csv to a CSV file
-      forms_csv_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.csv")
+      forms_csv_file <-
+        # paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.csv")
+        sprintf("%s/%s_%s-%s_%s_balancing_formulas.csv",
+                forms_dir, type, exposure, outcome, type)
+
       writeLines(forms_csv, con = forms_csv_file)
 
       # writes to rds
-      forms_rds_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
+      # forms_rds_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
+      forms_rds_file <- sprintf("%s/%s_%s-%s_%s_balancing_formulas.rds",
+                                forms_dir, type, exposure, outcome, type)
 
       saveRDS(forms, file = forms_rds_file)
     }
