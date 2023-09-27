@@ -220,9 +220,12 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   # Lists out exposure-epoch combos
   if( is.null(epochs)){ #making epochs time pts if not specified by user
+
     epochs <- data.frame(epochs = as.character(exposure_time_pts),
                          values = exposure_time_pts)
+
   } else{
+
     if( !is.data.frame(epochs) | ncol(epochs) != 2 | sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)){
       stop("If you supply epochs, please provide a dataframe with two columns of epochs and values.",
            call. = FALSE)
@@ -251,20 +254,25 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   # }
 
   if (mice::is.mids(data)){ #imputed dataset
+
     fits <- lapply(seq_len(data$m), function(y) {
+
       d <- mice::complete(data, y)
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
 
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
+
     })
 
     fits.null <- lapply(seq_len(data$m), function(y) {
+
       d <- mice::complete(data, y)
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
 
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
+
     })
 
     if (verbose){
@@ -281,17 +289,21 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   else if (inherits(data, "list")){ #imputed dataset
     fits <- lapply(seq_len(length(data)), function(y) {
+
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
+
     })
 
     fits.null <- lapply(seq_len(length(data)), function(y) {
+
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
+
     })
 
     if (verbose){
@@ -307,17 +319,21 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   else if (is.data.frame(data)){ #df
     fits <- lapply(1, function(y) {
+
       d <- data
       d$weights <- NULL
       d$weights <- weights[["0"]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
+
     })
 
     fits.null <- lapply(1, function(y) {
+
       d <- data
       d$weights <- NULL
       d$weights <- weights[["0"]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
+
     })
 
     if (verbose){
@@ -339,16 +355,23 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     names(fits) <- seq_len(length(fits))
 
     if (verbose){
-      cat(paste0("The marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
+
+      # cat(paste0("The marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
+      sprintf("The marginal model, %s run for each imputed dataset is summarized below: \n",
+              model)
+
       print(suppressWarnings(jtools::export_summs(
-        fits, statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
+        fits,
+        statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
         model.names = c(paste0("Imp.", seq_len(length(fits))))
       )))
     }
 
     if(save.out){
       suppressWarnings(jtools::export_summs(
-        fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
+        fits,
+        to.file = "docx",
+        statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
         model.names = c(paste0("Imp.", seq_len(length(fits)))),
         file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))
       ))
@@ -360,13 +383,17 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     if (verbose){
       require(survey)
       cat(paste0("The marginal model, ", model, ", is summarized below:"), "\n")
-      print(suppressWarnings(jtools::export_summs(fits, statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"))))
+      print(suppressWarnings(jtools::export_summs(
+        fits,
+        statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"))))
     }
 
     if (save.out){
       # requireNamespace(officer) #is there another way to do this? required for writing to word
       # requireNamespace(flextable) # " "
-      suppressWarnings(jtools::export_summs(fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
+      suppressWarnings(jtools::export_summs(fits,
+                                            to.file = "docx",
+                                            statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
                                             file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model,
                                                                                              "_table_mod_ev.docx"))))
     }
@@ -375,7 +402,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
 
   if(save.out){
-    saveRDS(fits, file = file.path(home_dir, "/models/", paste0(exposure, "-", outcome, "_", model, "_model.rds")))
+    saveRDS(fits,
+            file = file.path(home_dir, "/models/", paste0(exposure, "-", outcome, "_", model, "_model.rds")))
     cat("\n")
 
     if (verbose){

@@ -17,9 +17,11 @@
 #'                           reference = "h-h-h" )
 
 get_reference_values <- function(d, reference) {
+
   ref_vals <- sapply(seq_len(length(unlist(strsplit(reference, "-")))), function(x) {
     d[x, unlist(strsplit(reference, "-"))[x]]
   })
+
   ref_vals
 }
 
@@ -41,11 +43,13 @@ get_reference_values <- function(d, reference) {
 #' r <- get_comparison_values(d = d,
 #'                          comp_histories = c("h-h-h", "h-h-l"))
 get_comparison_values <- function(d, comp_histories) {
+
   comp_vals <- sapply(comp_histories, function(comp) {
     sapply(seq_len(length(unlist(strsplit(comp, "-")))), function(x) {
       d[x, unlist(strsplit(comp, "-"))[x]]
     })
   })
+
   t(comp_vals)
 }
 
@@ -60,6 +64,7 @@ get_comparison_values <- function(d, comp_histories) {
 #' @return contrasts
 #' @export
 create_custom_contrasts <- function(d, reference, comp_histories, exposure, preds) {
+
   if (is.na(reference) | is.null(comp_histories)) {
     return(NULL)  # Invalid input, return early
   }
@@ -121,6 +126,7 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 #' @export
 
 add_histories <- function(p, d) {
+
   if((is.list(p)) & length(p) == 1){
     history <- matrix(data = NA, nrow = nrow(p[[1]]), ncol = 1) # Get histories from the first element
     p <- p[[1]]
@@ -150,6 +156,7 @@ add_histories <- function(p, d) {
     }
     else { #comps
       for (i in seq_len(nrow(p))) {
+
         temp <- as.character(p$term[i])
         pair <- lapply(1:2, function(y) {
           a <- sapply(strsplit(temp, " - "), "[", y)

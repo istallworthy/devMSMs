@@ -88,20 +88,20 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
   stat_var <- colnames(balance_stats)[grepl("_bal", colnames(balance_stats))]
   colnames(balance_stats)[colnames(balance_stats) == stat_var] <- "avg_bal"
   # balance_stats <- balance_stats %>% dplyr::arrange(avg_bal)
-  balance_stats <- balance_stats[order(balance_stats$avg_bal), ]
+  balance_stats <- balance_stats[order(balance_stats$avg_bal), , drop = FALSE]
 
-  x_lab <- ifelse(exposure_type == "continuous", "Correlation with Exposure", "Standardized Mean Difference Between Exposures")
+  x_lab <- if(exposure_type == "continuous") "Correlation with Exposure" else "Standardized Mean Difference Between Exposures"
 
-  labels <- ifelse(balance_stats$balanced == 0, balance_stats$covariate, "")
+  labels <- if(sum(balance_stats$balanced == 0) > 0) balance_stats$covariate else ""
 
-  min_val <- ifelse(min(balance_stats[, "avg_bal"]) < 0, min(balance_stats[, "avg_bal"]) - 0.05, min(balance_thresh) - 0.05)
+  min_val <- if(min(balance_stats[, "avg_bal"]) < 0) min(balance_stats[, "avg_bal"]) - 0.05 else min(balance_thresh) - 0.05
   if (min_val > -(max(balance_thresh))){
-    min_val = -(max(balance_thresh)) - 0.05 #to make sure user-supplied balance thresh is on the figure
+    min_val <- -(max(balance_thresh)) - 0.05 #to make sure user-supplied balance thresh is on the figure
   }
 
-  max_val <- ifelse(max(balance_stats[, "avg_bal"]) > 0, max(balance_stats[, "avg_bal"]) + 0.05, max(balance_thresh) + 0.05)
+  max_val <- if(max(balance_stats[, "avg_bal"]) > 0) max(balance_stats[, "avg_bal"]) + 0.05 else max(balance_thresh) + 0.05
   if (max_val < max(balance_thresh)){
-    max_val = max(balance_thresh) + 0.05 #to make sure user-supplied balance thresh is on the figure
+    max_val <- max(balance_thresh) + 0.05 #to make sure user-supplied balance thresh is on the figure
   }
 
   # Make love plot per exposure time point
@@ -143,18 +143,25 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance for Imputation ", k))
 
     if(save.out){
-    suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "plots/",
-                                                           form_name, "_imp_", k, "_", exposure, "_", exposure_time_pt, "_",
-                                                           weights_method, "_summary_balance_plot.jpeg"), width = 6, height = 8))
+      suppressMessages(ggplot2::ggsave(lp, filename =
+                                         # paste0(home_dir, "/balance/", folder, "plots/",
+                                         #                     form_name, "_imp_", k, "_", exposure, "_", exposure_time_pt, "_",
+                                         #                     weights_method, "_summary_balance_plot.jpeg")
+                                         sprintf("%s/balance/%splots/%s_imp_%s_%s_%s_%s_summary_balance_plot.jpeg",
+                                                 home_dir, folder, form_name, k, exposure, exposure_time_pt, weights_method),
+                                       width = 6, height = 8))
     }
   }
   else {
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance"))
 
     if(save.out){
-    suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "plots/", form_name, "_", exposure, "_",
-                                                           exposure_time_pt, "_", weights_method, "_summary_balance_plot.jpeg"),
-                                     width = 6, height = 8))
+      suppressMessages(ggplot2::ggsave(lp, filename =
+                                         # paste0(home_dir, "/balance/", folder, "plots/", form_name, "_", exposure, "_",
+                                         #                     exposure_time_pt, "_", weights_method, "_summary_balance_plot.jpeg"),
+                                         sprintf("%s/balance/%splots/%s_%s_%s_%s_summary_balance_plot.jpeg",
+                                                 home_dir, folder, form_name, exposure, exposure_time_pt, weights_method),
+                                       width = 6, height = 8))
     }
   }
 

@@ -247,11 +247,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
         data$flag <- NULL # resets flag
       } # ends history loop (e.g., "l-l-l")
 
-      #summarize contributors to each history
-      # prop_sum <- prop_weights %>%
-      #   dplyr::group_by(as.factor(history)) %>%
-      #   dplyr::summarize(n = dplyr::n())
-
       prop_sum <- aggregate(exposure ~ as.factor(history), data = prop_weights,
                             FUN = function(x) n = length(x))
 
@@ -267,14 +262,20 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           ommitted_histories <- as.character(as.data.frame(prop_sum)[prop_sum$n == 1, 1])
 
           if (data_type == "imputed"){
-            cat(paste0("USER ALERT: the following history/histories, ", ommitted_histories,
-                       ", has/have been omitted from balance checking for exposure ", exposure,
-                       ", imputation ", k, ", at time point ", exposure_time_pt))
+            # cat(paste0("USER ALERT: the following history/histories, ", ommitted_histories,
+            #            ", has/have been omitted from balance checking for exposure ", exposure,
+            #            ", imputation ", k, ", at time point ", exposure_time_pt))
+            cat(sprintf("USER ALERT: the following history/histories, %s has/have been omitted from
+                        balance checking for exposure %s imputation %s at time point %s:",
+                        omitted_histories, exposure, k, exposure_time_pt))
           }
           else{
-            cat(paste0("USER ALERT: the following history/histories, ", ommitted_histories,
-                       ", has/have been omitted from balance checking for exposure ", exposure,
-                       " at time point ", exposure_time_pt))
+            # cat(paste0("USER ALERT: the following history/histories, ", ommitted_histories,
+            #            ", has/have been omitted from balance checking for exposure ", exposure,
+            #            " at time point ", exposure_time_pt))
+            cat(sprintf("USER ALERT: the following history/histories, %s has/have been omitted from
+                        balance checking for exposure %s at time point %s:",
+                        omitted_histories, exposure, exposure_time_pt))
           }
 
           temp <- temp[!temp$history %in% ommitted_histories, , drop = FALSE]
@@ -504,13 +505,22 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   if (verbose & save.out) {
     if (data_type == "imputed"){
-      cat(paste0("For each time point and imputation, ", gsub("/", "", folder), " summary plots for ",
-                 form_name, " formulas weighting method ",
-                 weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
+      # cat(paste0("For each time point and imputation, ", gsub("/", "", folder), " summary plots for ",
+      #            form_name, " formulas weighting method ",
+      #            weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
+
+      cat(paste0("For each time point and imputation, %s summary plots for  %s
+                 formulas weighting method %s have now been saved in the %s plots/' folder.\n",
+                 gsub("/", "", folder), form_name, weights_method, folder))
+
     }
-    else {cat(paste0(" For each time point, ", gsub("/", "", folder), " summary plots for ",
-                     form_name, " formulas and weighting method ",
-                     weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
+    else {
+      # cat(paste0(" For each time point, ", gsub("/", "", folder), " summary plots for ",
+      #                form_name, " formulas and weighting method ",
+      #                weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
+      cat(paste0("For each time point, %s summary plots for  %s
+                 formulas weighting method %s have now been saved in the %s plots/' folder.\n",
+                 gsub("/", "", folder), form_name, weights_method, folder))
     }
   }
 
@@ -525,25 +535,42 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
 
   if (save.out){
-    write.csv(bal_summary_exp, paste0(home_dir, "/balance/", folder, form_name, "_", exposure, "_", k, "_",
-                                      weights_method, "_balance_stat_summary.csv"))
-    write.csv(all_prop_weights, paste0(home_dir, "/balance/", folder, "/", form_name, "_form_", exposure, "_", k,
-                                       "_", weights_method, "_history_sample_weight.csv"))
+    write.csv(bal_summary_exp,
+              # paste0(home_dir, "/balance/", folder, form_name, "_", exposure, "_", k, "_",
+              # weights_method, "_balance_stat_summary.csv"))
+              sprintf("%s/balance/%s%s_%s_%s_%s_balance_stat_summary.csv",
+                      home_dir,folder, form_name, exposure, k, weights_method))
+
+    write.csv(all_prop_weights,
+              # paste0(home_dir, "/balance/", folder, "/", form_name, "_form_", exposure, "_", k,
+              #                          "_", weights_method, "_history_sample_weight.csv"))
+              sprintf("%s/balance/%s/%s_form_%s_%s_%s_history_sample_weight.csv",
+                      home_dir, folder, form_name, exposure, k, weights_method))
+
     if (verbose){
       cat("\n")
       if (data_type == "imputed"){
-        cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, ", imputation ", k, ", using ",
-                   weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
 
-        cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure, ", imputation ", k,
-                   " have been saved in the 'balance/", folder, "' folder"), "\n")
+        cat(sprintf("Balance statistics using %s formulas for %s imputation %s, using
+                   %s have been saved in the 'balance/%s' folder. \n",
+                    form_name, exposure, k, weights_method, folder))
+
+        # cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure, ", imputation ", k,
+        #            " have been saved in the 'balance/", folder, "' folder"), "\n")
+        cat(sprintf("Sampling weights using the %s for %s imputation %s have been saved in the 'balance/%s' folder., \n",
+                    form_name, exposure, k, folder))
       }
       else{
-        cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, "using ",
-                   weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
+        # cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, "using ",
+        #            weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
+        cat(sprintf("Balance statistics using %s formulas for %s using
+                   %s have been saved in the 'balance/%s' folder. \n",
+                    form_name, exposure, weights_method, folder))
 
-        cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure,
-                   " have been saved in the 'balance/", folder, "' folder"), "\n")
+        # cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure,
+        #            " have been saved in the 'balance/", folder, "' folder"), "\n")
+        cat(sprintf("Sampling weights using the %s for %s have been saved in the 'balance/%s' folder., \n",
+                    form_name, exposure, folder))
       }
       cat("\n")
     }
