@@ -106,14 +106,14 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)
   }
-  else if(!is.character(exposure) | length(exposure) != 1){
+  else if(!is.character(exposure) || length(exposure) != 1){
     stop("Please supply a single exposure as a character.", call. = FALSE)
   }
 
   if (missing(outcome)){
     stop("Please supply a single outcome.", call. = FALSE)
   }
-  else if(!is.character(outcome) | length(outcome) != 1){
+  else if(!is.character(outcome) || length(outcome) != 1){
     stop("Please supply a single outcome as a character.", call. = FALSE)
   }
 
@@ -143,15 +143,15 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   else  if(!is.character(type)){
     stop("Please provide a character string type from the following list: 'short', 'full', or 'update'", call. = FALSE)
   }
-  else if(! type %in% c("short", "full", "update") | length(type) != 1){
+  else if(! type %in% c("short", "full", "update") || length(type) != 1){
     stop("Please provide a single type from the following list: 'short', 'full', or 'update'", call. = FALSE)
   }
 
-  if (type != "update" & !is.null(bal_stats)){
+  if (type != "update" && !is.null(bal_stats)){
     stop ("Please only provide balance statistics for the type 'update'.", call. = FALSE)
   }
 
-  if(!is.null(bal_stats) & !is.data.frame(bal_stats)){
+  if(!is.null(bal_stats) && !is.data.frame(bal_stats)){
     stop("Please provide a data frame of balance statistics from the assessBalance function.", call. = FALSE)
   }
 
@@ -174,14 +174,14 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   all_covars <- c(tv_confounders, ti_confounders)
 
   if (!is.null(custom)){
-    if (length(custom) != length(exposure_time_pts) | !inherits(custom, "list")){
+    if (length(custom) != length(exposure_time_pts) || !inherits(custom, "list")){
       stop("If you wish to supply custom formulas, please provide a list of formulas for each exposure time point.", call. = FALSE)
     }
 
     forms <- custom
   }
   else{
-    if (type != "update" & !is.null(bal_stats)){
+    if (type != "update" && !is.null(bal_stats)){
       stop ("Please only provide balance statistics for the type 'update'.", call. = FALSE)
     }
 
@@ -263,9 +263,9 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
             time_var_include <- c(time_var_include, new)
 
             if (verbose){
-              # cat(paste0("For ", exposure, " at exposure time point ", time ,
-              #            ", the following covariate(s) will be added to the short balancing formula: "), paste(new, collapse = ", "), "\n")
-              cat(sprintf("For %s at exposure time point %s the following covariate(s) will be added to the short balancing formula: %s \n",
+
+              cat(sprintf("For %s at exposure time point %s the following covariate(s) will be added to the short balancing formula:
+                          %s \n",
                           exposure, time, paste(new, collapse = ", ")))
 
               cat("\n")
@@ -273,8 +273,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
           }
           else{
             if (verbose) {
-              # cat(paste0("For ", exposure, " at exposure time point ", time ,
-              #            " no time-varying confounders at additional lags were added."), "\n")
+
               cat(sprintf("For %s at exposure time point %s no time-varying confounders at additional lags were added. \n",
                           exposure, time ))
               cat("\n")
@@ -345,15 +344,12 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
 
     if(save.out){
       # Writes forms_csv to a CSV file
-      forms_csv_file <-
-        # paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.csv")
-        sprintf("%s/%s_%s-%s_%s_balancing_formulas.csv",
+      forms_csv_file <- sprintf("%s/%s_%s-%s_%s_balancing_formulas.csv",
                 forms_dir, type, exposure, outcome, type)
 
       writeLines(forms_csv, con = forms_csv_file)
 
       # writes to rds
-      # forms_rds_file <- paste0(forms_dir, "/", type, "_", exposure, "-", outcome, "_", type, "_balancing_formulas.rds")
       forms_rds_file <- sprintf("%s/%s_%s-%s_%s_balancing_formulas.rds",
                                 forms_dir, type, exposure, outcome, type)
 

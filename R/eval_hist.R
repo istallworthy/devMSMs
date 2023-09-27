@@ -65,7 +65,6 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
 
   data_wide <- data
 
-
   #new will always have exposure main effects (ether exposure time points or epochs)
   # Lists out exposure-epoch combos
   if( is.null(epochs)){ #making epochs time pts if not specified by user
@@ -108,7 +107,7 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
                     paste, sep = "", collapse = "-")
 
   # Assigning history (e.g., h-h-h) based on user-specified hi/lo cutoffs
-  if( !is.na(ref) & !is.null(comps)){
+  if( !is.na(ref) && !is.null(comps)){
     tot_hist <- tot_hist[tot_hist %in% c(ref, comps)]
   }
 
@@ -204,7 +203,7 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
   his_summ <- aggregate( ID ~ history, data = new,
                          FUN = function(x) n = length(x))
 
-  if( !is.na(ref) & !is.null(comps)){
+  if( !is.na(ref) && !is.null(comps)){
     his_sum <- his_summ[his_summ$history %in% c(ref, comps), ]
   }
 
@@ -255,23 +254,17 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
         sufficient spread to avoid extrapolation and low precision:", "\n")
 
     if (nrow(his_summ) != length(tot_hist)) {
-      # cat(paste0("USER ALERT: There are no individuals in your sample that fall into ",
-      #            paste(tot_hist[!tot_hist %in% his_summ$history], collapse = " & "),
-      #            " exposure history/histories. You may wish to consider different high/low cutoffs (for continuous exposures), alternative epochs, or choose a different measure to avoid extrapolation."), "\n")
-      cat(sprintf("USER ALERT: There are no individuals in your sample that fall into %s exposure history/histories.
+
+      warning(sprintf("USER ALERT: There are no individuals in your sample that fall into %s exposure history/histories.
                   You may wish to consider different high/low cutoffs (for continuous exposures), alternative epochs, or choose a different measure to avoid extrapolation.\n",
-                  paste(tot_hist[!tot_hist %in% his_summ$history], collapse = " & ")))
+                      paste(tot_hist[!tot_hist %in% his_summ$history], collapse = " & ")), call. = FALSE)
       cat("\n")
     }
 
     cat("\n")
-    cat(knitr::kable(his_summ, caption =
-                       # paste0("Summary of user-specified exposure ", exposure,
-                       #                          " histories based on exposure main effects ", paste(epochs$epochs, collapse = ", "),
-                       #                          " containing time points ", paste(epochs$values, collapse = ", "), ":"),
-                       sprintf("Summary of user-specified exposure %s histories based on exposure main effects %s
+    cat(knitr::kable(his_summ, caption = sprintf("Summary of user-specified exposure %s histories based on exposure main effects %s
                                containing time points %s:",
-                               exposure, paste(epochs$epochs, collapse = ", "), paste(epochs$values, collapse = ", ")),
+                                                 exposure, paste(epochs$epochs, collapse = ", "), paste(epochs$values, collapse = ", ")),
                      format = 'pipe', row.names = F), sep = "\n")
   }
 

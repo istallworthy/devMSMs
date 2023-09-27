@@ -47,7 +47,7 @@ library(devtools)
 install_github("istallworthy/devMSMs")
 library(devMSMs)
 
-#get helper files from github
+#get helper files from github. Note: you need to install devMSMs for inspectData to work. 
 install_github("istallworthy/devMSMsHelpers")
 library(devMSMsHelpers)
 
@@ -56,7 +56,7 @@ library(devMSMsHelpers)
 #prior to re-installing using the code above. Sorry, this is annoying!
 
 #conducting package checks & tests from documentation --just for IS to run; comment out when testing the workflow
-devtools::check()
+# devtools::check()
 ```
 
 
@@ -67,12 +67,16 @@ devtools::check()
 
 set.seed(1234)
 
+#required if you wish to use save.out = TRUE in the functions
 home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #no / after
 
+#required
 exposure <- "ESETA1"
 
+#required
 exposure_time_pts <- c(6, 15, 24, 35, 58)
 
+#required
 outcome <- "EF_avg_perc.58"
 
 #these are now optional 
@@ -94,6 +98,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "StrDif_Tot.35", "StrDif_Tot.58",   
                     "EF_avg_perc.35", "EF_avg_perc.58") 
 
+#required
 ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
                     "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
                     "peri_health", "mat_health", "gov_asst") 
@@ -201,6 +206,7 @@ data$HomeOwnd = as.factor(data$HomeOwnd)
 library(dplyr)
 data <- data %>%
   dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx")))) #removing these --came from old dataset
+data$ID = as.numeric(as.character(unlist(data$ID)))
 
 ```
 
@@ -652,7 +658,8 @@ models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome
 
 #minimum inputs
 model <- "m0"
-models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, epochs = epochs)
+models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
+                   epochs = epochs)
 
 #some optional inputs
 models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
