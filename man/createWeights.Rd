@@ -11,7 +11,7 @@ createWeights(
   outcome,
   formulas,
   method = "cbps",
-  SL.library = NA,
+  SL.library = "SL.glm",
   criterion = "p.mean",
   density = "dt_2",
   read_in_from_file = "no",
