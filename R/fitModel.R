@@ -108,13 +108,16 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   if (save.out) {
     if (missing(home_dir)) {
-      stop("Please supply a home directory.", call. = FALSE)
+      stop("Please supply a home directory.",
+           call. = FALSE)
     }
     else if(!is.character(home_dir)){
-      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
+           call. = FALSE)
     }
     else if(!dir.exists(home_dir)) {
-      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path if you wish to save output locally.",
+           call. = FALSE)
     }
   }
 
@@ -123,104 +126,131 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
          call. = FALSE)
   }
   else if (!inherits(data, "mids") && !is.data.frame(data) && !is.list(data)) {
-    stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.", call. = FALSE)
+    stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.",
+         call. = FALSE)
   }
   else if(is.list(data) && !is.data.frame(data)){
     if (sum(sapply(data, is.data.frame)) != length(data)){
-      stop("Please supply a list of data frames that have been imputed.", call. = FALSE)
+      stop("Please supply a list of data frames that have been imputed.",
+           call. = FALSE)
     }
   }
 
   if (missing(exposure)){
-    stop("Please supply a single exposure.", call. = FALSE)
+    stop("Please supply a single exposure.",
+         call. = FALSE)
   }
   else if(!is.character(exposure) || length(exposure) != 1){
-    stop("Please supply a single exposure as a character.", call. = FALSE)
+    stop("Please supply a single exposure as a character.",
+         call. = FALSE)
   }
 
   if (missing(outcome)){
-    stop("Please supply a single outcome.", call. = FALSE)
+    stop("Please supply a single outcome.",
+         call. = FALSE)
   }
   else if(!is.character(outcome) || length(outcome) != 1){
-    stop("Please supply a single outcome as a character.", call. = FALSE)
+    stop("Please supply a single outcome as a character.",
+         call. = FALSE)
   }
 
   if (missing(weights)){
-    stop("Please supply a list of IPTW weights.", call. = FALSE)
+    stop("Please supply a list of IPTW weights.",
+         call. = FALSE)
   }
   else if (!is.list(weights) || is.data.frame(weights)){
-    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+    stop("Please supply a list of weights output from the createWeights function.",
+         call. = FALSE)
   }
   else if(is.list(weights) && !is.data.frame(weights)){
     if (sum(sapply(weights, function(x) {
       inherits(x, "weightitMSM")})) != length(weights)){
-      stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+      stop("Please supply a list of weights output from the createWeights function.",
+           call. = FALSE)
     }
   }
 
   if (missing(exposure_time_pts)){
-    stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
+    stop("Please supply the exposure time points at which you wish to create weights.",
+         call. = FALSE)
   }
   else if(!is.numeric(exposure_time_pts)){
-    stop("Please supply a list of exposure time points as integers.", call. = FALSE)
+    stop("Please supply a list of exposure time points as integers.",
+         call. = FALSE)
   }
 
   if (missing(model)){
-    stop('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)
+    stop('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")',
+         call. = FALSE)
   }
 
   if (!is.character(model)){
-    stop('Please provide as a character string a valid model "m" from 0-3 (e.g., "m1")', call. = FALSE)
+    stop('Please provide as a character string a valid model "m" from 0-3 (e.g., "m1")',
+         call. = FALSE)
   }
   else if (!is.character(model) || length(model) != 1){
-    stop('Please provide a single outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)
+    stop('Please provide a single outcome model selection "m" from 0-3 (e.g., "m1")',
+         call. = FALSE)
   }
 
   if (!(model %in% c("m0", "m1", "m2", "m3"))) {
-    stop('Please provide a valid model "m" from 0-3 (e.g., "m1")', call. = FALSE)
+    stop('Please provide a valid model "m" from 0-3 (e.g., "m1")',
+         call. = FALSE)
   }
   if ((model == "m2" | model == "m3") && (is.na(int_order) || !is.numeric(int_order))){
-    stop("Please provide an integer interaction order if you select a model with interactions.", call. = FALSE)
+    stop("Please provide an integer interaction order if you select a model with interactions.",
+         call. = FALSE)
   }
   if ((model == "m1" | model == "m3") && (is.null(covariates) || !is.character(covariates))){
-    stop("Please provide a list of covariates as characters if you select a covariate model.", call. = FALSE)
+    stop("Please provide a list of covariates as characters if you select a covariate model.",
+         call. = FALSE)
   }
 
   if(!inherits(family, "function")){
-    stop("Please provide a valid family in the form of a function (without quotations).", call. = FALSE)
+    stop("Please provide a valid family in the form of a function (without quotations).",
+         call. = FALSE)
   }
   if(length(family) != 1){
-    stop("Please provide a single valid family in the form of a function (without quotations).", call. = FALSE)
+    stop("Please provide a single valid family in the form of a function (without quotations).",
+         call. = FALSE)
   }
 
   if(!inherits(link, "character")){
-    stop("Please provide as a character a valid link function.", call. = FALSE)
+    stop("Please provide as a character a valid link function.",
+         call. = FALSE)
   }
   else if(length(link) != 1){
-    stop("Please provide as a character a valid link function.", call. = FALSE)
+    stop("Please provide as a character a valid link function.",
+         call. = FALSE)
   }
 
   if (!is.null(covariates)){
     if(!is.character(covariates)){
-      stop("Please provide a list of character strings for covariates.", call. = FALSE)
+      stop("Please provide a list of character strings for covariates.",
+           call. = FALSE)
     }
     if (sum(as.numeric(sapply(strsplit(covariates, "\\."), "[", 2)) > exposure_time_pts[1], na.rm = T) > 0){
-      warning("Please only include covariates that are time invariant or measured at the first exposure time point.")
+      warning("Please only include covariates that are time invariant or measured at the first exposure time point.",
+              call. = FALSE)
     }
   }
 
   if(!is.logical(verbose)){
-    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+    stop("Please set verbose to either TRUE or FALSE.",
+         call. = FALSE)
   }
   else if(length(verbose) != 1){
-    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+    stop("Please provide a single TRUE or FALSE value to verbose.",
+         call. = FALSE)
   }
 
   if(!is.logical(save.out)){
-    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+    stop("Please set save.out to either TRUE or FALSE.",
+         call. = FALSE)
   }
   else if(length(save.out) != 1){
-    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
+    stop("Please provide a single TRUE or FALSE value to save.out.",
+         call. = FALSE)
   }
 
 
@@ -247,7 +277,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       stop("If you supply epochs, please provide a dataframe with two columns of epochs and values.",
            call. = FALSE)
     }
-    if(sum(is.na(epochs$values)) > 0){
+    if(anyNA(epochs$values)){
       stop("Please provide one or a list of several values for each epoch.", call. = FALSE)
     }
   }
@@ -390,7 +420,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
         statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
         model.names = c(paste0("Imp.", seq_len(length(fits)))),
         file.name = file.path(home_dir, "models",
-                              # paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))
                               sprintf("%s-%s_%s_table_mod_ev.docx",
                                       exposure, outcome, model))
       ))
@@ -416,7 +445,6 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
                              to.file = "docx",
                              statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
                              file.name = file.path(home_dir, "models",
-                                                   # paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))))
                                                    sprintf("%s-%s_%s_table_mod_ev.docx",
                                                            exposure, outcome, model))))
     }

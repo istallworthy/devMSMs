@@ -42,6 +42,8 @@ Feel free to put feedback in your version of this .rmd, in the notes Google doc,
 install.packages("devtools")
 library(devtools)
 
+#you may need to do this if you are having issues installing devMSMs --will talk to NG about it
+# install.packages("SuperLearner")
 
 #get devMSMs from github
 install_github("istallworthy/devMSMs")
@@ -82,7 +84,7 @@ outcome <- "EF_avg_perc.58"
 #these are now optional 
 tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "MDI.6", "MDI.15",                                            
-                    # "RHasSO.6", "RHasSO.15", "RHasSO.24", #removed for low variability 
+                    # "RHasSO.6", "RHasSO.15", "RHasSO.24", #removed for low variability --check this
                     "RHasSO.35", "RHasSO.58",                                         
                     "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
                     "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
@@ -113,7 +115,8 @@ At this stage, data can be in long or wide format, complete or incomplete.
 # data <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv") #change this to match your folder
 
 #reading a long data file here for use in subsequent steps
-data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", header = TRUE)
+data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", 
+                      header = TRUE)
 
 
 ```
@@ -137,8 +140,8 @@ data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, 
                             time_var = "TAge", #list original time variable here if it's not "WAVE"
                             id_var = "S_ID", #list original id variable here if it's not "ID"
                             missing = NA, #list missing value here
-                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO", "PmMrSt2", "HomeOwnd"),
-                            save.out = TRUE) #list factor variables here
+                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO", "PmMrSt2", "HomeOwnd"),#list factor variables here
+                            save.out = TRUE) 
 
 
 # #making exposure binary for testing purposes only 
@@ -163,7 +166,8 @@ data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 
 #removing vars w/no variability; specific to FLP data 
 library(dplyr)
-data_wide <- data_wide %>% dplyr::select(-c(RHasSO.6, RHasSO.15 , RHasSO.24))
+data_wide <- data_wide %>% 
+  dplyr::select(-c(RHasSO.6, RHasSO.15 , RHasSO.24))
 
 
 #if you have no missing data and want to use the package with a single wide data frame
@@ -180,8 +184,9 @@ data <- data_wide
 m <- 1 
 method <- "pmm"; # provide an imputation method pmm, midastouch, sample, cart , rf (default)
 
+#note: right now (just for testing purposes), the function is set up for maxit = 0 to go fast, default is 5
 imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, 
-                           para_proc = TRUE, read_imps_from_file = "no", save.out = TRUE)
+                           maxit = 0, para_proc = TRUE, read_imps_from_file = "no", save.out = TRUE)
 
 
 #if you want to use the package with imputed data
@@ -190,7 +195,8 @@ data <- imputed_data
 
 
 #OR, read in a saved mids object
-imputed_data <- readRDS(paste0(home_dir, "/imputed_data.rds")) #place your .rds file in your home directory and change the name of file here
+imputed_data <- readRDS(paste0(home_dir, 
+                               "/imputed_data.rds")) #place your .rds file in your home directory and change the name of file here
 
 #if you want to use the package with imputed data
 data <- imputed_data
