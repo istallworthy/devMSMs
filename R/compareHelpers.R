@@ -137,7 +137,8 @@ add_histories <- function(p, d) {
     for (i in seq_len(nrow(p))) {
       vals <- as.data.frame(p)[i, seq_len(nrow(d))]
       history[i] <- as.data.frame(paste(ifelse(round(as.numeric(as.character(vals)), 3) ==
-                                                 round(as.numeric(as.character(d$l)), 3), "l", "h"), collapse = "-")) #was getting different rounding values due to floaters (i think), so made char first
+                                                 round(as.numeric(as.character(d$l)), 3), "l", "h"),
+                                        collapse = "-")) #was getting different rounding values due to floaters (i think), so made char first
     }
     history <- unlist(history)
   }
@@ -214,15 +215,20 @@ add_dose <- function(p, dose_level) {
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method, verbose) {
   if (nrow(comps) > 1) {
     cat("\n")
-    cat(paste0("Conducting multiple comparison correction using the ", method, " method."), "\n")
+    # cat(paste0("Conducting multiple comparison correction using the ", method, " method."), "\n")
+    cat(sprintf("Conducting multiple comparison correction using the %s method. \n",
+                method))
     cat("\n")
     corr_p <- stats::p.adjust(comps$p.value, method = method)
     comps <- cbind(comps, p.value_corr = corr_p)
   }
   else {
     cat("\n")
-    cat(paste0("The user specified comparison only between ", reference, " and a single comparison, ", comp_histories,
-               ", so no correction for multiple comparisons will be implemented."), "\n")
+    # cat(paste0("The user specified comparison only between ", reference, " and a single comparison, ", comp_histories,
+    #            ", so no correction for multiple comparisons will be implemented."), "\n")
+    cat(sprintf("The user specified comparison only between %s and a single comparison, %s,
+                so no correction for multiple comparisons will be implemented.\n",
+                reference, comp_histories))
   }
   comps
 }

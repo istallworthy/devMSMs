@@ -122,17 +122,21 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
                           imp_conf = NULL, verbose = TRUE, save.out = TRUE){
 
   if (!is.logical(save.out)) {
-    stop("`save.out` must be a flag (TRUE or FALSE)", call. = FALSE)
+    stop("`save.out` must be a flag (TRUE or FALSE)",
+         call. = FALSE)
   }
   if (save.out) {
     if (missing(home_dir)) {
-      stop("Please supply a home directory.", call. = FALSE)
+      stop("Please supply a home directory.",
+           call. = FALSE)
     }
     else if(!is.character(home_dir)){
-      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
+           call. = FALSE)
     }
     else if(!dir.exists(home_dir)) {
-      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path if you wish to save output locally.",
+           call. = FALSE)
     }
   }
 
@@ -143,110 +147,138 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
   else if (!inherits(data, "mids") && !is.data.frame(data) &&
            !(is.list(data) && all(vapply(data, is.data.frame, logical(1L))))) {
-    stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.", call. = FALSE)
+    stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.",
+         call. = FALSE)
   }
   else if(is.list(data) && !is.data.frame(data)){
     if (sum(sapply(data, is.data.frame)) != length(data)){
-      stop("Please supply a list of data frames that have been imputed.", call. = FALSE)
+      stop("Please supply a list of data frames that have been imputed.",
+           call. = FALSE)
     }
   }
 
   if (missing(exposure)){
-    stop("Please supply a single exposure.", call. = FALSE)
+    stop("Please supply a single exposure.",
+         call. = FALSE)
   }
   else if(!is.character(exposure) | length(exposure) != 1){
-    stop("Please supply a single exposure as a character.", call. = FALSE)
+    stop("Please supply a single exposure as a character.",
+         call. = FALSE)
   }
 
   if (missing(outcome)){
-    stop("Please supply a single outcome.", call. = FALSE)
+    stop("Please supply a single outcome.",
+         call. = FALSE)
   }
   else if(!is.character(outcome) | length(outcome) != 1){
-    stop("Please supply a single outcome as a character.", call. = FALSE)
+    stop("Please supply a single outcome as a character.",
+         call. = FALSE)
   }
 
   if (missing(exposure_time_pts)){
-    stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
+    stop("Please supply the exposure time points at which you wish to create weights.",
+         call. = FALSE)
   }
   else if(!is.numeric(exposure_time_pts)){
-    stop("Please supply a list of exposure time points as integers.", call. = FALSE)
+    stop("Please supply a list of exposure time points as integers.",
+         call. = FALSE)
   }
 
   if (missing(formulas)){
-    stop("Please supply a list of balancing formulas.", call. = FALSE)
+    stop("Please supply a list of balancing formulas.",
+         call. = FALSE)
   }
   else if(!is.list(formulas) | is.data.frame(formulas)){
-    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
+    stop("Please provide a list of formulas for each exposure time point",
+         call. = FALSE)
   }
   else if(length(formulas) != length(exposure_time_pts)){
-    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
+    stop("Please provide a list of formulas for each exposure time point",
+         call. = FALSE)
   }
   else if(is.list(formulas) && !is.data.frame(formulas)){
     if (sum(sapply(formulas, function(x) {
       inherits(x, "formula")})) != length(formulas)){
-      stop("Please supply a list of formulas for each exposure time point.", call. = FALSE)
+      stop("Please supply a list of formulas for each exposure time point.",
+           call. = FALSE)
     }
   }
 
 
   if (missing(type)){
-    stop("Please supply a 'weighted', 'prebalance' type", call. = FALSE)
+    stop("Please supply a 'weighted', 'prebalance' type",
+         call. = FALSE)
   }
   if (!inherits(type, "character") || length(type) != 1 ){
-    stop("Please provide a single type as a character string from the following list: 'prebalance', 'weighted'", call. = FALSE)
+    stop("Please provide a single type as a character string from the following list: 'prebalance', 'weighted'",
+         call. = FALSE)
   }
   else if (!type %in% c("prebalance", "weighted")) {
-    stop("Please provide a type from the following list: 'prebalance', 'weighted'", call. = FALSE)
+    stop("Please provide a type from the following list: 'prebalance', 'weighted'",
+         call. = FALSE)
   }
   else if (type == "prebalance" && !is.null(weights)) {
-    stop("The 'prebalance' mode of this function assesses balance prior to weighting and thus does not take weights.", call. = FALSE)
+    stop("The 'prebalance' mode of this function assesses balance prior to weighting and thus does not take weights.",
+         call. = FALSE)
   }
   else if (type == "weighted" && (is.null(weights) || missing(weights))) {
-    stop("The 'weighted' mode of this function requires weights be supplied in the form of output from createWeights.", call. = FALSE)
+    stop("The 'weighted' mode of this function requires weights be supplied in the form of output from createWeights.",
+         call. = FALSE)
   }
 
   if (!inherits(data, "mids") && !is.data.frame(data) &&
       !(is.list(data) && all(vapply(data, is.data.frame, logical(1L))))) {
-    stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.", call. = FALSE)
+    stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.",
+         call. = FALSE)
   }
 
   if (!is.null(weights) && (!is.list(weights) || is.data.frame(weights))){
-    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+    stop("Please supply a list of weights output from the createWeights function.",
+         call. = FALSE)
   }
   else if(is.list(weights) && !is.data.frame(weights)){
     if (sum(sapply(weights, function(x) {
       inherits(x, "weightitMSM")})) != length(weights)){
-      stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+      stop("Please supply a list of weights output from the createWeights function.",
+           call. = FALSE)
     }
   }
 
   if (!is.numeric(balance_thresh)) {
-    stop("Please provide one or two balance thresholds as numbers from 0-1.")
+    stop("Please provide one or two balance thresholds as numbers from 0-1.",
+         call. = FALSE)
   }
 
   if (length(balance_thresh) == 2 && is.null(imp_conf)){
-    stop("If you wish to provide different balance threshold for important and less important confounders, please provide a list of important confounders in the 'imp_conf' field.", call. = FALSE)
+    stop("If you wish to provide different balance threshold for important and less important confounders, please provide a list of important confounders in the 'imp_conf' field.",
+         call. = FALSE)
   }
 
   if (!is.null(imp_conf) && length(balance_thresh) == 1){
-    stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively", call. = FALSE)
+    stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively",
+         call. = FALSE)
   }
   else if(!is.null(imp_conf) && !is.character(imp_conf)){
-    stop("Please provide a list variable names as characters that are important confounders.", call. = FALSE)
+    stop("Please provide a list variable names as characters that are important confounders.",
+         call. = FALSE)
   }
 
   if(!is.logical(verbose)){
-    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+    stop("Please set verbose to either TRUE or FALSE.",
+         call. = FALSE)
   }
   else if(length(verbose) != 1){
-    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+    stop("Please provide a single TRUE or FALSE value to verbose.",
+         call. = FALSE)
   }
 
   if(!is.logical(save.out)){
-    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+    stop("Please set save.out to either TRUE or FALSE.", c
+         all. = FALSE)
   }
   else if(length(save.out) != 1){
-    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
+    stop("Please provide a single TRUE or FALSE value to save.out.",
+         call. = FALSE)
   }
 
   mi <- !is.data.frame(data)
@@ -291,6 +323,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         m <- data$m
 
         bal_stats <- lapply(seq_len(m), function(k) {
+
           d <- as.data.frame(mice::complete(data, k))
 
           if (anyNA(d)){

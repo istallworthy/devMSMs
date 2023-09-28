@@ -238,7 +238,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       weights <- lapply(seq_len(data$m), function(i) {
         d <- as.data.frame(mice::complete(data, i))
 
-        if (length(which(is.na(d))) > 0){
+        if (anyNA(d)){
           stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                call. = FALSE)
         }
@@ -302,7 +302,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       weights <- lapply(seq_len(length(data)), function(i) {
         d <- data[[i]]
 
-        if (length(which(is.na(d))) > 0){
+        if (anyNA(d)){
           stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                call. = FALSE)
         }
@@ -367,7 +367,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
       }
-      if (length(which(is.na(data))) > 0){
+      if (anyNA(data)){
         stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
              call. = FALSE)
       }
@@ -407,9 +407,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
                            ggplot2::aes(x = weights[[1]]$weights)) +
         ggplot2::geom_histogram(color = 'black', bins = 15) +
         ggplot2::xlab("Weights") +
-        ggplot2::ggtitle(
-          # paste0("Distribution of ", weights_method, " weights"))
-          sprintf("Distribution of %s weights",
+        ggplot2::ggtitle( sprintf("Distribution of %s weights",
                   weights_method))
 
       if(verbose){
