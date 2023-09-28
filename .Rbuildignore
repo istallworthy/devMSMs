@@ -4,3 +4,6 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^examplePipelineRevisited\.Rmd$
+^\.git$
+^\.DS_Store$

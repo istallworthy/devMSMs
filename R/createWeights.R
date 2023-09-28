@@ -111,7 +111,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
 
-  if(!inherits(method, "character")){
+  if(!is.character(method)){
     stop("Please provide as a character string a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.",
          call. = FALSE)
   }
@@ -119,6 +119,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     stop("Please provide a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.",
          call. = FALSE)
   }
+
 
   if(!is.logical(verbose)){
     stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
@@ -231,7 +232,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     }
 
 
-    if(inherits(data, "mids")){
+    if (inherits(data, "mids")) {
+
       # Cycling through imputed datasets
       weights <- lapply(seq_len(data$m), function(i) {
         d <- as.data.frame(mice::complete(data, i))
