@@ -122,7 +122,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
   }
-  else if (!mice::is.mids(data) && !is.data.frame(data) && !inherits(data, "list")) {
+  else if (!inherits(data, "mids") && !is.data.frame(data) && !is.list(data)) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.", call. = FALSE)
   }
 
@@ -143,7 +143,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   if (missing(weights)){
     stop("Please supply a list of IPTW weights.", call. = FALSE)
   }
-  else if (!inherits(weights, "list")){
+  else if (!is.list(weights) || is.data.frame(weights)){
     stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
   }
 
@@ -251,7 +251,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   # fam <- family(link = l)
   # }
 
-  if (mice::is.mids(data)){ #imputed dataset
+  if (inherits(data, "mids")){ #imputed dataset
 
     fits <- lapply(seq_len(data$m), function(y) {
 
@@ -285,7 +285,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
 
 
-  else if (inherits(data, "list")){ #imputed dataset
+  else if (is.list(data) && !is.data.frame(data)){ #imputed dataset
     fits <- lapply(seq_len(length(data)), function(y) {
 
       d <- data[[y]]
@@ -348,7 +348,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
 
 
-  if (mice::is.mids(data) || inherits(data, "list")){
+  if (inherits(data, "mids") || is.list(data)){
 
     names(fits) <- seq_len(length(fits))
 

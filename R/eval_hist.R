@@ -6,8 +6,6 @@
 #' @param data data in wide format as: a data frame, list of imputed
 #'   data frames, or mids object
 #' @param exposure name of exposure variable
-#' @param tv_confounders list of time-varying confounders with ".timepoint"
-#'   suffix
 #' @param epochs (optional) data frame of exposure epoch labels and values
 #' @param time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure was measured

@@ -39,9 +39,6 @@ reference, required if reference is supplied}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
-
-\item{tv_confounders}{list of time-varying confounders with ".timepoint"
-suffix}
 }
 \value{
 none

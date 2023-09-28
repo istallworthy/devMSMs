@@ -78,7 +78,7 @@
 calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL,
                          imp_conf = NULL, verbose = TRUE, save.out = TRUE){
 
-  if(!inherits(formulas, "list")){
+  if(!is.list(formulas) | is.data.frame(formulas)){
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
   if (!is.null(weights) && !inherits(weights, "weightitMSM")){
@@ -218,10 +218,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           if (exp == 0) { # low levels/absent
             if (exposure_type == "continuous") {
               data$flag <- ifelse(data[, exps_time[t]] <= median(data[, paste0(exposure, ".", exposure_time_pt)])
-                                  && data$flag == flag, t, NA) # finding those w/ vals <= median exp @ time pt & flagged at prev t's
+                                  & data$flag == flag, t, NA) # finding those w/ vals <= median exp @ time pt & flagged at prev t's
             }
             else { # for binary exp
-              data$flag <- ifelse(data[, exps_time[t]] == 0 && data$flag == flag, t , NA) # if exposure is absent & flagged at prev t's
+              data$flag <- ifelse(data[, exps_time[t]] == 0 & data$flag == flag, t , NA) # if exposure is absent & flagged at prev t's
             }
 
           }
@@ -229,10 +229,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           if (exp == 1) { # hi levels/present
             if (exposure_type == "continuous") {
               data$flag <- ifelse(data[, exps_time[t]] > median(data[, paste0(exposure, ".", exposure_time_pt)])
-                                  && data$flag == flag, t, NA) # finding those w/ vals > median exp @ time pt & flagged at prev t's
+                                  & data$flag == flag, t, NA) # finding those w/ vals > median exp @ time pt & flagged at prev t's
             }
             else { # binary exp
-              data$flag <- ifelse(data[, exps_time[t]] == 1 && data$flag == flag, t , NA) # if exposure is present & flagged at prev t's
+              data$flag <- ifelse(data[, exps_time[t]] == 1 & data$flag == flag, t , NA) # if exposure is present & flagged at prev t's
             }
 
           }
@@ -258,8 +258,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
 
         # Removing any histories that only have 1 or 0 person contributing (cannot calc bal stats)
-        if (sum(prop_sum$n == 1) > 0 | sum(prop_sum$n == 0) > 0) {
-          ommitted_histories <- as.character(as.data.frame(prop_sum)[prop_sum$n == 1, 1])
+        if (sum(prop_sum$n == 1) > 0 || sum(prop_sum$n == 0) > 0) {
+          ommitted_histories <- as.character(as.data.frame(prop_sum)[prop_sum$n == 1 | prop_sum$n == 0, 1])
 
           if (data_type == "imputed"){
             # cat(paste0("USER ALERT: the following history/histories, ", ommitted_histories,
@@ -278,7 +278,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                         omitted_histories, exposure, exposure_time_pt))
           }
 
-          temp <- temp[!temp$history %in% ommitted_histories, , drop = FALSE]
+          temp <- temp[!temp$history %in% ommitted_histories, ]
         } #ends hist exc
 
         # Unweighted pre-balance checking
@@ -325,8 +325,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
               temp2 <- temp[temp$history == i, , drop = FALSE ]
 
-              cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding mean difference
-                                subset = temp2$history[temp2$history == i] == i) # subsetting by that history
+              cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE) # finding mean difference
+
+              # cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding mean difference
+              #                   subset = temp2$history[temp2$history == i] == i) # subsetting by that history
             })
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
@@ -372,7 +374,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               temp2 <- temp[temp$history == i, , drop = FALSE ]
 
               cobalt::col_w_cov(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding covariance
-                                subset = temp2$history[temp2$history == i] == i, # subsetting by that history
+                                # subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[, "weights"]) # adding IPTW weights
             })
 
@@ -413,7 +415,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               temp2 <- temp[temp$history == i, , drop = FALSE ]
 
               cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding mean difference
-                                subset = temp2$history[temp2$history == i] == i, # subsetting by that history
+                                # subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[, "weights"]) # adding IPTW weights
             })
 
@@ -573,17 +575,20 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   imbalanced_covars <- sum(bal_summary_exp$imbalanced_n, na.rm = TRUE)
   total_covars <- sum(bal_summary_exp$n, na.rm = TRUE)
-  percentage_imbalanced <- round((imbalanced_covars / total_covars) * 100, 0)
-
-  remaining_imbalanced_domains <- length(sapply(strsplit(all_bal_stats[all_bal_stats$balanced == 0, "covariate"], "\\."),
-                                                "[", 1)[!duplicated(sapply(strsplit(all_bal_stats[all_bal_stats$balanced == 0, "covariate"],
-                                                                                    "\\."), "[", 1))])
   total_domains <- length(tot_covars)
 
-  # remaining_avg_abs_corr <- round(mean(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
-  remaining_avg_abs_corr <- round(median(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
-  remaining_corr_range <- paste0(round(min(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2),
-                                 "-", round(max(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2))
+  if (imbalanced_covars > 0){
+    percentage_imbalanced <- round((imbalanced_covars / total_covars) * 100, 0)
+
+    remaining_imbalanced_domains <- length(sapply(strsplit(all_bal_stats[all_bal_stats$balanced == 0, "covariate"], "\\."),
+                                                  "[", 1)[!duplicated(sapply(strsplit(all_bal_stats[all_bal_stats$balanced == 0, "covariate"],
+                                                                                      "\\."), "[", 1))])
+
+    # remaining_avg_abs_corr <- round(mean(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
+    remaining_avg_abs_corr <- round(median(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
+    remaining_corr_range <- paste0(round(min(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2),
+                                   "-", round(max(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2))
+  }
 
 
   if (verbose){
@@ -596,41 +601,54 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                   round(median(abs(all_bal_stats$std_bal_stats)), 2),
                   round(min(all_bal_stats$std_bal_stats), 2),
                   round(max(all_bal_stats$std_bal_stats), 2)))
-
-      cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %sout of %s domains,
-                  remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
-                  imbalanced_covars,
-                  total_covars,
-                  percentage_imbalanced,
-                  remaining_imbalanced_domains,
-                  total_domains,
-                  remaining_avg_abs_corr,
-                  remaining_corr_range))
-
       cat("\n")
-      cat(knitr::kable(bal_summary_exp,
-                       caption = sprintf("Imbalanced Covariates for imputation %s using %s and %s formulas",
-                                                          k, weights_method, form_name),
-                       format = 'pipe'), sep = "\n")
+
+      if (imbalanced_covars > 0){
+        cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %sout of %s domains,
+                  remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
+                    imbalanced_covars,
+                    total_covars,
+                    percentage_imbalanced,
+                    remaining_imbalanced_domains,
+                    total_domains,
+                    remaining_avg_abs_corr,
+                    remaining_corr_range))
+
+        cat("\n")
+        cat(knitr::kable(bal_summary_exp,
+                         caption = sprintf("Imbalanced Covariates for imputation %s using %s and %s formulas",
+                                           k, weights_method, form_name),
+                         format = 'pipe'), sep = "\n")
+      }
+      else{
+        cat(sprintf("No covariates remain imbalanced for imputation %s using %s and %s formulas. \n",
+                    k, weights_method, form_name))
+      }
 
       cat("\n")
       cat("\n")
     } else {
 
-      cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %sout of %s domains,
+      if (imbalanced_covars > 0){
+        cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %s out of %s domains,
                   remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
-                  imbalanced_covars,
-                  total_covars,
-                  percentage_imbalanced,
-                  remaining_imbalanced_domains,
-                  total_domains,
-                  remaining_avg_abs_corr,
-                  remaining_corr_range))
+                    imbalanced_covars,
+                    total_covars,
+                    percentage_imbalanced,
+                    remaining_imbalanced_domains,
+                    total_domains,
+                    remaining_avg_abs_corr,
+                    remaining_corr_range))
 
-      cat("\n")
-      cat(knitr::kable(bal_summary_exp,
-                       caption = sprintf("Imbalanced covariates using %s and %s formulas", weights_method, form_name),
-                       format = 'pipe'), sep = "\n")
+        cat("\n")
+        cat(knitr::kable(bal_summary_exp,
+                         caption = sprintf("Imbalanced covariates using %s and %s formulas", weights_method, form_name),
+                         format = 'pipe'), sep = "\n")
+      }
+      else{
+        cat(sprintf("No covariates remain imbalanced using %s and %s formulas. \n",
+                    weights_method, form_name))
+      }
       cat("\n")
       cat("\n")
     }
@@ -640,4 +658,4 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   all_bal_stats
 }
-f
+

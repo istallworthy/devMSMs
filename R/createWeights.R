@@ -79,7 +79,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
   }
-  else if (!mice::is.mids(data) && !is.data.frame(data) && !inherits(data, "list")) {
+  else if (!inherits(data, "mids") && !is.data.frame(data) && !is.list(data)) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.",
          call. = FALSE)
   }
@@ -101,7 +101,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   if (missing(formulas)){
     stop("Please supply a list of balancing formulas.", call. = FALSE)
   }
-  else if(!inherits(formulas, "list")){
+  else if(!is.list(formulas) | is.data.frame(formulas)){
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
 
@@ -199,7 +199,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     }
 
 
-    if(mice::is.mids(data)){
+    if(inherits(data, "mids")){
       # Cycling through imputed datasets
       weights <- lapply(seq_len(data$m), function(i) {
         d <- as.data.frame(mice::complete(data, i))
@@ -271,7 +271,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       }
     }
 
-    else if(inherits(data, "list")){
+    else if(is.list(data) && !is.data.frame(data)){
       # Cycling through list of imputed datasets
       weights <- lapply(seq_len(length(data)), function(i) {
         d <- data[[i]]
