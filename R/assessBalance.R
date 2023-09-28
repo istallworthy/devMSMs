@@ -202,7 +202,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   if (!is.null(weights) && (!is.list(weights) || is.data.frame(weights))){
     stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
   }
-  else if(is.lis(weights) && !is.data.frame(weights)){
+  else if(is.list(weights) && !is.data.frame(weights)){
     if (sum(sapply(weights, function(x) {
       inherits(x, "weightitMSM")})) != length(weights)){
       stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
