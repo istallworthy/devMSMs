@@ -158,24 +158,32 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       # Unweighted pre-balance checking
       if (!weighted) {
         if (exposure_type == "continuous") {
-          bal_stats <- cobalt::col_w_cov(temp[, c(covars)], temp[, paste0(exposure, ".", exposure_time_pt)], std = TRUE) # finding correlation
+          bal_stats <- cobalt::col_w_cov(temp[, c(covars)],
+                                         temp[, paste0(exposure, ".", exposure_time_pt)],
+                                         std = TRUE) # finding correlation
         }
         else if (exposure_type == "binary") {
-          bal_stats <- cobalt::col_w_smd(temp[, c(covars)], temp[, paste0(exposure, ".", exposure_time_pt)], std = TRUE) # finding smd
+          bal_stats <- cobalt::col_w_smd(temp[, c(covars)],
+                                         temp[, paste0(exposure, ".", exposure_time_pt)],
+                                         std = TRUE) # finding smd
+
         }
       }
 
       # Weighted balance checking
       else {
         if (exposure_type == "continuous") {
-          # finding cor
-          bal_stats <- cobalt::col_w_cov(temp[covars], temp[[paste0(exposure, ".", exposure_time_pt)]], std = TRUE,
-                                         weights = temp[["weights"]]) #IPTW weights
+          bal_stats <- cobalt::col_w_cov(temp[, c(covars)],
+                                         temp[, paste0(exposure, ".", exposure_time_pt)],
+                                         std = TRUE, # finding cor
+                                         weights = temp[, "weights"]) #IPTW weights
         }
         else if (exposure_type == "binary") {
-          # finding smd
-          bal_stats <- cobalt::col_w_smd(temp[covars], temp[[paste0(exposure, ".", exposure_time_pt)]], std = TRUE,
-                                         weights = temp[["weights"]]) #IPTW weights
+          bal_stats <- cobalt::col_w_smd(temp[, c(covars)],
+                                         temp[, paste0(exposure, ".", exposure_time_pt)],
+                                         std = TRUE, # finding smd
+                                         weights = temp[, "weights"]) #IPTW weights
+       
         }
       }
       bal_stats <- as.data.frame(bal_stats)
@@ -289,7 +297,9 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
               temp2 <- temp[temp$history == i, , drop = FALSE ]
 
-              cobalt::col_w_cov(temp2[covars], temp2[[paste0(exposure, ".", exposure_time_pt)]], std = FALSE)
+              cobalt::col_w_cov(temp2[covars],
+                                temp2[[paste0(exposure, ".", exposure_time_pt)]],
+                                std = FALSE)
 
               # #should be same length as covars (already have factors split up)
               # cobalt::col_w_cov(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding covariance
@@ -298,7 +308,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
             # getting weighted mean across histories (cols), weighting by proportion of those w/ that same history
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
-              weighted.mean(t(bal_stats[i, ])[1, ], tabulate(as.factor(temp$history)) / nrow(temp))
+              weighted.mean(t(bal_stats[i, ])[1, ],
+                            tabulate(as.factor(temp$history)) / nrow(temp))
             })
 
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
@@ -325,7 +336,9 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
               temp2 <- temp[temp$history == i, , drop = FALSE ]
 
-              cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE) # finding mean difference
+              cobalt::col_w_smd(temp2[, c(covars)],
+                                temp2[, paste0(exposure, ".", exposure_time_pt)],
+                                std = FALSE) # finding mean difference
 
               # cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding mean difference
               #                   subset = temp2$history[temp2$history == i] == i) # subsetting by that history
@@ -333,7 +346,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
-              weighted.mean(t(bal_stats[i, ])[1, ], tabulate(as.factor(temp$history)) / nrow(temp))
+              weighted.mean(t(bal_stats[i, ])[1, ],
+                            tabulate(as.factor(temp$history)) / nrow(temp))
             })
 
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
@@ -370,10 +384,13 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           if (exposure_type == "continuous") {
             # finds balance for each covariate clustered/subset by history
             bal_stats <- sapply(sort(unique(temp$history)), function(i) {
+
               temp2 <- temp[temp$history == i,, drop = FALSE]
 
 
-              cobalt::col_w_cov(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding covariance
+              cobalt::col_w_cov(temp2[, c(covars)],
+                                temp2[, paste0(exposure, ".", exposure_time_pt)],
+                                std = FALSE, # finding covariance
                                 # subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[, "weights"]) # adding IPTW weights
             })
@@ -414,7 +431,9 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               temp2 <- temp[temp$history == i,, drop = FALSE]
 
 
-              cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding mean difference
+              cobalt::col_w_smd(temp2[, c(covars)],
+                                temp2[, paste0(exposure, ".", exposure_time_pt)],
+                                std = FALSE, # finding mean difference
                                 # subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[, "weights"]) # adding IPTW weights
             })
@@ -427,7 +446,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
-              weighted.mean(t(bal_stats[i, ])[1, ], tabulate(as.factor(temp$history)) / nrow(temp))
+              weighted.mean(t(bal_stats[i, ])[1, ],
+                            tabulate(as.factor(temp$history)) / nrow(temp))
             })
 
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
@@ -449,7 +469,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
 
-            bal_stats <- subset(bal_stats, select =  grepl("std", colnames(bal_stats) ))
+            bal_stats <- subset(bal_stats,
+                                select =  grepl("std", colnames(bal_stats) ))
           } #ends binary
         } #ends weighted
 
@@ -483,7 +504,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
     #adds custom bal thresh info
     if (!is.null(imp_conf)){
-      bal_stats$bal_thresh <- ifelse(bal_stats$covariate %in% imp_conf, balance_thresh[1], balance_thresh[2])
+      bal_stats$bal_thresh <- ifelse(bal_stats$covariate %in% imp_conf,
+                                     balance_thresh[1], balance_thresh[2])
       bal_stats$balanced <- ifelse(abs(bal_stats$std_bal_stats) < bal_stats$bal_thresh, 1, 0)
     }
     else{

@@ -240,7 +240,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   } else{
 
-    if( !is.data.frame(epochs) || ncol(epochs) != 2 || sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)){
+    if( !is.data.frame(epochs) || ncol(epochs) != 2 ||
+        sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)){
       stop("If you supply epochs, please provide a dataframe with two columns of epochs and values.",
            call. = FALSE)
     }
