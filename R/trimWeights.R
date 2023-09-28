@@ -81,7 +81,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
   if (missing(weights)){
     stop("Please supply a list of IPTW weights to trim.", call. = FALSE)
   }
-  else if (!inherits(weights, "list")){
+  else if (!is.list(weights) || is.data.frame(weights)){
     stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
   }
 

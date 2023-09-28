@@ -138,7 +138,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   if (missing(model)){
     stop("Please supply a list of model output", call. = FALSE)
   }
-  else if(!inherits(model, "list")){
+  else if(!is.list(model) || is.data.frame(model)){
     stop("Please provide a list of model output from the fitModel function.", call. = FALSE)
   }
 

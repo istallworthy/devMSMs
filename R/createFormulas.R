@@ -174,7 +174,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   all_covars <- c(tv_confounders, ti_confounders)
 
   if (!is.null(custom)){
-    if (length(custom) != length(exposure_time_pts) || !inherits(custom, "list")){
+    if (length(custom) != length(exposure_time_pts) || !is.list(custom) || is.data.frame(custom)){
       stop("If you wish to supply custom formulas, please provide a list of formulas for each exposure time point.", call. = FALSE)
     }
 

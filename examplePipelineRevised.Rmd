@@ -56,7 +56,7 @@ library(devMSMsHelpers)
 #prior to re-installing using the code above. Sorry, this is annoying!
 
 #conducting package checks & tests from documentation --just for IS to run; comment out when testing the workflow
-# devtools::check()
+ devtools::check()
 ```
 
 
@@ -280,7 +280,8 @@ inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders
 
 
 #or minimum inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders)
+inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, 
+            tv_confounders =  tv_confounders)
 
 ```
 
