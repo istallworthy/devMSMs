@@ -141,7 +141,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.", call. = FALSE)
   }
   else if(is.list(data) && !is.data.frame(data)){
-    if (sum(sapply(data, is.list)) != length(data)){
+    if (sum(sapply(data, is.data.frame)) != length(data)){
       stop("Please supply a list of data frames that have been imputed.", call. = FALSE)
     }
   }
@@ -177,7 +177,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
   else if(is.list(formulas) && !is.data.frame(formulas)){
-    if (sum(lapply(formulas, function(x) {
+    if (sum(sapply(formulas, function(x) {
       inherits(x, "formula")})) != length(formulas)){
       stop("Please supply a list of formulas for each exposure time point.", call. = FALSE)
     }
@@ -203,7 +203,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
   }
   else if(is.lis(weights) && !is.data.frame(weights)){
-    if (sum(lapply(weights, function(x) {
+    if (sum(sapply(weights, function(x) {
       inherits(x, "weightitMSM")})) != length(weights)){
       stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
     }

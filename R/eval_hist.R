@@ -200,6 +200,7 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
   new$history <- unlist(new$history)
   his_summ <- aggregate( ID ~ history, data = new,
                          FUN = function(x) n = length(x))
+  colnames(his_summ) <- c("history", "n")
 
   if( !is.na(ref) && !is.null(comps)){
     his_sum <- his_summ[his_summ$history %in% c(ref, comps), ]
@@ -216,7 +217,7 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
       #            hi_lo_cut[2] * 100, "th and ", hi_lo_cut[1] * 100, "th percentile values for low and high levels of exposure ", exposure,
       #            ", respectively, across ", paste(epochs$epochs, collapse = ", ")), "\n")
 
-      cat(sprintf("USER ALERT: Out of the total of %s individuals in the sample, below is the distribution of the %s (%s%%)
+      cat(sprintf("USER ALERT: Out of the total of %s individuals in the sample, below is the distribution of the %s (%s%%) individuals
                   that fall into %s out of the %s the total user-defined exposure histories created from
                   %sth and %sth percentile values for low and high levels of exposure %s, respectively, across %s. \n",
                   nrow(data_wide),
@@ -236,7 +237,7 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
       #            " the total user-defined exposure histories created from median split values for low and high levels of exposure ", exposure,
       #            ", respectively, across ", paste(epochs$epochs, collapse = ", ")), "\n")
 
-      cat(sprintf("USER ALERT: Out of the total of %s individuals in the sample, below is the distribution of the %s (%s%%) that fall into %s
+      cat(sprintf("USER ALERT: Out of the total of %s individuals in the sample, below is the distribution of the %s (%s%%) individuals that fall into %s
                   out of the %s total user-defined exposure histories created from median split values for low and high levels of exposure
                   %s, respectively, across %s. \n",
                   nrow(data_wide),

@@ -141,6 +141,10 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   else if(!is.list(model) || is.data.frame(model)){
     stop("Please provide a list of model output from the fitModel function.", call. = FALSE)
   }
+  else if (sum(sapply(model, function(x) {
+    inherits(x, "svyglm")})) != length(model)){
+    stop("Please supply a model as a list from the createWeights function.", call. = FALSE)
+  }
 
   if(!is.logical(verbose)){
     stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
