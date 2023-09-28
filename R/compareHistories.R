@@ -394,6 +394,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     preds_pool <- add_dose(preds_pool, dose_level)
 
     # If the user specified reference and comparison groups, subset pred_pool for inspection and plotting
+
     if (!is.na(reference) && !is.null(comp_histories)) {
       # preds_pool <- preds_pool %>%
       #   dplyr::filter(history %in% c(reference, comp_histories))
@@ -507,6 +508,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     preds <- add_dose(preds, dose_level)
 
     # If the user specified reference and comparison groups, subset preds for inspection and plotting
+
     if (!is.na(reference) && !is.null(comp_histories)) {
       # preds <- preds %>%
       #   dplyr::filter(history %in% c(reference, comp_histories))
