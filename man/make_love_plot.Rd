@@ -22,7 +22,7 @@ make_love_plot(
 )
 }
 \arguments{
-\item{home_dir}{path to home directory}
+\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{folder}{folder path for saving}
 
@@ -91,7 +91,6 @@ b <- assessBalance(data = test,
                    exposure = "A",
                    exposure_time_pts = c(1, 2, 3),
                    outcome = "D.3",
-                   tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                    type = "weighted",
                    weights = w,
                    formulas = f,

@@ -7,7 +7,7 @@
 #' @seealso [WeightIt::trim()],
 #'   <https://search.r-project.org/CRAN/refmans/WeightIt/html/trim.html> which
 #'   this function wraps
-#' @param home_dir path to home directory
+#' @param home_dir path to home directory (required if save.out = TRUE)
 #' @param exposure name of exposure variable
 #' @param outcome name of outcome variable with ".timepoint" suffix
 #' @param weights list of IPTW weights output from createWeights()
@@ -63,24 +63,62 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
     if (missing(home_dir)) {
       stop("Please supply a home directory.", call. = FALSE)
     }
+    else if(!is.character(home_dir)){
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+    }
     else if(!dir.exists(home_dir)) {
       stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
     }
   }
 
+  if (missing(exposure)){
+    stop("Please supply a single exposure.", call. = FALSE)
+  }
+  else if(!is.character(exposure) || length(exposure) != 1){
+    stop("Please supply a single exposure as a character.", call. = FALSE)
+  }
+
   if (missing(weights)){
     stop("Please supply a list of IPTW weights to trim.", call. = FALSE)
   }
+  else if (!is.list(weights) || is.data.frame(weights)){
+    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+  }
+  else if(is.list(weights) && !is.data.frame(weights)){
+    if (sum(sapply(weights, function(x) {
+      inherits(x, "weightitMSM")})) != length(weights)){
+      stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+    }
+  }
+
+  if (missing(outcome)){
+    stop("Please supply a single outcome.", call. = FALSE)
+  }
+  else if(!is.character(outcome) || length(outcome) != 1){
+    stop("Please supply a single outcome as a character.", call. = FALSE)
+  }
+
   if(!is.numeric(quantile)){
-    stop('Please sprovide a numeric quantile value between 0 and 1.', call. = FALSE)
+    stop('Please provide a numeric quantile value between 0 and 1.', call. = FALSE)
   }
   else if (quantile > 1 || quantile < 0) {
     stop('Please provide a quantile value between 0 and 1.', call. = FALSE)
   }
 
-  if (!inherits(weights, "list")){
-    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+  if(!is.logical(verbose)){
+    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
   }
+  else if(length(verbose) != 1){
+    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+  }
+
+  if(!is.logical(save.out)){
+    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(save.out) != 1){
+    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
+  }
+
 
   if(save.out){
     weights_dir <- file.path(home_dir, "weights")
@@ -105,25 +143,37 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
       t <- WeightIt::trim(w$weights, at = quantile)
 
       if (verbose){
-      cat('\n')
-      cat(paste0("For imputation ", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
-                     quantile, " quantile, the median weight value is ", round(median(t), 2) ,
-                     " (SD= ", round(sd(t), 2), "; range= ", round(min(t), 2), "-", round(max(t), 2), ")."), "\n")
-      cat('\n')
+        cat('\n')
+        # cat(paste0("For imputation ", x, " and the ", exposure, "-", outcome, " relation, following trimming at the ",
+        #                quantile, " quantile, the median weight value is ", round(median(t), 2) ,
+        #                " (SD= ", round(sd(t), 2), "; range= ", round(min(t), 2), "-", round(max(t), 2), ")."), "\n")
+        cat(sprintf("For imputation %s and the %s-%s relation, following trimming at the %s quantile, the median weight value is
+                  %s (SD= %s; range= %s-%s). \n",
+                    x, exposure, outcome, quantile, round(median(t), 2), round(sd(t), 2), round(min(t), 2), round(max(t))))
+        cat('\n')
       }
 
       # Save histogram of new weights
-      p <- ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
-        ggplot2::geom_histogram(color = 'black', bins = 15)
+      p <- ggplot2::ggplot(as.data.frame(t), ggplot2::aes(x = t)) +
+        ggplot2::geom_histogram(color = 'black', bins = 15) +
+        ggplot2::ggtitle(sprintf("Weights trimmed at the %s th value",
+                                 quantile))
 
       if(verbose){
         print(p)
       }
 
       if(save.out){
-        ggplot2::ggsave(paste("Hist_", exposure, "-", outcome, "_", weights[[x]]$method, "_weights_trim_",
-                              quantile, "_imp_", x, ".png", sep = ""), path = paste0(home_dir, "/weights/histograms/"), plot = p,
-                        height = 8, width = 14)
+        ggplot2::ggsave(
+          # paste("Hist_%s-%s_%s_weights_trim_%s_imp_%s.png", sep = ""),
+          sprintf("Hist_%s-%s_%s_weights_trim_%s_imp_%s.png",
+                  exposure, outcome, weights[[x]]$method, quantile, x),
+          path =
+            # paste0(home_dir, "/weights/histograms/"),
+            sprintf("%s/weights/histograms/",
+                    home_dir),
+          plot = p,
+          height = 8, width = 14)
       }
 
       # w$weights <- NA
@@ -141,37 +191,55 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
       t <- WeightIt::trim(w$weights, at = quantile)
 
       if (verbose){
-      cat('\n')
-      cat(paste0("For the ", exposure, "-", outcome, " relation, following trimming at the ",
-                     quantile, " quantile, the median weight value is ", round(median(t), 2) ,
-                     " (SD= ", round(sd(t), 2), "; range= ", round(min(t), 2), "-", round(max(t), 2), ")."), "\n")
-      cat('\n')
+        cat('\n')
+        # cat(paste0("For the ", exposure, "-", outcome, " relation, following trimming at the ",
+        #            quantile, " quantile, the median weight value is ", round(median(t), 2) ,
+        #            " (SD= ", round(sd(t), 2), "; range= ", round(min(t), 2), "-", round(max(t), 2), ")."), "\n")
+        cat(sprintf("For the %s-%s relation, following trimming at the %s quantile, the median weight value is
+                  %s (SD= %s; range= %s-%s). \n",
+                    exposure, outcome, quantile, round(median(t), 2), round(sd(t), 2), round(min(t), 2), round(max(t))))
+        cat('\n')
       }
 
       # Save histogram of new weights
-      p <- ggplot2::ggplot(as.data.frame(t), aes(x = t)) +
+      p <- ggplot2::ggplot(as.data.frame(t), ggplot2::aes(x = t)) +
         ggplot2::geom_histogram(color = 'black', bins = 15) +
-        ggtitle(paste0("Weights trimmed at the ", quantile, "th value"))
+        ggplot2::ggtitle(
+          # paste0("Weights trimmed at the ", quantile, "th value"))
+          sprintf("Weights trimmed at the %sth value", quantile))
 
       if(verbose){
         print(p)
       }
 
       if(save.out){
-        ggplot2::ggsave(paste("Hist_", exposure, "-", outcome,"_",weights[[x]]$method, "_weights_trim_", quantile, ".png", sep = ""), plot = p,
-                        path = paste0(home_dir, "/weights/histograms/"), height = 8, width = 14)
+        # ggplot2::ggsave(paste("Hist_", exposure, "-", outcome,"_",weights[[x]]$method, "_weights_trim_", quantile, ".png", sep = ""), plot = p,
+        #                 path = paste0(home_dir, "/weights/histograms/"), height = 8, width = 14)
+
+        ggplot2::ggsave(
+          # paste("Hist_%s-%s_%s_weights_trim_%s_imp_%s.png", sep = ""),
+          sprintf("Hist_%s-%s_%s_weights_trim_%s.png",
+                  exposure, outcome, weights[[x]]$method, quantile),
+          path =
+            # paste0(home_dir, "/weights/histograms/"),
+            sprintf("%s/weights/histograms/", home_dir),
+          plot = p,
+          height = 8, width = 14)
       }
 
-        w$weights <- NA
-        w$weights <- t
-        w
+      w$weights <- NA
+      w$weights <- t
+      w
     })
     names(trim_weights) <- "0"
   }
 
   if(save.out){
     # Save truncated weight data
-    saveRDS(trim_weights, paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", weights[[1]]$method, "_weights_trim.rds"))
+    saveRDS(trim_weights,
+            # paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", weights[[1]]$method, "_weights_trim.rds"))
+            sprintf("%s/weights/values/%s-%s_%s_weights_trim.rds",
+                    home_dir, exposure, outcome,weights[[1]]$method ))
   }
 
   trim_weights

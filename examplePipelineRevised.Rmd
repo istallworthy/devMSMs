@@ -47,7 +47,7 @@ library(devtools)
 install_github("istallworthy/devMSMs")
 library(devMSMs)
 
-#get helper files from github
+#get helper files from github. Note: you need to install devMSMs for inspectData to work. 
 install_github("istallworthy/devMSMsHelpers")
 library(devMSMsHelpers)
 
@@ -56,7 +56,7 @@ library(devMSMsHelpers)
 #prior to re-installing using the code above. Sorry, this is annoying!
 
 #conducting package checks & tests from documentation --just for IS to run; comment out when testing the workflow
-# devtools::check()
+ devtools::check()
 ```
 
 
@@ -67,14 +67,19 @@ library(devMSMsHelpers)
 
 set.seed(1234)
 
+#required if you wish to use save.out = TRUE in the functions
 home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #no / after
 
+#required
 exposure <- "ESETA1"
 
+#required
 exposure_time_pts <- c(6, 15, 24, 35, 58)
 
+#required
 outcome <- "EF_avg_perc.58"
 
+#these are now optional 
 tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "MDI.6", "MDI.15",                                            
                     # "RHasSO.6", "RHasSO.15", "RHasSO.24", #removed for low variability 
@@ -93,6 +98,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "StrDif_Tot.35", "StrDif_Tot.58",   
                     "EF_avg_perc.35", "EF_avg_perc.58") 
 
+#required
 ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
                     "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
                     "peri_health", "mat_health", "gov_asst") 
@@ -120,18 +126,18 @@ Choose from the following preliminary steps to assign to 'data' one of the follo
 - a mids object (output from mice::mice()) of data imputed in wide format
 - a list of data imputed in wide format
 
-Data columns shoudl be either numeric or factor form. Note that at present, the code can only take factors with 2 levels. 
+Data columns should be either numeric or factor form.
 
 ### P1. Format Data
 #### P1a. Format single data frame of long data 
 ```{r}
 
 # if you have long data with wrong time, id, and/or missing indicators and need to format
-data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, outcome, tv_confounders, 
+data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, outcome, 
                             time_var = "TAge", #list original time variable here if it's not "WAVE"
                             id_var = "S_ID", #list original id variable here if it's not "ID"
                             missing = NA, #list missing value here
-                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO"),
+                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO", "PmMrSt2", "HomeOwnd"),
                             save.out = TRUE) #list factor variables here
 
 
@@ -156,6 +162,7 @@ data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 
 
 #removing vars w/no variability; specific to FLP data 
+library(dplyr)
 data_wide <- data_wide %>% dplyr::select(-c(RHasSO.6, RHasSO.15 , RHasSO.24))
 
 
@@ -189,12 +196,18 @@ imputed_data <- readRDS(paste0(home_dir, "/imputed_data.rds")) #place your .rds 
 data <- imputed_data
 
 
+
 #optional: extract first imputed dataset for testing
 library(mice)
 data <- mice::complete(imputed_data, 1) #just for testing purposes
-# library(dplyr)
-# data <- data %>% 
-#   dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx")))) #removing these --came from old dataset
+
+#IS testing multi-level factors
+data$"PmMrSt2" = as.factor(data$"PmMrSt2")
+data$HomeOwnd = as.factor(data$HomeOwnd)
+library(dplyr)
+data <- data %>%
+  dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx")))) #removing these --came from old dataset
+data$ID = as.numeric(as.character(unlist(data$ID)))
 
 ```
 
@@ -258,7 +271,7 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 ```{r}
 
 #all inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, #required input
+inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, #required input
             epochs, hi_lo_cut, reference, comparison, verbose = TRUE, save.out = TRUE) #optional input
 
 
@@ -268,7 +281,8 @@ inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders
 
 
 #or minimum inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders)
+inspectData(data, home_dir, exposure, exposure_time_pts, outcome, 
+            ti_confounders, tv_confounders = tv_confounders)
 
 ```
 
@@ -298,11 +312,12 @@ custom <- full_formulas
 type = "full"
 
 #all inputs
-full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, 
+full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
                                 concur_conf = concur_conf, keep_conf = NULL, custom = custom, verbose = TRUE, save.out = TRUE)
 
 #or minimum inputs
-full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type)
+full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
+
 
 ```
 
@@ -322,11 +337,11 @@ type <- "prebalance"
 formulas <- full_formulas
 
 #all inputs
-prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome,  tv_confounders, type, formulas, 
+prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, 
                                   balance_thresh = balance_thresh, imp_conf = imp_conf, verbose = TRUE, save.out = TRUE)
 
 #or minimum inputs
-prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome,  tv_confounders, type, formulas)
+prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas)
 
 ```
 
@@ -356,11 +371,11 @@ custom <- NULL
 type <- "short" 
 
 #all inputs
-short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, 
+short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
                                  concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, verbose = TRUE, save.out = TRUE)
 
 #or minimum inputs
-short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type)
+short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
 
 ```
 
@@ -427,31 +442,31 @@ weights <- weights.ps
 
 
 #all inputs
-balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                     balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 #minimum inputs
-balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights)
+balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
 
 
 weights <- weights.cbps 
-balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                   balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 weights <- weights.glm 
-balance_stats.glm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+balance_stats.glm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                    balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 weights <- weights.gbm
-balance_stats.gbm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+balance_stats.gbm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                    balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 weights <- weights.bart
-balance_stats.bart <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+balance_stats.bart <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                     balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 weights <- weights.super 
-balance_stats.super <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+balance_stats.super <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                      balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 ```
@@ -477,11 +492,11 @@ formulas <- full_formulas
 weights <- weights.ps
 
 #all inputs
-balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
 
 #minimum inputs
-balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights)
+balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
 
 ```
 
@@ -508,11 +523,12 @@ type <- "update"
 bal_stats <- balance_stats
 
 #all inputs
-updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats, 
+updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
                                    concur_conf, keep_conf, verbose = TRUE, save.out = TRUE)
 
 #minimum inputs
-updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders, type, bal_stats)
+updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
+                                   bal_stats = bal_stats)
 
 ```
 
@@ -586,11 +602,11 @@ weights <- trim_weights
 
 
 #all input
-final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                      balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE) 
 
 #minimum input
-final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights)
+final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
 
 ```
 #### Sensitvity analyses
@@ -598,11 +614,11 @@ final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts
 
 #sensitivity tests
 weights <- trim_weights.s1
-final_balance_stats.s1 <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+final_balance_stats.s1 <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                         balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE) 
 
 weights <- trim_weights.s2
-final_balance_stats.s2 <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights, 
+final_balance_stats.s2 <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
                                         balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE) 
 
 ```
@@ -644,7 +660,8 @@ models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome
 
 #minimum inputs
 model <- "m0"
-models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model)
+models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
+                   epochs = epochs)
 
 #some optional inputs
 models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
@@ -707,15 +724,15 @@ model <- models #output from fitModel
 
 
 #all inputs
-results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
+results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, 
                             epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = FALSE, save.out = TRUE) 
 
 
 #minimum inputs
 reference <- "l-l-l-l-l"
 comparison <- c("h-h-h-h-h", "l-h-h-h-h") #multiple
-results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model,
-                            reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
+results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, epochs = epochs)
+                            # reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
 
 ```
 ##### Sensitvity analyses
@@ -723,11 +740,11 @@ results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_c
 
 #sensitivity tests
 model <- models.s1 
-results.s1 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
+results.s1 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, 
                                epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
 
 model <- models.s2 
-results.s2 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, 
+results.s2 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, 
                                epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
 
 ```

@@ -1,6 +1,6 @@
 #' Create love plots showing balancing statistics
 #'
-#' @param home_dir path to home directory
+#' @param home_dir path to home directory (required if save.out = TRUE)
 #' @param folder folder path for saving
 #' @param exposure name of exposure variable
 #' @param exposure_time_pt exposure time point integer
@@ -51,7 +51,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -88,26 +87,27 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
 
   stat_var <- colnames(balance_stats)[grepl("_bal", colnames(balance_stats))]
   colnames(balance_stats)[colnames(balance_stats) == stat_var] <- "avg_bal"
-  balance_stats <- balance_stats %>% dplyr::arrange(avg_bal)
+  # balance_stats <- balance_stats %>% dplyr::arrange(avg_bal)
+  balance_stats <- balance_stats[order(balance_stats$avg_bal), , drop = FALSE]
 
-  x_lab <- ifelse(exposure_type == "continuous", "Correlation with Exposure", "Standardized Mean Difference Between Exposures")
+  x_lab <- if(exposure_type == "continuous") "Correlation with Exposure" else "Standardized Mean Difference Between Exposures"
 
   labels <- ifelse(balance_stats$balanced == 0, balance_stats$covariate, "")
 
-  min_val <- ifelse(min(balance_stats[, "avg_bal"]) < 0, min(balance_stats[, "avg_bal"]) - 0.05, min(balance_thresh) - 0.05)
+  min_val <- if(min(balance_stats[, "avg_bal"]) < 0) min(balance_stats[, "avg_bal"]) - 0.05 else min(balance_thresh) - 0.05
   if (min_val > -(max(balance_thresh))){
-    min_val = -(max(balance_thresh)) - 0.05 #to make sure user-supplied balance thresh is on the figure
+    min_val <- -(max(balance_thresh)) - 0.05 #to make sure user-supplied balance thresh is on the figure
   }
 
-  max_val <- ifelse(max(balance_stats[, "avg_bal"]) > 0, max(balance_stats[, "avg_bal"]) + 0.05, max(balance_thresh) + 0.05)
+  max_val <- if(max(balance_stats[, "avg_bal"]) > 0) max(balance_stats[, "avg_bal"]) + 0.05 else max(balance_thresh) + 0.05
   if (max_val < max(balance_thresh)){
-    max_val = max(balance_thresh) + 0.05 #to make sure user-supplied balance thresh is on the figure
+    max_val <- max(balance_thresh) + 0.05 #to make sure user-supplied balance thresh is on the figure
   }
 
   # Make love plot per exposure time point
-  lp <- ggplot2::ggplot(aes(x = avg_bal, y = reorder(as.factor(covariate), avg_bal)), data = balance_stats) +
-    ggplot2::geom_point(aes(y = reorder(as.factor(covariate), avg_bal), x = avg_bal, fill = "white", alpha = 1)) +
-    ggplot2::geom_text(aes(label = labels, hjust = -0.2, vjust = 0.2), size = 1.5, color = "red") +
+  lp <- ggplot2::ggplot(ggplot2::aes(x = avg_bal, y = reorder(as.factor(covariate), avg_bal)), data = balance_stats) +
+    ggplot2::geom_point(ggplot2::aes(y = reorder(as.factor(covariate), avg_bal), x = avg_bal, fill = "white", alpha = 1)) +
+    ggplot2::geom_text(ggplot2::aes(label = labels, hjust = -0.2, vjust = 0.2), size = 1.5, color = "red") +
     ggplot2::xlab(x_lab) +
     ggplot2::ylab("Covariate") +
     ggplot2::xlim(min_val, max_val) +
@@ -143,18 +143,25 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance for Imputation ", k))
 
     if(save.out){
-    suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "plots/",
-                                                           form_name, "_imp_", k, "_", exposure, "_", exposure_time_pt, "_",
-                                                           weights_method, "_summary_balance_plot.jpeg"), width = 6, height = 8))
+      suppressMessages(ggplot2::ggsave(lp, filename =
+                                         # paste0(home_dir, "/balance/", folder, "plots/",
+                                         #                     form_name, "_imp_", k, "_", exposure, "_", exposure_time_pt, "_",
+                                         #                     weights_method, "_summary_balance_plot.jpeg")
+                                         sprintf("%s/balance/%splots/%s_imp_%s_%s_%s_%s_summary_balance_plot.jpeg",
+                                                 home_dir, folder, form_name, k, exposure, exposure_time_pt, weights_method),
+                                       width = 6, height = 8))
     }
   }
   else {
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance"))
 
     if(save.out){
-    suppressMessages(ggplot2::ggsave(lp, filename = paste0(home_dir, "/balance/", folder, "plots/", form_name, "_", exposure, "_",
-                                                           exposure_time_pt, "_", weights_method, "_summary_balance_plot.jpeg"),
-                                     width = 6, height = 8))
+      suppressMessages(ggplot2::ggsave(lp, filename =
+                                         # paste0(home_dir, "/balance/", folder, "plots/", form_name, "_", exposure, "_",
+                                         #                     exposure_time_pt, "_", weights_method, "_summary_balance_plot.jpeg"),
+                                         sprintf("%s/balance/%splots/%s_%s_%s_%s_summary_balance_plot.jpeg",
+                                                 home_dir, folder, form_name, exposure, exposure_time_pt, weights_method),
+                                       width = 6, height = 8))
     }
   }
 

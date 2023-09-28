@@ -3,9 +3,9 @@
 #' Fits weighted marginal outcome model as a generalized linear model of the
 #' user's choosing, relating exposure main effects to outcome using IPTW
 #' weights.
-#' @importFrom dplyr mutate select
 #' @seealso {[survey::svyglm()] for more on family/link specifications,
 #'   <https://www.rdocumentation.org/packages/survey/versions/4.2-1/topics/svyglm>}
+#' @importFrom survey svyglm
 #' @param home_dir path to home directory (required if 'save.out' = TRUE)
 #' @param data data in wide format as: a data frame, list of imputed data
 #'   frames, or mids object
@@ -110,6 +110,9 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     if (missing(home_dir)) {
       stop("Please supply a home directory.", call. = FALSE)
     }
+    else if(!is.character(home_dir)){
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+    }
     else if(!dir.exists(home_dir)) {
       stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
     }
@@ -119,51 +122,103 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
   }
+  else if (!inherits(data, "mids") && !is.data.frame(data) && !is.list(data)) {
+    stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.", call. = FALSE)
+  }
+  else if(is.list(data) && !is.data.frame(data)){
+    if (sum(sapply(data, is.data.frame)) != length(data)){
+      stop("Please supply a list of data frames that have been imputed.", call. = FALSE)
+    }
+  }
+
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)
   }
+  else if(!is.character(exposure) || length(exposure) != 1){
+    stop("Please supply a single exposure as a character.", call. = FALSE)
+  }
+
   if (missing(outcome)){
     stop("Please supply a single outcome.", call. = FALSE)
   }
+  else if(!is.character(outcome) || length(outcome) != 1){
+    stop("Please supply a single outcome as a character.", call. = FALSE)
+  }
+
   if (missing(weights)){
     stop("Please supply a list of IPTW weights.", call. = FALSE)
   }
+  else if (!is.list(weights) || is.data.frame(weights)){
+    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+  }
+  else if(is.list(weights) && !is.data.frame(weights)){
+    if (sum(sapply(weights, function(x) {
+      inherits(x, "weightitMSM")})) != length(weights)){
+      stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+    }
+  }
+
   if (missing(exposure_time_pts)){
     stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
   }
+  else if(!is.numeric(exposure_time_pts)){
+    stop("Please supply a list of exposure time points as integers.", call. = FALSE)
+  }
+
   if (missing(model)){
     stop('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)
-  }
-  if (!inherits(data, "mids") & !is.data.frame(data) & !inherits(data, "list")) {
-    stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.", call. = FALSE)
   }
 
   if (!is.character(model)){
     stop('Please provide as a character string a valid model "m" from 0-3 (e.g., "m1")', call. = FALSE)
+  else if (!is.character(model) || length(model) != 1){
+    stop('Please provide a single outcome model selection "m" from 0-3 (e.g., "m1")', call. = FALSE)
   }
   if (!(model %in% c("m0", "m1", "m2", "m3"))) {
     stop('Please provide a valid model "m" from 0-3 (e.g., "m1")', call. = FALSE)
   }
-  if ((model == "m2" | model == "m3") & (is.na(int_order) | !is.numeric(int_order))){
+  if ((model == "m2" | model == "m3") && (is.na(int_order) || !is.numeric(int_order))){
     stop("Please provide an integer interaction order if you select a model with interactions.", call. = FALSE)
   }
-  if ((model == "m1" | model == "m3") & (is.null(covariates) | !is.character(covariates))){
+  if ((model == "m1" | model == "m3") && (is.null(covariates) || !is.character(covariates))){
     stop("Please provide a list of covariates as characters if you select a covariate model.", call. = FALSE)
   }
 
   if(!inherits(family, "function")){
     stop("Please provide a valid family in the form of a function (without quotations).", call. = FALSE)
   }
+  if(length(family) != 1){
+    stop("Please provide a single valid family in the form of a function (without quotations).", call. = FALSE)
+  }
+
   if(!inherits(link, "character")){
     stop("Please provide as a character a valid link function.", call. = FALSE)
   }
+  else if(length(link) != 1){
+    stop("Please provide as a character a valid link function.", call. = FALSE)
+  }
+
   if (!is.null(covariates)){
+    if(!is.character(covariates)){
+      stop("Please provide a list of character strings for covariates.", call. = FALSE)
+    }
     if (sum(as.numeric(sapply(strsplit(covariates, "\\."), "[", 2)) > exposure_time_pts[1], na.rm = T) > 0){
       warning("Please only include covariates that are time invariant or measured at the first exposure time point.")
     }
   }
-  if (!inherits(weights, "list")){
-    stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+
+  if(!is.logical(verbose)){
+    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(verbose) != 1){
+    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+  }
+
+  if(!is.logical(save.out)){
+    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(save.out) != 1){
+    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
   }
 
 
@@ -179,10 +234,13 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   # Lists out exposure-epoch combos
   if( is.null(epochs)){ #making epochs time pts if not specified by user
+
     epochs <- data.frame(epochs = as.character(exposure_time_pts),
                          values = exposure_time_pts)
+
   } else{
-    if( !is.data.frame(epochs) | ncol(epochs) != 2 | sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)){
+
+    if( !is.data.frame(epochs) || ncol(epochs) != 2 || sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)){
       stop("If you supply epochs, please provide a dataframe with two columns of epochs and values.",
            call. = FALSE)
     }
@@ -191,9 +249,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     }
   }
 
-
   exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, paste, sep = "", collapse = ".")
-
 
   #getting null comparison
   if (model == "m0") {n <- "int"}
@@ -210,20 +266,25 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   # }
 
   if (inherits(data, "mids")){ #imputed dataset
+
     fits <- lapply(seq_len(data$m), function(y) {
-      d <- complete(data, y)
+
+      d <- mice::complete(data, y)
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
 
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
+
     })
 
     fits.null <- lapply(seq_len(data$m), function(y) {
-      d <- complete(data, y)
+
+      d <- mice::complete(data, y)
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
 
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
+
     })
 
     if (verbose){
@@ -238,19 +299,23 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
 
 
-  else if (inherits(data, "list")){ #imputed dataset
+  else if (is.list(data) && !is.data.frame(data)){ #imputed dataset
     fits <- lapply(seq_len(length(data)), function(y) {
+
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
+
     })
 
     fits.null <- lapply(seq_len(length(data)), function(y) {
+
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
+
     })
 
     if (verbose){
@@ -266,17 +331,21 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   else if (is.data.frame(data)){ #df
     fits <- lapply(1, function(y) {
+
       d <- data
       d$weights <- NULL
       d$weights <- weights[["0"]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
+
     })
 
     fits.null <- lapply(1, function(y) {
+
       d <- data
       d$weights <- NULL
       d$weights <- weights[["0"]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
+
     })
 
     if (verbose){
@@ -293,23 +362,34 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
 
 
-  if (inherits(data, "mids") | inherits(data, "list")){
+
+  if (inherits(data, "mids") || (is.list(data)) && !is.data.frame(data)){
 
     names(fits) <- seq_len(length(fits))
 
     if (verbose){
-      cat(paste0("The marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
+
+      # cat(paste0("The marginal model, ", model, ", run for each imputed dataset is summarized below:"), "\n")
+      sprintf("The marginal model, %s run for each imputed dataset is summarized below: \n",
+              model)
+
       print(suppressWarnings(jtools::export_summs(
-        fits, statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
+        fits,
+        statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
         model.names = c(paste0("Imp.", seq_len(length(fits))))
       )))
     }
 
     if(save.out){
       suppressWarnings(jtools::export_summs(
-        fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
+        fits,
+        to.file = "docx",
+        statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
         model.names = c(paste0("Imp.", seq_len(length(fits)))),
-        file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))
+        file.name = file.path(home_dir, "models",
+                              # paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))
+                              sprintf("%s-%s_%s_table_mod_ev.docx",
+                                      exposure, outcome, model))
       ))
     }
 
@@ -319,22 +399,34 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     if (verbose){
       require(survey)
       cat(paste0("The marginal model, ", model, ", is summarized below:"), "\n")
-      print(suppressWarnings(jtools::export_summs(fits, statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"))))
+      print(suppressWarnings(
+        jtools::export_summs(
+          fits,
+          statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"))))
     }
 
     if (save.out){
-      requireNamespace(officer) #is there another way to do this? required for writing to word
-      requireNamespace(flextable) # " "
-      suppressWarnings(jtools::export_summs(fits, to.file = "docx", statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
-                                            file.name = file.path(home_dir, "models", paste0(exposure, "-", outcome, "_", model,
-                                                                                             "_table_mod_ev.docx"))))
+      # requireNamespace(officer) #is there another way to do this? required for writing to word
+      # requireNamespace(flextable) # " "
+      suppressWarnings(
+        jtools::export_summs(fits,
+                             to.file = "docx",
+                             statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
+                             file.name = file.path(home_dir, "models",
+                                                   # paste0(exposure, "-", outcome, "_", model, "_table_mod_ev.docx"))))
+                                                   sprintf("%s-%s_%s_table_mod_ev.docx",
+                                                           exposure, outcome, model))))
     }
 
   }
 
 
   if(save.out){
-    saveRDS(fits, file = file.path(home_dir, "/models/", paste0(exposure, "-", outcome, "_", model, "_model.rds")))
+    saveRDS(fits,
+            file = file.path(home_dir, "/models/",
+                             # paste0(exposure, "-", outcome, "_", model, "_model.rds")))
+                             sprintf("%s-%s_%s_model.rds",
+                                     exposure, outcome, model)))
     cat("\n")
 
     if (verbose){

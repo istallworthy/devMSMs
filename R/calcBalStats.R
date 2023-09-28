@@ -78,16 +78,18 @@
 calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL,
                          imp_conf = NULL, verbose = TRUE, save.out = TRUE){
 
-  if(!is.list(formulas)) {
+
+  if(!is.list(formulas) | is.data.frame(formulas)){
     stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
   }
-  if (!is.null(weights) & !inherits(weights, "weightitMSM")){
+  if (!is.null(weights) && !inherits(weights, "weightitMSM")){
     stop("Please supply a list of weights output from the createWeights function (via WeightIt::WeightItMSM).", call. = FALSE)
   }
 
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
-  exposure_type <- ifelse(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"), "continuous", "binary")
-  weighted <- !is.null(weights)
+
+  exposure_type <- if(inherits(data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric")) "continuous" else "binary"
+  weighted <- if(!is.null(weights)) 1 else 0
 
   factor_covariates <- colnames(data)[sapply(data, is.factor)]
   factor_covariates <- setdiff(factor_covariates, "ID")
@@ -101,14 +103,23 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     weights_method <- "no weights"
   }
 
+
   folder <- if (weighted) "weighted/" else "prebalance/"
 
   data_type <- if (k == 0) "single" else "imputed"
 
-  if (data_type == "imputed" && verbose) {
-    cat(sprintf("**Imputation %s**\n", k))
+  if (data_type == "imputed" && verbose){
+    cat(paste0("**Imputation ", k, "**"), "\n")
   }
 
+  #split factors
+  if(length(names(data)[sapply(data, class ) == "factor"]) > 0){
+    data$"ID" = as.numeric(data$"ID")
+    data2 <- cobalt::splitfactor(data, names(data)[sapply(data, class ) == "factor"], drop.first = FALSE )
+  }
+  else{
+    data2 <- data
+  }
 
   #creating initial data frames
   #data frame with all sampling weights for all exposures at all exposure time points for all histories
@@ -131,9 +142,18 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     covars <- gsub(" ", "", covars)
 
 
+    if(length(names(data)[sapply(data, class ) == "factor"]) > 0){
+
+      #making factor covars separate variables
+      data_cov <- data[, covars]
+      data_cov <- cobalt::splitfactor(data_cov, names(data_cov)[sapply(data_cov, class ) == "factor"], drop.first = FALSE )
+      covars <- colnames(data_cov)
+    }
+
+
     # GETTING BALANCE STATS FOR T=1 W/ NO EXPOSURE HISTORY (ok to standardize immediately)
     if (length(lagged_time_pts) == 0) {
-      temp <- data
+      temp <- data2
 
       # Unweighted pre-balance checking
       if (!weighted) {
@@ -201,7 +221,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                                   & data$flag == flag, t, NA) # finding those w/ vals <= median exp @ time pt & flagged at prev t's
             }
             else { # for binary exp
-              data$flag <- ifelse(data[, exps_time[t]] == 0 & data$flag == flag, t, NA) # if exposure is absent & flagged at prev t's
+              data$flag <- ifelse(data[, exps_time[t]] == 0 & data$flag == flag, t , NA) # if exposure is absent & flagged at prev t's
             }
 
           }
@@ -212,6 +232,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             }
             else { # binary exp
               data$flag <- ifelse(data[[exps_time[t]]] == 1 & data$flag == flag, t, NA) # if exposure is present & flagged at prev t's
+
             }
 
           }
@@ -226,29 +247,36 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
         data$flag <- NULL # resets flag
       } # ends history loop (e.g., "l-l-l")
 
-      #summarize contributors to each history
-      prop_sum <- prop_weights %>%
-        dplyr::group_by(as.factor(history)) %>%
-        dplyr::summarize(n = dplyr::n())
+      prop_sum <- aggregate(exposure ~ as.factor(history), data = prop_weights,
+                            FUN = function(x) n = length(x))
 
       # GET BALANCE STATISTICS FOR T>1 (when there is a history to weight on)
       if (length(lagged_time_pts) > 0) {
+
         # Merge data with prop_weights by ID
-        temp <- merge(data, prop_weights, by = "ID", all.x = TRUE)
+        temp <- merge(data2, prop_weights, by = "ID", all.x = TRUE) #data with factors split up
+
 
         # Removing any histories that only have 1 or 0 person contributing (cannot calc bal stats)
         if (sum(prop_sum$n == 1) > 0 || sum(prop_sum$n == 0) > 0) {
-          ommitted_histories <- as.character(as.data.frame(prop_sum)[prop_sum$n == 1, 1])
+
+          ommitted_histories <- as.character(as.data.frame(prop_sum)[prop_sum$n == 1 | prop_sum$n == 0, 1])
 
           if (data_type == "imputed"){
-            cat(paste0("USER ALERT: the following history/histories, ", ommitted_histories,
-                       ", has/have been omitted from balance checking for exposure ", exposure,
-                       ", imputation ", k, ", at time point ", exposure_time_pt))
+            # cat(paste0("USER ALERT: the following history/histories, ", ommitted_histories,
+            #            ", has/have been omitted from balance checking for exposure ", exposure,
+            #            ", imputation ", k, ", at time point ", exposure_time_pt))
+            cat(sprintf("USER ALERT: the following history/histories, %s has/have been omitted from
+                        balance checking for exposure %s imputation %s at time point %s:",
+                        omitted_histories, exposure, k, exposure_time_pt))
           }
           else{
-            cat(paste0("USER ALERT: the following history/histories, ", ommitted_histories,
-                       ", has/have been omitted from balance checking for exposure ", exposure,
-                       " at time point ", exposure_time_pt))
+            # cat(paste0("USER ALERT: the following history/histories, ", ommitted_histories,
+            #            ", has/have been omitted from balance checking for exposure ", exposure,
+            #            " at time point ", exposure_time_pt))
+            cat(sprintf("USER ALERT: the following history/histories, %s has/have been omitted from
+                        balance checking for exposure %s at time point %s:",
+                        omitted_histories, exposure, exposure_time_pt))
           }
 
           temp <- temp[!temp$history %in% ommitted_histories, ]
@@ -258,10 +286,14 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
         if (!weighted) { # no IPTW weighting but weighting on history
           if (exposure_type == "continuous") {
             bal_stats <- sapply(sort(unique(temp$history)), function(i) { # finding balance by history
-              temp2 <- temp[temp$history == i,, drop = FALSE]
 
-              # finding covariance
+              temp2 <- temp[temp$history == i, , drop = FALSE ]
+
               cobalt::col_w_cov(temp2[covars], temp2[[paste0(exposure, ".", exposure_time_pt)]], std = FALSE)
+
+              # #should be same length as covars (already have factors split up)
+              # cobalt::col_w_cov(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding covariance
+              #                   subset = temp2$history[temp2$history == i] == i) # subsetting by that history
             })
 
             # getting weighted mean across histories (cols), weighting by proportion of those w/ that same history
@@ -271,17 +303,11 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
 
-            # standardizing balance statistics after weighting by history
-            bal_stats$std_bal_stats <- weighted_bal_stats /
-              (sapply(seq(ncol(data[, covars])), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
-                sd(as.numeric(data[, covars][, x]), na.rm = TRUE) }) *# unweighted covar sd
-                 sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE))  # exposure SD at that time pt
 
-            # bal_stats <- bal_stats %>%
-            #   dplyr::mutate(std_bal_stats = weighted_bal_stats /
-            #                   (sapply(seq(nrow(bal_stats)), function(x) {
-            #                     sd(as.numeric(data[, covars][, x]), na.rm = TRUE) }) *# unweighted covar sd
-            #                      sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))  # exposure SD at that time pt
+            bal_stats$std_bal_stats <- weighted_bal_stats /
+              (sapply(seq(nrow(bal_stats)), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
+                sd(as.numeric(data2[, rownames(bal_stats)[x]]), na.rm = TRUE) }) *# unweighted covar sd
+                 sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE))  # exposure SD at that time pt
 
             #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
             if (!is.list(bal_stats)) {
@@ -289,15 +315,20 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                    call. = FALSE)
             }
 
-            bal_stats <- bal_stats[grepl("std", names(bal_stats))]
+
+            bal_stats <- subset(bal_stats, select =  grepl("std", colnames(bal_stats) ))
+
           } #ends continuous
 
           else if (exposure_type == "binary") {
             bal_stats <- sapply(sort(unique(temp$history)), function(i) {
-              temp2 <- temp[temp$history == i,, drop = FALSE]
 
-              cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding mean difference
-                                subset = temp2$history[temp2$history == i] == i) # subsetting by that history
+              temp2 <- temp[temp$history == i, , drop = FALSE ]
+
+              cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE) # finding mean difference
+
+              # cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding mean difference
+              #                   subset = temp2$history[temp2$history == i] == i) # subsetting by that history
             })
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
@@ -308,16 +339,15 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
 
             # standardizing balance statistics after finding weighted balance stats
-            bal_stats <- bal_stats %>%
-              dplyr::mutate(std_bal_stats = weighted_bal_stats/
-                              sapply(seq(ncol(data[, covars])), function(x){
-                                sqrt(mean( #dividing by pool SD estimate (unadjusted)
-                                  var(as.numeric(data[data[, (colnames(data) %in% paste0(exposure, ".",
-                                                                                         exposure_time_pts[1]))] == 1 , colnames(data) %in% covars[x]])), #treated var
-                                  var(as.numeric(data[data[, (colnames(data) == paste0(exposure, ".",
-                                                                                       exposure_time_pts[1]))] == 0 , colnames(data) %in% covars[x]])) #untreated var
-                                ))
-                              }))
+            bal_stats$std_bal_stats <- weighted_bal_stats/
+              sapply(seq(ncol(data[, covars])), function(x){
+                sqrt(mean( #dividing by pool SD estimate (unadjusted)
+                  var(as.numeric(data[data[, (colnames(data) %in% paste0(exposure, ".",
+                                                                         exposure_time_pts[1]))] == 1 , colnames(data) %in% covars[x]])), #treated var
+                  var(as.numeric(data[data[, (colnames(data) == paste0(exposure, ".",
+                                                                       exposure_time_pts[1]))] == 0 , colnames(data) %in% covars[x]])) #untreated var
+                ))
+              })
 
             #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
             if(inherits(bal_stats, "list")){
@@ -328,8 +358,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
 
+            bal_stats <- subset(bal_stats, select =  grepl("std", colnames(bal_stats) ))
 
-            bal_stats <- bal_stats[grepl("std", names(bal_stats))]
           } #ends binary
         } #ends weighted=0
 
@@ -342,8 +372,9 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- sapply(sort(unique(temp$history)), function(i) {
               temp2 <- temp[temp$history == i,, drop = FALSE]
 
+
               cobalt::col_w_cov(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding covariance
-                                subset = temp2$history[temp2$history == i] == i, # subsetting by that history
+                                # subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[, "weights"]) # adding IPTW weights
             })
 
@@ -361,17 +392,20 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
 
             # standardizing balance statistics after weighting by history
-            bal_stats <- bal_stats %>%
-              dplyr::mutate(std_bal_stats = weighted_bal_stats /
-                              (sapply(seq(ncol(data[, covars])), function(x) {
-                                sd(as.numeric(data[, covars][, x]), na.rm = TRUE) # unweighted covar sd
-                              }) * sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE)))
+            # bal_stats <- bal_stats %>%
+            bal_stats$std_bal_stats <- weighted_bal_stats /
+              (sapply(seq(nrow(bal_stats)), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
+                sd(as.numeric(data2[, rownames(bal_stats)[x]]), na.rm = TRUE) }) *# unweighted covar sd
+                 sd(data[, paste0(exposure, ".", exposure_time_pt)], na.rm = TRUE))  # exposure SD at that time pt
+
 
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
 
-            bal_stats <- bal_stats %>%
-              dplyr::select(contains(c("std")))
+            # bal_stats <- bal_stats %>%
+            #   dplyr::select(contains(c("std")))
+            bal_stats <- subset(bal_stats, select =  grepl("std", colnames(bal_stats) ))
+
           } #ends continuous
 
           else if (exposure_type == "binary") {
@@ -379,8 +413,9 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- sapply(sort(unique(temp$history)), function(i) {
               temp2 <- temp[temp$history == i,, drop = FALSE]
 
+
               cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding mean difference
-                                subset = temp2$history[temp2$history == i] == i, # subsetting by that history
+                                # subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[, "weights"]) # adding IPTW weights
             })
 
@@ -398,16 +433,15 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
 
             # standardizing balance statistics after finding weighted balance stats
-            bal_stats <- bal_stats %>%
-              dplyr::mutate(std_bal_stats = weighted_bal_stats/
-                              sapply(seq(ncol(data[, covars])), function(x){
-                                sqrt(mean( #dividing by pool SD estimate (unadjusted)
-                                  var(as.numeric(data[data[, (colnames(data) %in% paste0(exposure, ".",
-                                                                                         exposure_time_pts[1]))] == 1 , colnames(data) %in% covars[x]])), #treated var
-                                  var(as.numeric(data[data[, (colnames(data) == paste0(exposure, ".",
-                                                                                       exposure_time_pts[1]))] == 0 , colnames(data) %in% covars[x]])) #untreated var
-                                ))
-                              }))
+            bal_stats$std_bal_stats <- weighted_bal_stats/
+              sapply(seq(ncol(data[, covars])), function(x){
+                sqrt(mean( #dividing by pool SD estimate (unadjusted)
+                  var(as.numeric(data[data[, (colnames(data) %in% paste0(exposure, ".",
+                                                                         exposure_time_pts[1]))] == 1 , colnames(data) %in% covars[x]])), #treated var
+                  var(as.numeric(data[data[, (colnames(data) == paste0(exposure, ".",
+                                                                       exposure_time_pts[1]))] == 0 , colnames(data) %in% covars[x]])) #untreated var
+                ))
+              })
 
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
@@ -415,9 +449,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
 
-
-            bal_stats <- bal_stats %>%
-              dplyr::select(contains(c("std")))
+            bal_stats <- subset(bal_stats, select =  grepl("std", colnames(bal_stats) ))
           } #ends binary
         } #ends weighted
 
@@ -431,9 +463,23 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     bal_stats <- as.data.frame(bal_stats)
     bal_stats$covariate <- rownames(bal_stats)
 
-    # Renames factor covariates
-    bal_stats$covariate[sapply(strsplit(bal_stats$covariate, "_"), "[", 1) %in% factor_covariates] <-
-      sapply(strsplit(bal_stats$covariate, "_"), "[", 1)[sapply(strsplit(bal_stats$covariate, "_"), "[", 1) %in% factor_covariates]
+    #averages across factor levels to create one bal stat per factor variable?
+    data$ID <- as.numeric(data$ID)
+    f_vars <- colnames(data)[sapply(data, is.factor)]
+
+    if(length(f_vars) > 0){
+      f_stats <- bal_stats[rownames(bal_stats)[sapply(strsplit(rownames(bal_stats), "_"), "[", 1) %in% f_vars], ]
+      f_stats$name <- sapply(strsplit(rownames(f_stats), "_"), "[", 1)
+      test <- aggregate(std_bal_stats ~ name, data = f_stats,
+                        FUN = function(x) new = mean(x))
+
+      colnames(test) <- c("covariate", "std_bal_stats")
+      new <- data.frame(std_bal_stats = test$std_bal_stats,
+                        covariate = test$covariate)
+      rownames(new) <- new$covariate
+      bal_stats <- rbind(bal_stats[rownames(bal_stats)[!sapply(strsplit(rownames(bal_stats), "_"), "[", 1) %in% f_vars], ],
+                         new)
+    }
 
     #adds custom bal thresh info
     if (!is.null(imp_conf)){
@@ -443,6 +489,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     else{
       bal_stats$bal_thresh <- balance_thresh
       bal_stats$balanced <- ifelse(abs(bal_stats$std_bal_stats) < bal_stats$bal_thresh, 1, 0)
+
     }
 
     bal_stats$exposure <- exposure
@@ -461,45 +508,58 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   if (verbose & save.out) {
     if (data_type == "imputed"){
-      cat(paste0("For each time point and imputation, ", gsub("/", "", folder), " summary plots for ",
-                 form_name, " formulas weighting method ",
-                 weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
+
+      cat(paste0("For each time point and imputation, %s summary plots for  %s
+                 formulas weighting method %s have now been saved in the %s plots/' folder.\n",
+                 gsub("/", "", folder), form_name, weights_method, folder))
+
     }
-    else {cat(paste0(" For each time point, ", gsub("/", "", folder), " summary plots for ",
-                     form_name, " formulas and weighting method ",
-                     weights_method, " have now been saved in the '", folder, "plots/' folder."), "\n")
+    else {
+
+      cat(paste0("For each time point, %s summary plots for  %s
+                 formulas weighting method %s have now been saved in the %s plots/' folder.\n",
+                 gsub("/", "", folder), form_name, weights_method, folder))
     }
   }
 
 
   # Summarizing balance
-  bal_summary_exp <- all_bal_stats %>%
-    dplyr::group_by(exp_time) %>%
-    dplyr::summarize(balanced_n = sum(balanced == 1), # Tallying balanced covariates
-                     imbalanced_n = sum(balanced == 0), # Tallying imbalanced covariates
-                     n = dplyr::n())
+  bal_summary_exp <- as.data.frame(aggregate(balanced ~ exp_time, data = all_bal_stats,
+                                             FUN = function(x) c(balanced_n = sum(x == 1),
+                                                                 imbalanced_n = sum(x  == 0),
+                                                                 n = length(x)) ))
+  bal_summary_exp <- do.call(data.frame, bal_summary_exp)
+  colnames(bal_summary_exp) <- c("exp_time", "balanced_n", "imbalanced_n", "n")
 
 
   if (save.out){
-    write.csv(bal_summary_exp, paste0(home_dir, "/balance/", folder, form_name, "_", exposure, "_", k, "_",
-                                      weights_method, "_balance_stat_summary.csv"))
-    write.csv(all_prop_weights, paste0(home_dir, "/balance/", folder, "/", form_name, "_form_", exposure, "_", k,
-                                       "_", weights_method, "_history_sample_weight.csv"))
+    write.csv(bal_summary_exp,
+              sprintf("%s/balance/%s%s_%s_%s_%s_balance_stat_summary.csv",
+                      home_dir,folder, form_name, exposure, k, weights_method))
+
+    write.csv(all_prop_weights,
+              sprintf("%s/balance/%s/%s_form_%s_%s_%s_history_sample_weight.csv",
+                      home_dir, folder, form_name, exposure, k, weights_method))
+
     if (verbose){
       cat("\n")
       if (data_type == "imputed"){
-        cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, ", imputation ", k, ", using ",
-                   weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
 
-        cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure, ", imputation ", k,
-                   " have been saved in the 'balance/", folder, "' folder"), "\n")
+        cat(sprintf("Balance statistics using %s formulas for %s imputation %s, using
+                   %s have been saved in the 'balance/%s' folder. \n",
+                    form_name, exposure, k, weights_method, folder))
+
+        cat(sprintf("Sampling weights using the %s for %s imputation %s have been saved in the 'balance/%s' folder., \n",
+                    form_name, exposure, k, folder))
       }
       else{
-        cat(paste0("Balance statistics using ", form_name, " formulas for ", exposure, "using ",
-                   weights_method, " have been saved in the 'balance/", folder, "' folder"), "\n")
 
-        cat(paste0("Sampling weights ", "using the ", form_name, " for ", exposure,
-                   " have been saved in the 'balance/", folder, "' folder"), "\n")
+        cat(sprintf("Balance statistics using %s formulas for %s using
+                   %s have been saved in the 'balance/%s' folder. \n",
+                    form_name, exposure, weights_method, folder))
+
+        cat(sprintf("Sampling weights using the %s for %s have been saved in the 'balance/%s' folder., \n",
+                    form_name, exposure, folder))
       }
       cat("\n")
     }
@@ -508,52 +568,89 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   # tallies total possible COVARIATES FROM FORM FOR ASSESSING BALANCE
   all_form <- as.data.frame(do.call(rbind, formulas))
   tot_covars <- deparse(all_form[, 3], width.cutoff = 300)
-  tot_covars <- as.character(unlist(strsplit(tot_covars, "\\+")))[!grepl("form", as.character(unlist(strsplit(tot_covars, "\\+"))))]
+  tot_covars <- as.character(unlist(strsplit(tot_covars, "\\+")))[
+    !grepl("form", as.character(unlist(strsplit(tot_covars, "\\+"))))]
   tot_covars <- gsub(" ", "", tot_covars)
-  tot_covars <- na.omit(sapply(strsplit(tot_covars, "\\."), "[", 1)[!duplicated(sapply(strsplit(tot_covars, "\\."), "[", 1))])
+  tot_covars <- na.omit(sapply(strsplit(tot_covars, "\\."), "[", 1)[
+    !duplicated(sapply(strsplit(tot_covars, "\\."), "[", 1))])
 
   imbalanced_covars <- sum(bal_summary_exp$imbalanced_n, na.rm = TRUE)
   total_covars <- sum(bal_summary_exp$n, na.rm = TRUE)
-  percentage_imbalanced <- round((imbalanced_covars / total_covars) * 100, 0)
-
-  remaining_imbalanced_domains <- length(sapply(strsplit(all_bal_stats[all_bal_stats$balanced == 0, "covariate"], "\\."),
-                                                "[", 1)[!duplicated(sapply(strsplit(all_bal_stats[all_bal_stats$balanced == 0, "covariate"],
-                                                                                    "\\."), "[", 1))])
   total_domains <- length(tot_covars)
 
-  # remaining_avg_abs_corr <- round(mean(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
-  remaining_avg_abs_corr <- round(median(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
-  remaining_corr_range <- paste0(round(min(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2),
-                                 "-", round(max(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2))
+  if (imbalanced_covars > 0){
+    percentage_imbalanced <- round((imbalanced_covars / total_covars) * 100, 0)
+
+    remaining_imbalanced_domains <- length(sapply(strsplit(all_bal_stats[all_bal_stats$balanced == 0, "covariate"], "\\."),
+                                                  "[", 1)[!duplicated(sapply(strsplit(all_bal_stats[all_bal_stats$balanced == 0, "covariate"],
+                                                                                      "\\."), "[", 1))])
+
+    # remaining_avg_abs_corr <- round(mean(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
+    remaining_avg_abs_corr <- round(median(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
+    remaining_corr_range <- paste0(round(min(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2),
+                                   "-", round(max(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2))
+  }
 
 
   if (verbose) {
     if (data_type == "imputed") {
 
-      cat(paste0("USER ALERT: For exposure ", exposure, " imputation ", k, " using ", weights_method, " and ", form_name, " formulas: "), "\n")
-      cat(paste0("The median absolute value relation between exposure and confounder is ", round(median(abs(all_bal_stats$std_bal_stats)), 2), " (range = ",
-                 round(min(all_bal_stats$std_bal_stats), 2), "-", round(max(all_bal_stats$std_bal_stats), 2), ")."), "\n")
+      cat(sprintf("USER ALERT: For exposure %s imputation %s using %s and %s formulas: \n",
+                  exposure, k, weights_method, form_name))
 
-      cat(paste0("As shown below, ", imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced,
-                 "%) covariates across time points, corresponding to ",
-                 remaining_imbalanced_domains, " out of ", total_domains,
-                 " domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of ",
-                 remaining_avg_abs_corr, " (range= ", remaining_corr_range, "):"), "\n")
+      cat(sprintf("The median absolute value relation between exposure and confounder is %s (range = %s - %s).\n",
+                  round(median(abs(all_bal_stats$std_bal_stats)), 2),
+                  round(min(all_bal_stats$std_bal_stats), 2),
+                  round(max(all_bal_stats$std_bal_stats), 2)))
       cat("\n")
-      cat(knitr::kable(bal_summary_exp, caption = paste0("Imbalanced Covariates for imputation ", k, " using ",
-                                                         weights_method, " and ", form_name, " formulas"), format = 'pipe'), sep = "\n")
+
+      if (imbalanced_covars > 0){
+        cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %sout of %s domains,
+                  remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
+                    imbalanced_covars,
+                    total_covars,
+                    percentage_imbalanced,
+                    remaining_imbalanced_domains,
+                    total_domains,
+                    remaining_avg_abs_corr,
+                    remaining_corr_range))
+
+        cat("\n")
+        cat(knitr::kable(bal_summary_exp,
+                         caption = sprintf("Imbalanced Covariates for imputation %s using %s and %s formulas",
+                                           k, weights_method, form_name),
+                         format = 'pipe'), sep = "\n")
+      }
+      else{
+        cat(sprintf("No covariates remain imbalanced for imputation %s using %s and %s formulas. \n",
+                    k, weights_method, form_name))
+      }
+
       cat("\n")
       cat("\n")
-    }
-    else {
-      cat(paste0("As shown below, for exposure ", exposure, " using ", weights_method, ", and ", form_name, " formulas, ",
-                 imbalanced_covars, " out of ", total_covars, " (", percentage_imbalanced, "%) covariates across time points corresponding to ",
-                 remaining_imbalanced_domains, " out of ", total_domains,
-                 " domains remain imbalanced with a remaining average absolute value correlation/std mean difference of ",
-                 remaining_avg_abs_corr, " (range= ", remaining_corr_range, ") :"), "\n")
-      cat("\n")
-      cat(knitr::kable(bal_summary_exp, caption = paste0("Imbalanced covariates using ",
-                                                         weights_method, " and ", form_name, " formulas"), format = 'pipe'), sep = "\n")
+
+    } else {
+
+      if (imbalanced_covars > 0){
+        cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %s out of %s domains,
+                  remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
+                    imbalanced_covars,
+                    total_covars,
+                    percentage_imbalanced,
+                    remaining_imbalanced_domains,
+                    total_domains,
+                    remaining_avg_abs_corr,
+                    remaining_corr_range))
+
+        cat("\n")
+        cat(knitr::kable(bal_summary_exp,
+                         caption = sprintf("Imbalanced covariates using %s and %s formulas", weights_method, form_name),
+                         format = 'pipe'), sep = "\n")
+      }
+      else{
+        cat(sprintf("No covariates remain imbalanced using %s and %s formulas. \n",
+                    weights_method, form_name))
+      }
       cat("\n")
       cat("\n")
     }
@@ -563,3 +660,4 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   all_bal_stats
 }
+

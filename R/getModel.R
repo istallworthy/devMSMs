@@ -87,11 +87,15 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
         for (l in seq_len(length(as.numeric(unlist(epochs[e, 2]))))){
           level <- as.numeric(unlist(epochs[e, 2]))[l]
           z <- d[, names(d)[grepl(exposure, names(d))]] #finds exposure vars
-          z <- as.numeric(as.character(unlist(z[, sapply(strsplit(names(z), "\\."), "[", 2) == as.character(level)])))
+          cols <- colnames(z)[as.logical(sapply(strsplit(names(z), "\\."), "[", 2) == as.character(level))]
+          cols <- cols[!is.na(cols)]
+          z <- as.numeric(as.character(unlist(z[, cols])))
           temp <- cbind(temp, z)
         }
         #adds a new variable of the exposure averaged within epoch
-        d  <- d %>% dplyr::mutate(!!new_var := rowMeans(temp, na.rm=T))
+        x <- as.data.frame(rowMeans(temp, na.rm = TRUE))
+        colnames(x) <- c(new_var)
+        d <- cbind(d, x)
         d[, new_var] <- as.numeric(d[, new_var])
       }
     }
@@ -122,12 +126,15 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
       }),
       collapse = " + "
     )
+
     #create interactions in data
     for (x in seq_len(length(unlist(strsplit(interactions, "\\+"))))) {
       name <- gsub(" ", "", unlist(strsplit(interactions, "\\+"))[x])
       if (! name %in% colnames(d)){
         temp <- d[, c(gsub(" ", "", as.character(unlist(strsplit(unlist(strsplit(interactions, "\\+"))[x], "\\:"))))) ]
-        d  <- d %>% dplyr::mutate(!! name := matrixStats::rowProds(as.matrix(temp), na.rm = T))
+        new <- matrixStats::rowProds(as.matrix(temp), na.rm = T)
+        names(new) <- name
+        d <- cbind(d, new)
       }
     }
   }
@@ -147,19 +154,25 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
   # Fitting intercept-only model
   if (model == "int"){
     fi <- paste(outcome, "~ 1")
-    mi <- survey::svyglm(as.formula(fi), family = fam,  design = s)
+    mi <- survey::svyglm(as.formula(fi),
+                         family = fam,
+                         design = s)
     return(mi)
   }
   else if (model == "covs"){
     fc <- paste(outcome, "~", covariate_list)
-    mc <- survey::svyglm(as.formula(fc), family = fam,  design = s)
+    mc <- survey::svyglm(as.formula(fc),
+                         family = fam,
+                         design = s)
     return(mc)
   }
 
 
   # Fitting baseline model w/ main effects only (m0) for all models
   f0 <- paste(outcome, "~", paste0(exp_epochs, sep = "", collapse = " + "))
-  m0 <- survey::svyglm(as.formula(f0), family = fam,  design = s)
+  m0 <- survey::svyglm(as.formula(f0),
+                       family = fam,
+                       design = s)
 
   if (model == "m0") {
     return(m0) # Save model
@@ -168,7 +181,9 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
     # Baseline + sig covar model OR baseline + sig covar + int model
     if (model == "m1" | model == "m3") {
       f1 <- paste(f0, "+", covariate_list) # Baseline + covariate model
-      m1 <- survey::svyglm(as.formula(f1), family = fam, design = s)
+      m1 <- survey::svyglm(as.formula(f1),
+                           family = fam,
+                           design = s)
 
       # Baseline + imbalanced covars
       if (model == "m1") {
@@ -183,7 +198,9 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
       # Baseline + interactions
       if (model == "m2") {
         # Fitting m2
-        m2 <- survey::svyglm(as.formula(f2), family = fam, design = s)
+        m2 <- survey::svyglm(as.formula(f2),
+                             family = fam,
+                             design = s)
         # Baseline + interactions
         return(m2)
       }
@@ -193,7 +210,9 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
         # Fitting m3
         f3 <- paste0(f1, "+", paste(interactions, sep = "", collapse = " + "))
         f3 <- as.formula(f3)
-        m3 <- survey::svyglm(f3, family = fam, design = s)
+        m3 <- survey::svyglm(f3,
+                             family = fam,
+                             design = s)
         # Baseline + covars+ interactions
 
         return(m3)

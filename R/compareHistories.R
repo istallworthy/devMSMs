@@ -4,9 +4,6 @@
 #' histories (pooling for imputed data), before conducting contrast comparisons
 #' (pooling for imputed data), correcting for multiple comparisons, and then
 #' plotting results.
-
-#' @importFrom gtools permutations
-#' @importFrom stringr str_count
 #' @seealso {[marginaleffects::avg_predictions()],
 #'   <https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf>}
 #' @seealso {[marginaleffects::hypotheses()],
@@ -18,8 +15,6 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint"
-#'   suffix
 #' @param model list of model outputs from fitModel()
 #' @param epochs (optional) data frame of exposure epoch labels and values
 #' @param hi_lo_cut (optional) list of two numbers indicating quantile values
@@ -85,13 +80,11 @@
 #' r <- compareHistories(exposure = "A",
 #'                       exposure_time_pts = c(1, 2, 3),
 #'                       outcome = "D.3",
-#'                       tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                       model = m,
 #'                       save.out = FALSE)
 #' r <- compareHistories(exposure = "A",
 #'                       exposure_time_pts = c(1, 2, 3),
 #'                       outcome = "D.3",
-#'                       tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                       model = m,
 #'                       reference = "l-l-l",
 #'                       comparison = "h-h-h",
@@ -99,20 +92,22 @@
 #' r <- compareHistories(exposure = "A",
 #'                       exposure_time_pts = c(1, 2, 3),
 #'                       outcome = "D.3",
-#'                       tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                       model = m,
 #'                       reference = "l-l-l",
 #'                       comparison = c("h-h-h", "h-l-l"),
 #'                       save.out = FALSE)
 
 
-compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_confounders, model, epochs = NULL, hi_lo_cut = NULL,
+compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, model, epochs = NULL, hi_lo_cut = NULL,
                              reference = NA, comparison = NULL, mc_comp_method = "BH", dose_level = "h", exp_lab = NA, out_lab = NA,
                              colors = "Dark2", verbose = TRUE, save.out = TRUE ) {
 
   if (save.out) {
     if (missing(home_dir)) {
       stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if(!is.character(home_dir)){
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
     }
     else if(!dir.exists(home_dir)) {
       stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
@@ -122,21 +117,49 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)
   }
+  else if(!is.character(exposure) || length(exposure) != 1){
+    stop("Please supply a single exposure as a character.", call. = FALSE)
+  }
+
   if (missing(outcome)){
     stop("Please supply a single outcome.", call. = FALSE)
   }
+  else if(!is.character(outcome) || length(outcome) != 1){
+    stop("Please supply a single outcome as a character.", call. = FALSE)
+  }
+
   if (missing(exposure_time_pts)){
     stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
   }
-  if (missing(tv_confounders)){
-    stop("Please supply a list of time-varying confounders.", call. = FALSE)
+  else if(!is.numeric(exposure_time_pts)){
+    stop("Please supply a list of exposure time points as integers.", call. = FALSE)
   }
+
   if (missing(model)){
     stop("Please supply a list of model output", call. = FALSE)
   }
-  if(!inherits(model, "list")){
+  else if(!is.list(model) || is.data.frame(model)){
     stop("Please provide a list of model output from the fitModel function.", call. = FALSE)
   }
+  else if (sum(sapply(model, function(x) {
+    inherits(x, "svyglm")})) != length(model)){
+    stop("Please supply a model as a list from the createWeights function.", call. = FALSE)
+  }
+
+  if(!is.logical(verbose)){
+    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(verbose) != 1){
+    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+  }
+
+  if(!is.logical(save.out)){
+    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(save.out) != 1){
+    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
+  }
+
 
 
   if(save.out){
@@ -150,8 +173,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     }
   }
 
-  exposure_type <- ifelse(inherits(model[[1]]$data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"),
-                          "continuous", "binary")
+  exposure_type <- if(inherits(model[[1]]$data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"))
+    "continuous" else "binary"
 
 
   ints <- gsub(" ", "", as.character(unlist(strsplit(as.character(unlist(model[[1]]$terms)), "\\+"))))
@@ -161,7 +184,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   #history inspection --done early bc function deals with epochs, etc.
   #print history sample distribution
   if (verbose){
-    eval_hist(data = model[[1]]$data, exposure, tv_confounders, epochs,
+    eval_hist(data = model[[1]]$data, exposure, epochs,
               exposure_time_pts, hi_lo_cut, reference, comparison, verbose)
   }
 
@@ -172,7 +195,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     data <- lapply(model, function(x) { x$data })
     data <- do.call("rbind", data)
   }
-  if(!is.null(names(model))){ #single df (not imputed)
+  else if(!is.null(names(model))){ #single df (not imputed)
     data <- model[[1]]$data
   }
 
@@ -182,7 +205,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   }
   else{
 
-    if( !is.data.frame(epochs) | ncol(epochs) != 2 | sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)){
+    if( !is.data.frame(epochs) || ncol(epochs) != 2 || sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)){
       stop("If you supply epochs, please provide a dataframe with two columns of epochs and values.",
            call. = FALSE)
     }
@@ -339,7 +362,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   }
 
   #conduct all pairwise comparisons if no ref/comparisons were specified by user
-  if (is.na(reference) & is.null(comp_histories)){
+  if (is.na(reference) && is.null(comp_histories)){
     # Pairwise comparisons; don't need to use custom class
     comps <- lapply(preds, function(y){
       y |> marginaleffects::hypotheses("pairwise")
@@ -371,8 +394,11 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     preds_pool <- add_dose(preds_pool, dose_level)
 
     # If the user specified reference and comparison groups, subset pred_pool for inspection and plotting
-    if (!is.na(reference) & !is.null(comp_histories)) {
-      preds_pool <- preds_pool[preds_pool$history %in% c(reference, comp_histories),]
+
+    if (!is.na(reference) && !is.null(comp_histories)) {
+      # preds_pool <- preds_pool %>%
+      #   dplyr::filter(history %in% c(reference, comp_histories))
+      preds_pool <- preds_pool[preds_pool$history %in% c(reference, comp_histories), , drop = FALSE ]
     }
 
 
@@ -380,9 +406,11 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
       if(is.null(hi_lo_cut)){
         hi_lo_cut <- "median+-.1"
       }
+
       # Makes table of pooled average estimates and saves out
-      sink(paste0(home_dir, "/histories/", exposure, "-", outcome, "_pooled_estimated_means_hi_lo=",
-                  paste(hi_lo_cut, collapse = "_"), ".html"))
+      outfile <- sprintf("%s/histories/%s-%s_pooled_estimated_means_hi_lo=%s.html",
+                         home_dir, exposure, outcome, paste(hi_lo_cut, collapse = "_") )
+      sink(outfile)
       stargazer::stargazer(
         as.data.frame(preds_pool),
         type = "html",
@@ -391,9 +419,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
         summary = FALSE,
         rownames = FALSE,
         header = FALSE,
-        out = paste0(home_dir, "/histories/", exposure, "-", outcome, "_pooled_estimated_means_hi_lo=",
-                     hi_lo_cut, ".html"
-        )
+        out = outfile
       )
       sink()
     }
@@ -401,7 +427,10 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     if (verbose){
       cat("\n")
       cat("Below are the pooled average predictions by user-specified history:") #
-      cat(knitr::kable(preds_pool, format = 'pipe', digits = 4), sep = "\n")
+      cat(knitr::kable(preds_pool,
+                       format = 'pipe',
+                       digits = 4),
+          sep = "\n")
       cat("\n")
     }
 
@@ -433,15 +462,15 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     }))
 
 
-
-
     if (save.out){
       if(is.null(hi_lo_cut)){
         hi_lo_cut <- "median+-.1"
       }
+
       # Makes table of pooled comparisons and saves out
-      sink(paste0(home_dir, "/histories/", exposure, "-", outcome, "_pooled_comparisons_hi_lo=",
-                  paste(hi_lo_cut, collapse = "_"), ".html"))
+      outfile <- sprintf("%s/histories/%s-%s_pooled_comparisons_hi_lo=%s.html",
+                         home_dir, exposure, outcome, paste(hi_lo_cut, collapse = "_") )
+      sink(outfile)
       stargazer::stargazer(
         as.data.frame(comps_pool),
         type = "html",
@@ -450,15 +479,17 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
         summary = FALSE,
         rownames = FALSE,
         header = FALSE,
-        out = paste0(home_dir, "/histories/", exposure, "-", outcome, "_pooled_comparisons_hi_lo=",
-                     paste(hi_lo_cut, collapse = "_"), ".html")
+        out = outfile
       )
       sink()
     }
     if (verbose){
       cat("\n")
       cat(paste0("USER ALERT: please inspect the following pooled comparisons :"), "\n")
-      cat(knitr::kable(comps_pool, format = 'pipe', digits = 4), sep = "\n")
+      cat(knitr::kable(comps_pool,
+                       format = 'pipe',
+                       digits = 4),
+          sep = "\n")
       cat("\n")
       cat("\n")
     }
@@ -477,8 +508,11 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
     preds <- add_dose(preds, dose_level)
 
     # If the user specified reference and comparison groups, subset preds for inspection and plotting
-    if (!is.na(reference) & !is.null(comp_histories)) {
-      preds_pool <- preds_pool[preds_pool$history %in% c(reference, comp_histories),]
+
+    if (!is.na(reference) && !is.null(comp_histories)) {
+      # preds <- preds %>%
+      #   dplyr::filter(history %in% c(reference, comp_histories))
+      preds <- preds[preds$history %in% c(reference, comp_histories), , drop = FALSE ]
     }
 
 
@@ -486,10 +520,15 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
       if(is.null(hi_lo_cut)){
         hi_lo_cut <- "median+-.1"
       }
+
       # Makes table of average estimates a
       lapply(seq_len(length(preds)), function(x) {
         y <- preds[[x]]
-        sink(paste0(home_dir, "/histories/", exposure, "-", outcome, "_estimated_means_hi_lo=", paste(hi_lo_cut, collapse = "_"), ".html"))
+
+        outfile <- sprintf("%s/histories/%s-%s_estimated_means_hi_lo=%s.html",
+                           home_dir, exposure, outcome, paste(hi_lo_cut, collapse = "_") )
+
+        sink(outfile)
         stargazer::stargazer(
           as.data.frame(y),
           type = "html",
@@ -498,17 +537,20 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
           summary = FALSE,
           rownames = FALSE,
           header = FALSE,
-          out = paste0(home_dir, "/histories/", exposure, "-", outcome, "_estimated_means_hi_lo=", paste(hi_lo_cut, collapse = "_"), ".html"
-          )
+          out = outfile
         )
         sink()
+
       })
     }
 
     if (verbose){
       cat("\n")
       cat("Below are the average predictions by user-specified history:", "\n") # Not sure if we need to print this?
-      cat(knitr::kable(preds, format = 'pipe', digits = 4), sep = "\n")
+      cat(knitr::kable(preds,
+                       format = 'pipe',
+                       digits = 4),
+          sep = "\n")
       cat("\n")
     }
 
@@ -540,9 +582,12 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
       if(is.null(hi_lo_cut)){
         hi_lo_cut <- "median+-.1"
       }
+
+      outfile <- sprintf("%s/histories/%s-%s_comparisons_hi_lo=%s.html",
+                         home_dir, exposure, outcome, paste(hi_lo_cut, collapse = "_") )
+
       # Makes table of comparisons and saves out
-      sink(paste0(home_dir, "/histories/", exposure, "-", outcome, "_comparisons_hi_lo=",
-                  paste(hi_lo_cut, collapse = "_"), ".html"))
+      sink(outfile)
       stargazer::stargazer(
         as.data.frame(comps),
         type = "html",
@@ -551,17 +596,19 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
         summary = FALSE,
         rownames = FALSE,
         header = FALSE,
-        out = paste0(home_dir, "/histories/", exposure, "-", outcome, "_comparisons_hi_lo=",
-                     hi_lo_cut, ".html"
-        )
+        out = outfile
       )
       sink()
+
     }
 
     if (verbose) {
       cat("\n")
       cat(paste0("USER ALERT: please inspect the following comparisons:"), "\n")
-      cat(knitr::kable(comps, format = 'pipe', digits = 2), sep = "\n")
+      cat(knitr::kable(comps,
+                       format = 'pipe',
+                       digits = 2),
+          sep = "\n")
       cat("\n")
       cat("\n")
     }
@@ -574,9 +621,13 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   if(!inherits(colors, "character")){
     stop("Please provide a character string of a Brewer palette name or list of colors for plotting.", call. = FALSE)
   }
-  else if (length(colors) > 1 & length(colors) != nrow(epochs) + 1) {
-    stop(paste0('Please provide either: ', nrow(epochs) + 1,
-                ' different colors, a color palette, or leave this entry blank.'), call. = FALSE)
+  else if (length(colors) > 1 && length(colors) != nrow(epochs) + 1) {
+    stop(
+      # paste0('Please provide either: ', nrow(epochs) + 1,
+      #           ' different colors, a color palette, or leave this entry blank.'),
+      sprint("Please provide either %s different colors, a Brewer color palette, or leave this entry blank. \n",
+             nrow(epochs) + 1),
+      call. = FALSE)
   }
 
   if (is.na(exp_lab)){
@@ -592,54 +643,63 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, tv_
   comparisons$history <- as.factor(comparisons$history)
   comparisons$dose <- as.factor(comparisons$dose)
 
-  comparisons <- comparisons %>%
-    dplyr::arrange(dose) # Order by dose
+  # comparisons <- comparisons %>%
+  #   dplyr::arrange(dose) # Order by dose
+  comparisons <- comparisons[order(comparisons$dose), , drop = FALSE]
 
   if (length(colors) > 1) { # If user input a list of colors
-    p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
+    p <- ggplot2::ggplot(data = comparisons, ggplot2::aes(x = estimate, y = history, color = dose)) +
       ggplot2::geom_point(size = 5) +
       ggplot2::scale_color_manual(values = colors) +
       ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
-      ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
+      ggplot2::geom_errorbarh(ggplot2::aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
       ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
       ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
       ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci),
                     max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
       ggplot2::theme(text = ggplot2::element_text(size = 14)) +
-      ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                     panel.background = element_blank(), axis.line = ggplot2::element_line(colour = "black"))
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = element_blank(),
+                     panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
 
     if (save.out){
-      ggplot2::ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
+      ggplot2::ggsave(
+        # paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"),
+        sprintf("%s/plots/%s-%s.jpeg",
+                home_dir, exposure, outcome),
+        plot = p)
     }
     if(verbose){
       print(p)
     }
 
   } else { # If user lists a palette (default)
-    p <- ggplot2::ggplot(data = comparisons, aes(x = estimate, y = history, color = dose)) +
+    p <- ggplot2::ggplot(data = comparisons, ggplot2::aes(x = estimate, y = history, color = dose)) +
       ggplot2::geom_point(size = 5) +
       ggplot2::scale_colour_brewer(palette = colors) +
       ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
-      ggplot2::geom_errorbarh(aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
+      ggplot2::geom_errorbarh(ggplot2::aes(xmin = low_ci, xmax = high_ci), height = 0.6) +
       ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
       ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
       ggplot2::xlim(min(comparisons$low_ci) - 1 * sd(comparisons$low_ci),
                     max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
       ggplot2::theme(text = ggplot2::element_text(size = 14)) +
-      ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                     panel.background = element_blank(), axis.line = ggplot2::element_line(colour = "black")) +
+      ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black")) +
       ggplot2::guides(fill = ggplot2::guide_legend(title="Dosage"))
 
     if (save.out){
-      ggplot2::ggsave(paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"), plot = p)
+      ggplot2::ggsave(
+        # paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"),
+        sprintf("%s/plots/%s-%s.jpeg",
+                home_dir, exposure, outcome),
+        plot = p)
     }
     if(verbose){
       print(p)
     }
   }
 
-  if (save.out & verbose){
+  if (save.out && verbose){
     cat("\n")
     cat("See the '/plots/' folder for graphical representations of results.")
   }

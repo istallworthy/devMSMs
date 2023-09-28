@@ -5,7 +5,6 @@
 #' guidelines from Jackson, 2016 on how to assess balance for time-varying
 #' exposures.
 #'
-#' @importFrom dplyr %>%
 #' @seealso {[cobalt] package,
 #'   <https://cran.r-project.org/web/packages/cobalt/index.html>}
 #' @seealso {Jackson, 2016 for more on assessing balance for time-varying
@@ -18,8 +17,6 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders list of time-varying confounders with ".timepoint"
-#'   suffix
 #' @param formulas list of balancing formulas at each time point output from
 #'   createFormulas()
 #' @param weights list of IPTW weights output from createWeights, required for
@@ -62,7 +59,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "prebalance",
 #'                    formulas = f,
 #'                    save.out = FALSE)
@@ -70,7 +66,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "prebalance",
 #'                    formulas = f,
 #'                    balance_thresh = 0.2,
@@ -79,7 +74,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "prebalance",
 #'                    formulas = f,
 #'                    balance_thresh = c(0.1, 0.2),
@@ -97,7 +91,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -106,7 +99,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -116,7 +108,6 @@
 #'                    exposure = "A",
 #'                    exposure_time_pts = c(1, 2, 3),
 #'                    outcome = "D.3",
-#'                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                    type = "weighted",
 #'                    weights = w,
 #'                    formulas = f,
@@ -126,8 +117,9 @@
 
 
 
-assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, tv_confounders, type, formulas, weights = NULL, balance_thresh = 0.1,
-                          imp_conf = NULL, verbose = TRUE, save.out = TRUE) {
+
+assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights = NULL, balance_thresh = 0.1,
+                          imp_conf = NULL, verbose = TRUE, save.out = TRUE){
 
   if (!is.logical(save.out)) {
     stop("`save.out` must be a flag (TRUE or FALSE)", call. = FALSE)
@@ -135,6 +127,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   if (save.out) {
     if (missing(home_dir)) {
       stop("Please supply a home directory.", call. = FALSE)
+    }
+    else if(!is.character(home_dir)){
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
     }
     else if(!dir.exists(home_dir)) {
       stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
@@ -145,26 +140,59 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
          call. = FALSE)
   }
-  if (missing(exposure)) {
-    stop("Please supply a single exposure.", call. = FALSE)
+
+  else if (!inherits(data, "mids") && !is.data.frame(data) &&
+           !(is.list(data) && all(vapply(data, is.data.frame, logical(1L))))) {
+    stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.", call. = FALSE)
   }
-  if (missing(outcome)) {
-    stop("Please supply a single outcome.", call. = FALSE)
-  }
-  if (missing(exposure_time_pts)) {
-    stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
-  }
-  if (missing(tv_confounders)) {
-    stop("Please supply a list of time-varying confounders.", call. = FALSE)
-  }
-  if (missing(type)) {
-    stop("Please supply a 'weighted', 'prebalance' type", call. = FALSE)
-  }
-  if (missing(formulas)) {
-    stop("Please supply a list of balancing formulas.", call. = FALSE)
+  else if(is.list(data) && !is.data.frame(data)){
+    if (sum(sapply(data, is.data.frame)) != length(data)){
+      stop("Please supply a list of data frames that have been imputed.", call. = FALSE)
+    }
   }
 
-  if (length(type) != 1 || !is.character(type)) {
+  if (missing(exposure)){
+    stop("Please supply a single exposure.", call. = FALSE)
+  }
+  else if(!is.character(exposure) | length(exposure) != 1){
+    stop("Please supply a single exposure as a character.", call. = FALSE)
+  }
+
+  if (missing(outcome)){
+    stop("Please supply a single outcome.", call. = FALSE)
+  }
+  else if(!is.character(outcome) | length(outcome) != 1){
+    stop("Please supply a single outcome as a character.", call. = FALSE)
+  }
+
+  if (missing(exposure_time_pts)){
+    stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
+  }
+  else if(!is.numeric(exposure_time_pts)){
+    stop("Please supply a list of exposure time points as integers.", call. = FALSE)
+  }
+
+  if (missing(formulas)){
+    stop("Please supply a list of balancing formulas.", call. = FALSE)
+  }
+  else if(!is.list(formulas) | is.data.frame(formulas)){
+    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
+  }
+  else if(length(formulas) != length(exposure_time_pts)){
+    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
+  }
+  else if(is.list(formulas) && !is.data.frame(formulas)){
+    if (sum(sapply(formulas, function(x) {
+      inherits(x, "formula")})) != length(formulas)){
+      stop("Please supply a list of formulas for each exposure time point.", call. = FALSE)
+    }
+  }
+
+
+  if (missing(type)){
+    stop("Please supply a 'weighted', 'prebalance' type", call. = FALSE)
+  }
+  if (!inherits(type, "character") || length(type) != 1 ){
     stop("Please provide a single type as a character string from the following list: 'prebalance', 'weighted'", call. = FALSE)
   }
   else if (!type %in% c("prebalance", "weighted")) {
@@ -182,34 +210,51 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.", call. = FALSE)
   }
 
-  if (!is.null(weights) && !is.list(weights)) {
+  if (!is.null(weights) && (!is.list(weights) || is.data.frame(weights))){
     stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+  }
+  else if(is.list(weights) && !is.data.frame(weights)){
+    if (sum(sapply(weights, function(x) {
+      inherits(x, "weightitMSM")})) != length(weights)){
+      stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)
+    }
   }
 
   if (!is.numeric(balance_thresh)) {
     stop("Please provide one or two balance thresholds as numbers from 0-1.")
   }
-  if (length(balance_thresh) == 2 && is.null(imp_conf)) {
+
+  if (length(balance_thresh) == 2 && is.null(imp_conf)){
     stop("If you wish to provide different balance threshold for important and less important confounders, please provide a list of important confounders in the 'imp_conf' field.", call. = FALSE)
   }
 
-  if (!is.null(imp_conf) && length(balance_thresh) == 1) {
+  if (!is.null(imp_conf) && length(balance_thresh) == 1){
     stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively", call. = FALSE)
   }
-  else if (!is.null(imp_conf) && !is.character(imp_conf)) {
+  else if(!is.null(imp_conf) && !is.character(imp_conf)){
     stop("Please provide a list variable names as characters that are important confounders.", call. = FALSE)
   }
 
-  if (!is.list(formulas)) {
-    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
+  if(!is.logical(verbose)){
+    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(verbose) != 1){
+    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+  }
+
+  if(!is.logical(save.out)){
+    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+  }
+  else if(length(save.out) != 1){
+    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
   }
 
   mi <- !is.data.frame(data)
 
   folder <- switch(type, "prebalance" = "prebalance/", "weighted/")
 
-  if (save.out) {
-    #creating required directories
+
+  if (save.out){
     balance_dir <- file.path(home_dir, "balance")
     if (!dir.exists(balance_dir)) {
       dir.create(balance_dir)
@@ -264,7 +309,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         })
       }
       else {
-        m <- length(data)
+
+        m = length(data)
 
         bal_stats <- lapply(seq_len(m), function(k) {
           d <- data[[k]]
@@ -289,10 +335,11 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       bal_stats_all_imp <- do.call(dplyr::bind_rows, bal_stats)
       bal_stats_all_imp <- bal_stats_all_imp[order(bal_stats_all_imp$covariate), ]
 
-      if (save.out) {
+
+      if (save.out){
         write.csv(bal_stats_all_imp, sprintf("%s/balance/%s/%s_all_imps_balance_stat_summary.csv",
                                              home_dir, type, exposure))
-        if (verbose) {
+        if (verbose ){
           cat("Pre balance statistics for each imputed dataset have now been saved in the 'balance/prebalance/' folder", "\n")
         }
 
@@ -309,25 +356,24 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         avg_bal = rowMeans(do.call(cbind, lapply(bal_stats, `[[`, "std_bal_stats"))))
 
       #adds custom bal thresh info
-      if (!is.null(imp_conf)) {
+
+      if (!is.null(imp_conf)){
+
         all_bal_stats$bal_thresh <- ifelse(all_bal_stats$covariate %in% imp_conf,
                                            balance_thresh[1], balance_thresh[2])
-        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = ifelse(all_bal_stats$covariate %in% imp_conf,
-        #                                                                      balance_thresh[1], balance_thresh[2]))
 
-        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) < all_bal_stats$bal_thresh, 1, 0)
-        # all_bal_stats <- all_bal_stats %>%   dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
-        #                                                                         all_bal_stats$bal_thresh, 1, 0) )
+        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
+                                           all_bal_stats$bal_thresh, 1, 0)
       }
-      else {
+      else{
         all_bal_stats$bal_thresh <- balance_thresh
-        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = balance_thresh)
-        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) < all_bal_stats$bal_thresh, 1, 0)
-        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
-        #                                                                      all_bal_stats$bal_thresh, 1, 0) )
+
+        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
+                                           all_bal_stats$bal_thresh, 1, 0)
       }
 
-      if (verbose) {
+
+      if (verbose){
         cat("\n")
         cat(paste0("*** Averaging Across All Imputations ***"), "\n")
       }
@@ -336,9 +382,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     }
     else {
 
-      # if (!is.data.frame(data)){
-      #   stop("Please provide data as a data frame, mids object, or list.", call. = FALSE)
-      # }
+
       if (sum(duplicated(data[["ID"]])) > 0){
         stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
       }
@@ -425,10 +469,10 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       bal_stats_all_imp <- do.call(dplyr::bind_rows, bal_stats)
       bal_stats_all_imp <- bal_stats_all_imp[order(bal_stats_all_imp$covariate), ]
 
-      if (save.out) {
-         write.csv(bal_stats_all_imp, sprintf("%s/balance/%s/%s_all_imps_balance_stat_summary.csv",
+      if (save.out){
+        write.csv(bal_stats_all_imp, sprintf("%s/balance/%s/%s_all_imps_balance_stat_summary.csv",
                                              home_dir, type, exposure))
-        if (verbose) {
+        if (verbose){
           cat("Weighted balance statistics for each imputed dataset have now been saved in the 'balance/weighted/' folder", "\n")
         }
       }
@@ -443,21 +487,19 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         avg_bal = rowMeans(do.call(cbind, lapply(bal_stats, `[[`, "std_bal_stats"))))
 
       # #adds custom bal thresh info
-      if (!is.null(imp_conf)) {
-        all_bal_stats$bal_thresh <- ifelse(all_bal_stats$covariate %in% imp_conf,
-                                           balance_thresh[1], balance_thresh[2])
-        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = ifelse(all_bal_stats$covariate %in% imp_conf,
-        #                                                                      balance_thresh[1], balance_thresh[2]))
-        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) < all_bal_stats$bal_thresh, 1, 0)
-        # all_bal_stats <- all_bal_stats %>%dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
-        #                                                                      all_bal_stats$bal_thresh, 1, 0) )
+      if (!is.null(imp_conf)){
+
+        all_bal_stas$bal_thresh <-ifelse(all_bal_stats$covariate %in% imp_conf,
+                                         balance_thresh[1], balance_thresh[2])
+
+        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
+                                           all_bal_stats$bal_thresh, 1, 0)
       }
       else{
         all_bal_stats$bal_thresh <- balance_thresh
-        # all_bal_stats <- all_bal_stats %>% dplyr::mutate(bal_thresh = balance_thresh)
-        all_bal_stats$balanced = ifelse(abs(all_bal_stats$avg_bal) < all_bal_stats$bal_thresh, 1, 0)
-        # all_bal_stats <- all_bal_stats %>% dplyr:: mutate(balanced = ifelse(abs(all_bal_stats$avg_bal) <
-        #                                                                       all_bal_stats$bal_thresh, 1, 0) )
+
+        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
+                                           all_bal_stats$bal_thresh, 1, 0)
       }
 
       if (verbose) {
@@ -468,6 +510,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       tot_covars <- sapply(strsplit(all_bal_stats$covariate, "\\."), `[`, 1)
     }
     else {
+
       if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
       }
@@ -504,6 +547,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
     if (inherits(data, "mids")) {
       exposure_type <- if (is.numeric(mice::complete(data, 1)[, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
+
     }
     else if (!is.data.frame(data)) {
       exposure_type <- if (is.numeric(data[[1]][, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
@@ -512,27 +556,28 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       exposure_type <- if (is.numeric(data[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
     }
 
-    temp <- all_bal_stats[all_bal_stats$exp_time == exposure_time_pt,, drop = FALSE]
-    # temp <- all_bal_stats %>% filter(exp_time == exposure_time_pt)
+
+    temp <- all_bal_stats[all_bal_stats$exp_time == exposure_time_pt, , drop = FALSE]
 
     make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, temp,
                    data_type, balance_thresh, weights_method, imp_conf, verbose, save.out)
   })
 
-
-  if (save.out) {
-    # Save out all correlations/std mean differences
+  if (save.out){
     outfile <- sprintf("%s/balance/%s/%s-%s_all_%s_%s_associations.html",
                        home_dir, type, exposure, outcome, type, weights_method)
+
+    # Save out all correlations/std mean differences
     sink(outfile)
     stargazer::stargazer(all_bal_stats, type = "html", digits = 2, column.labels = colnames(all_bal_stats), summary = FALSE,
                          rownames = FALSE, header = FALSE, out = outfile)
     sink()
 
-    if (verbose) {
-      if (mi) {
+
+    if (verbose){
+      if (mi){
         cat(sprintf("Summary plots for %s %s averaged across all imputations have been saved out for each time point in the 'balance/%s/plots/' folder.\n",
-                   form_name, exposure, type))
+                    form_name, exposure, type))
       }
       else {
         cat(sprintf("Summary plots for %s %s have now been saved out for each time point in the 'balance/%s/plots/' folder.\n",
@@ -547,7 +592,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
                                      home_dir, type, exposure, type, weights_method),
               row.names = FALSE)
 
-    if (verbose) {
+
+    if (verbose){
       if (mi) {
         cat(sprintf("Check 'balance/%s/' folder for a table of all %s correlations or
                    standardized mean differences averaged across imputed datasets.\n",
@@ -563,17 +609,17 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
 
   # Finding all imbalanced variables
-  unbalanced_covars <- all_bal_stats[all_bal_stats$balanced == 0,, drop = FALSE]
-  # unbalanced_covars <- all_bal_stats %>%
-  #   filter(balanced == 0)
+
+  unbalanced_covars <- all_bal_stats[all_bal_stats$balanced == 0, , drop = FALSE]
+
   unbalanced_constructs  <- sapply(strsplit(unbalanced_covars$covariate, "\\."),
                                    "[", 1)[!duplicated(sapply(strsplit(unbalanced_covars$covariate, "\\."), "[", 1))]
 
 
-  if (verbose) {
+  if (verbose){
     if (mi) {
       cat(sprintf("USER ALERT: Averaging across all imputed datasets for exposure %s using the %s formulas and %s :\n",
-                 exposure, form_name, weights_method))
+                  exposure, form_name, weights_method))
 
       cat(sprintf("The median absolute value relation between exposure and confounder is %s (range = %s-%s).\n",
                   round(median(abs(all_bal_stats$avg_bal)), 2),
@@ -592,34 +638,48 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
                     round(median(abs(as.numeric(unbalanced_covars$avg_bal[unbalanced_covars$balanced == 0]))), 2),
                     round(min(unbalanced_covars$avg_bal), 2),
                     round(max(unbalanced_covars$avg_bal), 2)))
-        # cat(paste0("As shown below, the following ", nrow(unbalanced_covars), " covariates across time points out of ",
-        #            length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), "%) spanning ",
-        #            length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
-        #            "%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ",
-        #            exposure, " of ", round(median(abs(as.numeric(unlist(unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
-        #                                                                   dplyr:: select(avg_bal))))), 2), " (range=",
-        #            round(min(unbalanced_covars$avg_bal), 2), "-", round(max(unbalanced_covars$avg_bal), 2), ") : "), "\n")
       }
       else{
         cat("There are no imbalanced covariates.", "\n")
       }
     }
     else {
-      #I'm going to let you finish the sprintf() conversion :)
-      cat(paste0("USER ALERT: For exposure ", exposure, " using the ", form_name," formulas and ", weights_method, " :"), "\n")
+      # cat(paste0("USER ALERT: For exposure ", exposure, " using the ", form_name," formulas and ", weights_method, " :"), "\n")
+      cat(sprintf("USER ALERT: For exposure %s using the %s formulas and %s :\n",
+                  exposure, form_name, weights_method))
 
-      cat(paste0("The median absolute value relation between exposure and confounder is ",
-                 round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
-                 round(min(all_bal_stats$avg_ba), 2), "-", round(max(all_bal_stats$avg_ba), 2), ")."), "\n")
+      # cat(paste0("The median absolute value relation between exposure and confounder is ",
+      #            round(median(abs(all_bal_stats$avg_bal)), 2), " (range = ",
+      #            round(min(all_bal_stats$avg_ba), 2), "-", round(max(all_bal_stats$avg_ba), 2), ")."), "\n")
+      cat(sprintf("The median absolute value relation between exposure and confounder is %s (range = %s -%s). \n",
+                  round(median(abs(all_bal_stats$avg_bal)), 2),
+                  round(min(all_bal_stats$avg_ba), 2),
+                  round(max(all_bal_stats$avg_ba), 2)))
 
       if (nrow(unbalanced_covars) > 0){
-        cat(paste0("As shown below, the following ", nrow(unbalanced_covars), " covariates across time points out of ",
-                   length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), "%) spanning ",
-                   length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
-                   "%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ",
-                   exposure, " of ", round(median(abs(as.numeric(unlist(unbalanced_covars %>% subset(unbalanced_covars$balanced == 0) %>%
-                                                                          dplyr::select(avg_bal))))), 2), " (range=",
-                   round(min(unbalanced_covars$avg_bal), 2), "-", round(max(unbalanced_covars$avg_bal), 2), ") : "), "\n")
+        # cat(paste0("As shown below, the following ", nrow(unbalanced_covars), " covariates across time points out of ",
+        #            length(tot_covars), " total (", round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2), "%) spanning ",
+        #            length(unbalanced_constructs), " domains out of ", length(tot_cons), " (", round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
+        #            "%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ",
+        #            exposure, " of ", round(median(abs(as.numeric(unlist(
+        #              # unbalanced_covars %>% dplyr:: filter(unbalanced_covars$balanced == 0) %>%
+        #              #                                                      dplyr:: select(avg_bal)
+        #              unbalanced_covars[unbalanced_covars$balanced == 0, ][, "avg_bal"]
+        #
+        #            )))), 2), " (range=",
+        #            round(min(unbalanced_covars$avg_bal), 2), "-", round(max(unbalanced_covars$avg_bal), 2), ") : "), "\n")
+
+        cat(sprintf("As shown below, the following %s covariates across time points out of %s total (%s%%) spanning %s domains out of %s (%s%%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to %s of %s (range=%s-%s) :\n",
+                    nrow(unbalanced_covars),
+                    length(tot_covars),
+                    round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2),
+                    length(unbalanced_constructs),
+                    length(tot_cons),
+                    round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
+                    exposure,
+                    round(median(abs(as.numeric(unlist(unbalanced_covars[unbalanced_covars$balanced == 0, ][, "avg_bal"])))), 2),
+                    round(min(unbalanced_covars$avg_bal), 2),
+                    round(max(unbalanced_covars$avg_bal), 2)))
       }
       else{
         cat("There are no imbalanced covariates.", "\n")
@@ -637,9 +697,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
     if (save.out) {
       # Save out only imbalanced covariates
-      sink(paste0(home_dir, "/balance/", type, "/", exposure, "-", outcome, "_",type,"_", weights_method, "_all_covariates_imbalanced.html"))
-      stargazer(unbalanced_covars, type = "html", digits = 2, column.labels = colnames(unbalanced_covars), summary = FALSE, rownames = FALSE, header = FALSE,
-                out = paste0(home_dir, "/balance/", type, "/", exposure, "-", outcome, "_", type, "_", weights_method, "_all_covariates_imbalanced.html"))
+      outfile <- sprintf("%s/balance/%s/%s-%s_%s_%s_all_covariates_imbalanced.html",
+                         home_dir, type, exposure, outcome, type, weights_method)
+
+      sink(outfile)
+      stargazer::stargazer(unbalanced_covars, type = "html", digits = 2, column.labels = colnames(unbalanced_covars), summary = FALSE, rownames = FALSE, header = FALSE,
+                           out = outfile)
       sink()
     }
   }

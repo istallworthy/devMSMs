@@ -7,7 +7,6 @@
 eval_hist(
   data,
   exposure,
-  tv_confounders,
   epochs = NULL,
   time_pts,
   hi_lo_cut = NULL,
@@ -21,9 +20,6 @@ eval_hist(
 data frames, or mids object}
 
 \item{exposure}{name of exposure variable}
-
-\item{tv_confounders}{list of time-varying confounders with ".timepoint"
-suffix}
 
 \item{epochs}{(optional) data frame of exposure epoch labels and values}
 

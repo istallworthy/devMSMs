@@ -15,7 +15,7 @@ trimWeights(
 )
 }
 \arguments{
-\item{home_dir}{path to home directory}
+\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{exposure}{name of exposure variable}
 
