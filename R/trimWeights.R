@@ -61,25 +61,31 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
 
   if (save.out) {
     if (missing(home_dir)) {
-      stop("Please supply a home directory.", call. = FALSE)
+      stop("Please supply a home directory.",
+           call. = FALSE)
     }
     else if(!is.character(home_dir)){
-      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
+           call. = FALSE)
     }
     else if(!dir.exists(home_dir)) {
-      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path if you wish to save output locally.",
+           call. = FALSE)
     }
   }
 
   if (missing(exposure)){
-    stop("Please supply a single exposure.", call. = FALSE)
+    stop("Please supply a single exposure.",
+         call. = FALSE)
   }
   else if(!is.character(exposure) || length(exposure) != 1){
-    stop("Please supply a single exposure as a character.", call. = FALSE)
+    stop("Please supply a single exposure as a character.",
+         call. = FALSE)
   }
 
   if (missing(weights)){
-    stop("Please supply a list of IPTW weights to trim.", call. = FALSE)
+    stop("Please supply a list of IPTW weights to trim.",
+         call. = FALSE)
   }
   else if (!is.list(weights) || is.data.frame(weights)){
     stop("Please supply a list of weights output from the createWeights function.", call. = FALSE)

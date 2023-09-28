@@ -161,7 +161,6 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   }
 
 
-
   if(save.out){
     histories_dir <- file.path(home_dir, "histories")
     if (!dir.exists(histories_dir)) {
@@ -620,10 +619,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     stop("Please provide a character string of a Brewer palette name or list of colors for plotting.", call. = FALSE)
   }
   else if (length(colors) > 1 && length(colors) != nrow(epochs) + 1) {
-    stop(
-      # paste0('Please provide either: ', nrow(epochs) + 1,
-      #           ' different colors, a color palette, or leave this entry blank.'),
-      sprint("Please provide either %s different colors, a Brewer color palette, or leave this entry blank. \n",
+    stop(sprint("Please provide either %s different colors, a Brewer color palette, or leave this entry blank. \n",
              nrow(epochs) + 1),
       call. = FALSE)
   }
@@ -686,9 +682,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       ggplot2::guides(fill = ggplot2::guide_legend(title="Dosage"))
 
     if (save.out){
-      ggplot2::ggsave(
-        # paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"),
-        sprintf("%s/plots/%s-%s.jpeg",
+      ggplot2::ggsave(sprintf("%s/plots/%s-%s.jpeg",
                 home_dir, exposure, outcome),
         plot = p)
     }

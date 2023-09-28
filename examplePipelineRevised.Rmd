@@ -409,16 +409,15 @@ weights.glm <- createWeights(home_dir, data, exposure, outcome, formulas,
 
 method = "gbm"
 weights.gbm <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                             method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
+                             method)
 
 method = "bart"
 weights.bart <- createWeights(home_dir, data, exposure, outcome, formulas, 
                               method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 method = "super"
-SL.library = "SL.glm" #required for superLearner method; see SuperLearner::listWrappers() for options
 weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                               method, read_in_from_file = "no", SL.library = SL.library, verbose = FALSE, save.out = TRUE)
+                               method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 ```
 

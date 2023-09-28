@@ -557,8 +557,14 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
     # Save out all correlations/std mean differences
     sink(outfile)
-    stargazer::stargazer(all_bal_stats, type = "html", digits = 2, column.labels = colnames(all_bal_stats), summary = FALSE,
-                         rownames = FALSE, header = FALSE, out = outfile)
+    stargazer::stargazer(all_bal_stats,
+                         type = "html",
+                         digits = 2,
+                         column.labels = colnames(all_bal_stats),
+                         summary = FALSE,
+                         rownames = FALSE,
+                         header = FALSE,
+                         out = outfile)
     sink()
 
     if (verbose){
@@ -676,7 +682,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     if(verbose){
       cat("\n")
       cat("\n")
-      cat(knitr::kable(unbalanced_covars, caption = "Imbalanced Covariates", format = 'pipe'), sep = "\n")
+      cat(knitr::kable(unbalanced_covars,
+                       caption = "Imbalanced Covariates",
+                       format = 'pipe'), sep = "\n")
       cat("\n")
     }
     if (save.out){
@@ -685,7 +693,13 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
                          home_dir, type, exposure, outcome, type, weights_method)
 
       sink(outfile)
-      stargazer::stargazer(unbalanced_covars, type = "html", digits = 2, column.labels = colnames(unbalanced_covars), summary = FALSE, rownames = FALSE, header = FALSE,
+      stargazer::stargazer(unbalanced_covars,
+                           type = "html",
+                           digits = 2,
+                           column.labels = colnames(unbalanced_covars),
+                           summary = FALSE,
+                           rownames = FALSE,
+                           header = FALSE,
                            out = outfile)
       sink()
     }

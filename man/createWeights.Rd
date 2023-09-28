@@ -12,6 +12,8 @@ createWeights(
   formulas,
   method = "cbps",
   SL.library = NA,
+  criterion = "p.mean",
+  density = "dt_2",
   read_in_from_file = "no",
   verbose = TRUE,
   save.out = TRUE
