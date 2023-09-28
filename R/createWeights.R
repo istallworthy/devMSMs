@@ -83,6 +83,11 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.",
          call. = FALSE)
   }
+  else if(is.list(data) && !is.data.frame(data)){
+    if (sum(sapply(data, is.data.frame)) != length(data)){
+      stop("Please supply a list of data frames that have been imputed.", call. = FALSE)
+    }
+  }
 
   if (missing(exposure)){
     stop("Please supply a single exposure.", call. = FALSE)

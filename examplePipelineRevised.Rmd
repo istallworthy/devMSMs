@@ -162,6 +162,7 @@ data_wide <- data_wide[,colSums(is.na(data_wide)) < nrow(data_wide)]
 
 
 #removing vars w/no variability; specific to FLP data 
+library(dplyr)
 data_wide <- data_wide %>% dplyr::select(-c(RHasSO.6, RHasSO.15 , RHasSO.24))
 
 
@@ -280,8 +281,8 @@ inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders
 
 
 #or minimum inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, 
-            tv_confounders =  tv_confounders)
+inspectData(data, home_dir, exposure, exposure_time_pts, outcome, 
+            ti_confounders, tv_confounders = tv_confounders)
 
 ```
 
