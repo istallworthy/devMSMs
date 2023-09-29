@@ -15,16 +15,20 @@
 #' @param outcome name of outcome variable with ".timepoint" suffix
 #' @param formulas list of balancing formulas at each time point output from
 #'   createFormulas()
-#' @param method (optional) character string of WeightItMSM() balancing method
+#' @param method (optional) character string of weightitMSM() balancing method
 #'   abbreviation (default is Covariate Balancing Propensity Score "cbps")
-#' @param SL.library required for superLearner weighting method; see
+#' @param SL.library required for superLearner weighting method ("super"); see
 #'   SuperLearner::listWrappers() for options
+#' @param criterion (optional) criterion used to select best weights (default is
+#'   "p.mean" minimizing avg Pearson correlation for continuous exposures and
+#'   "smd.mean" for binary exposures) (requird for "gbm" method)
 #' @param read_in_from_file (optional) "yes" or "no" indicator to read in
 #'   weights that have been previously run and saved locally (default is "no")
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and
 #'   intermediary output locally (default is TRUE)
+#' @param ... for other inputs to weightitMSM()
 #' @return list of IPTW balancing weights
 #' @export
 #' @examples
@@ -61,18 +65,23 @@
 #'                    save.out = FALSE)
 
 
-createWeights <- function(home_dir, data, exposure, outcome, formulas, method = "cbps", SL.library = "SL.glm", criterion = "p.mean",
-                          density = "dt_2", read_in_from_file = "no", verbose = TRUE, save.out = TRUE) {
+createWeights <- function(home_dir, data, exposure, outcome, formulas, method = "cbps", SL.library = "SL.glm", criterion = NA,
+                          read_in_from_file = "no", verbose = TRUE, save.out = TRUE, ...) {
+
+  # call <- match.call()
 
   if (save.out) {
     if (missing(home_dir)) {
-      stop("Please supply a home directory.", call. = FALSE)
+      stop("Please supply a home directory.",
+           call. = FALSE)
     }
     else if(!is.character(home_dir)){
-      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
+           call. = FALSE)
     }
     else if(!dir.exists(home_dir)) {
-      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path if you wish to save output locally.",
+           call. = FALSE)
     }
   }
 
@@ -86,29 +95,36 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   }
   else if(is.list(data) && !is.data.frame(data)){
     if (sum(sapply(data, is.data.frame)) != length(data)){
-      stop("Please supply a list of data frames that have been imputed.", call. = FALSE)
+      stop("Please supply a list of data frames that have been imputed.",
+           call. = FALSE)
     }
   }
 
   if (missing(exposure)){
-    stop("Please supply a single exposure.", call. = FALSE)
+    stop("Please supply a single exposure.",
+         call. = FALSE)
   }
   else if(!is.character(exposure) || length(exposure) != 1){
-    stop("Please supply a single exposure as a character.", call. = FALSE)
+    stop("Please supply a single exposure as a character.",
+         call. = FALSE)
   }
 
   if (missing(outcome)){
-    stop("Please supply a single outcome.", call. = FALSE)
+    stop("Please supply a single outcome.",
+         call. = FALSE)
   }
   else if(!is.character(outcome) || length(outcome) != 1){
-    stop("Please supply a single outcome as a character.", call. = FALSE)
+    stop("Please supply a single outcome as a character.",
+         call. = FALSE)
   }
 
   if (missing(formulas)){
-    stop("Please supply a list of balancing formulas.", call. = FALSE)
+    stop("Please supply a list of balancing formulas.",
+         call. = FALSE)
   }
   else if(!is.list(formulas) | is.data.frame(formulas)){
-    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
+    stop("Please provide a list of formulas for each exposure time point",
+         call. = FALSE)
   }
 
   if(!is.character(method)){
@@ -122,20 +138,22 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
 
 
   if(!is.logical(verbose)){
-    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+    stop("Please set verbose to either TRUE or FALSE.",
+         call. = FALSE)
   }
   else if(length(verbose) != 1){
-    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+    stop("Please provide a single TRUE or FALSE value to verbose.",
+         call. = FALSE)
   }
 
   if(!is.logical(save.out)){
-    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+    stop("Please set save.out to either TRUE or FALSE.",
+         call. = FALSE)
   }
   else if(length(save.out) != 1){
-    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
+    stop("Please provide a single TRUE or FALSE value to save.out.",
+         call. = FALSE)
   }
-
-
 
   weights_method <- method
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
@@ -158,8 +176,6 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   if (read_in_from_file == "yes") {
 
     tryCatch({
-      # weights <- readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_",
-      #                           weights_method, "_fit.rds"))
       weights <- readRDS(sprintf("%s/weights/%s-%s_%s_%s_fit.rds",
                                  home_dir, exposure, outcome, form_name, weights_method))
 
@@ -178,55 +194,68 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     form <- formulas
     form <- unname(form)
 
-    # Helper function to calculate weights
-    calculate_weights <- function(data, form, weights_method, SL.library, criterion, density, verbose) {
+    #temp
+    if (method == "gbm" && is.na(criterion)){
+      criterion <- "p.mean"
+    }
+
+    # function to wrap weightitMSM() and calculate weights
+    calculate_weights <- function(data, form, weights_method, SL.library, criterion, verbose, ...) {
 
       if(weights_method == "super"){
         fit <- WeightIt::weightitMSM(form,
                                      data = data,
                                      method = weights_method,
                                      stabilize = TRUE,
-                                     density = density, #continuous exposures
-                                     use.kernel = TRUE,
                                      include.obj = TRUE,
-                                     SL.library = SL.library,
+                                     SL.library = SL.library, #required
                                      verbose = verbose,
-                                     over = FALSE)
+                                     ...)
       }
       else if (weights_method == "glm"){
         fit <- WeightIt::weightitMSM(form,
                                      data = data,
                                      method = weights_method,
                                      stabilize = TRUE,
-                                     density = density, #continuous exposures
                                      use.kernel = TRUE,
                                      include.obj = TRUE,
                                      verbose = verbose,
-                                     over = FALSE)
+                                     ...)
 
       }
       else if (weights_method == "gbm"){
+
         fit <- WeightIt::weightitMSM(form,
                                      data = data,
                                      method = weights_method,
                                      stabilize = TRUE,
-                                     density = density ,#continuous exposures
                                      use.kernel = TRUE,
                                      include.obj = TRUE,
-                                     criterion = criterion,
+                                     criterion = criterion, #required? even tho doc says there is default
                                      verbose = verbose,
-                                     over = FALSE)
+                                     ...)
+      }
+      else if (weights_method == "cbps"){
+        fit <- WeightIt::weightitMSM(form,
+                                     data = data,
+                                     method = weights_method,
+                                     stabilize = TRUE,
+                                     use.kernel = TRUE,
+                                     include.obj = TRUE,
+                                     verbose = verbose, #for cbps
+                                     over = FALSE,
+                                     ...)
       }
       else{
         fit <- WeightIt::weightitMSM(form,
                                      data = data,
                                      method = weights_method,
                                      stabilize = TRUE,
-                                     density = density, #continuous exposures
                                      use.kernel = TRUE,
                                      include.obj = TRUE,
                                      verbose = verbose,
-                                     over = FALSE)
+                                     over = FALSE,
+                                     ...)
       }
       fit
     }
@@ -246,7 +275,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
           stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
 
-        fit <- calculate_weights(d, form, weights_method, SL.library)
+        fit <- calculate_weights(d, form, weights_method, SL.library, criterion, ...)
 
         d$weights <- fit$weights
 
@@ -310,7 +339,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
           stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
 
-        fit <- calculate_weights(d, form, weights_method, SL.library, criterion, density, verbose)
+        fit <- calculate_weights(d, form, weights_method, SL.library, criterion,  verbose, ...)
 
         d$weights <- fit$weights
 
@@ -374,7 +403,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
 
       # Creating weights
       weights <-  lapply(1, function(i) {
-        calculate_weights(data, form, weights_method, SL.library, criterion, density, verbose)
+        calculate_weights(data, form, weights_method, SL.library, criterion, verbose, ...)
       })
 
       data$weights <- weights[[1]]$weights
@@ -408,7 +437,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         ggplot2::geom_histogram(color = 'black', bins = 15) +
         ggplot2::xlab("Weights") +
         ggplot2::ggtitle( sprintf("Distribution of %s weights",
-                  weights_method))
+                                  weights_method))
 
       if(verbose){
         print(p)
