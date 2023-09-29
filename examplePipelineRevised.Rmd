@@ -413,15 +413,25 @@ method = "glm"
 weights.glm <- createWeights(home_dir, data, exposure, outcome, formulas, 
                              method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
+
 method = "gbm"
 weights.gbm <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                             method)
+                             method) #runs w/ minimal inputs
+
+weights.gbm <- createWeights(home_dir, data, exposure, outcome, formulas, 
+                             method, 
+                             criterion = "p.max", distribution = "laplace") #can now add any input that weightitMSM() takes for "gbm
 
 method = "bart"
 weights.bart <- createWeights(home_dir, data, exposure, outcome, formulas, 
                               method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 method = "super"
+weights.super <- createWeights(home_dir, data, exposure, outcome, formulas)
+
+weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, 
+                               SL.library = "SL.mean") #can now specify SuperLearner library (default is "SL.glm")
+
 weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, 
                                method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 

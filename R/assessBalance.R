@@ -273,7 +273,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   }
 
   if(!is.logical(save.out)){
-    stop("Please set save.out to either TRUE or FALSE.", c
+    stop("Please set save.out to either TRUE or FALSE.",
          all. = FALSE)
   }
   else if(length(save.out) != 1){
