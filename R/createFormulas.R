@@ -219,8 +219,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       }
     }
 
-    factor_covariates <- colnames(data)[which(sapply(data, class) == "factor")]
-    factor_covariates <- factor_covariates[!factor_covariates %in% "ID"]
+    factor_covariates <- colnames(data)[sapply(data, is.factor)]
+    factor_covariates <- factor_covariates[factor_covariates != "ID"]
 
     forms_csv <- character()
     forms <- list()
@@ -330,9 +330,9 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
 
       #adding in any user-specified confounders to retain in all formulas
       if(!is.null(keep_conf)){
-        if(!inherits(keep_conf, "character")){
-          stop("Please provide as a character string a list of confounders to include in all formulas.",
-               call. = FALSE)
+        if(!is.character(keep_conf)){
+          stop("Please provide as a character string a list of confounders to include in all formulas.", call. = FALSE)
+
         }
         if(sum(keep_conf %in% tv_confounders) != length(keep_conf)){
           stop("The variables in the keep_conf field must be included in tv_confounders.",
@@ -360,9 +360,11 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       }
 
       # Appends the form string to forms_csv
-      forms_csv <- c(forms_csv,
-                     sprintf("%s formula for %s-%s at %s time point %s:",
-                             type, exposure, outcome, exposure, as.character(time)))
+      if (save.out) {
+        forms_csv <- c(forms_csv,
+                       sprintf("%s formula for %s-%s at %s time point %s:",
+                               type, exposure, outcome, exposure, as.character(time)))
+
 
       forms_csv <- c(forms_csv, paste(exposure, "~",
                                       paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))

@@ -185,6 +185,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
 
   if (!is.character(model)){
+
     stop('Please provide as a character string a valid model "m" from 0-3 (e.g., "m1")',
          call. = FALSE)
   }
