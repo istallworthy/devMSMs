@@ -5,6 +5,7 @@
 #' relevant confounders.
 #'
 #' @export
+#' @importFrom SuperLearner SuperLearner
 #' @seealso {[WeightIt::weightitMSM()],
 #'   <https://ngreifer.github.io/WeightIt/reference/weightitMSM.html>}
 #' @param home_dir path to home directory (required if 'save.out' = TRUE)
@@ -14,16 +15,20 @@
 #' @param outcome name of outcome variable with ".timepoint" suffix
 #' @param formulas list of balancing formulas at each time point output from
 #'   createFormulas()
-#' @param method (optional) character string of WeightItMSM() balancing method
+#' @param method (optional) character string of weightitMSM() balancing method
 #'   abbreviation (default is Covariate Balancing Propensity Score "cbps")
-#' @param SL.library required for superLearner weighting method; see
+#' @param SL.library required for superLearner weighting method ("super"); see
 #'   SuperLearner::listWrappers() for options
+#' @param criterion (optional) criterion used to select best weights (default is
+#'   "p.mean" minimizing avg Pearson correlation for continuous exposures and
+#'   "smd.mean" for binary exposures) (requird for "gbm" method)
 #' @param read_in_from_file (optional) "yes" or "no" indicator to read in
 #'   weights that have been previously run and saved locally (default is "no")
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and
 #'   intermediary output locally (default is TRUE)
+#' @param ... for other inputs to weightitMSM()
 #' @return list of IPTW balancing weights
 #' @export
 #' @examples
@@ -60,18 +65,23 @@
 #'                    save.out = FALSE)
 
 
-createWeights <- function(home_dir, data, exposure, outcome, formulas, method = "cbps", SL.library = NA, read_in_from_file = "no",
-                          verbose = TRUE, save.out = TRUE) {
+createWeights <- function(home_dir, data, exposure, outcome, formulas, method = "cbps", SL.library = "SL.glm", criterion = NA,
+                          read_in_from_file = "no", verbose = TRUE, save.out = TRUE, ...) {
+
+  # call <- match.call()
 
   if (save.out) {
     if (missing(home_dir)) {
-      stop("Please supply a home directory.", call. = FALSE)
+      stop("Please supply a home directory.",
+           call. = FALSE)
     }
     else if(!is.character(home_dir)){
-      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
+           call. = FALSE)
     }
     else if(!dir.exists(home_dir)) {
-      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+      stop("Please provide a valid home directory path if you wish to save output locally.",
+           call. = FALSE)
     }
   }
 
@@ -85,29 +95,36 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   }
   else if(is.list(data) && !is.data.frame(data)){
     if (sum(sapply(data, is.data.frame)) != length(data)){
-      stop("Please supply a list of data frames that have been imputed.", call. = FALSE)
+      stop("Please supply a list of data frames that have been imputed.",
+           call. = FALSE)
     }
   }
 
   if (missing(exposure)){
-    stop("Please supply a single exposure.", call. = FALSE)
+    stop("Please supply a single exposure.",
+         call. = FALSE)
   }
   else if(!is.character(exposure) || length(exposure) != 1){
-    stop("Please supply a single exposure as a character.", call. = FALSE)
+    stop("Please supply a single exposure as a character.",
+         call. = FALSE)
   }
 
   if (missing(outcome)){
-    stop("Please supply a single outcome.", call. = FALSE)
+    stop("Please supply a single outcome.",
+         call. = FALSE)
   }
   else if(!is.character(outcome) || length(outcome) != 1){
-    stop("Please supply a single outcome as a character.", call. = FALSE)
+    stop("Please supply a single outcome as a character.",
+         call. = FALSE)
   }
 
   if (missing(formulas)){
-    stop("Please supply a list of balancing formulas.", call. = FALSE)
+    stop("Please supply a list of balancing formulas.",
+         call. = FALSE)
   }
   else if(!is.list(formulas) | is.data.frame(formulas)){
-    stop("Please provide a list of formulas for each exposure time point", call. = FALSE)
+    stop("Please provide a list of formulas for each exposure time point",
+         call. = FALSE)
   }
 
   if(!is.character(method)){
@@ -121,20 +138,22 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
 
 
   if(!is.logical(verbose)){
-    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+    stop("Please set verbose to either TRUE or FALSE.",
+         call. = FALSE)
   }
   else if(length(verbose) != 1){
-    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
+    stop("Please provide a single TRUE or FALSE value to verbose.",
+         call. = FALSE)
   }
 
   if(!is.logical(save.out)){
-    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
+    stop("Please set save.out to either TRUE or FALSE.",
+         call. = FALSE)
   }
   else if(length(save.out) != 1){
-    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
+    stop("Please provide a single TRUE or FALSE value to save.out.",
+         call. = FALSE)
   }
-
-
 
   weights_method <- method
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
@@ -157,8 +176,6 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   if (read_in_from_file == "yes") {
 
     tryCatch({
-      # weights <- readRDS(paste0(home_dir, "/weights/", exposure, "-", outcome, "_", form_name, "_",
-      #                           weights_method, "_fit.rds"))
       weights <- readRDS(sprintf("%s/weights/%s-%s_%s_%s_fit.rds",
                                  home_dir, exposure, outcome, form_name, weights_method))
 
@@ -177,29 +194,68 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     form <- formulas
     form <- unname(form)
 
-    # Helper function to calculate weights
-    calculate_weights <- function(data, form, weights_method, SL.library) {
+    #temp
+    if (method == "gbm" && is.na(criterion)){
+      criterion <- "p.mean"
+    }
+
+    # function to wrap weightitMSM() and calculate weights
+    calculate_weights <- function(data, form, weights_method, SL.library, criterion, verbose, ...) {
 
       if(weights_method == "super"){
         fit <- WeightIt::weightitMSM(form,
                                      data = data,
                                      method = weights_method,
                                      stabilize = TRUE,
-                                     density = "dt_2", #do we want this?
+                                     include.obj = TRUE,
+                                     SL.library = SL.library, #required
+                                     verbose = verbose,
+                                     ...)
+      }
+      else if (weights_method == "glm"){
+        fit <- WeightIt::weightitMSM(form,
+                                     data = data,
+                                     method = weights_method,
+                                     stabilize = TRUE,
                                      use.kernel = TRUE,
                                      include.obj = TRUE,
-                                     SL.library = SL.library,
-                                     over = FALSE)
+                                     verbose = verbose,
+                                     ...)
+
+      }
+      else if (weights_method == "gbm"){
+
+        fit <- WeightIt::weightitMSM(form,
+                                     data = data,
+                                     method = weights_method,
+                                     stabilize = TRUE,
+                                     use.kernel = TRUE,
+                                     include.obj = TRUE,
+                                     criterion = criterion, #required? even tho doc says there is default
+                                     verbose = verbose,
+                                     ...)
+      }
+      else if (weights_method == "cbps"){
+        fit <- WeightIt::weightitMSM(form,
+                                     data = data,
+                                     method = weights_method,
+                                     stabilize = TRUE,
+                                     use.kernel = TRUE,
+                                     include.obj = TRUE,
+                                     verbose = verbose, #for cbps
+                                     over = FALSE,
+                                     ...)
       }
       else{
         fit <- WeightIt::weightitMSM(form,
                                      data = data,
                                      method = weights_method,
                                      stabilize = TRUE,
-                                     density = "dt_2", #do we want this?
                                      use.kernel = TRUE,
                                      include.obj = TRUE,
-                                     over = FALSE)
+                                     verbose = verbose,
+                                     over = FALSE,
+                                     ...)
       }
       fit
     }
@@ -211,7 +267,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       weights <- lapply(seq_len(data$m), function(i) {
         d <- as.data.frame(mice::complete(data, i))
 
-        if (length(which(is.na(d))) > 0){
+        if (anyNA(d)){
           stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                call. = FALSE)
         }
@@ -219,7 +275,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
           stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
 
-        fit <- calculate_weights(d, form, weights_method, SL.library)
+        fit <- calculate_weights(d, form, weights_method, SL.library, criterion, ...)
 
         d$weights <- fit$weights
 
@@ -239,33 +295,25 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
 
         if(save.out){
           # Save weights merged with ID variable
-          write.csv(x = d, file =
-                      # paste0(home_dir, "/weights/values/", exposure, "-", outcome, "_", form_name,
-                      #                    "_", weights_method, "_", i, ".csv"))
-                      sprintf("%s/weights/values/%s-%s_%s_%s_%s.csv",
-                              home_dir, exposure, outcome, form_name, weights_method, i))
+          write.csv(x = d, file = sprintf("%s/weights/values/%s-%s_%s_%s_%s.csv",
+                                          home_dir, exposure, outcome, form_name, weights_method, i))
         }
 
         # Writes image of the histogram of weights to assess heavy tails
         p <- ggplot2::ggplot(data = as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
           ggplot2::geom_histogram(color = 'black', bins = 15) +
           ggplot2::xlab("Weights") +
-          ggplot2::ggtitle(
-            # paste0("Distribution of ", weights_method, " weights"))
-            sprintf("Distribution of %s weights",
-                    weights_method))
+          ggplot2::ggtitle(sprintf("Distribution of %s weights",
+                                   weights_method))
 
         if(verbose){
           print(p)
         }
 
         if(save.out){
-          ggsave(
-            # paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome, "_", form_name,
-            #             "_", weights_method, "_", i, ".png"),
-            sprintf("%s/weights/histograms/Hist_%s-%s_%s_%s_%s.png",
-                    home_dir, exposure, outcome, form_name, weights_method, i),
-            plot = p, height = 8, width = 14)
+          ggsave(sprintf("%s/weights/histograms/Hist_%s-%s_%s_%s_%s.png",
+                         home_dir, exposure, outcome, form_name, weights_method, i),
+                 plot = p, height = 8, width = 14)
         }
 
         fit
@@ -283,7 +331,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       weights <- lapply(seq_len(length(data)), function(i) {
         d <- data[[i]]
 
-        if (length(which(is.na(d))) > 0){
+        if (anyNA(d)){
           stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                call. = FALSE)
         }
@@ -291,7 +339,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
           stop("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
         }
 
-        fit <- calculate_weights(d, form, weights_method, SL.library)
+        fit <- calculate_weights(d, form, weights_method, SL.library, criterion,  verbose, ...)
 
         d$weights <- fit$weights
 
@@ -314,11 +362,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         if(save.out){
           # Save weights merged with ID variable
           write.csv(x = d,
-                    file =
-                      # paste0(home_dir, "/weights/values/", exposure, "-", outcome,
-                      #                    "_", form_name, "_", weights_method, "_", i, ".csv"))
-                      sprintf("%s/weights/values/%s-%s_%s_%s_%s.csv",
-                              home_dir, exposure, outcome, form_name, weights_method, i))
+                    file = sprintf("%s/weights/values/%s-%s_%s_%s_%s.csv",
+                                   home_dir, exposure, outcome, form_name, weights_method, i))
         }
 
         # Writes image of the histogram of weights to assess heavy tails
@@ -332,12 +377,9 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         }
 
         if(save.out){
-          ggplot2::ggsave(
-            # paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
-            #                      "_", form_name, "_", weights_method, "_", i, ".png"),
-            sprintf("%s/weights/histograms/Hist_%s-%s_%s_%s_%s.png",
-                    home_dir, exposure, outcome, form_name, weights_method, i),
-            plot = p, height = 8, width = 14)
+          ggplot2::ggsave(sprintf("%s/weights/histograms/Hist_%s-%s_%s_%s_%s.png",
+                                  home_dir, exposure, outcome, form_name, weights_method, i),
+                          plot = p, height = 8, width = 14)
         }
 
         fit
@@ -354,14 +396,14 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       if (sum(duplicated(data$"ID")) > 0){
         stop("Please provide wide dataset with a single row per ID.", call. = FALSE)
       }
-      if (length(which(is.na(data))) > 0){
+      if (anyNA(data)){
         stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
              call. = FALSE)
       }
 
       # Creating weights
       weights <-  lapply(1, function(i) {
-        calculate_weights(data, form, weights_method, SL.library)
+        calculate_weights(data, form, weights_method, SL.library, criterion, verbose, ...)
       })
 
       data$weights <- weights[[1]]$weights
@@ -371,7 +413,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         #            round(median(data$weights), 2) , " (SD = ", round(sd(data$weights), 2), "; range = ",
         #            round(min(data$weights), 2), "-", round(max(data$weights), 2), ")."), "\n")
         cat(sprintf("For the %s weighting method, the median weight value is %s
-                    (SD = %s; range = %s-%s. \n",
+                    (SD = %s; range = %s-%s). \n",
                     weights_method,
                     round(median(data$weights), 2),
                     round(sd(data$weights), 2),
@@ -385,33 +427,26 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
 
       if(save.out){
         # Save weights merged with ID variable
-        write.csv(x = data, file =
-                    # paste0(home_dir, "/weights/values/", exposure, "-", outcome,
-                    #                       "_", form_name, "_", weights_method, ".csv"))
-                    sprintf("%s/weights/values/%s-%s_%s_%s.csv",
-                            home_dir, exposure, outcome, form_name, weights_method))
+        write.csv(x = data, file =  sprintf("%s/weights/values/%s-%s_%s_%s.csv",
+                                            home_dir, exposure, outcome, form_name, weights_method))
       }
 
       # Writes image of the histogram of weights to assess heavy tails
-      p <- ggplot2::ggplot(data = as.data.frame(weights[[1]]$weights), ggplot2::aes(x = weights[[1]]$weights)) +
+      p <- ggplot2::ggplot(data = as.data.frame(weights[[1]]$weights),
+                           ggplot2::aes(x = weights[[1]]$weights)) +
         ggplot2::geom_histogram(color = 'black', bins = 15) +
         ggplot2::xlab("Weights") +
-        ggplot2::ggtitle(
-          # paste0("Distribution of ", weights_method, " weights"))
-          sprintf("Distribution of %s weights",
-                  weights_method))
+        ggplot2::ggtitle( sprintf("Distribution of %s weights",
+                                  weights_method))
 
       if(verbose){
         print(p)
       }
 
       if(save.out){
-        ggplot2::ggsave(
-          # paste0(home_dir, "/weights/histograms/", "Hist_", exposure, "-", outcome,
-          #                      "_", form_name, "_", weights_method, ".png"),
-          sprintf("%s/weights/histograms/Hist_%s-%s_%s_%s.png",
-                  home_dir, exposure, outcome, form_name, weights_method),
-          plot = p, height = 8, width = 14)
+        ggplot2::ggsave(sprintf("%s/weights/histograms/Hist_%s-%s_%s_%s.png",
+                                home_dir, exposure, outcome, form_name, weights_method),
+                        plot = p, height = 8, width = 14)
 
         if (verbose){
           cat("Weights have now been saved into the 'weights/values/' folder.")
@@ -422,11 +457,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     }
 
     if(save.out){
-      saveRDS(weights, file =
-                # paste0(home_dir, "/weights/", exposure, "-", outcome,
-                #                      "_", form_name, "_", weights_method, "_fit.rds"))
-                sprintf("%s/weights/%s-%s_%s_%s_fit.rds",
-                        home_dir, exposure, outcome, form_name, weights_method))
+      saveRDS(weights, file = sprintf("%s/weights/%s-%s_%s_%s_fit.rds",
+                                      home_dir, exposure, outcome, form_name, weights_method))
       if (verbose){
         cat("\n")
         cat("Weights models have been saved as an .rds object in the 'weights' folder.", "\n")

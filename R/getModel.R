@@ -132,7 +132,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
       name <- gsub(" ", "", unlist(strsplit(interactions, "\\+"))[x])
       if (! name %in% colnames(d)){
         temp <- d[, c(gsub(" ", "", as.character(unlist(strsplit(unlist(strsplit(interactions, "\\+"))[x], "\\:"))))) ]
-        new <- matrixStats::rowProds(as.matrix(temp), na.rm = T)
+        new <- matrixStats::rowProds(as.matrix(temp), na.rm = TRUE)
         names(new) <- name
         d <- cbind(d, new)
       }

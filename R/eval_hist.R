@@ -101,7 +101,8 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
     cat("\n")
   }
 
-  tot_hist <- apply(gtools::permutations(2, nrow(epochs), c("l", "h"), repeats.allowed = TRUE), 1,
+  tot_hist <- apply(gtools::permutations(2, nrow(epochs), c("l", "h"),
+                                         repeats.allowed = TRUE), 1,
                     paste, sep = "", collapse = "-")
 
   # Assigning history (e.g., h-h-h) based on user-specified hi/lo cutoffs
@@ -123,10 +124,12 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
           if (is.na(new[x, y + 1])) {
             return(NA)
           }
-          if (new[x, y + 1] >= as.numeric(median((new[, y + 1]), na.rm = TRUE) + 0.001)) { #added 0.001 bc marginaleffects needs different values
+          if (new[x, y + 1] >= as.numeric(median((new[, y + 1]),
+                                                 na.rm = TRUE) + 0.001)) { #added 0.001 bc marginaleffects needs different values
             return("h")
           }
-          if (new[x, y + 1] <= as.numeric(median((new[, y + 1]), na.rm = TRUE) - 0.001)) {
+          if (new[x, y + 1] <= as.numeric(median((new[, y + 1]),
+                                                 na.rm = TRUE) - 0.001)) {
             return("l")
           }
         }), collapse = "-")
@@ -140,15 +143,18 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
         lo_cutoff <- hi_lo_cut[2]
 
         if (hi_cutoff > 1 || hi_cutoff < 0) {
-          stop('Please select a high cutoff value between 0 and 1', call. = FALSE)
+          stop('Please select a high cutoff value between 0 and 1',
+               call. = FALSE)
         }
         if (lo_cutoff > 1 || lo_cutoff < 0) {
-          stop('Please select low cutoff value between 0 and 1', call. = FALSE)
+          stop('Please select low cutoff value between 0 and 1',
+               call. = FALSE)
         }
       }
       else{
         if (hi_lo_cut > 1 || hi_lo_cut < 0) {
-          stop('Please select a hi_lo cutoff value between 0 and 1', call. = FALSE)
+          stop('Please select a hi_lo cutoff value between 0 and 1',
+               call. = FALSE)
         }
 
         hi_cutoff <- hi_lo_cut
@@ -163,11 +169,13 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
             return(NA)
           }
           if (unname(new[x, y + 1]) >= as.numeric(quantile(unname(new[, y + 1]),
-                                                           probs = hi_lo_cut[1], na.rm = TRUE))) {
+                                                           probs = hi_lo_cut[1],
+                                                           na.rm = TRUE))) {
             return("h")
           }
           if (unname(new[x, y + 1]) <= as.numeric(quantile(unname(new[, y + 1]),
-                                                           probs =  hi_lo_cut[2], na.rm = TRUE))) {
+                                                           probs =  hi_lo_cut[2],
+                                                           na.rm = TRUE))) {
             return("l")
           }
         }), collapse = "-")

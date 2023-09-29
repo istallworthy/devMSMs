@@ -11,10 +11,12 @@ createWeights(
   outcome,
   formulas,
   method = "cbps",
-  SL.library = NA,
+  SL.library = "SL.glm",
+  criterion = NA,
   read_in_from_file = "no",
   verbose = TRUE,
-  save.out = TRUE
+  save.out = TRUE,
+  ...
 )
 }
 \arguments{
@@ -30,11 +32,15 @@ frames, or mids object}
 \item{formulas}{list of balancing formulas at each time point output from
 createFormulas()}
 
-\item{method}{(optional) character string of WeightItMSM() balancing method
+\item{method}{(optional) character string of weightitMSM() balancing method
 abbreviation (default is Covariate Balancing Propensity Score "cbps")}
 
-\item{SL.library}{required for superLearner weighting method; see
+\item{SL.library}{required for superLearner weighting method ("super"); see
 SuperLearner::listWrappers() for options}
+
+\item{criterion}{(optional) criterion used to select best weights (default is
+"p.mean" minimizing avg Pearson correlation for continuous exposures and
+"smd.mean" for binary exposures) (requird for "gbm" method)}
 
 \item{read_in_from_file}{(optional) "yes" or "no" indicator to read in
 weights that have been previously run and saved locally (default is "no")}
@@ -44,6 +50,8 @@ TRUE)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is TRUE)}
+
+\item{...}{for other inputs to weightitMSM()}
 }
 \value{
 list of IPTW balancing weights
