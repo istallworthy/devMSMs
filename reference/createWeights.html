@@ -55,10 +55,12 @@ relevant confounders.</p>
 <span>  <span class="va">outcome</span>,</span>
 <span>  <span class="va">formulas</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"cbps"</span>,</span>
-<span>  SL.library <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  SL.library <span class="op">=</span> <span class="st">"SL.glm"</span>,</span>
+<span>  criterion <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  read_in_from_file <span class="op">=</span> <span class="st">"no"</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  save.out <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  save.out <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,13 +89,19 @@ createFormulas()</p></dd>
 
 
 <dt>method</dt>
-<dd><p>(optional) character string of WeightItMSM() balancing method
+<dd><p>(optional) character string of weightitMSM() balancing method
 abbreviation (default is Covariate Balancing Propensity Score "cbps")</p></dd>
 
 
 <dt>SL.library</dt>
-<dd><p>required for superLearner weighting method; see
+<dd><p>required for superLearner weighting method ("super"); see
 SuperLearner::listWrappers() for options</p></dd>
+
+
+<dt>criterion</dt>
+<dd><p>(optional) criterion used to select best weights (default is
+"p.mean" minimizing avg Pearson correlation for continuous exposures and
+"smd.mean" for binary exposures) (requird for "gbm" method)</p></dd>
 
 
 <dt>read_in_from_file</dt>
@@ -109,6 +117,10 @@ TRUE)</p></dd>
 <dt>save.out</dt>
 <dd><p>(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is TRUE)</p></dd>
+
+
+<dt>...</dt>
+<dd><p>for other inputs to weightitMSM()</p></dd>
 
 </dl></div>
     <div id="value">
@@ -146,17 +158,17 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A - D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a8c4465af8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a06d36c6f0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A - D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a8c4465af8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a06d36c6f0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A - D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.2 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a8c4465af8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a06d36c6f0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">createWeights</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
