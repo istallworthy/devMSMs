@@ -31,7 +31,6 @@ Imports:
     matrixStats,
     knitr,
     survey,
-    jtools,
     mice,
     mitml,
     stargazer,
@@ -40,7 +39,9 @@ Imports:
     stringr,
     huxtable,
     officer,
-    flextable
+    flextable,
+    sjPlot,
+    SuperLearner
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

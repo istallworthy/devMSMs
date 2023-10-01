@@ -78,8 +78,6 @@
 calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL,
                          imp_conf = NULL, verbose = TRUE, save.out = TRUE) {
 
-
-
   if(!is.list(formulas) | is.data.frame(formulas)){
     stop("Please provide a list of formulas for each exposure time point",
          call. = FALSE)
@@ -153,7 +151,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       data_cov <- data[, covars]
       data_cov <- cobalt::splitfactor(data_cov,
                                       names(data_cov)[sapply(data_cov, class ) == "factor"],
-                                      drop.first = FALSE )
+                                      drop.first = "if2" )
       covars <- colnames(data_cov)
     }
 
@@ -165,7 +163,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       # Unweighted pre-balance checking
       if (!weighted) {
         if (exposure_type == "continuous") {
-          
+
           bal_stats <- cobalt::col_w_cov(temp[covars], temp[[exposure_name]], std = TRUE) # finding correlation
         }
         else if (exposure_type == "binary") {
@@ -268,23 +266,25 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
 
         # Removing any histories that only have 1 or 0 person contributing (cannot calc bal stats)
-        if (any(prop_sum$n == 1) || any(prop_sum$n == 0)) {
+        if (any(prop_sum$exposure == 1) || any(prop_sum$exposure == 0)) {
 
-          omitted_histories <- as.character(as.data.frame(prop_sum)[[1]][prop_sum$n == 1 | prop_sum$n == 0])
+          omitted_histories <- as.character(as.data.frame(prop_sum)[[1]][prop_sum$exposure == 1 | prop_sum$exposure == 0])
 
 
           if (data_type == "imputed"){
 
             cat(sprintf("USER ALERT: the following history/histories, %s has/have been omitted from
-                        balance checking for exposure %s imputation %s at time point %s:",
+                        balance checking for exposure %s imputation %s at time point %s due to insufficient counts:",
                         omitted_histories, exposure, k, exposure_time_pt))
+            cat("\n")
           }
 
           else{
 
             cat(sprintf("USER ALERT: the following history/histories, %s has/have been omitted from
-                        balance checking for exposure %s at time point %s:",
+                        balance checking for exposure %s at time point %s due to insufficient counts:",
                         omitted_histories, exposure, exposure_time_pt))
+            cat("\n")
           }
 
           temp <- temp[!temp$history %in% omitted_histories, , drop = FALSE]
@@ -300,10 +300,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
               cobalt::col_w_cov(temp2[covars], temp2[[exposure_name]], std = FALSE)
 
-
-              # #should be same length as covars (already have factors split up)
-              # cobalt::col_w_cov(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding covariance
-              #                   subset = temp2$history[temp2$history == i] == i) # subsetting by that history
             })
 
             # getting weighted mean across histories (cols), weighting by proportion of those w/ that same history
@@ -321,11 +317,11 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               }) *# unweighted covar sd
                 sd(data[[exposure_name]], na.rm = TRUE))  # exposure SD at that time pt
 
-            #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
-            if (!is.list(bal_stats)) {
-              stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
-                   call. = FALSE)
-            }
+            # #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
+            # if (!is.list(bal_stats)) {
+            #   stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
+            #        call. = FALSE)
+            # }
 
 
             bal_stats <- bal_stats[startsWith(names(bal_stats), "std")]
@@ -339,9 +335,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
               cobalt::col_w_smd(temp2[covars], temp2[[exposure_name]], std = FALSE) # finding mean difference
 
-
-              # cobalt::col_w_smd(temp2[, c(covars)], temp2[, paste0(exposure, ".", exposure_time_pt)], std = FALSE, # finding mean difference
-              #                   subset = temp2$history[temp2$history == i] == i) # subsetting by that history
             })
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
@@ -361,11 +354,11 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                 ))
               })
 
-            #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
-            if (!is.data.frame(bal_stats)) {
-              stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
-                   call. = FALSE)
-            }
+            # #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
+            # if (!is.data.frame(bal_stats)) {
+            #   stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
+            #        call. = FALSE)
+            # }
 
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
@@ -385,16 +378,14 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               temp2 <- temp[temp$history == i,, drop = FALSE]
 
               cobalt::col_w_cov(temp2[covars], temp2[[exposure_name]], std = FALSE, # finding covariance
-
-                                # subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[["weights"]]) # adding IPTW weights
             })
 
             #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
-            if (!is.data.frame(bal_stats)) {
-              stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
-                   call. = FALSE)
-            }
+            # if (!is.data.frame(bal_stats)) {
+            #   stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
+            #        call. = FALSE)
+            # }
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
@@ -415,8 +406,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
 
-            # bal_stats <- bal_stats %>%
-            #   dplyr::select(contains(c("std")))
             bal_stats <- bal_stats[startsWith(names(bal_stats), "std")]
 
           } #ends continuous
@@ -427,16 +416,14 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               temp2 <- temp[temp$history == i,, drop = FALSE]
 
               cobalt::col_w_smd(temp2[covars], temp2[[exposure_name]], std = FALSE, # finding mean difference
-
-                                # subset = temp2$history[temp2$history == i] == i, # subsetting by that history
                                 weights = temp2[["weights"]]) # adding IPTW weights
             })
 
-            #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
-            if (!is.data.frame(bal_stats)) {
-              stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
-                   call. = FALSE)
-            }
+            # #temp error warning re: factor w/ multiple levels creating different numbers of variables per history --makes bal_stats a list and breaks std code
+            # if (!is.data.frame(bal_stats)) {
+            #   stop("There are unequal numbers of variables across histories, likely due to an ordinal variable with several levels denoted as a factor.",
+            #        call. = FALSE)
+            # }
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
@@ -521,16 +508,19 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   if (verbose & save.out) {
     if (data_type == "imputed") {
 
-      cat(paste0("For each time point and imputation, %s summary plots for  %s
+      cat(sprintf("For each time point and imputation, %s summary plots for  %s
                  formulas weighting method %s have now been saved in the %s plots/' folder.\n",
                  gsub("/", "", folder), form_name, weights_method, folder))
+      cat("\n")
 
     }
     else {
 
-      cat(paste0("For each time point, %s summary plots for  %s
+      cat(sprintf("For each time point, %s summary plots for  %s
                  formulas weighting method %s have now been saved in the %s plots/' folder.\n",
                  gsub("/", "", folder), form_name, weights_method, folder))
+      cat("\n")
+
     }
   }
 
@@ -541,7 +531,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                                              FUN = function(x) c(balanced_n = sum(x == 1),
                                                                  imbalanced_n = sum(x == 0),
                                                                  n = length(x))))
-  bal_summary_exp <- do.call(data.frame, bal_summary_exp) #?
+  bal_summary_exp <- do.call(data.frame, bal_summary_exp) #? IS: b/c aggregate() makes new variables into a single weird matrix thing
   names(bal_summary_exp) <- c("exp_time", "balanced_n", "imbalanced_n", "n")
 
 
@@ -561,15 +551,18 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
         cat(sprintf("Balance statistics using %s formulas for %s imputation %s, using
                    %s have been saved in the 'balance/%s' folder. \n",
                     form_name, exposure, k, weights_method, folder))
+        cat("\n")
 
         cat(sprintf("Sampling weights using the %s for %s imputation %s have been saved in the 'balance/%s' folder., \n",
                     form_name, exposure, k, folder))
+        cat("\n")
       }
       else {
 
         cat(sprintf("Balance statistics using %s formulas for %s using
                    %s have been saved in the 'balance/%s' folder. \n",
                     form_name, exposure, weights_method, folder))
+        cat("\n")
 
         cat(sprintf("Sampling weights using the %s for %s have been saved in the 'balance/%s' folder., \n",
                     form_name, exposure, folder))
@@ -618,6 +611,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       cat("\n")
 
       if (imbalanced_covars > 0) {
+        cat("\n")
         cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %sout of %s domains,
                   remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
                     imbalanced_covars,
@@ -628,7 +622,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                     remaining_avg_abs_corr,
                     remaining_corr_range))
 
-        cat("\n")
         cat(knitr::kable(bal_summary_exp,
                          caption = sprintf("Imbalanced Covariates for imputation %s using %s and %s formulas",
                                            k, weights_method, form_name),

@@ -104,64 +104,79 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
   if (save.out) {
     if (missing(home_dir)) {
-      stop("Please supply a home directory.", call. = FALSE)
+      stop("Please supply a home directory.",
+           call. = FALSE)
     }
-    else if(!is.character(home_dir)){
-      stop("Please provide a valid home directory path as a string if you wish to save output locally.", call. = FALSE)
+    else if(!is.character(home_dir)) {
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
+           call. = FALSE)
     }
-    else if(!dir.exists(home_dir)) {
-      stop("Please provide a valid home directory path if you wish to save output locally.", call. = FALSE)
+    else if (!dir.exists(home_dir)) {
+      stop ("Please provide a valid home directory path if you wish to save output locally.",
+            = FALSE)
     }
   }
 
-  if (missing(exposure)){
-    stop("Please supply a single exposure.", call. = FALSE)
+  if (missing(exposure)) {
+    stop("Please supply a single exposure.",
+         call. = FALSE)
   }
-  else if(!is.character(exposure) || length(exposure) != 1){
-    stop("Please supply a single exposure as a character.", call. = FALSE)
-  }
-
-  if (missing(outcome)){
-    stop("Please supply a single outcome.", call. = FALSE)
-  }
-  else if(!is.character(outcome) || length(outcome) != 1){
-    stop("Please supply a single outcome as a character.", call. = FALSE)
+  else if (!is.character(exposure) || length(exposure) != 1) {
+    stop ("Please supply a single exposure as a character.",
+         call. = FALSE)
   }
 
-  if (missing(exposure_time_pts)){
-    stop("Please supply the exposure time points at which you wish to create weights.", call. = FALSE)
+  if (missing(outcome)) {
+    stop ("Please supply a single outcome.",
+         call. = FALSE)
   }
-  else if(!is.numeric(exposure_time_pts)){
-    stop("Please supply a list of exposure time points as integers.", call. = FALSE)
+  else if (!is.character(outcome) || length(outcome) != 1) {
+    stop ("Please supply a single outcome as a character.",
+         call. = FALSE)
   }
 
-  if (missing(model)){
-    stop("Please supply a list of model output", call. = FALSE)
+  if (missing(exposure_time_pts)) {
+    stop ("Please supply the exposure time points at which you wish to create weights.",
+         call. = FALSE)
   }
-  else if(!is.list(model) || is.data.frame(model)){
-    stop("Please provide a list of model output from the fitModel function.", call. = FALSE)
+  else if (!is.numeric(exposure_time_pts)) {
+    stop ("Please supply a list of exposure time points as integers.",
+         call. = FALSE)
+  }
+
+  if (missing(model)) {
+    stop ("Please supply a list of model output",
+         call. = FALSE)
+  }
+  else if (!is.list(model) || is.data.frame(model)) {
+    stop ("Please provide a list of model output from the fitModel function.",
+         call. = FALSE)
   }
   else if (sum(sapply(model, function(x) {
-    inherits(x, "svyglm")})) != length(model)){
-    stop("Please supply a model as a list from the createWeights function.", call. = FALSE)
+    inherits(x, "svyglm") } )) != length(model)) {
+    stop ("Please supply a model as a list from the createWeights function.",
+         call. = FALSE)
   }
 
-  if(!is.logical(verbose)){
-    stop("Please set verbose to either TRUE or FALSE.", call. = FALSE)
+  if (!is.logical(verbose)) {
+    stop ("Please set verbose to either TRUE or FALSE.",
+         call. = FALSE)
   }
-  else if(length(verbose) != 1){
-    stop("Please provide a single TRUE or FALSE value to verbose.", call. = FALSE)
-  }
-
-  if(!is.logical(save.out)){
-    stop("Please set save.out to either TRUE or FALSE.", call. = FALSE)
-  }
-  else if(length(save.out) != 1){
-    stop("Please provide a single TRUE or FALSE value to save.out.", call. = FALSE)
+  else if (length(verbose) != 1) {
+    stop ("Please provide a single TRUE or FALSE value to verbose.",
+         call. = FALSE)
   }
 
+  if (!is.logical(save.out)) {
+    stop ("Please set save.out to either TRUE or FALSE.",
+         call. = FALSE)
+  }
+  else if (length(save.out) != 1) {
+    stop ("Please provide a single TRUE or FALSE value to save.out.",
+         call. = FALSE)
+  }
 
-  if(save.out){
+  if (save.out) {
     histories_dir <- file.path(home_dir, "histories")
     if (!dir.exists(histories_dir)) {
       dir.create(histories_dir)
@@ -172,7 +187,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     }
   }
 
-  exposure_type <- if(inherits(model[[1]]$data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"))
+  exposure_type <- if (inherits(model[[1]]$data[, paste0(exposure, '.', exposure_time_pts[1])], "numeric"))
     "continuous" else "binary"
 
 
@@ -182,34 +197,41 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
   #history inspection --done early bc function deals with epochs, etc.
   #print history sample distribution
-  if (verbose){
+
+  if (verbose) {
     eval_hist(data = model[[1]]$data, exposure, epochs,
               exposure_time_pts, hi_lo_cut, reference, comparison, verbose)
   }
 
 
   #getting data to use for determining hi/lo values: should have any epochs created/ used in the model
-  if (is.null(names(model))){ #imputed data
+
+  if (is.null(names(model))) { #imputed data
+
     # stacking imputed data to compute hi/lo vals across all imps
-    data <- lapply(model, function(x) { x$data })
+
+    data <- lapply(model, function(x) { x$data } )
     data <- do.call("rbind", data)
   }
-  else if(!is.null(names(model))){ #single df (not imputed)
+
+  else if (!is.null(names(model))) { #single df (not imputed)
     data <- model[[1]]$data
+
   }
 
-  if(is.null(epochs)){ #making epochs time pts if not specified by user
+  if (is.null(epochs)) { #making epochs time pts if not specified by user
     epochs <- data.frame(epochs = as.character(exposure_time_pts),
                          values = exposure_time_pts)
   }
-  else{
+  else {
 
-    if( !is.data.frame(epochs) || ncol(epochs) != 2 || sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)){
-      stop("If you supply epochs, please provide a dataframe with two columns of epochs and values.",
+    if ( !is.data.frame(epochs) || ncol(epochs) != 2 || sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)) {
+      stop ("If you supply epochs, please provide a dataframe with two columns of epochs and values.",
            call. = FALSE)
     }
-    if(sum(is.na(epochs$values)) > 0){
-      stop("Please provide one or a list of several values for each epoch.", call. = FALSE)
+    if (sum(is.na(epochs$values)) > 0) {
+      stop ("Please provide one or a list of several values for each epoch.",
+           call. = FALSE)
     }
   }
 
@@ -217,8 +239,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   terms <- gsub(" ", "", as.character(unlist(strsplit(as.character(unlist(terms[3])), "\\+"))))
   exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, paste, sep = "", collapse = ".")
 
-  if (sum(exp_epochs %in% terms) != length(exp_epochs)){
-    stop("The use of exposure epochs must be consistent across fitModel and compareHistories, given that the fitted model output is used as the basis of histories.
+  if (sum(exp_epochs %in% terms) != length(exp_epochs)) {
+    stop ("The use of exposure epochs must be consistent across fitModel and compareHistories, given that the fitted model output is used as the basis of histories.
          If you specified exposure epochs in fitModel, please specify the same ones at this step.
          If you did not, please do not specify them at this step.",
          call. = FALSE)
@@ -226,12 +248,15 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
 
   # creates permutations of high ("h") and low ("l") levels of exposure for each exposure epoch
+
   exposure_levels <- apply(gtools::permutations(2, nrow(epochs), c("l", "h"),
                                                 repeats.allowed = TRUE), 1, paste, sep = "", collapse = "-")
+
   exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, paste, sep = "", collapse = ".")
 
-  eps <- epochs$epochs
   # gathering epoch information for each exposure for deriving betas
+
+  eps <- epochs$epochs
   epoch_info <- as.data.frame(rep(exposure, length(eps)))
   epoch_info$time <- eps
   is.na(epoch_info$low) <- TRUE
@@ -240,33 +265,39 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   if (exposure_type == "continuous") {
 
     #finds high and low values for each epoch
+
     for (t in seq_len(length(eps))) {
       var_name <- paste(exposure, eps[t], sep = ".")
 
-      if(is.null(hi_lo_cut)){ #default is median split
+      if(is.null(hi_lo_cut)) { #default is median split
         epoch_info$low[t] <- as.numeric(median(data[, var_name] - 0.001, na.rm = T)) #padded with -.001 bc otherwise breaks hypotheses()
         epoch_info$high[t] <- as.numeric(median(data[, var_name] + 0.001 , na.rm = T))
 
-      } else if (!inherits(hi_lo_cut, "numeric")){
-        stop("Please provide one or two numbers to hi_lo_cut between 0-1", call. = FALSE)
+      } else if (!inherits(hi_lo_cut, "numeric")) {
+        stop ("Please provide one or two numbers to hi_lo_cut between 0-1",
+             call. = FALSE)
 
-      } else if (is.numeric(hi_lo_cut)){
-        if (length(hi_lo_cut) > 2){
-          stop("Please provide either one or two numeric values between 0-1 to hi_lo_cut.", call. = FALSE)
+      } else if (is.numeric(hi_lo_cut)) {
+        if (length(hi_lo_cut) > 2) {
+          stop ("Please provide either one or two numeric values between 0-1 to hi_lo_cut.",
+               call. = FALSE)
 
-        }else if (length(hi_lo_cut) == 2){ #if two cutoff values supplied
+        } else if (length(hi_lo_cut) == 2) { #if two cutoff values supplied
           hi_cutoff <- hi_lo_cut[1]
           lo_cutoff <- hi_lo_cut[2]
 
           if (hi_cutoff > 1 || hi_cutoff < 0) {
-            stop('Please supply a high cutoff value to hi_lo_cut between 0 and 1', call. = FALSE)
+            stop ('Please supply a high cutoff value to hi_lo_cut between 0 and 1',
+                 call. = FALSE)
           }
           if (lo_cutoff > 1 || lo_cutoff < 0) {
-            stop('Please supply a low cutoff value to hi_lo_cut between 0 and 1', call. = FALSE)
+            stop ('Please supply a low cutoff value to hi_lo_cut between 0 and 1',
+                 call. = FALSE)
           }
-        } else{ #if only one cutoff value supplied
+        } else { #if only one cutoff value supplied
           if (hi_lo_cut > 1 || hi_lo_cut < 0) {
-            stop('Please select a hi_lo cutoff value between 0 and 1', call. = FALSE)
+            stop ('Please select a hi_lo cutoff value between 0 and 1',
+                 call. = FALSE)
           }
 
           hi_cutoff <- hi_lo_cut
@@ -274,6 +305,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
         }
 
         #find user-specfied quantile values
+
         epoch_info$low[t] <- as.numeric(quantile(data[, var_name], probs = lo_cutoff, na.rm = T))
         epoch_info$high[t] <- as.numeric(quantile(data[, var_name], probs = hi_cutoff, na.rm = T))
       }
@@ -290,6 +322,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   }
 
   # gather high and low values for each exposure epoch based on quantile values
+
   d <- data.frame(e = paste(epoch_info[[1]], epoch_info[[2]], sep = "."),
                   l = epoch_info$low,
                   h = epoch_info$high)
@@ -305,6 +338,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
   # STEP 1: Estimated marginal predictions for each history
   # Gets estimated marginal predictions
+
   preds <- lapply(seq_len(length(model)), function(y) { # Goes through dsifferent fitted model
     final_model <- model[[y]]
     p <- marginaleffects::avg_predictions(final_model,
@@ -319,37 +353,35 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
   if (!is.na(reference)) {
     if (!inherits(reference, "character")){
-      stop("Please provide as a character a valid reference history made up of combinations of 'h' and 'l'",
+      stop ("Please provide as a character a valid reference history made up of combinations of 'h' and 'l'",
            call. = FALSE)
     }
     if (sum(exposure_levels %in% reference) == 0) {
-      stop(paste0('If you wish to conduct custom comparisons, please select a valid reference history from the following list:
-                  ',
-                  paste(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), repeats.allowed = TRUE), 1,
-                              paste, sep = ",", collapse = "-"), sep = ", ", collapse = ", ")),
+      stop (paste0('If you wish to conduct custom comparisons, please select a valid reference history from the following list:
+                  ', paste(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), repeats.allowed = TRUE), 1,
+                                 paste, sep = ",", collapse = "-"), sep = ", ", collapse = ", ")),
            call. = FALSE)
     }
     if (is.null(comparison)) {
-      stop(paste0("If you wish to conduct custom comparisons, please specify at least one valid comparison history from the following list:
-                  ",
-                  paste0(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), repeats.allowed = TRUE), 1,
-                               paste, sep = ",", collapse = "-"), sep = " ", collapse = " "),
+      stop (paste0("If you wish to conduct custom comparisons, please specify at least one valid comparison history from the following list:
+                  ", paste0(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), repeats.allowed = TRUE), 1,
+                                  paste, sep = ",", collapse = "-"), sep = " ", collapse = " "),
                   " otherwise, do not specify reference and comparison events to conduct all comparisons."),
            call. = FALSE)
     }
     else if (reference %in% comparison) {
-      stop("If you wish to make a custom comparison, please provide unique reference and comparison events.",
+      stop ("If you wish to make a custom comparison, please provide unique reference and comparison events.",
            call. = FALSE)
     }
   }
 
   if (!is.null(comparison)) {
-    if (!inherits(comparison, "character")){
-      stop("Please provide as a character a valid comparison history/histories made up of combinations of 'h' and 'l'",
+    if (!inherits(comparison, "character")) {
+      stop ("Please provide as a character a valid comparison history/histories made up of combinations of 'h' and 'l'",
            call. = FALSE)
     }
     if (sum(exposure_levels %in% comparison) == 0) {
-      stop(paste0('If you wish to specify comparison(s), please provide at least one comparison history from the following list ',
+      stop (paste0('If you wish to specify comparison(s), please provide at least one comparison history from the following list ',
                   paste0(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), repeats.allowed = TRUE), 1,
                                paste, sep = "", collapse = "-"), sep = ", ", collapse = " "),
                   " otherwise, do not specify reference or comparison events to conduct all comparisons."))
@@ -361,22 +393,25 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   }
 
   #conduct all pairwise comparisons if no ref/comparisons were specified by user
-  if (is.na(reference) && is.null(comp_histories)){
+
+  if (is.na(reference) && is.null(comp_histories)) {
     # Pairwise comparisons; don't need to use custom class
-    comps <- lapply(preds, function(y){
+    comps <- lapply(preds, function(y) {
       y |> marginaleffects::hypotheses("pairwise")
     })
 
-  } else{
+  } else {
     comps <- create_custom_contrasts(d, reference, comp_histories, exposure, preds)
   }
 
 
   #IMPUTED DATA
   #pooling predicted values and contrasts for imputed data
+
   if (is.null(names(model))){ #imputed data
 
     # STEP 1b: Create custom tidy method; not called directly but used in mice::pool()
+
     tidy.pred_custom <<- function(x, ...) {
       out <- NextMethod("tidy", x)
       out$term <- do.call(sprintf, c(paste0(paste(names(args), collapse = " = %s, "), " = %s"),
@@ -386,6 +421,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
     # STEP 1c: Pooling predicted estimates
     # Pool results
+
     preds_pool <- mice::pool(mice::as.mira(preds)) |> summary(digits = 3)
 
     preds_pool <- add_histories(preds_pool, d)
@@ -395,14 +431,12 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     # If the user specified reference and comparison groups, subset pred_pool for inspection and plotting
 
     if (!is.na(reference) && !is.null(comp_histories)) {
-      # preds_pool <- preds_pool %>%
-      #   dplyr::filter(history %in% c(reference, comp_histories))
       preds_pool <- preds_pool[preds_pool$history %in% c(reference, comp_histories), , drop = FALSE ]
     }
 
 
-    if (save.out){
-      if(is.null(hi_lo_cut)){
+    if (save.out) {
+      if (is.null(hi_lo_cut)) {
         hi_lo_cut <- "median+-.1"
       }
 
@@ -423,7 +457,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       sink()
     }
 
-    if (verbose){
+    if (verbose) {
       cat("\n")
       cat("Below are the pooled average predictions by user-specified history:") #
       cat(knitr::kable(preds_pool,
@@ -437,6 +471,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
     #STEP 2b: pool comparison values
     #pool summary
+
     comps_pool <- mice::pool(comps) |> summary()
 
     comps_pool <- add_histories(comps_pool, d)
@@ -445,10 +480,12 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
 
     #STEP 3: conduct multiple comparison correction
+
     comps_pool <- perform_multiple_comparison_correction(comps_pool, reference, comp_histories, mc_comp_method, verbose)
 
     #rounding term values
-    comps_pool$term <- unlist(lapply(1:length(comps_pool$term), function(x){
+
+    comps_pool$term <- unlist(lapply(1:length(comps_pool$term), function(x) {
       x = as.character(comps_pool$term[x])
       a = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))[
         !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
@@ -461,8 +498,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     }))
 
 
-    if (save.out){
-      if(is.null(hi_lo_cut)){
+    if (save.out) {
+      if (is.null(hi_lo_cut)) {
         hi_lo_cut <- "median+-.1"
       }
 
@@ -482,7 +519,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       )
       sink()
     }
-    if (verbose){
+    if (verbose) {
       cat("\n")
       cat(paste0("USER ALERT: please inspect the following pooled comparisons :"), "\n")
       cat(knitr::kable(comps_pool,
@@ -499,9 +536,10 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     preds <- preds_pool
 
 
-  } else{ # NON-IMPUTED DATA
+  } else { # NON-IMPUTED DATA
 
     #add history and dose labels
+
     preds <- add_histories(preds, d)
 
     preds <- add_dose(preds, dose_level)
@@ -509,14 +547,12 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     # If the user specified reference and comparison groups, subset preds for inspection and plotting
 
     if (!is.na(reference) && !is.null(comp_histories)) {
-      # preds <- preds %>%
-      #   dplyr::filter(history %in% c(reference, comp_histories))
       preds <- preds[preds$history %in% c(reference, comp_histories), , drop = FALSE ]
     }
 
 
     if (save.out){
-      if(is.null(hi_lo_cut)){
+      if (is.null(hi_lo_cut)) {
         hi_lo_cut <- "median+-.1"
       }
 
@@ -543,7 +579,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       })
     }
 
-    if (verbose){
+    if (verbose) {
       cat("\n")
       cat("Below are the average predictions by user-specified history:", "\n") # Not sure if we need to print this?
       cat(knitr::kable(preds,
@@ -556,6 +592,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
 
     #STEP 3: conduct multiple comparison correction
+
     comps <- comps[[1]]
 
     comps <- add_histories(comps, d)
@@ -565,7 +602,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     comps <- perform_multiple_comparison_correction(comps, reference, comp_histories, mc_comp_method, verbose)
 
     #rounding term values
-    comps$term <- unlist(lapply(1:length(comps$term), function(x){
+
+    comps$term <- unlist(lapply(1:length(comps$term), function(x) {
       x = comps$term[x]
       a = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))[
         !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
@@ -577,8 +615,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       new
     }))
 
-    if (save.out){
-      if(is.null(hi_lo_cut)){
+    if (save.out) {
+      if (is.null(hi_lo_cut)) {
         hi_lo_cut <- "median+-.1"
       }
 
@@ -617,19 +655,21 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
 
   #STEP 4: Plot results
-  if(!inherits(colors, "character")){
-    stop("Please provide a character string of a Brewer palette name or list of colors for plotting.", call. = FALSE)
+
+  if (!inherits(colors, "character")) {
+    stop("Please provide a character string of a Brewer palette name or list of colors for plotting.",
+         call. = FALSE)
   }
   else if (length(colors) > 1 && length(colors) != nrow(epochs) + 1) {
     stop(sprint("Please provide either %s different colors, a Brewer color palette, or leave this entry blank. \n",
-             nrow(epochs) + 1),
-      call. = FALSE)
+                nrow(epochs) + 1),
+         call. = FALSE)
   }
 
-  if (is.na(exp_lab)){
+  if (is.na(exp_lab)) {
     exp_lab <- exposure
   }
-  if(is.na(out_lab)){
+  if (is.na(out_lab)) {
     out_lab <- outcome
   }
 
@@ -657,14 +697,12 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = element_blank(),
                      panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black"))
 
-    if (save.out){
-      ggplot2::ggsave(
-        # paste0(home_dir, "/plots/", exposure, "-", outcome, ".jpeg"),
-        sprintf("%s/plots/%s-%s.jpeg",
-                home_dir, exposure, outcome),
-        plot = p)
+    if (save.out) {
+      ggplot2::ggsave(sprintf("%s/plots/%s-%s.jpeg",
+                              home_dir, exposure, outcome),
+                      plot = p)
     }
-    if(verbose){
+    if (verbose) {
       print(p)
     }
 
@@ -683,17 +721,17 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
                      panel.background = ggplot2::element_blank(), axis.line = ggplot2::element_line(colour = "black")) +
       ggplot2::guides(fill = ggplot2::guide_legend(title="Dosage"))
 
-    if (save.out){
+    if (save.out) {
       ggplot2::ggsave(sprintf("%s/plots/%s-%s.jpeg",
-                home_dir, exposure, outcome),
-        plot = p)
+                              home_dir, exposure, outcome),
+                      plot = p)
     }
-    if(verbose){
+    if (verbose) {
       print(p)
     }
   }
 
-  if (save.out && verbose){
+  if (save.out && verbose) {
     cat("\n")
     cat("See the '/plots/' folder for graphical representations of results.")
   }
