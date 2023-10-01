@@ -127,13 +127,13 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 
 add_histories <- function(p, d) {
 
-  if((is.list(p)) && length(p) == 1){
+  if ((is.list(p)) && length(p) == 1) {
     history <- matrix(data = NA, nrow = nrow(p[[1]]), ncol = 1) # Get histories from the first element
     p <- p[[1]]
   }
 
   #for preds
-  if (sum(d$e %in% colnames(p)) == nrow(d)){
+  if (sum(d$e %in% colnames(p)) == nrow(d)) {
     for (i in seq_len(nrow(p))) {
       vals <- as.data.frame(p)[i, seq_len(nrow(d))]
       history[i] <- as.data.frame(paste(ifelse(round(as.numeric(as.character(vals)), 3) ==
@@ -143,11 +143,11 @@ add_histories <- function(p, d) {
     history <- unlist(history)
   }
 
-  if("term" %in% colnames(p)) { #preds_pool, comps
+  if ("term" %in% colnames(p)) { #preds_pool, comps
     history <- matrix(data = NA, nrow = nrow(p), ncol = 1) # Get histories from the first element
 
-    if(grepl("\\=", p$term[1])) {
-      for (i in seq_len(nrow(p))){
+    if (grepl("\\=", p$term[1])) {
+      for (i in seq_len(nrow(p))) {
         vals <- as.numeric(sapply(strsplit(unlist(strsplit(as.character(p$term[i]), "\\,")), "="), "[", 2))
         history[i] <- as.data.frame(paste(ifelse(round(as.numeric(as.character(vals)), digits = 3) ==
                                                    round(as.numeric(as.character(d$l)), digits = 3), "l", "h"), collapse = "-"))
@@ -183,17 +183,17 @@ add_histories <- function(p, d) {
 #' @export
 
 add_dose <- function(p, dose_level) {
-  if( length(p$history[1]) == 1 ) {
-    if(grepl("vs", p$history[1])) {
+  if ( length(p$history[1]) == 1 ) {
+    if (grepl("vs", p$history[1])) {
       dose_a <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 1), dose_level)
       dose_b <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 2), dose_level)
       dose_count <- data.frame(dose = gsub(" ", " vs ", paste(dose_a, dose_b)))
     }
-    else{
+    else {
       dose_count <- stringr::str_count(p$history, dose_level)
     }
   }
-  if (length(p$history[1]) > 1){
+  if (length(p$history[1]) > 1) {
     dose_count <- stringr::str_count(p$history, dose_level)
   }
   p <- cbind (p, dose_count = dose_count)
@@ -215,7 +215,6 @@ add_dose <- function(p, dose_level) {
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method, verbose) {
   if (nrow(comps) > 1) {
     cat("\n")
-    # cat(paste0("Conducting multiple comparison correction using the ", method, " method."), "\n")
     cat(sprintf("Conducting multiple comparison correction using the %s method. \n",
                 method))
     cat("\n")
@@ -224,8 +223,7 @@ perform_multiple_comparison_correction <- function(comps, reference, comp_histor
   }
   else {
     cat("\n")
-    # cat(paste0("The user specified comparison only between ", reference, " and a single comparison, ", comp_histories,
-    #            ", so no correction for multiple comparisons will be implemented."), "\n")
+
     cat(sprintf("The user specified comparison only between %s and a single comparison, %s,
                 so no correction for multiple comparisons will be implemented.\n",
                 reference, comp_histories))

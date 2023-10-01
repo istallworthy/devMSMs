@@ -5,7 +5,7 @@
 #' time invariant confounders at each exposure time point to be used to create
 #' IPTW weights.
 #'
-#' @param home_dir path to home directory
+#' @param home_dir path to home directory (required if 'save.out' = TRUE)
 #' @param exposure name of exposure variable
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
@@ -89,126 +89,125 @@
 
 
 createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = NULL,  bal_stats = NULL, concur_conf = NULL,
-                           keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ){
+                           keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ) {
 
   if (save.out) {
     if (missing(home_dir)) {
-      stop("Please supply a home directory.",
-           call. = FALSE)
-    }
-    else if(!is.character(home_dir)){
-      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
-           call. = FALSE)
-    }
-    else if(!dir.exists(home_dir)) {
-      stop("Please provide a valid home directory path if you wish to save output locally.",
-           call. = FALSE)
-    }
-  }
-
-  if (missing(exposure)){
-    stop("Please supply a single exposure.",
-         call. = FALSE)
-  }
-  else if(!is.character(exposure) || length(exposure) != 1){
-    stop("Please supply a single exposure as a character.",
-         call. = FALSE)
-  }
-
-  if (missing(outcome)){
-    stop("Please supply a single outcome.",
-         call. = FALSE)
-  }
-  else if(!is.character(outcome) || length(outcome) != 1){
-    stop("Please supply a single outcome as a character.",
-         call. = FALSE)
-  }
-
-  if (missing(exposure_time_pts)){
-    stop("Please supply the exposure time points at which you wish to create weights.",
-         call. = FALSE)
-  }
-  else if(!is.numeric(exposure_time_pts)){
-    stop("Please supply a list of exposure time points as integers.",
-         call. = FALSE)
-  }
-
-  if (missing(tv_confounders)){
-    warning("You have not specified any time-varying confounders. If you have time-varying exposure, please list all wide exposure variables as tv_confounders.",
+      stop ("Please supply a home directory.",
             call. = FALSE)
+    }
+    else if (!is.character(home_dir)) {
+      stop ("Please provide a valid home directory path as a string if you wish to save output locally.",
+            call. = FALSE)
+    }
+    else if (!dir.exists(home_dir)) {
+      stop ("Please provide a valid home directory path if you wish to save output locally.",
+            call. = FALSE)
+    }
+  }
+
+  if (missing(exposure)) {
+    stop ("Please supply a single exposure.",
+          call. = FALSE)
+  }
+  else if (!is.character(exposure) || length(exposure) != 1) {
+    stop ("Please supply a single exposure as a character.",
+          call. = FALSE)
+  }
+
+  if (missing(outcome)) {
+    stop ("Please supply a single outcome.",
+          call. = FALSE)
+  }
+  else if (!is.character(outcome) || length(outcome) != 1) {
+    stop ("Please supply a single outcome as a character.",
+          call. = FALSE)
+  }
+
+  if (missing(exposure_time_pts)) {
+    stop ("Please supply the exposure time points at which you wish to create weights.",
+          call. = FALSE)
+  }
+  else if (!is.numeric(exposure_time_pts)) {
+    stop ("Please supply a list of exposure time points as integers.",
+          call. = FALSE)
+  }
+
+  if (missing(tv_confounders)) {
+    warning ("You have not specified any time-varying confounders. If you have time-varying exposure, please list all wide exposure variables as tv_confounders.",
+             call. = FALSE)
     tv_confounders <- character(0)
   }
-  else if(!is.character(tv_confounders)){
-    stop("Please provide a list of time-varying confounders as character strings.",
-         call. = FALSE)
+  else if (!is.character(tv_confounders)) {
+    stop ("Please provide a list of time-varying confounders as character strings.",
+          call. = FALSE)
   }
 
-  if (missing(ti_confounders)){
-    stop("You have not specified time invariant confounders.",
-         call. = FALSE)
+  if (missing(ti_confounders)) {
+    stop ("You have not specified time invariant confounders.",
+          call. = FALSE)
     # ti_confounders <- NULL
   }
 
-  if (missing(type)){
-    stop("Please supply a 'full', 'short', or 'update' type",
-         call. = FALSE)
+  if (missing(type)) {
+    stop ("Please supply a 'full', 'short', or 'update' type",
+          call. = FALSE)
   }
-  else  if(!is.character(type)){
-    stop("Please provide a character string type from the following list: 'short', 'full', or 'update'",
-         call. = FALSE)
+  else  if (!is.character(type)) {
+    stop ("Please provide a character string type from the following list: 'short', 'full', or 'update'",
+          call. = FALSE)
   }
-  else if(! type %in% c("short", "full", "update") || length(type) != 1){
-    stop("Please provide a single type from the following list: 'short', 'full', or 'update'",
-         call. = FALSE)
+  else if (! type %in% c("short", "full", "update") || length(type) != 1) {
+    stop ("Please provide a single type from the following list: 'short', 'full', or 'update'",
+          call. = FALSE)
   }
 
-  if (type != "update" && !is.null(bal_stats)){
+  if (type != "update" && !is.null(bal_stats)) {
     stop ("Please only provide balance statistics for the type 'update'.",
           call. = FALSE)
   }
 
-  if(!is.null(bal_stats) && !is.data.frame(bal_stats)){
-    stop("Please provide a data frame of balance statistics from the assessBalance function.",
-         call. = FALSE)
+  if (!is.null(bal_stats) && !is.data.frame(bal_stats)) {
+    stop ("Please provide a data frame of balance statistics from the assessBalance function.",
+          call. = FALSE)
   }
 
-  if(!is.logical(verbose)){
-    stop("Please set verbose to either TRUE or FALSE.",
-         call. = FALSE)
+  if (!is.logical(verbose)) {
+    stop ("Please set verbose to either TRUE or FALSE.",
+          call. = FALSE)
   }
-  else if(length(verbose) != 1){
-    stop("Please provide a single TRUE or FALSE value to verbose.",
-         call. = FALSE)
-  }
-
-  if(!is.logical(save.out)){
-    stop("Please set save.out to either TRUE or FALSE.",
-         call. = FALSE)
-  }
-  else if(length(save.out) != 1){
-    stop("Please provide a single TRUE or FALSE value to save.out.",
-         call. = FALSE)
+  else if (length(verbose) != 1) {
+    stop ("Please provide a single TRUE or FALSE value to verbose.",
+          call. = FALSE)
   }
 
+  if (!is.logical(save.out)) {
+    stop ("Please set save.out to either TRUE or FALSE.",
+          call. = FALSE)
+  }
+  else if (length(save.out) != 1) {
+    stop ("Please provide a single TRUE or FALSE value to save.out.",
+          call. = FALSE)
+  }
 
-  time_varying_covariates <- tv_confounders
+
   all_covars <- c(tv_confounders, ti_confounders)
 
-  if (!is.null(custom)){
-    if (length(custom) != length(exposure_time_pts) || !is.list(custom) || is.data.frame(custom)){
-      stop("If you wish to supply custom formulas, please provide a list of formulas for each exposure time point.",
-           call. = FALSE)
+  if (!is.null(custom)) {
+    if (length(custom) != length(exposure_time_pts) || !is.list(custom) || is.data.frame(custom)) {
+      stop ("If you wish to supply custom formulas, please provide a list of formulas for each exposure time point.",
+            call. = FALSE)
     }
 
     forms <- custom
   }
-  else{
-    if (type != "update" && !is.null(bal_stats)){
+  else {
+    if (type != "update" && !is.null(bal_stats)) {
       stop ("Please only provide balance statistics for the type 'update'.",
             call. = FALSE)
     }
 
-    if(save.out){
+    if (save.out) {
       forms_dir1 <- file.path(home_dir, "formulas")
       if (!dir.exists(forms_dir1)) {
         dir.create(forms_dir1)
@@ -219,8 +218,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       }
     }
 
-    factor_covariates <- colnames(data)[sapply(data, is.factor)]
-    factor_covariates <- factor_covariates[factor_covariates != "ID"]
+    factor_covariates <- names(data)[sapply(data, is.factor)]
+    factor_covariates <- setdiff(factor_covariates, "ID")
 
     forms_csv <- character()
     forms <- list()
@@ -229,45 +228,45 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       time <- exposure_time_pts[x]
 
       #identifying lagged tv confounders relative to time point based on formula type
-      if (type == "full"){
+      if (type == "full") {
 
-        if(verbose){
+        if (verbose) {
           message("USER ALERT: Please manually inspect the full balancing formula below:")
         }
 
-        time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) < time]
+        time_var_include <- tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), "[", 2)) < time]
 
       }
 
-      else if (type == "short"){
+      else if (type == "short") {
 
-        if(verbose){
+        if (verbose) {
           message("USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:")
         }
 
-        time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
-                                                      exposure_time_pts[x - 1]]
+        time_var_include <- tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), "[", 2)) ==
+                                             exposure_time_pts[x - 1]]
 
       }
 
-      else if (type == "update"){
+      else if (type == "update") {
 
-        if(is.null(bal_stats)){
-          stop("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function",
-               call. = FALSE)
+        if (is.null(bal_stats)) {
+          stop ("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function",
+                call. = FALSE)
         }
-        else if (!is.data.frame(bal_stats)){
-          stop("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function",
-               call. = FALSE)
+        else if (!is.data.frame(bal_stats)) {
+          stop ("Please provide balance statistics from the assessBalance() function if you wish to run the update version of this function",
+                call. = FALSE)
         }
 
-        if(verbose){
-          message("USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and
+        if (verbose) {
+          message ("USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and
                   those greater at further lags that remained imbalanced:")
         }
 
-        time_var_include <- time_varying_covariates[as.numeric(sapply(strsplit(time_varying_covariates, "\\."), "[", 2)) ==
-                                                      exposure_time_pts[x - 1]]
+        time_var_include <- tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), "[", 2)) ==
+                                             exposure_time_pts[x - 1]]
 
         if (x > 1) {
 
@@ -285,7 +284,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
 
             time_var_include <- c(time_var_include, new)
 
-            if (verbose){
+            if (verbose) {
 
               cat(sprintf("For %s at exposure time point %s the following covariate(s) will be added to the short balancing formula:
                           %s \n",
@@ -294,7 +293,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
               cat("\n")
             }
           }
-          else{
+          else {
             if (verbose) {
 
               cat(sprintf("For %s at exposure time point %s no time-varying confounders at additional lags were added. \n",
@@ -308,40 +307,48 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       vars_to_include <- c(ti_confounders, time_var_include)
 
       #adding in any user-specified concurrent confounders (default is only lagged)
-      if(!is.null(concur_conf)){
-        if(!inherits(concur_conf, "character")){
-          stop("Please provide as a character string a list of concurrent confounders to include.",
-               call. = FALSE)
-        }
-        if(sapply(strsplit(concur_conf, "\\."), "[", 1) %in% exposure){
-          stop("Do not include the exposure concurrently. Please revise the concur_conf field.",
-               call. = FALSE)
+      if (!is.null(concur_conf)) {
+
+        if (!inherits(concur_conf, "character")) {
+          stop ("Please provide as a character string a list of concurrent confounders to include.",
+                call. = FALSE)
         }
 
-        if(sum(concur_conf %in% tv_confounders) != length(concur_conf)){
-          stop("The variables in the concur_conf field must be included in the tv_confounders.",
-               all. = FALSE)
+        if (sapply(strsplit(concur_conf, "\\."), "[", 1) %in% exposure) {
+          stop ("Do not include the exposure concurrently. Please revise the concur_conf field.",
+                call. = FALSE)
         }
-        if(as.numeric(sapply(strsplit(concur_conf, "\\."), "[", 2)) %in% time){
+
+        if (sum(concur_conf %in% tv_confounders) != length(concur_conf)) {
+          stop ("The variables in the concur_conf field must be included in the tv_confounders.",
+                all. = FALSE)
+        }
+
+        if (as.numeric(sapply(strsplit(concur_conf, "\\."), "[", 2)) %in% time) {
           vars_to_include <- c(vars_to_include,
                                concur_conf[as.numeric(sapply(strsplit(concur_conf, "\\."), "[", 2)) %in% time] )
         }
       }
 
       #adding in any user-specified confounders to retain in all formulas
-      if(!is.null(keep_conf)){
-        if(!is.character(keep_conf)){
-          stop("Please provide as a character string a list of confounders to include in all formulas.", call. = FALSE)
+      if (!is.null(keep_conf)) {
+
+        if (!is.character(keep_conf)) {
+          stop ("Please provide as a character string a list of confounders to include in all formulas.",
+                call. = FALSE)
 
         }
-        if(sum(keep_conf %in% tv_confounders) != length(keep_conf)){
-          stop("The variables in the keep_conf field must be included in tv_confounders.",
-               call. = FALSE)
+
+        if (sum(keep_conf %in% tv_confounders) != length(keep_conf)) {
+          stop ("The variables in the keep_conf field must be included in tv_confounders.",
+                call. = FALSE)
         }
+
         keep_conf <- keep_conf[!paste0(exposure, ".", time) %in% keep_conf]
 
-        if (length(keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time]) > 0){
-          if(! keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time] %in% vars_to_include){
+        if (length(keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time]) > 0) {
+
+          if (! keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time] %in% vars_to_include) {
             vars_to_include <- c(vars_to_include, keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time])
           }
         }
@@ -352,7 +359,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
                             paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
 
       # Prints form for user inspection
-      if (verbose){
+      if (verbose) {
         cat(sprintf("The %s formula for %s - %s at %s time point %s is: \n",
                     type, exposure, outcome, exposure, as.character(time)))
         print(f)
@@ -365,22 +372,26 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
                        sprintf("%s formula for %s-%s at %s time point %s:",
                                type, exposure, outcome, exposure, as.character(time)))
 
+        forms_csv <- c(forms_csv, paste(exposure, "~",
+                                        paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
 
-      forms_csv <- c(forms_csv, paste(exposure, "~",
-                                      paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
+      }
 
       # Assigns the form to forms list
       forms[[paste(type, "_form", "-", time, sep = "")]] <- f
+
     }
 
-    if(save.out){
+    if (save.out) {
       # Writes forms_csv to a CSV file
+
       forms_csv_file <- sprintf("%s/%s_%s-%s_%s_balancing_formulas.csv",
-                forms_dir, type, exposure, outcome, type)
+                                forms_dir, type, exposure, outcome, type)
 
       writeLines(forms_csv, con = forms_csv_file)
 
       # writes to rds
+
       forms_rds_file <- sprintf("%s/%s_%s-%s_%s_balancing_formulas.rds",
                                 forms_dir, type, exposure, outcome, type)
 
