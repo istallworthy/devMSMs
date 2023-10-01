@@ -113,7 +113,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     }
     else if (!dir.exists(home_dir)) {
       stop ("Please provide a valid home directory path if you wish to save output locally.",
-            = FALSE)
+            .call = FALSE)
     }
   }
 
