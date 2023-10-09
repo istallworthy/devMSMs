@@ -269,7 +269,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     for (t in seq_len(length(eps))) {
       var_name <- paste(exposure, eps[t], sep = ".")
 
-      if(is.null(hi_lo_cut)) { #default is median split
+      if (is.null(hi_lo_cut)) { #default is median split
         epoch_info$low[t] <- as.numeric(median(data[, var_name] - 0.001, na.rm = T)) #padded with -.001 bc otherwise breaks hypotheses()
         epoch_info$high[t] <- as.numeric(median(data[, var_name] + 0.001 , na.rm = T))
 
@@ -370,7 +370,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
            call. = FALSE)
     }
     else if (reference %in% comparison) {
-      stop ("If you wish to make a custom comparison, please provide unique reference and comparison events.",
+      stop ("If you wish to make custom comparisons, please provide unique reference and comparison events.",
            call. = FALSE)
     }
   }
@@ -441,6 +441,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       }
 
       # Makes table of pooled average estimates and saves out
+
       outfile <- sprintf("%s/histories/%s-%s_pooled_estimated_means_hi_lo=%s.html",
                          home_dir, exposure, outcome, paste(hi_lo_cut, collapse = "_") )
       sink(outfile)
@@ -504,6 +505,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       }
 
       # Makes table of pooled comparisons and saves out
+
       outfile <- sprintf("%s/histories/%s-%s_pooled_comparisons_hi_lo=%s.html",
                          home_dir, exposure, outcome, paste(hi_lo_cut, collapse = "_") )
       sink(outfile)
@@ -532,6 +534,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
 
     # for plotting
+
     comps <- comps_pool
     preds <- preds_pool
 
@@ -557,6 +560,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       }
 
       # Makes table of average estimates a
+
       lapply(seq_len(length(preds)), function(x) {
         y <- preds[[x]]
 
@@ -601,6 +605,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
 
     comps <- perform_multiple_comparison_correction(comps, reference, comp_histories, mc_comp_method, verbose)
 
+
     #rounding term values
 
     comps$term <- unlist(lapply(1:length(comps$term), function(x) {
@@ -623,7 +628,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       outfile <- sprintf("%s/histories/%s-%s_comparisons_hi_lo=%s.html",
                          home_dir, exposure, outcome, paste(hi_lo_cut, collapse = "_") )
 
+
       # Makes table of comparisons and saves out
+
       sink(outfile)
       stargazer::stargazer(
         as.data.frame(comps),

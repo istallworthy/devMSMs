@@ -467,7 +467,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     }
 
     if (mi) {
+
       # Running balance stats function, unweighted, on each imputed dataset w/ no weights
+
       if (inherits(data, "mids")) {
         m <- data$m
 
@@ -525,6 +527,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
 
       # Gathering imbalanced covariate statistics to average across imputed datasets for the final list/assessment of imbalanced covariates
       # Averaging across imputed datasets
+
       all_bal_stats <- data.frame(
         exposure = exposure,
         exp_time = bal_stats[[1]]$exp_time,
@@ -533,6 +536,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         avg_bal = rowMeans(do.call(cbind, lapply(bal_stats, `[[`, "std_bal_stats"))))
 
       # #adds custom bal thresh info
+
       if (!is.null(imp_conf)) {
 
         all_bal_stats$bal_thresh <-ifelse(all_bal_stats$covariate %in% imp_conf,
@@ -567,6 +571,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
                                 balance_thresh, k = 0, weights = w, imp_conf, verbose, save.out)
 
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
+
       all_bal_stats  <- data.frame(
         exposure = exposure,
         exp_time = bal_stats$exp_time,
@@ -577,14 +582,17 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         balanced = bal_stats$balanced)
 
       # Getting totals
+
       tot_covars <- sapply(strsplit(all_bal_stats$covariate, "\\."), `[`, 1)
     }
   } #ends weighted
 
   ### Plotting and summarizing
+
   tot_cons <- unique(tot_covars) # Total domains/constructs
 
   # Make love plot to summarize imbalance at each exposure time point
+
   data_type <- if (mi) "imputed" else "single"
 
   weights_method <- if (type == "weighted") weights[[1]]$method else "no weights"

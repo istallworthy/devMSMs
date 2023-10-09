@@ -228,6 +228,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       time <- exposure_time_pts[x]
 
       #identifying lagged tv confounders relative to time point based on formula type
+
       if (type == "full") {
 
         if (verbose) {
@@ -307,6 +308,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       vars_to_include <- c(ti_confounders, time_var_include)
 
       #adding in any user-specified concurrent confounders (default is only lagged)
+
       if (!is.null(concur_conf)) {
 
         if (!inherits(concur_conf, "character")) {
@@ -331,6 +333,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       }
 
       #adding in any user-specified confounders to retain in all formulas
+
       if (!is.null(keep_conf)) {
 
         if (!is.character(keep_conf)) {
@@ -355,6 +358,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       }
 
       # Creates form for the given exposure time point
+
       f <- as.formula(paste(paste0(exposure, ".", time, " ~ "),
                             paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
 
@@ -367,6 +371,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       }
 
       # Appends the form string to forms_csv
+
       if (save.out) {
         forms_csv <- c(forms_csv,
                        sprintf("%s formula for %s-%s at %s time point %s:",
@@ -378,11 +383,13 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       }
 
       # Assigns the form to forms list
+
       forms[[paste(type, "_form", "-", time, sep = "")]] <- f
 
     }
 
     if (save.out) {
+
       # Writes forms_csv to a CSV file
 
       forms_csv_file <- sprintf("%s/%s_%s-%s_%s_balancing_formulas.csv",
