@@ -224,6 +224,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
       }
 
       # Save histogram of new weights
+
       p <- ggplot2::ggplot(as.data.frame(t), ggplot2::aes(x = t)) +
         ggplot2::geom_histogram(color = 'black',
                                 bins = 15) +

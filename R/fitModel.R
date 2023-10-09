@@ -286,19 +286,16 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, paste, sep = "", collapse = ".")
 
   #getting null comparisons for LHT
+
   if (model == "m0") { n <- "int" }
   else if (model == "m1") { n <- "covs" }
   else if (model == "m2") { n <- "int" }
   else if (model == "m3") { n <- "covs" }
 
-  # if (family == "gaussian"){
   l <- link
   family <- family(link = l)
   fam <- family
-  # assign("fam", family, envir = .GlobalEnv) #not sure how else to make this available for the export_summ() function down below
-  # family <- family(link = l)
-  # fam <- family(link = l)
-  # }
+
 
   if (inherits(data, "mids")) { #imputed dataset
 

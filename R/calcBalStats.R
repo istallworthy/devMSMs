@@ -78,12 +78,12 @@
 calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL,
                          imp_conf = NULL, verbose = TRUE, save.out = TRUE) {
 
-  if(!is.list(formulas) | is.data.frame(formulas)){
-    stop("Please provide a list of formulas for each exposure time point",
+  if (!is.list(formulas) | is.data.frame(formulas)) {
+    stop ("Please provide a list of formulas for each exposure time point",
          call. = FALSE)
   }
-  if (!is.null(weights) && !inherits(weights, "weightitMSM")){
-    stop("Please supply a list of weights output from the createWeights function (via WeightIt::WeightItMSM).",
+  if (!is.null(weights) && !inherits(weights, "weightitMSM")) {
+    stop ("Please supply a list of weights output from the createWeights function (via WeightIt::WeightItMSM).",
          call. = FALSE)
   }
 
@@ -114,8 +114,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   }
 
   #split factors
+
   if (length(factor_covariates) > 0) {
-    # data$"ID" = as.numeric(data$"ID")
     data2 <- cobalt::splitfactor(data, factor_covariates, drop.first = "if2")
   }
   else {
@@ -124,6 +124,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
   #creating initial data frames
   #data frame with all sampling weights for all exposures at all exposure time points for all histories
+
   all_prop_weights <- data.frame("ID" = NA,
                                  exposure = NA,
                                  exp_time = NA,
@@ -131,11 +132,13 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   all_bal_stats <- data.frame()
 
   #cycles through user-specified exposure time points
+
   for (z in seq_along(exposure_time_pts)) {
     exposure_time_pt <- exposure_time_pts[z]
     lagged_time_pts <- exposure_time_pts[exposure_time_pts < exposure_time_pt]
 
     # GETS COVARIATES FROM FORM FOR ASSESSING BALANCE
+
     full_form <- formulas[[names(formulas)[as.numeric(sapply(strsplit(names(formulas), "-"), "[", 2)) == exposure_time_pt]]]
     covars <- deparse1(full_form[[3]], collapse = "") # gets covariates
     covar_time <- sapply(strsplit(unlist(strsplit(as.character(covars), "\\+")), "\\."), "[", 2)
@@ -157,10 +160,12 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
 
     # GETTING BALANCE STATS FOR T=1 W/ NO EXPOSURE HISTORY (ok to standardize immediately)
+
     if (length(lagged_time_pts) == 0) {
       temp <- data2
 
       # Unweighted pre-balance checking
+
       if (!weighted) {
         if (exposure_type == "continuous") {
 
@@ -173,14 +178,19 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       }
 
       # Weighted balance checking
+
       else {
         if (exposure_type == "continuous") {
+
           # finding cor
+
           bal_stats <- cobalt::col_w_cov(temp[covars], temp[[exposure_name]], std = TRUE,
                                          weights = temp[["weights"]]) #IPTW weights
         }
         else if (exposure_type == "binary") {
+
           # finding smd
+
           bal_stats <- cobalt::col_w_smd(temp[covars], temp[[exposure_name]], std = TRUE,
                                          weights = temp[["weights"]]) #IPTW weights
 
@@ -190,33 +200,42 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       names(bal_stats) <- "std_bal_stats"
     } #ends lag=0
 
+
     # ASSIGNING HISTORIES FOR EXP TIME POINTS T>1
+
     else {
+
       # creating proportion weights based on proportion of individuals in a given exposure history
+
       prop_weights <- data.frame(ID = data[["ID"]],
                                  exposure = exposure,
                                  exp_time = exposure_time_pt,
                                  history = NA)
 
       # finding histories up until exp time point T
+
       histories <- apply(gtools::permutations(2, length(lagged_time_pts), c(1, 0), repeats.allowed = TRUE),
                          1, paste, sep = "", collapse = "-")
       histories <- as.data.frame(histories)
 
       # cycle through histories to identify individuals with each history
+
       for (h in seq_len(nrow(histories))) {
         his <- as.data.frame(histories[h, ])
         his <- as.character(unlist(his[1, ]))
 
         # get wide data variable names for exposures at each time in each history
+
         exps_time <- apply(expand.grid(exposure, as.character(lagged_time_pts)), 1,
                            paste, collapse = ".", sep = ".")
 
         # initiate flag marking whether each individual falls into the given history at 0 (t(1)-1)
+
         data$flag <- 0
 
         # cycles through times in each history and sequentially flags individuals who meet each criterion
         # (e.g., hi at 6, lo at 15, etc.) for that history
+
         for (t in seq_along(lagged_time_pts)) {
           time <- lagged_time_pts[t]
           exp <- as.numeric(sapply(strsplit(as.character(his), "-"), "[", t)) # hi/lo indicator
@@ -246,10 +265,13 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
         } # ends history's constituent time pts time points (e.g., 6, 15, 24)
 
+
         # finding ids who met criteria for that history
+
         ids <- data[["ID"]][!is.na(data$flag) & data$flag == t]
 
         # labels those ids w/ that history
+
         prop_weights[["history"]][prop_weights[["ID"]] %in% ids] <- paste(his, collapse = ",")
         data$flag <- NULL # resets flag
       } # ends history loop (e.g., "l-l-l")
@@ -259,13 +281,16 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
 
       # GET BALANCE STATISTICS FOR T>1 (when there is a history to weight on)
+
       if (length(lagged_time_pts) > 0) {
 
         # Merge data with prop_weights by ID
+
         temp <- merge(data2, prop_weights, by = "ID", all.x = TRUE) #data with factors split up
 
 
         # Removing any histories that only have 1 or 0 person contributing (cannot calc bal stats)
+
         if (any(prop_sum$exposure == 1) || any(prop_sum$exposure == 0)) {
 
           omitted_histories <- as.character(as.data.frame(prop_sum)[[1]][prop_sum$exposure == 1 | prop_sum$exposure == 0])
@@ -279,7 +304,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             cat("\n")
           }
 
-          else{
+          else {
 
             cat(sprintf("USER ALERT: the following history/histories, %s has/have been omitted from
                         balance checking for exposure %s at time point %s due to insufficient counts:",
@@ -290,7 +315,9 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           temp <- temp[!temp$history %in% omitted_histories, , drop = FALSE]
         } #ends hist exc
 
+
         # Unweighted pre-balance checking
+
         if (!weighted) { # no IPTW weighting but weighting on history
 
           if (exposure_type == "continuous") {
@@ -303,6 +330,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             })
 
             # getting weighted mean across histories (cols), weighting by proportion of those w/ that same history
+
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
               weighted.mean(t(bal_stats[i, ])[1, ],
                             tabulate(as.factor(temp$history)) / nrow(temp))
@@ -338,6 +366,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             })
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
+
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
               weighted.mean(t(bal_stats[i, ])[1, ],
                             tabulate(as.factor(temp$history)) / nrow(temp))
@@ -346,6 +375,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
 
             # standardizing balance statistics after finding weighted balance stats
+
             bal_stats$std_bal_stats <- weighted_bal_stats/
               sapply(covars, function(x) {
                 sqrt(mean( #dividing by pool SD estimate (unadjusted)
@@ -361,6 +391,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # }
 
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
+
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
 
             bal_stats <- bal_stats[startsWith(names(bal_stats), "std")]
@@ -368,11 +399,15 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           } #ends binary
         } #ends weighted=0
 
+
         # Weighted balance checking
+
         else { # if weighted, use IPTW weights from weightitmsm and weight by history
 
           if (exposure_type == "continuous") {
+
             # finds balance for each covariate clustered/subset by history
+
             bal_stats <- sapply(sort(unique(temp$history)), function(i) {
 
               temp2 <- temp[temp$history == i,, drop = FALSE]
@@ -388,6 +423,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # }
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
+
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
               weighted.mean(t(bal_stats[i, ])[1, ],
                             tabulate(as.factor(temp$history)) / nrow(temp))
@@ -396,7 +432,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
 
             # standardizing balance statistics after weighting by history
-            # bal_stats <- bal_stats %>%
+
             bal_stats$std_bal_stats <- weighted_bal_stats /
               (sapply(rownames(bal_stats), function(x) { #issue: looking in data for unweighted vals but factors have additional vars
                 sd(as.numeric(data2[[x]]), na.rm = TRUE) }) *# unweighted covar sd
@@ -404,6 +440,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
 
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
+
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
 
             bal_stats <- bal_stats[startsWith(names(bal_stats), "std")]
@@ -411,7 +448,9 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           } #ends continuous
 
           else if (exposure_type == "binary") {
+
             # finds balance for each covariate clustered/subset by history
+
             bal_stats <- sapply(sort(unique(temp$history)), function(i) {
               temp2 <- temp[temp$history == i,, drop = FALSE]
 
@@ -426,6 +465,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             # }
 
             # getting weighted mean across histories, weighting by proportion of those w/ that same history
+
             weighted_bal_stats <- sapply(seq(nrow(bal_stats)), function(i) {
               weighted.mean(t(bal_stats[i, ])[1, ],
                             tabulate(as.factor(temp$history)) / nrow(temp))
@@ -434,6 +474,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- as.data.frame(cbind(bal_stats, weighted_bal_stats))
 
             # standardizing balance statistics after finding weighted balance stats
+
             bal_stats$std_bal_stats <- weighted_bal_stats/
               sapply(covars, function(x) {
                 sqrt(mean( #dividing by pool SD estimate (unadjusted)
@@ -443,6 +484,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               })
 
             # For a weighted_bal_stat of 0, make std stat also 0 so as not to throw an error
+
             bal_stats$std_bal_stats[is.nan(bal_stats$std_bal_stats)] <- 0
 
             bal_stats <- bal_stats[startsWith(names(bal_stats), "std")]
@@ -451,16 +493,20 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
         } #ends weighted
 
         # collect proportions for histories at this time point
+
         all_prop_weights <- rbind(all_prop_weights, prop_weights)
       }
     } # ends lag>0 loops
 
 
+
     # ADDS INFO TO BAL STATS
+
     bal_stats <- as.data.frame(bal_stats)
     bal_stats$covariate <- rownames(bal_stats)
 
     #averages across factor levels to create one bal stat per factor variable?
+
     data$ID <- as.numeric(data$ID)
     f_vars <- colnames(data)[sapply(data, is.factor)]
 
@@ -499,6 +545,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     all_bal_stats$covar_time[is.na(all_bal_stats$covar_time)] <- 0
 
     # Make love plot per exposure time point
+
     make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k,
                    form_name, bal_stats, data_type, balance_thresh, weights_method, imp_conf, verbose, save.out)
 
@@ -526,6 +573,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
 
 
   # Summarizing balance
+
   bal_summary_exp <- as.data.frame(aggregate(balanced ~ exp_time,
                                              data = all_bal_stats,
                                              FUN = function(x) c(balanced_n = sum(x == 1),
@@ -571,7 +619,9 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     }
   }
 
+
   # tallies total possible COVARIATES FROM FORM FOR ASSESSING BALANCE
+
   all_form <- as.data.frame(do.call(rbind, formulas))
   tot_covars <- deparse1(all_form[, 3])
   tot_covars <- as.character(unlist(strsplit(tot_covars, "\\+")))[

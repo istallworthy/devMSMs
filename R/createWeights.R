@@ -191,15 +191,18 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   else {
 
     # List of formulas for each time point
+
     form <- formulas
     form <- unname(form)
 
     #temp workaround while noah is fixing weightitMSM bug...this will only work for continuous exposures tho
+
     if (method == "gbm" && is.na(criterion)) {
       criterion <- "p.mean"
     }
 
     # function to wrap weightitMSM() and calculate weights
+
     calculate_weights <- function(data, form, weights_method, SL.library, criterion, verbose, ...) {
 
       if(weights_method == "super") {
@@ -277,7 +280,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
                call. = FALSE)
         }
 
-        fit <- calculate_weights(d, form, weights_method, SL.library, criterion, ...)
+        fit <- calculate_weights(d, form, weights_method, SL.library, criterion, verbose, ...)
 
         d$weights <- fit$weights
 
@@ -296,6 +299,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         }
 
         if (save.out) {
+
           # Save weights merged with ID variable
 
           write.csv(x = d, file = sprintf("%s/weights/values/%s-%s_%s_%s_%s.csv",
@@ -413,6 +417,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       }
 
       # Creating weights
+
       weights <-  lapply(1, function(i) {
         calculate_weights(data, form, weights_method, SL.library, criterion, verbose, ...)
       })
