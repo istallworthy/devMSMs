@@ -152,10 +152,10 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
          call. = FALSE)
   }
 
-  else if(is.list(data) && !is.data.frame(data)) {
-    if (sum(sapply(data, is.data.frame)) != length(data)){
-      stop("Please supply a list of data frames that have been imputed.",
-           call. = FALSE)
+  else if (is.list(data) && !is.data.frame(data)  && !mice::is.mids(data)) {
+    if (sum(sapply(data, is.data.frame)) != length(data)) {
+      stop ("Please supply a list of data frames that have been imputed.",
+            call. = FALSE)
     }
   }
 
