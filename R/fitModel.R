@@ -416,7 +416,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     if (save.out) {
 
       sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
-                        file = file.path(home_dir, "models",
+                        file = file.path(home_dir, "/models/",
                                          sprintf("%s-%s_%s_table_mod_ev.docx",
                                                  exposure, outcome, model)))
 
@@ -450,7 +450,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     if (save.out) {
 
       sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
-                        file = file.path(home_dir, "models",
+                        file = file.path(home_dir, "/models/",
                                          sprintf("%s-%s_%s_table_mod_ev.docx",
                                                  exposure, outcome, model)))
       # # require(sur

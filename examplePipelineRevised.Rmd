@@ -354,7 +354,7 @@ prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, o
 
 
 ### STEP 2: Determine optimal weighting method
-#### 2a. Create short formulas
+#### 2a. Create simplified balancing formulas
 ```{r}
 
 #optional list of concurrent confounder
@@ -386,7 +386,7 @@ short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome,
 
 ```
 
-#### 2b. Create weights with all weighting methods
+#### 2b. Create IPTW Balancing Weights using Multiple Weighting Methods
 ```{r}
 
 ## Create balancing weights with simplified formulas
@@ -625,6 +625,10 @@ final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts
 #minimum input
 final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
 
+
+#remaining imbalanced covariates that are time-invariant or measured at t=1 ---manually add
+imbalanced_covars <- c("ESETA1.6", "gov_asst", "B18Raw.6") 
+
 ```
 #### Sensitvity analyses
 ```{r}
@@ -657,6 +661,7 @@ int_order = 3
 int_order = NA
 
 #covariates (required for covariate models m1, m3)
+covariates <- imbalanced_covariates 
 covariates <- c("ESETA1.6", "gov_asst", "B18Raw.6") 
 covariates = NULL
 
