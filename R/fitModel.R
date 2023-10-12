@@ -103,9 +103,9 @@
 #'               save.out = FALSE)
 
 fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
-                     family = gaussian, link = "identity", int_order = NA, covariates = NULL, epochs = NULL,
+                     family = NA, link = NA, int_order = NA, covariates = NULL, epochs = NULL,
                      verbose = TRUE, save.out = TRUE) {
-
+  
   if (save.out) {
     if (missing(home_dir)) {
       stop ("Please supply a home directory.",
@@ -120,7 +120,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
             call. = FALSE)
     }
   }
-
+  
   if (missing(data)) {
     stop ("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
           call. = FALSE)
@@ -135,7 +135,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
             call. = FALSE)
     }
   }
-
+  
   if (missing(exposure)) {
     stop ("Please supply a single exposure.",
           call. = FALSE)
@@ -144,7 +144,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ("Please supply a single exposure as a character.",
           call. = FALSE)
   }
-
+  
   if (missing(outcome)) {
     stop ("Please supply a single outcome.",
           call. = FALSE)
@@ -153,7 +153,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ("Please supply a single outcome as a character.",
           call. = FALSE)
   }
-
+  
   if (missing(weights)) {
     stop ("Please supply a list of IPTW weights.",
           call. = FALSE)
@@ -169,7 +169,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
             call. = FALSE)
     }
   }
-
+  
   if (missing(exposure_time_pts)) {
     stop ("Please supply the exposure time points at which you wish to create weights.",
           call. = FALSE)
@@ -178,12 +178,12 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ("Please supply a list of exposure time points as integers.",
           call. = FALSE)
   }
-
+  
   if (missing(model)) {
     stop ('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")',
           call. = FALSE)
   }
-
+  
   if (!is.character(model)) {
     stop ('Please provide as a character string a valid model "m" from 0-3 (e.g., "m1")',
           call. = FALSE)
@@ -192,7 +192,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ('Please provide a single outcome model selection "m" from 0-3 (e.g., "m1")',
           call. = FALSE)
   }
-
+  
   if (!(model %in% c("m0", "m1", "m2", "m3"))) {
     stop ('Please provide a valid model "m" from 0-3 (e.g., "m1")',
           call. = FALSE)
@@ -205,17 +205,20 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ("Please provide a list of covariates as characters if you select a covariate model.",
           call. = FALSE)
   }
-
-  if (!inherits(family, "function")) {
+  
+  if (!inherits(family, "function") && !is.na(family)) {
     stop ("Please provide a valid family in the form of a function (without quotations).",
           call. = FALSE)
   }
-  if (length(family) != 1) {
+  else if (length(family) != 1) {
     stop ("Please provide a single valid family in the form of a function (without quotations).",
           call. = FALSE)
+  } 
+  if (is.na(family)) {
+    family <- gaussian
   }
-
-  if (!inherits(link, "character")) {
+  
+  if (!inherits(link, "character") && !is.na(link)) {
     stop ("Please provide as a character a valid link function.",
           call. = FALSE)
   }
@@ -223,7 +226,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ("Please provide as a character a valid link function.",
           call. = FALSE)
   }
-
+  if (is.na(link)) {
+    link <- "identity"
+  }
+  
   if (!is.null(covariates)) {
     if (!is.character(covariates)) {
       stop ("Please provide a list of character strings for covariates.",
@@ -234,7 +240,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
                call. = FALSE)
     }
   }
-
+  
   if (!is.logical(verbose)) {
     stop ("Please set verbose to either TRUE or FALSE.",
           call. = FALSE)
@@ -243,7 +249,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ("Please provide a single TRUE or FALSE value to verbose.",
           call. = FALSE)
   }
-
+  
   if (!is.logical(save.out)) {
     stop ("Please set save.out to either TRUE or FALSE.",
           call. = FALSE)
@@ -252,26 +258,26 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ("Please provide a single TRUE or FALSE value to save.out.",
           call. = FALSE)
   }
-
-
+  
+  
   weights_method <- weights[[1]]$method
-
+  
   if (save.out) {
     models_dir <- file.path(home_dir, "models")
     if (!dir.exists(models_dir)) {
       dir.create(models_dir)
     }
   }
-
+  
   # Lists out exposure-epoch combos
-
+  
   if ( is.null(epochs)) { #making epochs time pts if not specified by user
-
+    
     epochs <- data.frame(epochs = as.character(exposure_time_pts),
                          values = exposure_time_pts)
-
+    
   } else {
-
+    
     if ( !is.data.frame(epochs) || ncol(epochs) != 2 ||
          sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)) {
       stop ("If you supply epochs, please provide a dataframe with two columns of epochs and values.",
@@ -282,169 +288,169 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
             call. = FALSE)
     }
   }
-
+  
   exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, paste, sep = "", collapse = ".")
-
+  
   #getting null comparisons for LHT
-
+  
   if (model == "m0") { n <- "int" }
   else if (model == "m1") { n <- "covs" }
   else if (model == "m2") { n <- "int" }
   else if (model == "m3") { n <- "covs" }
-
+  
   l <- link
   family <- family(link = l)
   fam <- family
-
-
+  
+  
   if (inherits(data, "mids")) { #imputed dataset
-
+    
     fits <- lapply(seq_len(data$m), function(y) {
-
+      
       d <- mice::complete(data, y)
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
-
+      
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
-
+      
     })
-
+    
     fits.null <- lapply(seq_len(data$m), function(y) {
-
+      
       d <- mice::complete(data, y)
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
-
+      
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
-
+      
     })
-
+    
     if (verbose) {
       message("USER ALERT: Please inspect the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
       cat("\n")
       message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
       cat("\n")
     }
-
+    
     print(mitml::testModels(fits, fits.null))
     cat("\n")
   }
-
-
+  
+  
   else if (is.list(data) && !is.data.frame(data)) { #imputed dataset
     fits <- lapply(seq_len(length(data)), function(y) {
-
+      
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
-
+      
     })
-
+    
     fits.null <- lapply(seq_len(length(data)), function(y) {
-
+      
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
-
+      
     } )
-
+    
     if (verbose) {
       message("Please inspect the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
       cat("\n")
       message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
       cat("\n")
     }
-
+    
     print(mitml::testModels(fits, fits.null))
     cat("\n")
   }
-
+  
   else if (is.data.frame(data)) { #df
     fits <- lapply(1, function(y) {
-
+      
       d <- data
       d$weights <- NULL
       d$weights <- weights[["0"]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
-
+      
     } )
-
+    
     fits.null <- lapply(1, function(y) {
-
+      
       d <- data
       d$weights <- NULL
       d$weights <- weights[["0"]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
-
+      
     } )
-
+    
     if (verbose) {
       message("Please inspect the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
       cat("\n")
       message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
       cat("\n")
     }
-
+    
     print(anova(fits[[1]], fits.null[[1]]))
     names(fits) <- "0"
     cat("\n")
   }
-
-
+  
+  
   if (inherits(data, "mids") || (is.list(data)) && !is.data.frame(data)) {
-
+    
     names(fits) <- seq_len(length(fits))
-
+    
     if (verbose) {
       sprintf("The marginal model, %s run for each imputed dataset is summarized below: \n",
               model)
-
-
+      
+      
       cat(paste("The marginal model, ", model, ", is summarized below:"), "\n")
-
+      
       print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE))
-
+      
     }
-
+    
     if (save.out) {
-
+      
       print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
-                        file = file.path(home_dir, "models",
-                                         sprintf("%s-%s_%s_table_mod_ev.docx",
-                                                 exposure, outcome, model))))
+                              file = file.path(home_dir, "models",
+                                               sprintf("%s-%s_%s_table_mod_ev.docx",
+                                                       exposure, outcome, model))))
     }
-
+    
     names(fits) <- NULL
   }
   else {
     if (verbose) {
-
+      
       cat(paste("The marginal model, ", model, ", is summarized below:"), "\n")
-
+      
       print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE))
-
+      
     }
-
+    
     if (save.out) {
-
+      
       print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
-                        file = file.path(home_dir, "models",
-                                         sprintf("%s-%s_%s_table_mod_ev.docx",
-                                                 exposure, outcome, model))))
+                              file = file.path(home_dir, "models",
+                                               sprintf("%s-%s_%s_table_mod_ev.docx",
+                                                       exposure, outcome, model))))
     }
-
+    
   }
-
-
+  
+  
   if (save.out) {
     saveRDS(fits,
             file = file.path(home_dir, "models",
                              sprintf("%s-%s_%s_model.rds",
                                      exposure, outcome, model)))
     cat("\n")
-
+    
     if (verbose) {
       cat("\n")
       print(lapply(fits, function(x) { summary(x) } ))
@@ -452,7 +458,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       cat("Tables of model evidence have now been saved in the 'models/' folder.\n")
     }
   }
-
+  
   fits
-
+  
 }
