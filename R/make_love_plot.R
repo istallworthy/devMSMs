@@ -84,28 +84,28 @@
 
 make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, balance_stats, data_type,
                            balance_thresh, weights_method, imp_conf, verbose, save.out) {
-
+  
   stat_var <- colnames(balance_stats)[grepl("_bal", colnames(balance_stats))]
   colnames(balance_stats)[colnames(balance_stats) == stat_var] <- "avg_bal"
   # balance_stats <- balance_stats %>% dplyr::arrange(avg_bal)
   balance_stats <- balance_stats[order(balance_stats$avg_bal), , drop = FALSE]
-
+  
   x_lab <- if (exposure_type == "continuous") "Correlation with Exposure" else "Standardized Mean Difference Between Exposures"
-
+  
   labels <- ifelse(balance_stats$balanced == 0, balance_stats$covariate, "")
-
+  
   min_val <- if (min(balance_stats[, "avg_bal"]) < 0) min(balance_stats[, "avg_bal"]) - 0.05 else min(balance_thresh) - 0.05
-
+  
   if (min_val > -(max(balance_thresh))){
     min_val <- -(max(balance_thresh)) - 0.05 #to make sure user-supplied balance thresh is on the figure
   }
-
+  
   max_val <- if (max(balance_stats[, "avg_bal"]) > 0) max(balance_stats[, "avg_bal"]) + 0.05 else max(balance_thresh) + 0.05
-
+  
   if (max_val < max(balance_thresh)) {
     max_val <- max(balance_thresh) + 0.05 #to make sure user-supplied balance thresh is on the figure
   }
-
+  
   # Make love plot per exposure time point
   lp <- ggplot2::ggplot(ggplot2::aes(x = avg_bal,
                                      y = reorder(as.factor(covariate), avg_bal)),
@@ -134,11 +134,11 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
                    legend.key = ggplot2::element_blank(),
                    legend.position = "none") +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
-
+  
   if (nrow(balance_stats) > 40) { # stagger covariate labels if there are many
     lp <- lp + ggplot2::scale_y_discrete(guide = ggplot2::guide_axis(n.dodge = 2))
   }
-
+  
   if (!is.null(imp_conf)) { #adding threshold lines
     lp <- lp + ggplot2::geom_vline(xintercept = balance_thresh[1],
                                    linetype = "dashed",
@@ -160,34 +160,36 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
     lp <- lp + ggplot2::geom_vline(xintercept = -balance_thresh,
                                    linetype = "dashed",
                                    color = "red")
-
+    
   }
-
+  
   if (data_type == "imputed") {
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance for Imputation ", k))
-
+    
     if (save.out) {
       suppressMessages(ggplot2::ggsave(lp,
-                                       filename = sprintf("%s/balance/%splots/%s_imp_%s_%s_%s_%s_summary_balance_plot.jpeg",
-                                                              home_dir, folder, form_name, k, exposure, exposure_time_pt, weights_method),
+                                       filename = file.path(home_dir, "balance", folder, "plots", 
+                                                            sprintf("%s_imp_%s_%s_%s_%s_summary_balance_plot.jpeg",
+                                                                    form_name, k, exposure, exposure_time_pt, weights_method)),
                                        width = 6,
                                        height = 8))
     }
   }
   else {
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance"))
-
+    
     if (save.out) {
       suppressMessages(ggplot2::ggsave(lp,
-                                       filename =  sprintf("%s/balance/%splots/%s_%s_%s_%s_summary_balance_plot.jpeg",
-                                                               home_dir, folder, form_name, exposure, exposure_time_pt, weights_method),
+                                       filename =  file.path(home_dir, "balance", folder, "plots", 
+                                                             sprintf("%s_%s_%s_%s_summary_balance_plot.jpeg",
+                                                                     form_name, exposure, exposure_time_pt, weights_method)),
                                        width = 6,
                                        height = 8))
     }
   }
-
+  
   if (verbose) {
     print(lp)
   }
-
+  
 }
