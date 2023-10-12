@@ -86,8 +86,7 @@ outcome <- "EF_avg_perc.58"
 #optional 
 tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "MDI.6", "MDI.15",                                            
-                    # "RHasSO.6", "RHasSO.15", "RHasSO.24", #removed for low variability --check this
-                    "RHasSO.35", "RHasSO.58",                                         
+                    "RHasSO.6", "RHasSO.15","RHasSO.35", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
                     "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
                     "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
                     "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
@@ -114,7 +113,7 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 Choose from the following preliminary steps to assign to 'data' one of the following for use in the package:
 - a single data frame of data in wide format with no missing data 
 - a mids object (output from mice::mice()) of data imputed in wide format
-- a list of data imputed in wide format
+- a list of data imputed in wide format as data frames
 
 Data columns should be either numeric or factor form and the ID column should be numeric.
 
@@ -136,11 +135,11 @@ data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/
 
 # if you have long data with wrong time, id, and/or missing indicators and need to format
 data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, outcome, 
-                            time_var = "TAge", #list original time variable here if it's not "WAVE"
-                            id_var = "S_ID", #list original id variable here if it's not "ID"
-                            missing = NA, #list missing value here
-                            factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO", "PmMrSt2", "HomeOwnd"), #list factor variables here
-                            save.out = TRUE) 
+                              time_var = "TAge", #list original time variable here if it's not "WAVE"
+                              id_var = "S_ID", #list original id variable here if it's not "ID"
+                              missing = NA, #list missing value here
+                              factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO", "PmMrSt2", "HomeOwnd"), #list factor variables here
+                              save.out = TRUE) 
 
 
 # #making exposure binary for testing purposes only 
@@ -182,6 +181,10 @@ data <- data_wide
 #optional
 m <- 1 #number of imputations (default is 5)
 method <- "pmm" # provide an imputation method pmm, midastouch, sample, cart , rf (default)
+
+#optional
+#please see the mice::mice() documentation for more optimal input to customize mice(): https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice
+
 
 #note: right now (just for testing purposes), the function is set up for maxit = 0 to go fast, default is 5
 imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, 
@@ -240,12 +243,12 @@ If you specify exposure epochs, we recommend doing so consistently throughout th
 ```{r}
 
 #change this to match your data/theory 
-epochs <- data.frame(epochs = c("Infancy", 
-                              "Toddlerhood", 
-                              "Childhood"), 
-                     values = I(list(c(6, 15), 
-                                   c(24, 35), 
-                                   c(58)
+epochs <- data.frame(epochs = c("Infancy", #list user-specified names
+                                "Toddlerhood", 
+                                "Childhood"), 
+                     values = I(list(c(6, 15), #list corresponding time points from data
+                                     c(24, 35), 
+                                     c(58)
                      ))) 
 
 ```
@@ -280,18 +283,19 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 ```{r}
 
 #all inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, #required input
-            epochs, hi_lo_cut, reference, comparison, verbose = TRUE, save.out = TRUE) #optional input
+inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, # required input
+            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
+            verbose = TRUE, save.out = TRUE) #optional input
 
 
-#or some optional inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders,
-            hi_lo_cut = hi_lo_cut) #assign w/ = any subset of optional inputs
-
-
-#or minimum inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, 
-            ti_confounders, tv_confounders = tv_confounders)
+# #or some optional inputs
+# inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders,
+#             hi_lo_cut = hi_lo_cut) #assign w/ = any subset of optional inputs
+# 
+# 
+# #or minimum inputs
+# inspectData(data, home_dir, exposure, exposure_time_pts, outcome, 
+#             ti_confounders, tv_confounders = tv_confounders)
 
 ```
 
@@ -308,6 +312,7 @@ If you specify concurrent confounders to retain, we recommend doing so consisten
 concur_conf <- NULL 
 concur_conf <- "B18Raw.15"
 
+
 #optional custom formulas
 custom <- NULL
 #note: below is an example of just one of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what output looks like 
@@ -315,18 +320,19 @@ custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_as
                                      mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth +...
                                      RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
 names(custom) <- c("full_form-6")
-custom <- full_formulas
+# custom <- full_formulas #for testing only 
 
 
 #required
 type <- "full"
 
 #all inputs
-full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
-                                concur_conf = concur_conf, keep_conf = NULL, custom = custom, verbose = TRUE, save.out = TRUE)
+full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, #required
+                                tv_confounders = tv_confounders, concur_conf = concur_conf, custom = custom, #optional
+                                verbose = TRUE, save.out = TRUE) #optional
 
 #or minimum inputs
-full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
+# full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
 
 
 ```
@@ -336,6 +342,7 @@ If you specify balance threshold(s), we recommend doing so consistently througho
 ```{r}
 
 #optional balance threshold specification
+balance_thresh <- NULL
 balance_thresh <- 0.1 
 balance_thresh <- c(0.05, 0.1) 
 
@@ -348,11 +355,12 @@ type <- "prebalance"
 formulas <- full_formulas
 
 #all inputs
-prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, 
-                                  balance_thresh = balance_thresh, imp_conf = imp_conf, verbose = TRUE, save.out = TRUE)
+prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, #required
+                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                  verbose = TRUE, save.out = TRUE) #optional
 
-#or minimum inputs
-prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas)
+# #or minimum inputs
+# prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas)
 
 ```
 
@@ -371,27 +379,28 @@ keep_conf  <-  NULL
 keep_conf <- "InRatioCor.6"
 
 #optional custom formulas
+custom <- NULL
 custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr + ...
                                      mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth +...
                                      RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
 names(custom) <- c("full_form-6")
-custom <- short_formulas
-custom <- NULL
+# custom <- short_formulas
 
 
 #required
 type <- "short" 
 
 #all inputs
-short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
-                                 concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, verbose = TRUE, save.out = TRUE)
+short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, #required
+                                 tv_confounders = tv_confounders, concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, #optional
+                                 verbose = TRUE, save.out = TRUE) #optional
 
-#or minimum inputs
-short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
+# #or minimum inputs
+# short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
 
 ```
 
-#### 2b. Create IPTW Balancing Weights using Multiple Weighting Methods
+#### 2b. Create IPTW balancing weights using multiple weighting methods
 ```{r}
 
 ## Create balancing weights with simplified formulas
@@ -402,43 +411,54 @@ formulas <- short_formulas
 # optional weighting method "ps", "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
 method <- "ps"; 
 
-#all input
-weights.ps <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                            method = method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
+# other optional input for each weighting method
+ # We suggest reviewing the WeightIt documentation (https://ngreifer.github.io/WeightIt/reference/weightitMSM.html) for more information about the additional optional arguments available for each of the weighting methods.
 
-#or minimum input
-weights.ps <- createWeights(home_dir, data, exposure, outcome, formulas)
+
+#all input
+weights.ps <- createWeights(home_dir, data, exposure, outcome, formulas, #required
+                            method = method, read_in_from_file = "no", #optional
+                            verbose = TRUE, save.out = TRUE) #optional 
+
+# #or minimum input
+# weights.ps <- createWeights(home_dir, data, exposure, outcome, formulas)
 
 
 
 method <- "cbps"
-weights.cbps <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                              method = method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
+weights.cbps <- createWeights(home_dir, data, exposure, outcome, formulas, #required
+                              method = method, read_in_from_file = "no",  #optional
+                              verbose = TRUE, save.out = TRUE)  #optional
 
 method <- "glm"
-weights.glm <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                             method = method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
+weights.glm <- createWeights(home_dir, data, exposure, outcome, formulas, #required
+                             method = method, read_in_from_file = "no",  #optional
+                             verbose = TRUE, save.out = TRUE)  #optional
 
 method <- "gbm"
-weights.gbm <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                             method = method) 
-
-weights.gbm <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                             method = method, 
-                             criterion = "p.max", distribution = "laplace") #can now add any input that weightitMSM() takes for "gbm
+weights.gbm <- createWeights(home_dir, data, exposure, outcome, formulas, #required
+                             method = method, read_in_from_file = "no",  #optional
+                             verbose = TRUE, save.out = TRUE)  #optional
+# testing additional arguments
+weights.gbm <- createWeights(home_dir, data, exposure, outcome, formulas, #required
+                             method = method, read_in_from_file = "no", #optional
+                             verbose = TRUE, save.out = TRUE, #optional
+                             criterion = "p.max", distribution = "laplace") ##optional; can now add any input that weightitMSM() takes for "gbm
 
 method <- "bart"
-weights.bart <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                              method = method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
+weights.bart <- createWeights(home_dir, data, exposure, outcome, formulas, #required
+                              method = method, read_in_from_file = "no", #optional
+                              verbose = TRUE, save.out = TRUE) #optional
 
 method <- "super"
-weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, method = method)
-
-weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, method = method,
+weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, #required
+                               method = method, read_in_from_file = "no", #optional
+                               verbose = TRUE, save.out = TRUE) #optional
+#testing library specification
+weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, #required
+                               method = method, read_in_from_file = "no", #optional
+                               verbose = TRUE, save.out = TRUE,
                                SL.library = "SL.mean") #can now specify SuperLearner library (default is "SL.glm")
-
-weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                               method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
 
 ```
 
@@ -447,12 +467,13 @@ If you specify balance threshold(s), we recommend doing so consistently througho
 ```{r}
 
 #optional balance threshold specification
+balance_thresh <- NULL
 balance_thresh <- 0.1 
 balance_thresh <- c(0.05, 0.1) 
 
 #optional list of important confounders
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 imp_conf <- NULL
+imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 
 
 #required
@@ -463,34 +484,38 @@ weights <- weights.ps
 
 
 #all inputs
-balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                                    balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
+balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                  verbose = TRUE, save.out = TRUE) #optional
 
-#minimum inputs
-balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
+# #minimum inputs
+# balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
 
 
 weights <- weights.cbps 
-balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                                  balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
+balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                  verbose = TRUE, save.out = TRUE) #optional
 
 weights <- weights.glm 
-balance_stats.glm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                                   balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
-
+balance_stats.glm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                       
+                                              balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                  verbose = TRUE, save.out = TRUE) #optional
 weights <- weights.gbm
-balance_stats.gbm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                                   balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
+balance_stats.gbm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                  verbose = TRUE, save.out = TRUE) #optional
 
 weights <- weights.bart
-balance_stats.bart <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                                    balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
+balance_stats.bart <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                  verbose = TRUE, save.out = TRUE) #optional
 
 weights <- weights.super 
-
-balance_stats.super <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                                     balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
-
+balance_stats.super <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                  verbose = TRUE, save.out = TRUE) #optional
 ```
 
 
@@ -500,6 +525,7 @@ If you specify balance threshold(s), we recommend doing so consistently througho
 ```{r}
 
 #optional balance threshold specification
+balance_thresh <- NULL
 balance_thresh <- 0.1 
 balance_thresh <- c(0.05, 0.1) 
 
@@ -515,11 +541,12 @@ formulas <- full_formulas
 weights <- weights.ps
 
 #all inputs
-balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                               balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE)
+balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                               balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                               verbose = TRUE, save.out = TRUE) #optional
 
 #minimum inputs
-balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
+# balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
 
 ```
 
@@ -528,14 +555,16 @@ If you specify concurrent confounders to retain and/or confounders to keep in ba
 ```{r}
 
 #optional custom formulas
+custom <- NULL
 custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr +  mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
 names(custom) <- c("full_form-6")
-custom <- updated_formulas
-custom <- NULL
+# custom <- updated_formulas
+
 
 #optional list of concurrent confounder
 concur_conf <-  NULL 
 concur_conf <- "B18Raw.15"
+
 
 #optional list of tv confounders to always retain (lag t-1)
 keep_conf <- NULL 
@@ -547,12 +576,13 @@ type <- "update"
 bal_stats <- balance_stats
 
 #all inputs
-updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
-                                   concur_conf, keep_conf, verbose = TRUE, save.out = TRUE)
+updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, #required
+                                   tv_confounders = tv_confounders, concur_conf, keep_conf, #optional
+                                   verbose = TRUE, save.out = TRUE) #optional
 
 #minimum inputs
-updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
-                                   bal_stats = bal_stats)
+# updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
+#                                    bal_stats = bal_stats)
 
 ```
 
@@ -565,11 +595,12 @@ formulas <- updated_formulas
 method <- "ps"
 
 #all inputs
-final_weights <- createWeights(home_dir, data, exposure, outcome, formulas, 
-                               method, read_in_from_file = "no", verbose = TRUE, save.out = TRUE)
+final_weights <- createWeights(home_dir, data, exposure, outcome, formulas, #required
+                               method = method, read_in_from_file = "no", #optional
+                               verbose = TRUE, save.out = TRUE) #optional
 
 #minimum inputs
-final_weights <- createWeights(home_dir, data, exposure, outcome, formulas)
+# final_weights <- createWeights(home_dir, data, exposure, outcome, formulas)
 
 ```
 
@@ -578,6 +609,7 @@ final_weights <- createWeights(home_dir, data, exposure, outcome, formulas)
 ```{r}
 
 # optional quantile of weights above which weights are trimmed (default is 0.95)
+quantile <- NULL 
 quantile <- 0.95 
 
 #required
@@ -585,11 +617,12 @@ weights <- final_weights
 
 
 #all inputs
-trim_weights <- trimWeights(home_dir, exposure, outcome, weights, 
-                            quantile, verbose = TRUE, save.out = TRUE)
+trim_weights <- trimWeights(home_dir, exposure, outcome, weights, #required
+                            quantile = quantile, #optional
+                            verbose = TRUE, save.out = TRUE) #optional
 
-#minimum inputs
-trim_weights <- trimWeights(home_dir, exposure, outcome, weights)
+# #minimum inputs
+# trim_weights <- trimWeights(home_dir, exposure, outcome, weights)
 
 ```
 
@@ -598,12 +631,14 @@ trim_weights <- trimWeights(home_dir, exposure, outcome, weights)
 
 #sensitivity tests   
 quantile <- 0.92 #optional quantile of weights above which weights are trimmed (default is 0.95)
-trim_weights.s1 <- trimWeights(home_dir, exposure, outcome, weights, quantile, 
-                               verbose = TRUE, save.out = TRUE) 
+trim_weights.s1 <- trimWeights(home_dir, exposure, outcome, weights, #required
+                               quantile = quantile, #optional
+                               verbose = TRUE, save.out = TRUE) #optional
 
 quantile <- 0.98 #optional quantile of weights above which weights are trimmed (default is 0.95)
-trim_weights.s2 <- trimWeights(home_dir, exposure, outcome, weights, quantile, 
-                               verbose = TRUE, save.out = TRUE) 
+trim_weights.s2 <- trimWeights(home_dir, exposure, outcome, weights, #required
+                               quantile = quantile, #optional
+                               verbose = TRUE, save.out = TRUE) #optional
 
 ```
 
@@ -614,12 +649,13 @@ If you specify balance threshold(s), we recommend doing so consistently througho
 ```{r}
 
 #optional balance threshold specification
+balance_thresh <- NULL
 balance_thresh <- 0.1 
 balance_thresh <- c(0.05, 0.1) 
 
 #optional list of important confounders
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 imp_conf <- NULL
+imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 
 #required
 type <- "weighted"
@@ -628,32 +664,42 @@ weights <- trim_weights
 
 
 #all input
-final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                                     balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE) 
+final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                                     balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                     verbose = TRUE, save.out = TRUE) #optional
 
-#minimum input
-final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
+# #minimum input
+# final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
 
 
-#manually list remaining imbalanced covariates that are time-invariant or measured at t=1 
+#manually list remaining imbalanced covariates that are time-invariant or time-varying at t=1 for use in Step 5
 imbalanced_covars <- c("ESETA1.6", "gov_asst", "B18Raw.6") 
 
 ```
 
 #### Sensitvity analyses
 We recommend specifying sensitivity analyses to match the main analyses above. 
-Note: as of now, these will overwrite the above main analysis using assessBalance. Please run the above main analysis and then rename the output before running each sensitivity test and renaming each one successively. 
+Note: Please run the above main analysis and then rename or relocate the following output, before running each sensitivity test and renaming/relocating each one in the same manner:
+
+In the balance -> weighted folder, .csv/.html tables of:
+- balance statistics
+- imbalanced statistics
+- overall balance summary
+
+In the balance -> weighted -> plots folder, .jpeg images of:
+- summary balance plots
 ```{r}
 
 #sensitivity tests
 weights <- trim_weights.s1
-final_balance_stats.s1 <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                                        balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE) 
+final_balance_stats.s1 <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                                        balance_thresh = balane_thresh, imp_conf = imp_conf, #optional
+                                        verbose = TRUE, save.out = TRUE) #optional
 
 weights <- trim_weights.s2
-final_balance_stats.s2 <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, 
-                                        balance_thresh, imp_conf, verbose = TRUE, save.out = TRUE) 
-
+final_balance_stats.s2 <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+                                        balance_thresh = balane_thresh, imp_conf = imp_conf, #optional
+                                        verbose = TRUE, save.out = TRUE) #optional
 ```
 
 
@@ -666,19 +712,22 @@ If you specify exposure epochs, we recommend doing so consistently throughout th
 ```{r}
 
 #optional family/link information for glm
+family <- NA
 family <- gaussian 
 link <- "identity" 
 
 # max interaction order (required for interaction models m2-3)
-int_order <- 3
 int_order <- NA
+int_order <- 3
 
 #covariates (required for covariate models m1, m3)
+covariates <- NULL
 covariates <- imbalanced_covariates 
 covariates <- c("ESETA1.6", "gov_asst", "B18Raw.6") 
-covariates <- NULL
+
 
 #optional specification of epochs
+epochs <- NULL
 epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
                      values = I(list(c(6, 15), c(24, 35), c(58)))) 
 
@@ -690,34 +739,42 @@ weights <- trim_weights
 # all inputs
 #required
 model <- "m3"
-models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
-                   family, link, int_order, covariates, epochs, verbose = TRUE, save.out = TRUE)   
+models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, #required
+                   family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
+                   verbose = TRUE, save.out = TRUE) #optional
 
 #minimum inputs
-model <- "m0"
-models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
-                   epochs = epochs)
+# model <- "m0"
+# models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
+#                    epochs = epochs)
 
-#some optional inputs
-models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
-                   int_order = int_order)
+# #some optional inputs
+# models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
+#                    int_order = int_order)
 
 ```
 
 ##### Sensitvity analyses
 We recommend specifying sensitivity analyses to match the main analyses above. 
-Note: as of now, these will overwrite the above main analysis using fitModel. Please run the above main analysis and then rename the output before running each sensitivity test and renaming each one successively.
+Note: We recommend specifying sensitivity analyses to match the main analyses above. 
+Note: Please run the above main analysis and then rename or relocate the following output, before running each sensitivity test and renaming/relocating each one in the same manner:
+
+in the model folder:
+- .rds model file
+- .docx table of model evidence
+
 ```{r}
 
 #sensitivity tests
 weights <- trim_weights.s1
-models.s1 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
-                      family, link, int_order, covariates, epochs, verbose = TRUE, save.out = TRUE) 
+models.s1 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, #required
+                   family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
+                   verbose = TRUE, save.out = TRUE) #optional
 
 weights <- trim_weights.s2
-models.s2 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
-                      family, link, int_order, covariates, epochs, verbose = TRUE, save.out = TRUE) 
-
+models.s2 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, #required
+                   family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
+                   verbose = TRUE, save.out = TRUE) #optional
 ```
 
 #### 5b. Estimate, compare, & visualize histories
@@ -726,10 +783,12 @@ If you specify exposure epochs, we recommend doing so consistently throughout th
 ```{r}
 
 #optional specification of epochs; only specify this if you did in model fitting (5a) --must be identical
+epochs <- NULL
 epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
                      values = I(list(c(6, 15), c(24, 35), c(58)))) 
 
 #optional list of quantiles specifying high and low cutoff values for continuous exposures; 
+hi_lo_cut <- NULL
 hi_lo_cut <- c(0.6, 0.3) #default are median split
 
 #optional reference history (required if comparisons are specified)
@@ -742,18 +801,23 @@ comparison <- "h-h-h" #single
 comparison <- c("h-h-h", "h-h-l") #multiple
 
 #optional multiple comparion method
+mc_comp_method <- NA
 mc_comp_method <- "bonferroni" # default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
 
 #optional specification of dose level (high or low) for dose count
+dose_level <- NA
 dose_level <- "h" #(default is "h")
 
 #optional exposure label for plotting
+exp_lab <- NA
 exp_lab <- "Economic Strain" 
 
 #optional outcome label for plotting 
+out_lab <- NA
 out_lab <- "Executive Functioning" 
 
 # optional list of colors (equal to number of epochs +1) or brewer palette for plotting
+colors <- NA
 colors <- c("Dark2")  #(see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) for plotting default is 'Dark2'); 
 colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2") #list number-of-epochs-+1 colors
 
@@ -763,31 +827,45 @@ model <- models #output from fitModel
 
 
 #all inputs
-results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, 
-                            epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = FALSE, save.out = TRUE) 
+results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, #required
+                            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
+                            mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                            verbose = FALSE, save.out = TRUE) #optional
 
 
-#minimum inputs
-reference <- "l-l-l-l-l"
-comparison <- c("h-h-h-h-h", "l-h-h-h-h") #multiple
-results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, epochs = epochs)
-                            # reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
+# #minimum inputs
+# reference <- "l-l-l-l-l"
+# comparison <- c("h-h-h-h-h", "l-h-h-h-h") #multiple
+# results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, epochs = epochs)
+# # reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
 
 ```
 
 ##### Sensitvity analyses
 We recommend specifying sensitivity analyses to match the main analyses above. 
-Note: as of now, these will overwrite the above main analysis using compareHistories. Please run the above main analysis and then rename the output before running each sensitivity test and renaming each one successively.
+Note: Please run the above main analysis and then rename or relocate the following output, before running each sensitivity test and renaming/relocating each one in the same manner:
+
+in the histories folder, .html tables of:
+- estimated mean outcome values for each hisotry
+- history comparisons
+
+in the plots folder, .jpeg images of:
+- predicted outcomes values for each history
+
 ```{r}
 
 #sensitivity tests
 model <- models.s1 
-results.s1 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, 
-                               epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
+results.s1 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, #required
+                            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
+                            mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                            verbose = FALSE, save.out = TRUE) #optional
 
 model <- models.s2 
-results.s2 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, 
-                               epochs, hi_lo_cut, reference, comparison, mc_comp_method , dose_level, exp_lab, out_lab, colors, verbose = TRUE, save.out = TRUE) 
+results.s2 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, #required
+                            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
+                            mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                            verbose = FALSE, save.out = TRUE) #optional
 
 ```
 

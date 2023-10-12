@@ -566,10 +566,10 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                         sprintf("%s_%s_%s_%s_balance_stat_summary.csv",
                                 form_name, exposure, k, weights_method)))
     
-    write.csv(all_prop_weights,
-              file.path(home_dir, "balance", folder, 
-                        sprintf("%s_form_%s_%s_%s_history_sample_weight.csv",
-                                form_name, exposure, k, weights_method)))
+    # write.csv(all_prop_weights,
+    #           file.path(home_dir, "balance", folder, 
+    #                     sprintf("%s_form_%s_%s_%s_history_sample_weight.csv",
+    #                             form_name, exposure, k, weights_method)))
     
     if (verbose) {
       cat("\n")
