@@ -7,3 +7,4 @@
 ^examplePipelineRevisited\.Rmd$
 ^\.git$
 ^\.DS_Store$
+^devMSMs\.Rproj$

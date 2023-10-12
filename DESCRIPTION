@@ -41,6 +41,9 @@ Imports:
     officer,
     flextable,
     sjPlot,
+    CBPS,
+    gbm,
+    dbarts,
     SuperLearner
 Suggests: 
     testthat (>= 3.0.0)

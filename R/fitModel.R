@@ -109,7 +109,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   if (save.out) {
     if (missing(home_dir)) {
       stop ("Please supply a home directory.",
-           call. = FALSE)
+            call. = FALSE)
     }
     else if (!is.character(home_dir)) {
       stop ("Please provide a valid home directory path as a string if you wish to save output locally.",
@@ -138,7 +138,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   if (missing(exposure)) {
     stop ("Please supply a single exposure.",
-         call. = FALSE)
+          call. = FALSE)
   }
   else if (!is.character(exposure) || length(exposure) != 1) {
     stop ("Please supply a single exposure as a character.",
@@ -172,7 +172,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   if (missing(exposure_time_pts)) {
     stop ("Please supply the exposure time points at which you wish to create weights.",
-         call. = FALSE)
+          call. = FALSE)
   }
   else if (!is.numeric(exposure_time_pts)) {
     stop ("Please supply a list of exposure time points as integers.",
@@ -181,12 +181,12 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   if (missing(model)) {
     stop ('Please provide an outcome model selection "m" from 0-3 (e.g., "m1")',
-         call. = FALSE)
+          call. = FALSE)
   }
 
   if (!is.character(model)) {
     stop ('Please provide as a character string a valid model "m" from 0-3 (e.g., "m1")',
-         call. = FALSE)
+          call. = FALSE)
   }
   else if (!is.character(model) || length(model) != 1) {
     stop ('Please provide a single outcome model selection "m" from 0-3 (e.g., "m1")',
@@ -275,9 +275,9 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     if ( !is.data.frame(epochs) || ncol(epochs) != 2 ||
          sum(colnames(epochs) == c("epochs", "values")) != ncol(epochs)) {
       stop ("If you supply epochs, please provide a dataframe with two columns of epochs and values.",
-           call. = FALSE)
+            call. = FALSE)
     }
-    if (anyNA(epochs$values)){
+    if (anyNA(epochs$values)) {
       stop ("Please provide one or a list of several values for each epoch.",
             call. = FALSE)
     }
@@ -320,7 +320,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     })
 
     if (verbose) {
-      message("USER ALERT: Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
+      message("USER ALERT: Please inspect the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
       cat("\n")
       message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
       cat("\n")
@@ -348,10 +348,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d$weights <- weights[[y]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
 
-    })
+    } )
 
     if (verbose) {
-      message("Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
+      message("Please inspect the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
       cat("\n")
       message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
       cat("\n")
@@ -378,10 +378,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d$weights <- weights[["0"]]$weights
       getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
 
-    })
+    } )
 
     if (verbose) {
-      message("Please insepct the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
+      message("Please inspect the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n")
       cat("\n")
       message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n")
       cat("\n")
@@ -406,29 +406,14 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
       print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE))
 
-      # print(suppressWarnings(jtools::export_summs(
-      #   fits,
-      #   statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
-      #   model.names = c(paste0("Imp.", seq_len(length(fits))))
-      # )))
     }
 
     if (save.out) {
 
-      sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
-                        file = file.path(home_dir, "/models/",
+      print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
+                        file = file.path(home_dir, "models",
                                          sprintf("%s-%s_%s_table_mod_ev.docx",
-                                                 exposure, outcome, model)))
-
-      # suppressWarnings(jtools::export_summs(
-      #   fits,
-      #   to.file = "docx",
-      #   statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
-      #   model.names = c(paste0("Imp.", seq_len(length(fits)))),
-      #   file.name = file.path(home_dir, "models",
-      #                         sprintf("%s-%s_%s_table_mod_ev.docx",
-      #                                 exposure, outcome, model))
-      # ))
+                                                 exposure, outcome, model))))
     }
 
     names(fits) <- NULL
@@ -440,28 +425,14 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
       print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE))
 
-      # # require(survey)
-      # print(suppressWarnings(
-      #   jtools::export_summs(
-      #     fits,
-      #     statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"))))
     }
 
     if (save.out) {
 
-      sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
-                        file = file.path(home_dir, "/models/",
+      print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
+                        file = file.path(home_dir, "models",
                                          sprintf("%s-%s_%s_table_mod_ev.docx",
-                                                 exposure, outcome, model)))
-      # # require(sur
-
-      # suppressWarnings(
-      #   jtools::export_summs(fits,
-      #                        to.file = "docx",
-      #                        statistics = c(N = "nobs", AIC = "AIC", R2 = "r.squared"),
-      #                        file.name = file.path(home_dir, "models",
-      #                                              sprintf("%s-%s_%s_table_mod_ev.docx",
-      #                                                      exposure, outcome, model))))
+                                                 exposure, outcome, model))))
     }
 
   }
@@ -469,7 +440,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
 
   if (save.out) {
     saveRDS(fits,
-            file = file.path(home_dir, "/models/",
+            file = file.path(home_dir, "models",
                              sprintf("%s-%s_%s_model.rds",
                                      exposure, outcome, model)))
     cat("\n")
