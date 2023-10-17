@@ -17,11 +17,13 @@
 #'                           reference = "h-h-h" )
 
 get_reference_values <- function(d, reference) {
-
-  ref_vals <- sapply(seq_len(length(unlist(strsplit(reference, "-")))), function(x) {
-    d[x, unlist(strsplit(reference, "-"))[x]]
+  
+  ref_vals <- sapply(reference, function(ref) {
+    sapply(seq_len(length(unlist(strsplit(ref, "-")))), function(x) {
+      d[x, unlist(strsplit(ref, "-"))[x]]
+    })
   })
-
+  
   ref_vals
 }
 
@@ -43,13 +45,13 @@ get_reference_values <- function(d, reference) {
 #' r <- get_comparison_values(d = d,
 #'                          comp_histories = c("h-h-h", "h-h-l"))
 get_comparison_values <- function(d, comp_histories) {
-
+  
   comp_vals <- sapply(comp_histories, function(comp) {
     sapply(seq_len(length(unlist(strsplit(comp, "-")))), function(x) {
       d[x, unlist(strsplit(comp, "-"))[x]]
     })
   })
-
+  
   t(comp_vals)
 }
 
@@ -64,19 +66,31 @@ get_comparison_values <- function(d, comp_histories) {
 #' @return contrasts
 #' @export
 create_custom_contrasts <- function(d, reference, comp_histories, exposure, preds) {
-
-  if (is.na(reference) | is.null(comp_histories)) {
+  
+  if (is.null(reference) | is.null(comp_histories)) {
     return(NULL)  # Invalid input, return early
   }
-
-  ref_vals <- get_reference_values(d, reference)
+  
+  ref_values <- get_reference_values(d, reference)
+  
   comp_vals <- get_comparison_values(d, comp_histories)
-  cus_comps <- create_custom_comparisons(preds, ref_vals, comp_vals, exposure)
-
+  
+  
+  # cycle thru ref events
+  
+  # cus_comps <- create_custom_comparisons(preds, ref_vals, comp_vals, exposure)
+  cus_comps <- lapply(seq_len(ncol(ref_values)), function(x) {
+    ref_vals <- ref_values[, x]
+    create_custom_comparisons(preds, ref_vals, comp_vals, exposure)
+  } )
+  
+  cus_comparisons <- cus_comps
   comps <- lapply(preds, function(y) {
-    y |> marginaleffects::hypotheses(cus_comps)
+    lapply(cus_comparisons, function(x){
+      y |> marginaleffects::hypotheses(x)
+    })
   })
-
+  
   comps
 }
 
@@ -91,18 +105,19 @@ create_custom_contrasts <- function(d, reference, comp_histories, exposure, pred
 #' @export
 
 create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
-  cus_comps <- matrix(ncol = nrow(comp_vals), nrow = nrow(as.data.frame(preds[[1]][[1]])))
-
+  cus_comps <- matrix(ncol = nrow(comp_vals), 
+                      nrow = nrow(as.data.frame(preds[[1]][[1]])))
+  
   ref_pos <- which(apply(as.data.frame(preds[[1]])[grepl(exposure, colnames(as.data.frame(preds[[1]])))], 1,
                          paste, collapse = ",") == paste0(ref_vals, collapse = ","))
   cus_comps[ref_pos, ] <- -1
-
+  
   for (x in seq_len(nrow(comp_vals))) {
     c <- paste(comp_vals[x, ], collapse = ",")
     cus_comps[which(apply(as.data.frame(preds[[1]])[grepl(exposure, colnames(as.data.frame(preds[[1]])))], 1,
                           paste, collapse = ",") == paste0(c, collapse = ",")), x] <- 1
   }
-
+  
   if (nrow(comp_vals) > 1) {
     colnames(cus_comps) <- paste0("(", paste0(paste0(ref_vals, collapse = ","), ") - (",
                                               apply(comp_vals, 1, paste, collapse = ",")), ")")
@@ -111,7 +126,7 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
     colnames(cus_comps) <- paste0("(", paste0(paste0(ref_vals, collapse = ","), ") - (",
                                               paste0(paste0(comp_vals, collapse = ",")), ")"))
   }
-
+  
   cus_comps[is.na(cus_comps)] <- 0
   cus_comps
 }
@@ -126,12 +141,12 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 #' @export
 
 add_histories <- function(p, d) {
-
+  
   if ((is.list(p)) && length(p) == 1) {
     history <- matrix(data = NA, nrow = nrow(p[[1]]), ncol = 1) # Get histories from the first element
     p <- p[[1]]
   }
-
+  
   #for preds
   if (sum(d$e %in% colnames(p)) == nrow(d)) {
     for (i in seq_len(nrow(p))) {
@@ -142,10 +157,10 @@ add_histories <- function(p, d) {
     }
     history <- unlist(history)
   }
-
+  
   if ("term" %in% colnames(p)) { #preds_pool, comps
     history <- matrix(data = NA, nrow = nrow(p), ncol = 1) # Get histories from the first element
-
+    
     if (grepl("\\=", p$term[1])) {
       for (i in seq_len(nrow(p))) {
         vals <- as.numeric(sapply(strsplit(unlist(strsplit(as.character(p$term[i]), "\\,")), "="), "[", 2))
@@ -153,11 +168,11 @@ add_histories <- function(p, d) {
                                                    round(as.numeric(as.character(d$l)), digits = 3), "l", "h"), collapse = "-"))
       }
       history <- unlist(history)
-
+      
     }
     else { #comps
       for (i in seq_len(nrow(p))) {
-
+        
         temp <- as.character(p$term[i])
         pair <- lapply(1:2, function(y) {
           a <- sapply(strsplit(temp, " - "), "[", y)
@@ -213,20 +228,35 @@ add_dose <- function(p, dose_level) {
 #' @export
 
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method, verbose) {
-  if (nrow(comps) > 1) {
-    cat("\n")
-    cat(sprintf("Conducting multiple comparison correction using the %s method. \n",
-                method))
-    cat("\n")
+  
+  #if there is more than one reference or one reference with more than 1 comparison
+  
+  if (length(comps) > 1 || length(comps$term) > 1) {
+    
+    if (verbose) {
+      cat("\n")
+      cat(sprintf("Conducting multiple comparison correction for all pairings between comparison histories and each refernece history using the %s method. \n",
+                  method))
+      cat("\n")
+    }
+    
+    # #gets values out of list (one list entry per ref event)
+    # 
+    # comps <- do.call(rbind.data.frame, comps)
+    # 
     corr_p <- stats::p.adjust(comps$p.value, method = method)
+    
     comps <- cbind(comps, p.value_corr = corr_p)
   }
+  
   else {
-    cat("\n")
-
-    cat(sprintf("The user specified comparison only between %s and a single comparison, %s,
+    
+    if (verbose) {
+      cat("\n")
+      cat(sprintf("The user specified comparison only between %s and a single comparison, %s,
                 so no correction for multiple comparisons will be implemented.\n",
-                reference, comp_histories))
+                  reference, comp_histories))
+    }
   }
   comps
 }

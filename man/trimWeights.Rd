@@ -9,7 +9,7 @@ trimWeights(
   exposure,
   outcome,
   weights,
-  quantile = 0.95,
+  quantile = NA,
   verbose = TRUE,
   save.out = TRUE
 )

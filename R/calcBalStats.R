@@ -113,6 +113,14 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     cat(paste0("**Imputation ", k, "**"), "\n")
   }
   
+  #checking for char vars
+  
+  if (any(sapply(data, is.character))) {
+    stop (sprintf("The following variables are characters. Please convert them to factor variables: %s",
+                  paste(names(data[sapply(data, is.character)]), collapse = ", ")),
+          call. = FALSE)
+  }
+  
   #split factors
   
   if (length(factor_covariates) > 0) {
@@ -141,9 +149,26 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     
     full_form <- formulas[[names(formulas)[as.numeric(sapply(strsplit(names(formulas), "-"), "[", 2)) == exposure_time_pt]]]
     covars <- deparse1(full_form[[3]], collapse = "") # gets covariates
-    covar_time <- sapply(strsplit(unlist(strsplit(as.character(covars), "\\+")), "\\."), "[", 2)
+    covar_time <- sapply(strsplit(unlist(strsplit(as.character(covars), "\\+")), 
+                                  "\\."), "[", 2)
     covars <- as.character(unlist(strsplit(covars, "\\+")))
     covars <- gsub(" ", "", covars)
+
+        
+    #checking covariates from formulas 
+    
+    if (any(duplicated(covars))) {
+      stop (sprintf("The following variable(s) are duplicated in the formula for exposure at time point %s: %s.",
+                    exposure_time_pt, paste(covars[duplicated(covars)], collapse = ", ")),
+            call. = FALSE)
+    }
+    
+    if (any(covars %in% names(data) == FALSE)) {
+      stop (sprintf("The following variable(s) included in the balancing formulas are not present in your data: %s,",
+                    paste(covars[! covars %in% names(data)], collapse = ", ")),
+            call. = FALSE
+      )
+    }
     
     exposure_name <- paste0(exposure, ".", exposure_time_pt)
     
@@ -169,10 +194,12 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       if (!weighted) {
         if (exposure_type == "continuous") {
           
-          bal_stats <- cobalt::col_w_cov(temp[covars], temp[[exposure_name]], std = TRUE) # finding correlation
+          bal_stats <- cobalt::col_w_cov(temp[covars], temp[[exposure_name]], 
+                                         std = TRUE) # finding correlation
         }
         else if (exposure_type == "binary") {
-          bal_stats <- cobalt::col_w_smd(temp[covars], temp[[exposure_name]], std = TRUE) # finding smd
+          bal_stats <- cobalt::col_w_smd(temp[covars], temp[[exposure_name]], 
+                                         std = TRUE) # finding smd
           
         }
       }
@@ -184,14 +211,16 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
           
           # finding cor
           
-          bal_stats <- cobalt::col_w_cov(temp[covars], temp[[exposure_name]], std = TRUE,
+          bal_stats <- cobalt::col_w_cov(temp[covars], temp[[exposure_name]], 
+                                         std = TRUE,
                                          weights = temp[["weights"]]) #IPTW weights
         }
         else if (exposure_type == "binary") {
           
           # finding smd
           
-          bal_stats <- cobalt::col_w_smd(temp[covars], temp[[exposure_name]], std = TRUE,
+          bal_stats <- cobalt::col_w_smd(temp[covars], temp[[exposure_name]], 
+                                         std = TRUE,
                                          weights = temp[["weights"]]) #IPTW weights
           
         }
@@ -214,7 +243,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       
       # finding histories up until exp time point T
       
-      histories <- apply(gtools::permutations(2, length(lagged_time_pts), c(1, 0), repeats.allowed = TRUE),
+      histories <- apply(gtools::permutations(2, length(lagged_time_pts), c(1, 0), 
+                                              repeats.allowed = TRUE),
                          1, paste, sep = "", collapse = "-")
       histories <- as.data.frame(histories)
       
@@ -325,7 +355,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               
               temp2 <- temp[temp$history == i, , drop = FALSE]
               
-              cobalt::col_w_cov(temp2[covars], temp2[[exposure_name]], std = FALSE)
+              cobalt::col_w_cov(temp2[covars], temp2[[exposure_name]], 
+                                std = FALSE)
               
             })
             
@@ -355,7 +386,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               
               temp2 <- temp[temp$history == i, , drop = FALSE ]
               
-              cobalt::col_w_smd(temp2[covars], temp2[[exposure_name]], std = FALSE) # finding mean difference
+              cobalt::col_w_smd(temp2[covars], temp2[[exposure_name]], 
+                                std = FALSE) # finding mean difference
               
             })
             
@@ -401,7 +433,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               
               temp2 <- temp[temp$history == i,, drop = FALSE]
               
-              cobalt::col_w_cov(temp2[covars], temp2[[exposure_name]], std = FALSE, # finding covariance
+              cobalt::col_w_cov(temp2[covars], temp2[[exposure_name]], 
+                                std = FALSE, # finding covariance
                                 weights = temp2[["weights"]]) # adding IPTW weights
             })
             
@@ -437,7 +470,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
             bal_stats <- sapply(sort(unique(temp$history)), function(i) {
               temp2 <- temp[temp$history == i,, drop = FALSE]
               
-              cobalt::col_w_smd(temp2[covars], temp2[[exposure_name]], std = FALSE, # finding mean difference
+              cobalt::col_w_smd(temp2[covars], temp2[[exposure_name]], 
+                                std = FALSE, # finding mean difference
                                 weights = temp2[["weights"]]) # adding IPTW weights
             })
             
@@ -506,11 +540,13 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     if (!is.null(imp_conf)) {
       bal_stats$bal_thresh <- ifelse(bal_stats$covariate %in% imp_conf,
                                      balance_thresh[1], balance_thresh[2])
-      bal_stats$balanced <- ifelse(abs(bal_stats$std_bal_stats) < bal_stats$bal_thresh, 1, 0)
+      bal_stats$balanced <- ifelse(abs(bal_stats$std_bal_stats) < 
+                                     bal_stats$bal_thresh, 1, 0)
     }
     else {
       bal_stats$bal_thresh <- balance_thresh
-      bal_stats$balanced <- ifelse(abs(bal_stats$std_bal_stats) < bal_stats$bal_thresh, 1, 0)
+      bal_stats$balanced <- ifelse(abs(bal_stats$std_bal_stats) < 
+                                     bal_stats$bal_thresh, 1, 0)
       
     }
     
@@ -524,7 +560,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     # Make love plot per exposure time point
     
     make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k,
-                   form_name, bal_stats, data_type, balance_thresh, weights_method, imp_conf, verbose, save.out)
+                   form_name, bal_stats, data_type, balance_thresh, weights_method, 
+                   imp_conf, verbose, save.out)
     
   }     # Ends exp_time_pt loop
   
@@ -565,11 +602,6 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
               file.path(home_dir, "balance", folder, 
                         sprintf("%s_%s_%s_%s_balance_stat_summary.csv",
                                 form_name, exposure, k, weights_method)))
-    
-    # write.csv(all_prop_weights,
-    #           file.path(home_dir, "balance", folder, 
-    #                     sprintf("%s_form_%s_%s_%s_history_sample_weight.csv",
-    #                             form_name, exposure, k, weights_method)))
     
     if (verbose) {
       cat("\n")
@@ -621,9 +653,12 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                                                                                       "\\."), "[", 1))])
     
     # remaining_avg_abs_corr <- round(mean(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
-    remaining_avg_abs_corr <- round(median(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), na.rm = TRUE), 2)
-    remaining_corr_range <- paste0(round(min(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2),
-                                   "-", round(max(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], na.rm = TRUE), 2))
+    remaining_avg_abs_corr <- round(median(abs(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"]), 
+                                           na.rm = TRUE), 2)
+    remaining_corr_range <- paste0(round(min(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], 
+                                             na.rm = TRUE), 2),
+                                   "-", round(max(all_bal_stats[all_bal_stats$balanced == 0, "std_bal_stats"], 
+                                                  na.rm = TRUE), 2))
   }
   
   
@@ -641,7 +676,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       
       if (imbalanced_covars > 0) {
         cat("\n")
-        cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %sout of %s domains,
+        cat(sprintf("As shown below, %s out of %s (%s%%) covariates across time points, corresponding to %s out of %s domains,
                   remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
                     imbalanced_covars,
                     total_covars,
@@ -669,7 +704,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     else {
       
       if (imbalanced_covars > 0) {
-        cat(sprintf("As shown below, %s out of %s ( %s%%) covariates across time points, corresponding to %s out of %s domains,
+        cat(sprintf("As shown below, %s out of %s (%s%%) covariates across time points, corresponding to %s out of %s domains,
                   remain imbalanced with a remaining median absolute value correlation/std mean difference of %s (range= %s):\n",
                     imbalanced_covars,
                     total_covars,

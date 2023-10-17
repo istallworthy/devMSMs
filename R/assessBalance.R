@@ -118,7 +118,7 @@
 
 
 
-assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights = NULL, balance_thresh = 0.1,
+assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights = NULL, balance_thresh = NULL,
                           imp_conf = NULL, verbose = TRUE, save.out = TRUE) {
   
   if (!is.logical(save.out)) {
@@ -249,11 +249,11 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     }
   }
   
-  if (!is.numeric(balance_thresh)) {
+  if (!is.numeric(balance_thresh) && !is.null(balance_thresh)) {
     stop ("Please provide one or two balance thresholds as numbers from 0-1.",
           call. = FALSE)
   }
-  else if (!length(balance_thresh < 3)) {
+  else if (!is.null(balance_thresh) && !length(balance_thresh < 3)) {
     stop ("Please provide one or two balance thresholds as numbers from 0-1.",
           call. = FALSE)
   }
@@ -261,8 +261,11 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop ("If you wish to provide different balance threshold for important and less important confounders, please provide a list of important confounders in the 'imp_conf' field.",
           call. = FALSE)
   }
+  if (is.null(balance_thresh)) {
+    balance_thresh <- 0.1
+  }
   
-  if (!is.null(imp_conf) && length(balance_thresh) == 1) {
+  if (!is.null(imp_conf) && length(balance_thresh) == 1 && !is.null(balance_thresh) ) {
     stop ("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively",
           call. = FALSE)
   }
@@ -628,7 +631,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   if (save.out) {
     outfile <- file.path(home_dir, "balance", type, 
                          sprintf("%s_%s-%s_all_%s_%s_associations.html",
-                                 form_name, outcome, type, weights_method))
+                                 form_name, exposure, outcome, type, weights_method))
     
     # Save out all correlations/std mean differences
     
@@ -669,15 +672,14 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     
     if (verbose) {
       if (mi) {
-        cat(sprintf("Check 'balance/%s/' folder for a table of all %s correlations or
-                   standardized mean differences averaged across imputed datasets.\n",
+        cat(sprintf("Check 'balance/%s/' folder for a table of all %s correlations or standardized mean differences averaged across imputed datasets.\n",
                     type, type))
       }
       else {
-        cat(sprintf("Check 'balance/%s/' folder for a table of all %s correlations or
-                   standardized mean differences.\n",
+        cat(sprintf("Check 'balance/%s/' folder for a table of all %s correlations or standardized mean differences.\n",
                     type, type))
       }
+      cat("\n")
     }
   }
   
@@ -727,7 +729,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       }
       
       if (verbose) {
-        cat(sprintf("As shown below, the following %s covariates across time points out of %s total (%s%%) spanning %s domains out of %s (%s%%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to %s of %s (range=%s-%s) :\n",
+        cat("\n")
+        cat(sprintf("As shown below, the following %s covariates across time points out of %s total (%s%%) spanning %s domains out of %s (%s%%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to %s of %s (range=%s-%s) :",
                     nrow(unbalanced_covars),
                     length(tot_covars),
                     round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2),

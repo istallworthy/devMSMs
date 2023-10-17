@@ -356,6 +356,12 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
         }
       }
       
+      if (any(duplicated(vars_to_include))) {
+        stop (sprintf("The following variable(s) are duplicated: %s.",
+                      paste(vars_to_include[duplicated(vars_to_include)], 
+                            collapse = ", ")))
+      }
+      
       # Creates form for the given exposure time point
       
       f <- as.formula(paste(paste0(exposure, ".", time, " ~ "),

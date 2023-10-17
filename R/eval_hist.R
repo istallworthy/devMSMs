@@ -11,7 +11,7 @@
 #'   created/assessed that correspond to time points when exposure was measured
 #' @param hi_lo_cut list of two numbers indicating quantile values that reflect
 #'   high and low values, respectively, for continuous exposure
-#' @param ref (optional) string of "-"-separated "l" and "h" values
+#' @param ref (optional) list of one or more strings of "-"-separated "l" and "h" values
 #'   indicative of a reference exposure history to which to compare comparison,
 #'   required if comparison is supplied
 #' @param comps (optional) list of one or more strings of "-"-separated "l"
@@ -52,7 +52,7 @@
 #'                ref = "l-l-l",
 #'                comps = "h-h-h")
 
-eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL, ref = NA, comps = NULL, verbose = TRUE) {
+eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL, ref = NULL, comps = NULL, verbose = TRUE) {
   
   exposure_type <- if (inherits(data[, paste0(exposure, '.', time_pts[1])], "numeric")) "continuous" else "binary"
   
@@ -108,7 +108,7 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
   
   # Assigning history (e.g., h-h-h) based on user-specified hi/lo cutoffs
   
-  if ( !is.na(ref) && !is.null(comps)) {
+  if ( !is.null(ref) && !is.null(comps)) {
     tot_hist <- tot_hist[tot_hist %in% c(ref, comps)]
   }
   
@@ -215,7 +215,7 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
                          FUN = length)
   colnames(his_summ) <- c("history", "n")
   
-  if ( !is.na(ref) && !is.null(comps)) {
+  if ( !is.null(ref) && !is.null(comps)) {
     his_sum <- his_summ[his_summ$history %in% c(ref, comps), ]
   }
   

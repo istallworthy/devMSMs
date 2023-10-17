@@ -20,7 +20,7 @@
 #' @param hi_lo_cut (optional) list of two numbers indicating quantile values
 #'   that reflect high and low values, respectively, for continuous exposure
 #'   (default is median split)
-#' @param reference (optional) string of "-"-separated "l" and "h" values
+#' @param reference (optional) list sof one or more strings of "-"-separated "l" and "h" values
 #'   indicative of a reference exposure history to which to compare comparison,
 #'   required if comparison is supplied
 #' @param comparison (optional) list of one or more strings of "-"-separated "l"
@@ -96,10 +96,23 @@
 #'                       reference = "l-l-l",
 #'                       comparison = c("h-h-h", "h-l-l"),
 #'                       save.out = FALSE)
-
+#' r <- compareHistories(exposure = "A",
+#'                       exposure_time_pts = c(1, 2, 3),
+#'                       outcome = "D.3",
+#'                       model = m,
+#'                       reference = c("l-l-l", "l-h-h"),
+#'                       comparison = c("h-h-h"),
+#'                       save.out = FALSE)
+#' r <- compareHistories(exposure = "A",
+#'                       exposure_time_pts = c(1, 2, 3),
+#'                       outcome = "D.3",
+#'                       model = m,
+#'                       reference = c("l-l-l", "l-h-h"),
+#'                       comparison = c("h-h-h", "l-l-h"),
+#'                       save.out = FALSE)
 
 compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, model, epochs = NULL, hi_lo_cut = NULL,
-                             reference = NA, comparison = NULL, mc_comp_method = NA, dose_level = NA, exp_lab = NA, out_lab = NA,
+                             reference = NULL, comparison = NULL, mc_comp_method = NA, dose_level = NA, exp_lab = NA, out_lab = NA,
                              colors = NA, verbose = TRUE, save.out = TRUE ) {
   
   if (save.out) {
@@ -183,6 +196,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   if ( !is.character(colors) && !is.na(colors)) {
     stop ("To specify plotting colors, as character strings, please provide either a list of valid colors equal to the number of exposure main effects + 1 or a valid Brewer palette.",
           .call = FALSE)
+  }
+  else if (is.na(colors)) {
+    colors <- "Dark2"
   }
   
   if ((!is.character(exp_lab) && !is.na(exp_lab)) || length(exp_lab) > 1) {
@@ -396,12 +412,17 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   
   #STEP 2: CONDUCT HISTORY COMPARISONS
   
-  if (!is.na(reference)) {
+  if (!is.null(reference)) {
     if (!inherits(reference, "character")){
-      stop ("Please provide as a character a valid reference history made up of combinations of 'h' and 'l'",
+      stop ("Please provide one or more character strings each comprising a valid reference history made up of combinations of 'h' and 'l'",
             call. = FALSE)
     }
-    if (sum(exposure_levels %in% reference) == 0) {
+    else if (!length(reference) < length(exposure_levels)) {
+      stop ("Please provide at least 1 fewer reference events.",
+            call. = FALSE)
+    }
+      
+    if (sum(exposure_levels %in% reference) != length(reference)) {
       stop (paste0('If you wish to conduct custom comparisons, please select a valid reference history from the following list:
                   ', paste(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), 
                                                       repeats.allowed = TRUE), 1,
@@ -418,8 +439,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
                    " otherwise, do not specify reference and comparison events to conduct all comparisons."),
             call. = FALSE)
     }
-    else if (reference %in% comparison) {
-      stop ("If you wish to make custom comparisons, please provide unique reference and comparison events.",
+    else if (any(reference %in% comparison)) {
+      stop ("If you wish to make custom comparisons, please provide distinct reference and comparison events.",
             call. = FALSE)
     }
   }
@@ -429,7 +450,11 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       stop ("Please provide as a character a valid comparison history/histories made up of combinations of 'h' and 'l'",
             call. = FALSE)
     }
-    if (sum(exposure_levels %in% comparison) == 0) {
+    else if (!length(comparison) < length(exposure_levels)) {
+      stop ("Please provide at least 1 fewer comparison events.",
+            call. = FALSE)
+    }
+    if (sum(exposure_levels %in% comparison) != length(comparison)) {
       stop (paste0('If you wish to specify comparison(s), please provide at least one comparison history from the following list ',
                    paste0(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), 
                                                      repeats.allowed = TRUE), 1,
@@ -445,8 +470,10 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   
   #conduct all pairwise comparisons if no ref/comparisons were specified by user
   
-  if (is.na(reference) && is.null(comp_histories)) {
+  if (is.null(reference) && is.null(comp_histories)) {
+    
     # Pairwise comparisons; don't need to use custom class
+    
     comps <- lapply(preds, function(y) {
       y |> marginaleffects::hypotheses("pairwise")
     })
@@ -483,7 +510,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     # If the user specified reference and comparison groups, subset pred_pool for inspection and plotting
     
-    if (!is.na(reference) && !is.null(comp_histories)) {
+    if (!is.null(reference) && !is.null(comp_histories)) {
       preds_pool <- preds_pool[preds_pool$history %in% c(reference, comp_histories), , 
                                drop = FALSE ]
     }
@@ -529,8 +556,18 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     #STEP 2b: pool comparison values
     #pool summary
     
-    comps_pool <- mice::pool(comps) |> summary()
+    # putting data from all ref events into  same entry
     
+    comps <- lapply(comps, function(x) {
+      do.call(rbind.data.frame, x)
+    })
+    
+    
+    comps_pool <- mice::pool(comps) |> summary()
+    # comps_pool <- lapply(comps, function(x){
+    #   mice::pool(x) |> summary()
+    # })
+    # 
     comps_pool <- add_histories(comps_pool, d)
     
     comps_pool <- add_dose(comps_pool, dose_level)
@@ -566,7 +603,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       
       # Makes table of pooled comparisons and saves out
       
-      outfile <- fil.path(home_dir, "histories", 
+      outfile <- file.path(home_dir, "histories", 
                           sprintf("%s-%s_pooled_comparisons_hi_lo=%s.html",
                                   exposure, outcome, 
                                   paste(hi_lo_cut, collapse = "_") ))
@@ -611,7 +648,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     # If the user specified reference and comparison groups, subset preds for inspection and plotting
     
-    if (!is.na(reference) && !is.null(comp_histories)) {
+    if (!is.null(reference) && !is.null(comp_histories)) {
       preds <- preds[preds$history %in% c(reference, comp_histories), , 
                      drop = FALSE ]
     }
@@ -624,28 +661,28 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       
       # Makes table of average estimates a
       
-      lapply(seq_len(length(preds)), function(x) {
-        y <- preds[[x]]
-        
-        outfile <- file.path(home_dir, "histories", 
-                             sprintf("%s-%s_estimated_means_hi_lo=%s.html",
-                                     exposure, outcome, 
-                                     paste(hi_lo_cut, collapse = "_") ))
-        
-        sink(outfile)
-        stargazer::stargazer(
-          as.data.frame(y),
-          type = "html",
-          digits = 4,
-          column.labels = colnames(y),
-          summary = FALSE,
-          rownames = FALSE,
-          header = FALSE,
-          out = outfile
-        )
-        sink()
-        
-      })
+      # lapply(seq_len(length(preds)), function(x) {
+      #   y <- preds[[x]]
+      
+      outfile <- file.path(home_dir, "histories", 
+                           sprintf("%s-%s_estimated_means_hi_lo=%s.html",
+                                   exposure, outcome, 
+                                   paste(hi_lo_cut, collapse = "_") ))
+      
+      sink(outfile)
+      stargazer::stargazer(
+        as.data.frame(preds),
+        type = "html",
+        digits = 4,
+        column.labels = colnames(preds),
+        summary = FALSE,
+        rownames = FALSE,
+        header = FALSE,
+        out = outfile
+      )
+      sink()
+      
+      # })
     }
     
     if (verbose) {
@@ -662,11 +699,21 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     #STEP 3: conduct multiple comparison correction
     
-    comps <- comps[[1]]
+    # comps <- comps[[1]]
     
-    comps <- add_histories(comps, d)
+    # comps <- add_histories(comps, d)
+    comps <- lapply(comps[[1]], function(x){
+      add_histories(x, d)
+    })
     
-    comps <- add_dose(comps, dose_level)
+    # comps <- add_dose(comps, dose_level)
+    comps <- lapply(comps, function(x){
+      add_dose(x, dose_level)
+    })
+    
+    # transforms into df 
+    comps <- do.call(rbind.data.frame, comps)
+    
     
     comps <- perform_multiple_comparison_correction(comps, 
                                                     reference, 
@@ -811,9 +858,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     if (save.out) {
       ggplot2::ggsave(file.path(home_dir, "plots", 
-                                sprintf("%s-%s_%s.jpeg",
-                                        exposure, outcome, 
-                                        deparse(substitute(model)))),
+                                sprintf("%s-%s.jpeg",
+                                        exposure, outcome
+                                )),
                       plot = p)
     }
     if (verbose) {

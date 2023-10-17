@@ -15,9 +15,10 @@ Goals of this round of testing:
 - assess the user output in the console and the items saved out from each function
 - make sure the Supplement provides sufficient detail for running this .rmd file
 
-A note on running functions in R. 
+The code is set up to identify all possible inputs to each function (required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function, including a NULL/NA option if the user does not wish to specify an optional input. Alternatively, the user could modify the call to the function and remove the optional input argument entirely. 
+
+Some notes on functions in R:
 For the required arguments  (e.g., arg1, arg2) in a function, you can supply them directly to the function as variables in your global environment.
-arg1 = 8
 arg2 = 9.5
 E.g., function(arg1, arg2).
 
@@ -27,9 +28,8 @@ E.g., function(arg1, arg2, arg3 = arg3)
 or 
 E.g., function(arg1, arg2, arg3 = 4.5)
 
-In the chunks throughout this rmd, I show an example for running the function with all the optional inputs (all inputs) and one with just the required inputs (minimum inputs). Would love help figuring out which examples to use in our empirical data/supplement.
 
-Please use the Supplement and/or type ?functionName into the console for more guidance on required vs optional arguments for each function. These two sources should match but let me know if you see discrepancies. 
+Please use the Supplement and/or type ?functionName into the console for more guidance on the arguments for each function. These two sources should match but let me know if you see discrepancies. 
 
 PLEASE Slack me right away with any issues or confusion you encounter --there will likely be bumps in the road as we test this!
 Feel free to put feedback in your version of this .rmd, in the notes Google doc, or in the Supplement as comments. 
@@ -40,24 +40,25 @@ Until devMSMs is available on CRAN, you will need to install it directly from Gi
 You will always need to install the devMSMs helper functions from Github (deveMSMsHelpers) if you wish to use them. 
 ```{r}
 
-#install devtools
+#first, install devtools
 install.packages("devtools")
 library(devtools)
 
 #you may need to do this if you are having issues installing devMSMs --will talk to NG about it
 # install.packages("SuperLearner")
 
-#get devMSMs from github
+#install devMSMs from github
 install_github("istallworthy/devMSMs")
 library(devMSMs)
 
-#get helper files from github. Note: you need to install devMSMs for inspectData to work. 
+#install helper files from github. Note: you need to install devMSMs for devMSMsHelpers::inspectData() to work. 
 install_github("istallworthy/devMSMsHelpers")
 library(devMSMsHelpers)
 
-#note: if I update Github to fix something, you may need to first uninstall deveMSMs by running the following code:
-# remove.packages("devMSMs") or remove.packages("devMSMsHelpers")
-#prior to re-installing using the code above. Sorry, this is annoying!
+#note: if I update Github to fix something, you may need to first uninstall the package(s) by running the following code:
+# remove.packages("devMSMs") or 
+# remove.packages("devMSMsHelpers")
+#prior to re-installing using the code above. Sorry, this is annoying! There may also be a short lag between when I update something on Github and when it becomes available for install. 
 
 #conducting package checks & tests from documentation --just for IS to run; comment out when testing the workflow
 #devtools::check()
@@ -72,7 +73,7 @@ The user should change all fields in this code chunk to match their home directo
 set.seed(1234)
 
 #required if you wish to use save.out = TRUE in the functions
-home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #no / after
+home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
 
 #required
 exposure <- "ESETA1"
@@ -81,12 +82,12 @@ exposure <- "ESETA1"
 exposure_time_pts <- c(6, 15, 24, 35, 58)
 
 #required
-outcome <- "EF_avg_perc.58"
+outcome <- "StrDif_Tot.58"
 
-#optional 
+#optional; list in wide format
 tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "MDI.6", "MDI.15",                                            
-                    "RHasSO.6", "RHasSO.15","RHasSO.35", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
+                    "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
                     "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
                     "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
                     "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
@@ -98,19 +99,23 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "LESMnPos.24", "LESMnPos.35",                                  
                     "LESMnNeg.24", "LESMnNeg.35",       
                     "ALI_Le.35",
-                    "StrDif_Tot.35", "StrDif_Tot.58",   
-                    "EF_avg_perc.35", "EF_avg_perc.58") 
+                    "StrDif_Tot.35", "StrDif_Tot.58",    
+                    # "EF_avg_perc.35", "EF_avg_perc.58"
+                    "fscore.35", "fscore.58"
+                    ) 
 
 #required
 ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
                     "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
-                    "peri_health", "mat_health", "gov_asst") 
+                    "peri_health", 
+                    # "mat_health", "gov_asst")
+                    "caregiv_health", "gov_assist")
 
 ```
 
 
 ## STEP P: Preliminary Steps for Reading in, Formatting, & Inspecting Data
-Choose from the following preliminary steps to assign to 'data' one of the following for use in the package:
+Choose from the following preliminary steps with the goal of assigning to 'data' one of the following for use in the package:
 - a single data frame of data in wide format with no missing data 
 - a mids object (output from mice::mice()) of data imputed in wide format
 - a list of data imputed in wide format as data frames
@@ -121,11 +126,11 @@ Data columns should be either numeric or factor form and the ID column should be
 At this stage, data can be in long or wide format, complete or incomplete. 
 ```{r}
 
-# data <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv") #change this to match your folder
+# data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv") #change this to match your folder
 
 #reading a long data file here for use in subsequent steps
-data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", 
-                      header = TRUE)
+# data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your long data file here if you want to begin with long data
+#                       header = TRUE)
 
 ```
 
@@ -138,7 +143,8 @@ data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, 
                               time_var = "TAge", #list original time variable here if it's not "WAVE"
                               id_var = "S_ID", #list original id variable here if it's not "ID"
                               missing = NA, #list missing value here
-                              factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO", "PmMrSt2", "HomeOwnd"), #list factor variables here
+                              factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO", "PmMrSt2", 
+                                                     "HomeOwnd", "SurpPreg", "BioDadInHH2"), #list factor variables here
                               save.out = TRUE) 
 
 
@@ -162,10 +168,21 @@ data_wide <- stats::reshape(data = data_long_f,
 data_wide <- data_wide[, colSums(is.na(data_wide)) < nrow(data_wide)]
 
 
-#removing vars w/no variability; specific to FLP data 
-library(dplyr)
-data_wide <- data_wide %>% 
-  dplyr::select(-c(RHasSO.6, RHasSO.15 , RHasSO.24))
+
+# read in formatted wide data
+data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your wide, formatted data file here 
+                      header = TRUE)
+#make factors
+factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
+                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                   "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
+data_wide[, factor_covars] <- as.data.frame(lapply(data_wide[, factor_covars], as.factor))
+
+
+# #removing vars w/no variability; specific to FLP data 
+# library(dplyr)
+# data_wide <- data_wide %>% 
+#   dplyr::select(-c(RHasSO.6, RHasSO.15 , RHasSO.24))
 
 
 #if you have no missing data and want to use the package with a single wide data frame
@@ -175,20 +192,29 @@ data <- data_wide
 
 
 ### P2. Impute Data to Account for Missingness
-#### P2a. Multiply impute single wide data frame using mice
+#### P2a. Multiply impute single wide, formatted data frame using mice
 ```{r}
 
 #optional
+m <- NA
 m <- 1 #number of imputations (default is 5)
-method <- "pmm" # provide an imputation method pmm, midastouch, sample, cart , rf (default)
+
+#optional
+method <- NA
+method <- "rf" # provide an imputation method pmm, midastouch, sample, cart , rf (default)
+
+#optional
+maxit <- NA
+maxit <- 0 #maximum iterations for imputation (default is 5)
 
 #optional
 #please see the mice::mice() documentation for more optimal input to customize mice(): https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice
 
 
 #note: right now (just for testing purposes), the function is set up for maxit = 0 to go fast, default is 5
-imputed_data <- imputeData(data_wide, m, method, home_dir, exposure, outcome, 
-                           maxit = 0, para_proc = TRUE, read_imps_from_file = "no", save.out = TRUE)
+imputed_data <- imputeData(data_wide, home_dir, exposure, outcome, 
+                           m = m, method = method, maxit = maxit, para_proc = TRUE, read_imps_from_file = "no", 
+                           save.out = TRUE)
 
 
 #if you want to use the package with imputed data
@@ -209,14 +235,20 @@ data <- imputed_data
 library(mice)
 data <- mice::complete(imputed_data, 1) #just for testing purposes
 
-#IS testing multi-level factors
-data$"PmMrSt2" = as.factor(data$"PmMrSt2")
-data$HomeOwnd = as.factor(data$HomeOwnd)
+#make factors
+factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
+                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                   "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
+data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
 
-library(dplyr)
-data <- data %>%
-  dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx")))) #removing these --came from old dataset
-data$ID <- as.numeric(as.character(unlist(data$ID)))
+# #IS testing multi-level factors
+# data$"PmMrSt2" = as.factor(data$"PmMrSt2")
+# data$HomeOwnd = as.factor(data$HomeOwnd)
+# 
+# library(dplyr)
+# data <- data %>%
+#   dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx")))) #removing these --came from old dataset
+# data$ID <- as.numeric(as.character(unlist(data$ID)))
 
 ```
 
@@ -233,6 +265,15 @@ files <- list.files(folder, full.names = TRUE, pattern = "\\.csv")
 data <- lapply(files, function(file) {
   imp_data <- read.csv(file)
   imp_data
+})
+
+#make factors
+factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
+                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                   "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
+data <- lapply(data, function(x){
+  x[, factor_covars] <- as.data.frame(lapply(x[, factor_covars], as.factor))
+  x
 })
 
 ```
@@ -284,7 +325,7 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 
 #all inputs
 inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, # required input
-            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
+            tv_confounders = tv_confounders, epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
             verbose = TRUE, save.out = TRUE) #optional input
 
 
@@ -332,7 +373,7 @@ full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, 
                                 verbose = TRUE, save.out = TRUE) #optional
 
 #or minimum inputs
-# full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
+full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
 
 
 ```
@@ -360,7 +401,7 @@ prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, o
                                   verbose = TRUE, save.out = TRUE) #optional
 
 # #or minimum inputs
-# prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas)
+prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas)
 
 ```
 
@@ -409,7 +450,7 @@ short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome,
 formulas <- short_formulas
 
 # optional weighting method "ps", "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
-method <- "ps"; 
+method <- "ps"
 
 # other optional input for each weighting method
  # We suggest reviewing the WeightIt documentation (https://ngreifer.github.io/WeightIt/reference/weightitMSM.html) for more information about the additional optional arguments available for each of the weighting methods.
@@ -550,6 +591,7 @@ balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outc
 
 ```
 
+
 #### 3b. Update short formulas 
 If you specify concurrent confounders to retain and/or confounders to keep in balancing formulas, we recommend doing so consistently throughout this workflow. 
 ```{r}
@@ -576,8 +618,8 @@ type <- "update"
 bal_stats <- balance_stats
 
 #all inputs
-updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, #required
-                                   tv_confounders = tv_confounders, concur_conf, keep_conf, #optional
+updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, bal_stats = bal_stats, #required
+                                   tv_confounders = tv_confounders, concur_conf = concur_conf, keep_conf = keep_conf, #optional
                                    verbose = TRUE, save.out = TRUE) #optional
 
 #minimum inputs
@@ -609,7 +651,7 @@ final_weights <- createWeights(home_dir, data, exposure, outcome, formulas, #req
 ```{r}
 
 # optional quantile of weights above which weights are trimmed (default is 0.95)
-quantile <- NULL 
+quantile <- NA 
 quantile <- 0.95 
 
 #required
@@ -713,7 +755,9 @@ If you specify exposure epochs, we recommend doing so consistently throughout th
 
 #optional family/link information for glm
 family <- NA
-family <- gaussian 
+family <- gaussian
+
+link <- NA
 link <- "identity" 
 
 # max interaction order (required for interaction models m2-3)
@@ -738,7 +782,7 @@ weights <- trim_weights
 
 # all inputs
 #required
-model <- "m3"
+model <- "m0"
 models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, #required
                    family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
                    verbose = TRUE, save.out = TRUE) #optional
@@ -829,7 +873,7 @@ model <- models #output from fitModel
 #all inputs
 results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, #required
                             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
-                            mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                            mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                             verbose = FALSE, save.out = TRUE) #optional
 
 
