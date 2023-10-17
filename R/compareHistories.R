@@ -559,18 +559,17 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     # putting data from all ref events into  same entry
     
-    if (length(reference) > 1){
     comps <- lapply(comps, function(x) {
       do.call(rbind.data.frame, x)
     })
-    }
+    
     
     
     comps_pool <- mice::pool(comps) |> summary()
     # comps_pool <- lapply(comps, function(x){
     #   mice::pool(x) |> summary()
     # })
-    # 
+
     comps_pool <- add_histories(comps_pool, d)
     
     comps_pool <- add_dose(comps_pool, dose_level)
