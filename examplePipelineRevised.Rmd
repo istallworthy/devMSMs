@@ -122,8 +122,10 @@ Choose from the following preliminary steps with the goal of assigning to 'data'
 
 Data columns should be either numeric or factor form and the ID column should be numeric.
 
+
 ## Read in a single .csv file 
 At this stage, data can be in long or wide format, complete or incomplete. 
+
 ```{r}
 
 # data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv") #change this to match your folder
@@ -134,8 +136,10 @@ At this stage, data can be in long or wide format, complete or incomplete.
 
 ```
 
+
 ### P1. Format Data
 #### P1a. Format single data frame of long data 
+
 ```{r}
 
 # if you have long data with wrong time, id, and/or missing indicators and need to format
@@ -154,7 +158,9 @@ data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, 
 
 ```
 
+
 #### P1b. Convert single data frame from long to wide format
+
 ```{r}
 
 v <- sapply(strsplit(tv_confounders, "\\."), "[", 1)
@@ -193,6 +199,7 @@ data <- data_wide
 
 ### P2. Impute Data to Account for Missingness
 #### P2a. Multiply impute single wide, formatted data frame using mice
+
 ```{r}
 
 #optional
@@ -254,6 +261,7 @@ data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
 
 
 #### P2b. Read in wide imputed data saved locally as .csvs
+
 ```{r}
 
 #read in imputed csv files to list
@@ -281,6 +289,7 @@ data <- lapply(data, function(x){
 
 ### P3. Optional: Identify Exposure Epochs
 If you specify exposure epochs, we recommend doing so consistently throughout this workflow.
+
 ```{r}
 
 #change this to match your data/theory 
@@ -298,6 +307,7 @@ epochs <- data.frame(epochs = c("Infancy", #list user-specified names
 ### P4. Recommended: Specify and Inspect Exposure Histories
 #### P4a. Create cutoff values for continuous exposures
 If you specify high and low cutoffs, we recommend doing so consistently throughout this workflow. 
+
 ```{r}
 
 #optional list of quantiles specifying high and low cutoff values, respectively, for continuous exposures; default is median
@@ -305,8 +315,10 @@ hi_lo_cut <- c(0.6, 0.3)
 
 ```
 
+
 #### P4b. Specify hypotheses-relevant exposure histories
 If you specify reference and comparison histories, please do so consistently throughout this workflow. 
+
 ```{r}
 
 #optional reference history (required if comparisons are specified)
@@ -320,7 +332,9 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 
 ```
 
+
 #### P4c. Inspect exposure histories (recommended)
+
 ```{r}
 
 #all inputs
@@ -347,6 +361,7 @@ inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders
 ### STEP 1: Pre-Balance Checking
 #### 1a. Create full formulas
 If you specify concurrent confounders to retain, we recommend doing so consistently throughout this workflow. 
+
 ```{r}
 
 #optional concurrent confounders
@@ -380,6 +395,7 @@ full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, 
 
 #### 1b. Exploratory prebalance assessment
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
+
 ```{r}
 
 #optional balance threshold specification
@@ -442,6 +458,7 @@ short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome,
 ```
 
 #### 2b. Create IPTW balancing weights using multiple weighting methods
+
 ```{r}
 
 ## Create balancing weights with simplified formulas
@@ -505,6 +522,7 @@ weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, #req
 
 #### 2c. Assess all weighting methods
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
+
 ```{r}
 
 #optional balance threshold specification
@@ -563,6 +581,7 @@ balance_stats.super <- assessBalance(home_dir, data, exposure, exposure_time_pts
 ### STEP 3: Re-specify weights using optimal weighting method
 #### 3a. Assess balance using full formulas
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
+
 ```{r}
 
 #optional balance threshold specification
@@ -629,6 +648,7 @@ updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcom
 ```
 
 #### 3c. Re-create weights
+
 ```{r}
 
 #required
@@ -646,8 +666,10 @@ final_weights <- createWeights(home_dir, data, exposure, outcome, formulas, #req
 
 ```
 
+
 #### 3d. Truncate weights
 ##### Main
+
 ```{r}
 
 # optional quantile of weights above which weights are trimmed (default is 0.95)
@@ -669,6 +691,7 @@ trim_weights <- trimWeights(home_dir, exposure, outcome, weights, #required
 ```
 
 ##### Sensitvity analyses
+
 ```{r}
 
 #sensitivity tests   
@@ -688,6 +711,7 @@ trim_weights.s2 <- trimWeights(home_dir, exposure, outcome, weights, #required
 ### STEP 4: Final Balance Assessment
 #### Main
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
+
 ```{r}
 
 #optional balance threshold specification
@@ -719,6 +743,7 @@ imbalanced_covars <- c("ESETA1.6", "gov_asst", "B18Raw.6")
 
 ```
 
+
 #### Sensitvity analyses
 We recommend specifying sensitivity analyses to match the main analyses above. 
 Note: Please run the above main analysis and then rename or relocate the following output, before running each sensitivity test and renaming/relocating each one in the same manner:
@@ -730,6 +755,7 @@ In the balance -> weighted folder, .csv/.html tables of:
 
 In the balance -> weighted -> plots folder, .jpeg images of:
 - summary balance plots
+
 ```{r}
 
 #sensitivity tests
@@ -751,6 +777,7 @@ final_balance_stats.s2 <- assessBalance(home_dir, data, exposure, exposure_time_
 #### 5a. Fit marginal structural model
 ##### Main
 If you specify exposure epochs, we recommend doing so consistently throughout this workflow. 
+
 ```{r}
 
 #optional family/link information for glm
@@ -798,6 +825,7 @@ models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome
 
 ```
 
+
 ##### Sensitvity analyses
 We recommend specifying sensitivity analyses to match the main analyses above. 
 Note: We recommend specifying sensitivity analyses to match the main analyses above. 
@@ -821,9 +849,11 @@ models.s2 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outc
                    verbose = TRUE, save.out = TRUE) #optional
 ```
 
+
 #### 5b. Estimate, compare, & visualize histories
 ##### Main
 If you specify exposure epochs, we recommend doing so consistently throughout this workflow. 
+
 ```{r}
 
 #optional specification of epochs; only specify this if you did in model fitting (5a) --must be identical
@@ -836,8 +866,9 @@ hi_lo_cut <- NULL
 hi_lo_cut <- c(0.6, 0.3) #default are median split
 
 #optional reference history (required if comparisons are specified)
-reference <- NA 
+reference <- NULL
 reference <- "l-l-l"
+reference <- c("l-l-l", "l-l-h") #multiple
 
 #optional comparison history/historis
 comparison <- NULL 
@@ -863,7 +894,7 @@ out_lab <- "Executive Functioning"
 # optional list of colors (equal to number of epochs +1) or brewer palette for plotting
 colors <- NA
 colors <- c("Dark2")  #(see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) for plotting default is 'Dark2'); 
-colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2") #list number-of-epochs-+1 colors
+colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2") #list number-of-exposure-main-effects-+1 colors
 
 
 #required
@@ -884,6 +915,7 @@ results <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, mode
 # # reference = reference, comparison = comparison) # for our data, specify ref and comp bc too many comparisons for exposure time point; 
 
 ```
+
 
 ##### Sensitvity analyses
 We recommend specifying sensitivity analyses to match the main analyses above. 
@@ -916,6 +948,7 @@ results.s2 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, m
 
 ## Package citations :) 
 We are grateful to the authors of many existing packages that devMSMs draws from!
+
 ```{r}
 
 grateful::cite_packages(out.dir = home_dir, omit = "devMSMs", include.Rstudio = TRUE, out.format = "docx")
