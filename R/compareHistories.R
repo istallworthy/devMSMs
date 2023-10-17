@@ -477,6 +477,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     comps <- lapply(preds, function(y) {
       y |> marginaleffects::hypotheses("pairwise")
     })
+  
     
   } else {
     comps <- create_custom_contrasts(d, reference, comp_histories, 
@@ -558,9 +559,11 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     # putting data from all ref events into  same entry
     
+    if (length(reference) > 1){
     comps <- lapply(comps, function(x) {
       do.call(rbind.data.frame, x)
     })
+    }
     
     
     comps_pool <- mice::pool(comps) |> summary()
@@ -701,18 +704,22 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     # comps <- comps[[1]]
     
-    # comps <- add_histories(comps, d)
-    comps <- lapply(comps[[1]], function(x){
-      add_histories(x, d)
-    })
+    if (length(reference) > 1) {
+      comps <- do.call(rbind.data.frame, comps)
+    }
     
-    # comps <- add_dose(comps, dose_level)
-    comps <- lapply(comps, function(x){
-      add_dose(x, dose_level)
-    })
+    comps <- add_histories(comps, d)
+    # comps <- lapply(comps[[1]], function(x){
+    #   add_histories(x, d)
+    # })
     
-    # transforms into df 
-    comps <- do.call(rbind.data.frame, comps)
+    comps <- add_dose(comps, dose_level)
+    # comps <- lapply(comps, function(x){
+    #   add_dose(x, dose_level)
+    # })
+    
+    # # transforms into df 
+    # comps <- do.call(rbind.data.frame, comps)
     
     
     comps <- perform_multiple_comparison_correction(comps, 
