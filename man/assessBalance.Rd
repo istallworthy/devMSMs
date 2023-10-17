@@ -13,7 +13,7 @@ assessBalance(
   type,
   formulas,
   weights = NULL,
-  balance_thresh = 0.1,
+  balance_thresh = NULL,
   imp_conf = NULL,
   verbose = TRUE,
   save.out = TRUE

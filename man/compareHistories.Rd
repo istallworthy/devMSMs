@@ -12,13 +12,13 @@ compareHistories(
   model,
   epochs = NULL,
   hi_lo_cut = NULL,
-  reference = NA,
+  reference = NULL,
   comparison = NULL,
-  mc_comp_method = "BH",
-  dose_level = "h",
+  mc_comp_method = NA,
+  dose_level = NA,
   exp_lab = NA,
   out_lab = NA,
-  colors = "Dark2",
+  colors = NA,
   verbose = TRUE,
   save.out = TRUE
 )
@@ -41,7 +41,7 @@ created/assessed that correspond to time points when exposure wass measured}
 that reflect high and low values, respectively, for continuous exposure
 (default is median split)}
 
-\item{reference}{(optional) string of "-"-separated "l" and "h" values
+\item{reference}{(optional) list sof one or more strings of "-"-separated "l" and "h" values
 indicative of a reference exposure history to which to compare comparison,
 required if comparison is supplied}
 
@@ -132,6 +132,20 @@ r <- compareHistories(exposure = "A",
                       model = m,
                       reference = "l-l-l",
                       comparison = c("h-h-h", "h-l-l"),
+                      save.out = FALSE)
+r <- compareHistories(exposure = "A",
+                      exposure_time_pts = c(1, 2, 3),
+                      outcome = "D.3",
+                      model = m,
+                      reference = c("l-l-l", "l-h-h"),
+                      comparison = c("h-h-h"),
+                      save.out = FALSE)
+r <- compareHistories(exposure = "A",
+                      exposure_time_pts = c(1, 2, 3),
+                      outcome = "D.3",
+                      model = m,
+                      reference = c("l-l-l", "l-h-h"),
+                      comparison = c("h-h-h", "l-l-h"),
                       save.out = FALSE)
 }
 \seealso{

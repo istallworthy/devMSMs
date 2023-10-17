@@ -10,7 +10,7 @@ eval_hist(
   epochs = NULL,
   time_pts,
   hi_lo_cut = NULL,
-  ref = NA,
+  ref = NULL,
   comps = NULL,
   verbose = TRUE
 )
@@ -29,7 +29,7 @@ created/assessed that correspond to time points when exposure was measured}
 \item{hi_lo_cut}{list of two numbers indicating quantile values that reflect
 high and low values, respectively, for continuous exposure}
 
-\item{ref}{(optional) string of "-"-separated "l" and "h" values
+\item{ref}{(optional) list of one or more strings of "-"-separated "l" and "h" values
 indicative of a reference exposure history to which to compare comparison,
 required if comparison is supplied}
 

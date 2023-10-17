@@ -57,7 +57,7 @@
 
 
 
-trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, verbose = TRUE, save.out = TRUE) {
+trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA, verbose = TRUE, save.out = TRUE) {
   
   if (save.out) {
     if (missing(home_dir)) {
@@ -108,14 +108,18 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = 0.95, v
           call. = FALSE)
   }
   
-  if (!is.numeric(quantile) || length(quantile) != 1) {
+  if ((!is.numeric(quantile) && !is.na(quantile)) || length(quantile) != 1) {
     stop ('Please provide a single numeric quantile value between 0 and 1.',
           call. = FALSE)
+  }
+  else if (is.na(quantile)) {
+    quantile <- 0.95
   }
   else if (quantile > 1 || quantile < 0) {
     stop ('Please provide a quantile value between 0 and 1.',
           call. = FALSE)
   }
+
   
   if (!is.logical(verbose)) {
     stop ("Please set verbose to either TRUE or FALSE.",
