@@ -147,19 +147,21 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     
     # GETS COVARIATES FROM FORM FOR ASSESSING BALANCE
     
-    full_form <- formulas[[names(formulas)[as.numeric(sapply(strsplit(names(formulas), "-"), "[", 2)) == exposure_time_pt]]]
+    full_form <- formulas[[names(formulas)[as.numeric(sapply(strsplit(names(formulas), 
+                                                                      "-"), "[", 2)) == exposure_time_pt]]]
     covars <- deparse1(full_form[[3]], collapse = "") # gets covariates
     covar_time <- sapply(strsplit(unlist(strsplit(as.character(covars), "\\+")), 
                                   "\\."), "[", 2)
     covars <- as.character(unlist(strsplit(covars, "\\+")))
     covars <- gsub(" ", "", covars)
-
-        
+    
+    
     #checking covariates from formulas 
     
     if (any(duplicated(covars))) {
       stop (sprintf("The following variable(s) are duplicated in the formula for exposure at time point %s: %s.",
-                    exposure_time_pt, paste(covars[duplicated(covars)], collapse = ", ")),
+                    exposure_time_pt, paste(covars[duplicated(covars)], 
+                                            collapse = ", ")),
             call. = FALSE)
     }
     
@@ -277,7 +279,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                                   & data$flag == flag, t, NA) # finding those w/ vals <= median exp @ time pt & flagged at prev t's
             }
             else { # for binary exp
-              data$flag <- ifelse(data[[exps_time[t]]] == 0 & data$flag == flag, t, NA) # if exposure is absent & flagged at prev t's
+              data$flag <- ifelse(data[[exps_time[t]]] == 0 & data$flag == flag, 
+                                  t, NA) # if exposure is absent & flagged at prev t's
             }
             
           }
@@ -287,7 +290,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
                                   & data$flag == flag, t, NA) # finding those w/ vals > median exp @ time pt & flagged at prev t's
             }
             else { # binary exp
-              data$flag <- ifelse(data[[exps_time[t]]] == 1 & data$flag == flag, t, NA) # if exposure is present & flagged at prev t's
+              data$flag <- ifelse(data[[exps_time[t]]] == 1 & data$flag == flag, 
+                                  t, NA) # if exposure is present & flagged at prev t's
               
             }
             
@@ -522,7 +526,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     f_vars <- colnames(data)[sapply(data, is.factor)]
     
     if (length(f_vars) > 0) {
-      f_stats <- bal_stats[rownames(bal_stats)[sapply(strsplit(rownames(bal_stats), "_"), "[", 1) %in% f_vars], ]
+      f_stats <- bal_stats[rownames(bal_stats)[sapply(strsplit(rownames(bal_stats), 
+                                                               "_"), "[", 1) %in% f_vars], ]
       f_stats$name <- sapply(strsplit(rownames(f_stats), "_"), "[", 1)
       test <- aggregate(std_bal_stats ~ name, data = f_stats,
                         FUN = mean)
@@ -531,7 +536,8 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       new <- data.frame(std_bal_stats = test$std_bal_stats,
                         covariate = test$covariate)
       rownames(new) <- new$covariate
-      bal_stats <- rbind(bal_stats[rownames(bal_stats)[!sapply(strsplit(rownames(bal_stats), "_"), "[", 1) %in% f_vars], ],
+      bal_stats <- rbind(bal_stats[rownames(bal_stats)[!sapply(strsplit(rownames(bal_stats), 
+                                                                        "_"), "[", 1) %in% f_vars], ],
                          new)
     }
     

@@ -64,10 +64,11 @@
 #'               fam = gaussian,
 #'               model = "m0")
 
-getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, fam, covariates, verbose) {
+getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
+                     int_order, model, fam, covariates, verbose) {
 
   if (sum(duplicated(d$"ID")) > 0) {
-    stop("Please provide wide data with a single row per ID.",
+    stop ("Please provide wide data with a single row per ID.",
          call. = FALSE)
   }
 
@@ -95,7 +96,8 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
         for (l in seq_len(length(as.numeric(unlist(epochs[e, 2]))))) {
           level <- as.numeric(unlist(epochs[e, 2]))[l]
           z <- d[, names(d)[grepl(exposure, names(d))]] #finds exposure vars
-          cols <- colnames(z)[as.logical(sapply(strsplit(names(z), "\\."), "[", 2) == as.character(level))]
+          cols <- colnames(z)[as.logical(sapply(strsplit(names(z), "\\."), "[", 2) 
+                                         == as.character(level))]
           cols <- cols[!is.na(cols)]
           z <- as.numeric(as.character(unlist(z[, cols])))
           temp <- cbind(temp, z)
@@ -120,7 +122,8 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
       stop ("Please only include covariates that correspond to variables in the wide dataset.",
            call. = FALSE)
     }
-    covariate_list <- paste(as.character(covariates), sep = "", collapse = " + ")
+    covariate_list <- paste(as.character(covariates), sep = "", 
+                            collapse = " + ")
 
   } else {
     covariate_list <- NULL
@@ -128,6 +131,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
 
 
   # interaction model checking
+  
   if (model == "m2" | model == "m3") {
 
     if (int_order > nrow(epochs)) {
@@ -221,6 +225,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
       f2 <- paste(f0, "+", paste(interactions, sep = "", collapse = " + "))
 
       # Baseline + interactions
+      
       if (model == "m2") {
 
         # Fitting m2
@@ -239,6 +244,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs
       if (model == "m3") {
 
         # Fitting m3
+        
         f3 <- paste0(f1, "+", paste(interactions, sep = "", collapse = " + "))
         f3 <- as.formula(f3)
         m3 <- survey::svyglm(f3,

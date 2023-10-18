@@ -50,6 +50,19 @@
 #'                     ti_confounders = "C",
 #'                     type = "short",
 #'                     save.out = FALSE)
+#'                     
+#' c <- list("short_form-1" = as.formula(A.1 ~ C),
+#'           "short_form-2" = as.formula(A.2 ~ A.1 + B.1 + C),
+#'           "short_form-3" = as.formula(A.3 ~ A.2 + B.2 + C))
+#' 
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "short",
+#'                     custom = c,
+#'                     save.out = FALSE)
 #'
 #' #Update Formulas
 #' test <- data.frame(ID = 1:50,
@@ -77,8 +90,7 @@
 #'                    weights = w,
 #'                    formulas = f,
 #'                    save.out = FALSE)
-#'
-#' f <- createFormulas(exposure = "A",
+# f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
 #'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
@@ -86,9 +98,9 @@
 #'                     type = "update",
 #'                     bal_stats = b,
 #'                     save.out = FALSE)
+#'
 
-
-createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = NULL,  bal_stats = NULL, concur_conf = NULL,
+createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = NULL, bal_stats = NULL, concur_conf = NULL,
                            keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ) {
   
   if (save.out) {
@@ -149,15 +161,15 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   }
   
   if (missing(type)) {
-    stop ("Please supply a 'full', 'short', or 'update' type",
+    stop ("Please supply a 'full', 'short', or 'update' type.",
           call. = FALSE)
   }
   else  if (!is.character(type)) {
-    stop ("Please provide a character string type from the following list: 'short', 'full', or 'update'",
+    stop ("Please provide a character string type from the following list: 'short', 'full', or 'update'.",
           call. = FALSE)
   }
   else if (! type %in% c("short", "full", "update") || length(type) != 1) {
-    stop ("Please provide a single type from the following list: 'short', 'full', or 'update'",
+    stop ("Please provide a single type from the following list: 'short', 'full', or 'update'.",
           call. = FALSE)
   }
   
@@ -192,14 +204,83 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   
   all_covars <- c(tv_confounders, ti_confounders)
   
+  #for custom formulas
+  
   if (!is.null(custom)) {
-    if (length(custom) != length(exposure_time_pts) || !is.list(custom) || is.data.frame(custom)) {
+    if (length(custom) != length(exposure_time_pts) || !is.list(custom) || 
+        is.data.frame(custom)) {
       stop ("If you wish to supply custom formulas, please provide a list of formulas for each exposure time point.",
             call. = FALSE)
     }
     
     forms <- custom
+    
+    if (any(as.logical(unlist(lapply(forms, function(x) {
+      !inherits(x, "formula") } ))))) {
+      stop ("Please make sure each entry of your custom formulas list is a formula.",
+            call. = FALSE)
+    }
+    
+    if (any(names(forms) != paste(paste0(type, "_form"), exposure_time_pts, 
+                                  sep = "-"))) {
+      if (verbose) {
+        message("Renaming custom formulas.")
+      }
+      
+      names(forms) = paste(paste0(type, "_form"), exposure_time_pts, sep = "-")
+    }
+    
+    
+    #checking custom formulas
+    
+    covars <- lapply(forms, function(f) {
+      deparse1(f, collapse = "") # gets covariates
+    })
+    
+    if (any(as.logical(unlist(lapply(covars, function(x) {
+      sapply(strsplit(sapply(strsplit(x, "\\~"), "[", 1), "\\."), "[", 1) != 
+        exposure }))))) {
+      stop ("Please make each formula in your custom formula list a function of exposure at each time point.",
+            call. = FALSE)
+    }
+    
+    if (any(as.numeric(unlist(lapply(covars, function(x) {
+      sapply(strsplit(sapply(strsplit(x, "\\~"), "[", 1), "\\."), "[", 2)}))) != 
+      exposure_time_pts)) {
+      stop ("Please make each formula in your custom formula list a function of exposure at each time point.",
+            call. = FALSE)
+    }
+    
+    covars <- lapply(covars, function(x) {
+      sapply(strsplit(x, "\\~"), "[", 2)
+    })
+    
+    covars <- lapply(covars, function(x){
+      as.character(unlist(strsplit(x, "\\+")))
+    })
+    
+    covars <- lapply(covars, function(x) {
+      gsub(" ", "", x)
+    })
+    
+    if (any(as.logical(unlist(lapply(covars, function(x) {
+      any(!x %in% tv_confounders & !x  %in% 
+          ti_confounders)
+    }))))) {
+      miss <- lapply(covars, function(x){
+        x[!x %in% tv_confounders & !x %in% 
+            ti_confounders]
+      })
+      stop(sprintf("Please make sure all variables in your custom formulas are included as either time-varying or time invariant confounders.
+           The following variables are not: %s",
+                   paste(miss, sep = ", ")),
+           call. = FALSE)
+    }
+    
   }
+  
+  #create formulas 
+  
   else {
     if (type != "update" && !is.null(bal_stats)) {
       stop ("Please only provide balance statistics for the type 'update'.",
@@ -327,7 +408,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
         
         if (as.numeric(sapply(strsplit(concur_conf, "\\."), "[", 2)) %in% time) {
           vars_to_include <- c(vars_to_include,
-                               concur_conf[as.numeric(sapply(strsplit(concur_conf, "\\."), "[", 2)) %in% time] )
+                               concur_conf[as.numeric(sapply(strsplit(concur_conf, 
+                                                                      "\\."), "[", 2)) %in% time] )
         }
       }
       
@@ -365,7 +447,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       # Creates form for the given exposure time point
       
       f <- as.formula(paste(paste0(exposure, ".", time, " ~ "),
-                            paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
+                            paste0(vars_to_include[order(vars_to_include)], 
+                                   sep = "", collapse = " + ")))
       
       # Prints form for user inspection
       if (verbose) {
@@ -383,7 +466,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
                                type, exposure, outcome, exposure, as.character(time)))
         
         forms_csv <- c(forms_csv, paste(exposure, "~",
-                                        paste0(vars_to_include[order(vars_to_include)], sep = "", collapse = " + ")))
+                                        paste0(vars_to_include[order(vars_to_include)], 
+                                               sep = "", collapse = " + ")))
         
       }
       

@@ -63,8 +63,37 @@
 #'                    formulas = f,
 #'                    method = "cbps",
 #'                    save.out = FALSE)
-
-
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    formulas = f,
+#'                    method = "ps",
+#'                    save.out = FALSE)
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    formulas = f,
+#'                    method = "gbm",
+#'                    save.out = FALSE)                    
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    formulas = f,
+#'                    method = "bart",
+#'                    save.out = FALSE)
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    formulas = f,
+#'                    method = "super",
+#'                    save.out = FALSE)   
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    formulas = f,
+#'                    method = "glm",
+#'                    save.out = FALSE)
+#'                                                      
 createWeights <- function(home_dir, data, exposure, outcome, formulas, method = "cbps", SL.library = "SL.glm", criterion = NA,
                           read_in_from_file = "no", verbose = TRUE, save.out = TRUE, ...) {
   
@@ -175,18 +204,65 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   
   if (read_in_from_file == "yes") {
     
-    tryCatch( {
+    tryCatch ( {
       weights <- readRDS(file.path(home_dir, "weights", 
                                    sprintf("%s-%s_%s_%s_fit.rds",
-                                           exposure, outcome, form_name, weights_method)))
+                                           exposure, outcome, form_name, 
+                                           weights_method)))
       
       if (verbose) {
         message("Reading in balancing weights from the local folder.")
       }
+      
+      if (!is.list(weights) || !inherits(weights[[1]], "weightitMSM")) {
+        stop ("The weights saved locally are not the correct class of weightitMSM classed objects saved as a list.",
+              call. = FALSE)
+      }
+      
+      #checking weights
+      
+      if (is.data.frame(data)) {
+        l <- 1
+        n <- names(data)
+      }
+      else if (is.list(data) && !is.data.frame(data)) {
+        l <- length(data)
+        n <- names(data[[1]])
+      }
+      else if (mice::is.mids(data)){
+        l <- data$m
+        n <- names(mice::complete(data, 1))
+      }
+      
+      if (length(weights) !=  l) {
+        stop ("The locally saved weights object does not match the data you have supplied.",
+              call. = FALSE)
+      }
+      
+      if (weights[[1]]$method != weights_method) {
+        stop (sprintf("The weights saved locally are incorrectly labeled and were actually created with %s weighting method.",
+                      weights[[1]]$method),
+              call. = FALSE)
+      }
+      
+      if (length(weights[[1]]$covs.list) != length(formulas)) {
+        stop ("The locally saved weights were created using formulas other than what are supplied here.",
+              call. = FALSE)
+      }
+      
+      if (as.logical(unlist(lapply(weights[[1]]$covs.list, function(x){
+        any(!names(x) %in% n)
+      })))) {
+        stop ("The locally saved weights were created using data other than what is supplied.",
+              call. = FALSE)
+      }
+      
+      
     }, error = function(x) {
       stop ("These weights have not previously been saved locally. Please re-run with read_in_from_file='no'",
             call. = FALSE)
     })
+    
     weights
   }
   else {
@@ -204,7 +280,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     
     # function to wrap weightitMSM() and calculate weights
     
-    calculate_weights <- function(data, form, weights_method, SL.library, criterion, verbose, ...) {
+    calculate_weights <- function(data, form, weights_method, SL.library, 
+                                  criterion, verbose, ...) {
       
       if (weights_method == "super") {
         fit <- WeightIt::weightitMSM(form,
@@ -281,7 +358,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
                 call. = FALSE)
         }
         
-        fit <- calculate_weights(d, form, weights_method, SL.library, criterion, verbose, ...)
+        fit <- calculate_weights(d, form, weights_method, SL.library, 
+                                 criterion, verbose, ...)
         
         d$weights <- fit$weights
         
@@ -306,12 +384,14 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
           write.csv(x = d, 
                     file = file.path(home_dir, "weights", "values", 
                                      sprintf("%s-%s_%s_%s_%s.csv",
-                                             exposure, outcome, form_name, weights_method, i)))
+                                             exposure, outcome, form_name, 
+                                             weights_method, i)))
         }
         
         # Writes image of the histogram of weights to assess heavy tails
         
-        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
+        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), 
+                             ggplot2::aes(x = fit$weight)) +
           ggplot2::geom_histogram(color = 'black', bins = 15) +
           ggplot2::xlab("Weights") +
           ggplot2::ggtitle(sprintf("Distribution of %s weights",
@@ -324,7 +404,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         if (save.out) {
           ggsave(file.path(home_dir, "weights", "histograms", 
                            sprintf("Hist_%s-%s_%s_%s_%s.png",
-                                   exposure, outcome, form_name, weights_method, i)),
+                                   exposure, outcome, form_name, 
+                                   weights_method, i)),
                  plot = p, height = 8, width = 14)
         }
         
@@ -354,15 +435,13 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
                 call. = FALSE)
         }
         
-        fit <- calculate_weights(d, form, weights_method, SL.library, criterion,  verbose, ...)
+        fit <- calculate_weights(d, form, weights_method, SL.library, 
+                                 criterion, verbose, ...)
         
         d$weights <- fit$weights
         
         if (verbose) {
-          # cat(paste0("For imputation", i, " and ", weights_method,
-          #            ", weighting method, the median weight value is ", round(median(fit$weights), 2) ,
-          #            " (SD= ", round(sd(fit$weights), 2), "; range= ", round(min(fit$weights), 2), "-",
-          #            round(max(fit$weights), 2), ")."), "\n")
+          
           cat(sprintf("For imputation %s and the %s weighting method, the median weight value is %s
                      (SD= %s; range= %s-%s ). \n",
                       i,
@@ -381,15 +460,18 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
           write.csv(x = d,
                     file = file.path(home_dir, "weights", "values", 
                                      sprintf("%s-%s_%s_%s_%s.csv",
-                                             exposure, outcome, form_name, weights_method, i)))
+                                             exposure, outcome, form_name, 
+                                             weights_method, i)))
         }
         
         # Writes image of the histogram of weights to assess heavy tails
         
-        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), ggplot2::aes(x = fit$weight)) +
+        p <- ggplot2::ggplot(data = as.data.frame(fit$weight), 
+                             ggplot2::aes(x = fit$weight)) +
           ggplot2::geom_histogram(color = 'black', bins = 15) +
           ggplot2::xlab("Weights") +
-          ggplot2::ggtitle(paste0("Distribution of ", weights_method, " weights"))
+          ggplot2::ggtitle(paste0("Distribution of ", weights_method, 
+                                  " weights"))
         
         if (verbose) {
           print(p)
@@ -398,7 +480,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         if (save.out) {
           ggplot2::ggsave(file.path(home_dir, "weights", "histograms", 
                                     sprintf("Hist_%s-%s_%s_%s_%s.png",
-                                            exposure, outcome, form_name, weights_method, i)),
+                                            exposure, outcome, form_name, 
+                                            weights_method, i)),
                           plot = p, height = 8, width = 14)
         }
         
@@ -425,7 +508,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       # Creating weights
       
       weights <-  lapply(1, function(i) {
-        calculate_weights(data, form, weights_method, SL.library, criterion, verbose, ...)
+        calculate_weights(data, form, weights_method, SL.library, criterion, 
+                          verbose, ...)
       })
       
       data$weights <- weights[[1]]$weights
@@ -451,7 +535,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         write.csv(x = data, 
                   file = file.path(home_dir, "weights", "values", 
                                    sprintf("%s-%s_%s_%s.csv",
-                                           exposure, outcome, form_name, weights_method)))
+                                           exposure, outcome, form_name, 
+                                           weights_method)))
       }
       
       # Writes image of the histogram of weights to assess heavy tails
@@ -470,7 +555,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       if (save.out) {
         ggplot2::ggsave(file.path(home_dir, "weights", "histograms", 
                                   sprintf("Hist_%s-%s_%s_%s.png",
-                                          exposure, outcome, form_name, weights_method)),
+                                          exposure, outcome, form_name, 
+                                          weights_method)),
                         plot = p, height = 8, width = 14)
         
         if (verbose) {
@@ -486,7 +572,8 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       saveRDS(weights, 
               file = file.path(home_dir, "weights", 
                                sprintf("%s-%s_%s_%s_fit.rds",
-                                       exposure, outcome, form_name, weights_method)))
+                                       exposure, outcome, form_name, 
+                                       weights_method)))
       if (verbose) {
         cat("\n")
         cat("Weights models have been saved as an .rds object in the 'weights' folder.", "\n")

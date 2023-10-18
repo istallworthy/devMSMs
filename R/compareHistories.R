@@ -110,7 +110,20 @@
 #'                       reference = c("l-l-l", "l-h-h"),
 #'                       comparison = c("h-h-h", "l-l-h"),
 #'                       save.out = FALSE)
-
+#' r <- compareHistories(exposure = "A",
+#'                       exposure_time_pts = c(1, 2, 3),
+#'                       outcome = "D.3",
+#'                       model = m,
+#'                       reference = c("l-l-l", "l-h-h"),
+#'                       comparison = c("h-h-h", "l-l-h"),
+#'                       hi_lo_cut = c(0.60, 0.30),
+#'                       mc_comp_method = "BH",
+#'                       dose_level = "l",
+#'                       exp_lab = "Hello",
+#'                       out_lab = "Goodbye",
+#'                       colors = "Set1",
+#'                       save.out = FALSE)
+#'                       
 compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, model, epochs = NULL, hi_lo_cut = NULL,
                              reference = NULL, comparison = NULL, mc_comp_method = NA, dose_level = NA, exp_lab = NA, out_lab = NA,
                              colors = NA, verbose = TRUE, save.out = TRUE ) {

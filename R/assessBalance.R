@@ -116,8 +116,6 @@
 #'                    save.out = FALSE)
 
 
-
-
 assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights = NULL, balance_thresh = NULL,
                           imp_conf = NULL, verbose = TRUE, save.out = TRUE) {
   
@@ -206,7 +204,6 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
             call. = FALSE)
     }
   }
-  
   
   if (missing(type)) {
     stop ("Please supply a 'weighted', 'prebalance' type",
@@ -370,7 +367,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
           exposure_type <- if (is.numeric(d[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
           
           if (sum(duplicated(d[["ID"]])) > 0) {
-            stop ("Please provide wide imputed datasets with a single row per ID.", call. = FALSE)
+            stop ("Please provide wide imputed datasets with a single row per ID.", 
+                  call. = FALSE)
           }
           
           calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome,
@@ -444,8 +442,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       
       exposure_type <- if (is.numeric(data[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
       
-      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, exposure_time_pts, outcome,
-                                balance_thresh, k = 0, weights = NULL, imp_conf, verbose, save.out)
+      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, 
+                                exposure_time_pts, outcome, balance_thresh, 
+                                k = 0, weights = NULL, imp_conf, verbose, save.out)
       
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       
@@ -577,8 +576,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       }
       
       w <- weights[[1]]
-      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, exposure_time_pts, outcome,
-                                balance_thresh, k = 0, weights = w, imp_conf, verbose, save.out)
+      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, 
+                                exposure_time_pts, outcome, balance_thresh, k = 0, 
+                                weights = w, imp_conf, verbose, save.out)
       
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       
@@ -624,14 +624,16 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     
     temp <- all_bal_stats[all_bal_stats$exp_time == exposure_time_pt, , drop = FALSE]
     
-    make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, temp,
-                   data_type, balance_thresh, weights_method, imp_conf, verbose, save.out)
+    make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, 
+                   k = 0, form_name, temp, data_type, balance_thresh, 
+                   weights_method, imp_conf, verbose, save.out)
   })
   
   if (save.out) {
     outfile <- file.path(home_dir, "balance", type, 
                          sprintf("%s_%s-%s_all_%s_%s_associations.html",
-                                 form_name, exposure, outcome, type, weights_method))
+                                 form_name, exposure, outcome, type, 
+                                 weights_method))
     
     # Save out all correlations/std mean differences
     
@@ -665,8 +667,9 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     # Saving out all pre-balance associations
     
     write.csv(all_bal_stats, 
-              file.path(home_dir, "balance", type, sprintf("%s_%s_%s_stat_summary.csv",
-                                                           exposure, type, weights_method)),
+              file.path(home_dir, "balance", type, 
+                        sprintf("%s_%s_%s_stat_summary.csv",
+                                exposure, type, weights_method)),
               row.names = FALSE)
     
     
@@ -689,7 +692,8 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   unbalanced_covars <- all_bal_stats[all_bal_stats$balanced == 0, , drop = FALSE]
   
   unbalanced_constructs  <- sapply(strsplit(unbalanced_covars$covariate, "\\."),
-                                   "[", 1)[!duplicated(sapply(strsplit(unbalanced_covars$covariate, "\\."), "[", 1))]
+                                   "[", 1)[!duplicated(sapply(strsplit(unbalanced_covars$covariate, 
+                                                                       "\\."), "[", 1))]
   
   if (save.out) {
     summ <- rbind(exposure = exposure,
@@ -718,10 +722,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         summ <- rbind(summ,
                       n_imbal_confounders = nrow(unbalanced_covars),
                       n_confounders = length(tot_covars),
-                      perc_imbal_confounders = round(nrow(unbalanced_covars) / length(tot_covars) * 100, 4),
+                      perc_imbal_confounders = round(nrow(unbalanced_covars) / 
+                                                       length(tot_covars) * 100, 4),
                       n_imbal_domains = length(unbalanced_constructs),
                       n_domains =  length(tot_cons),
-                      perc_imbal_domains = round(length(unbalanced_constructs) / length(tot_cons) * 100, 4),
+                      perc_imbal_domains = round(length(unbalanced_constructs) / 
+                                                   length(tot_cons) * 100, 4),
                       imbal_med_bal_stat = round(median(abs(as.numeric(unbalanced_covars$avg_bal[unbalanced_covars$balanced == 0]))), 4),
                       imbal_min_bal_stat = round(min(unbalanced_covars$avg_bal), 4),
                       imbal_max_bal_stat = round(max(unbalanced_covars$avg_bal), 4)
@@ -772,10 +778,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
         summ <- rbind(summ,
                       n_imbal_confounders = nrow(unbalanced_covars),
                       n_confounders = length(tot_covars),
-                      perc_imbal_confounders = round(nrow(unbalanced_covars) / length(tot_covars) * 100, 4),
+                      perc_imbal_confounders = round(nrow(unbalanced_covars) / 
+                                                       length(tot_covars) * 100, 4),
                       n_imbal_domains = length(unbalanced_constructs),
                       n_domains =  length(tot_cons),
-                      perc_imbal_domains = round(length(unbalanced_constructs) / length(tot_cons) * 100, 4),
+                      perc_imbal_domains = round(length(unbalanced_constructs) / 
+                                                   length(tot_cons) * 100, 4),
                       imbal_med_bal_stat =  round(median(abs(as.numeric(unlist(unbalanced_covars[unbalanced_covars$balanced == 0, ][, "avg_bal"])))), 4),
                       imbal_min_bal_stat = round(min(unbalanced_covars$avg_bal), 4),
                       imbal_max_bal_stat = round(max(unbalanced_covars$avg_bal), 4)
@@ -822,6 +830,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     if (save.out) {
       
       # save out summary balance assessment
+      
       k <- knitr::kable(summ,
                         caption = sprintf("Summary of %s Exposure for %s using %s",
                                           exposure, form_name, weights_method),
@@ -829,14 +838,16 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       kableExtra::save_kable(k,
                              file = file.path(home_dir, "balance", type, 
                                               sprintf("%s_%s-%s_%s_%s_balance_summary.html",
-                                                      form_name, exposure, outcome, type, weights_method)))
+                                                      form_name, exposure, outcome, 
+                                                      type, weights_method)))
       
       
       # Save out only imbalanced covariates
       
       outfile <- file.path(home_dir, "balance", type, 
                            sprintf("%s_%s-%s_%s_%s_all_covariates_imbalanced.html",
-                                   form_name, exposure, outcome, type, weights_method))
+                                   form_name, exposure, outcome, type, 
+                                   weights_method))
       
       sink(outfile)
       stargazer::stargazer(unbalanced_covars,

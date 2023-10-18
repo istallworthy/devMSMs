@@ -164,11 +164,16 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
   }
   
   if (data_type == "imputed") {
-    lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance for Imputation ", k))
+    lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", 
+                                       exposure_time_pt, 
+                                       ") Balance for Imputation ", k))
     
     if (save.out) {
       suppressMessages(ggplot2::ggsave(lp,
-                                       filename = file.path(home_dir, "balance", folder, "plots", 
+                                       filename = file.path(home_dir, 
+                                                            "balance", 
+                                                            folder, 
+                                                            "plots", 
                                                             sprintf("%s_imp_%s_%s_%s_%s_summary_balance_plot.jpeg",
                                                                     form_name, k, exposure, exposure_time_pt, weights_method)),
                                        width = 6,
@@ -176,7 +181,8 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
     }
   }
   else {
-    lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, ") Balance"))
+    lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, 
+                                       ") Balance"))
     
     if (save.out) {
       suppressMessages(ggplot2::ggsave(lp,

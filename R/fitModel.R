@@ -192,16 +192,18 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ('Please provide a single outcome model selection "m" from 0-3 (e.g., "m1")',
           call. = FALSE)
   }
-  
   if (!(model %in% c("m0", "m1", "m2", "m3"))) {
     stop ('Please provide a valid model "m" from 0-3 (e.g., "m1")',
           call. = FALSE)
   }
-  if ((model == "m2" | model == "m3") && (is.na(int_order) || !is.numeric(int_order))) {
+  if ((model == "m2" | model == "m3") && (is.na(int_order) || 
+                                          !is.numeric(int_order) || 
+                                          length(int_order) > 1)) {
     stop ("Please provide an integer interaction order if you select a model with interactions.",
           call. = FALSE)
   }
-  if ((model == "m1" | model == "m3") && (is.null(covariates) || !is.character(covariates))) {
+  if ((model == "m1" | model == "m3") && (is.null(covariates) || 
+                                          !is.character(covariates))) {
     stop ("Please provide a list of covariates as characters if you select a covariate model.",
           call. = FALSE)
   }
@@ -235,7 +237,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       stop ("Please provide a list of character strings for covariates.",
             call. = FALSE)
     }
-    if (sum(as.numeric(sapply(strsplit(covariates, "\\."), "[", 2)) > exposure_time_pts[1], na.rm = T) > 0) {
+    if (sum(as.numeric(sapply(strsplit(covariates, "\\."), "[", 2)) > 
+            exposure_time_pts[1], na.rm = T) > 0) {
       warning ("Please only include covariates that are time invariant or measured at the first exposure time point.",
                call. = FALSE)
     }
@@ -289,7 +292,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     }
   }
   
-  exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, paste, sep = "", collapse = ".")
+  exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, 
+                      paste, sep = "", collapse = ".")
   
   #getting null comparisons for LHT
   
@@ -311,7 +315,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
       
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
+      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
+               int_order, model, family, covariates, verbose)
       
     })
     
@@ -321,7 +326,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
       
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
+      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
+               int_order, model = n, family, covariates, verbose)
       
     })
     
@@ -343,7 +349,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
+      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
+               int_order, model, family, covariates, verbose)
       
     })
     
@@ -352,7 +359,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
+      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
+               int_order, model = n, family, covariates, verbose)
       
     } )
     
@@ -373,7 +381,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d <- data
       d$weights <- NULL
       d$weights <- weights[["0"]]$weights
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model, family, covariates, verbose)
+      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
+               int_order, model, family, covariates, verbose)
       
     } )
     
@@ -382,7 +391,8 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d <- data
       d$weights <- NULL
       d$weights <- weights[["0"]]$weights
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, int_order, model = n, family, covariates, verbose)
+      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
+               int_order, model = n, family, covariates, verbose)
       
     } )
     
