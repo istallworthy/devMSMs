@@ -20,9 +20,9 @@
 #' @param hi_lo_cut (optional) list of two numbers indicating quantile values
 #'   that reflect high and low values, respectively, for continuous exposure
 #'   (default is median split)
-#' @param reference (optional) list sof one or more strings of "-"-separated "l" and "h" values
-#'   indicative of a reference exposure history to which to compare comparison,
-#'   required if comparison is supplied
+#' @param reference (optional) list sof one or more strings of "-"-separated "l"
+#'   and "h" values indicative of a reference exposure history to which to
+#'   compare comparison, required if comparison is supplied
 #' @param comparison (optional) list of one or more strings of "-"-separated "l"
 #'   and "h" values indicative of comparison history/histories to compare to
 #'   reference, required if reference is supplied
@@ -434,7 +434,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       stop ("Please provide at least 1 fewer reference events.",
             call. = FALSE)
     }
-      
+    
     if (sum(exposure_levels %in% reference) != length(reference)) {
       stop (paste0('If you wish to conduct custom comparisons, please select a valid reference history from the following list:
                   ', paste(apply(gtools::permutations(2, nrow(epochs), c("l", "h"), 
@@ -490,7 +490,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     comps <- lapply(preds, function(y) {
       y |> marginaleffects::hypotheses("pairwise")
     })
-  
+    
     
   } else {
     comps <- create_custom_contrasts(d, reference, comp_histories, 
@@ -582,7 +582,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     # comps_pool <- lapply(comps, function(x){
     #   mice::pool(x) |> summary()
     # })
-
+    
     comps_pool <- add_histories(comps_pool, d)
     
     comps_pool <- add_dose(comps_pool, dose_level)
@@ -619,9 +619,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       # Makes table of pooled comparisons and saves out
       
       outfile <- file.path(home_dir, "histories", 
-                          sprintf("%s-%s_pooled_comparisons_hi_lo=%s.html",
-                                  exposure, outcome, 
-                                  paste(hi_lo_cut, collapse = "_") ))
+                           sprintf("%s-%s_pooled_comparisons_hi_lo=%s.html",
+                                   exposure, outcome, 
+                                   paste(hi_lo_cut, collapse = "_") ))
       sink(outfile)
       stargazer::stargazer(
         as.data.frame(comps_pool),
@@ -716,9 +716,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     # comps <- comps[[1]]
     
-    if (length(reference) > 1) {
-      comps <- do.call(rbind.data.frame, comps)
-    }
+    # if (length(reference) > 1) {
+    comps <- do.call(rbind.data.frame, comps)
+    # }
     
     comps <- add_histories(comps, d)
     # comps <- lapply(comps[[1]], function(x){

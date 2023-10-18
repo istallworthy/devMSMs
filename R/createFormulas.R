@@ -90,7 +90,7 @@
 #'                    weights = w,
 #'                    formulas = f,
 #'                    save.out = FALSE)
-# f <- createFormulas(exposure = "A",
+#' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
 #'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),

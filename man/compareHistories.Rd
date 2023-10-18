@@ -41,9 +41,9 @@ created/assessed that correspond to time points when exposure wass measured}
 that reflect high and low values, respectively, for continuous exposure
 (default is median split)}
 
-\item{reference}{(optional) list sof one or more strings of "-"-separated "l" and "h" values
-indicative of a reference exposure history to which to compare comparison,
-required if comparison is supplied}
+\item{reference}{(optional) list sof one or more strings of "-"-separated "l"
+and "h" values indicative of a reference exposure history to which to
+compare comparison, required if comparison is supplied}
 
 \item{comparison}{(optional) list of one or more strings of "-"-separated "l"
 and "h" values indicative of comparison history/histories to compare to
@@ -147,6 +147,20 @@ r <- compareHistories(exposure = "A",
                       reference = c("l-l-l", "l-h-h"),
                       comparison = c("h-h-h", "l-l-h"),
                       save.out = FALSE)
+r <- compareHistories(exposure = "A",
+                      exposure_time_pts = c(1, 2, 3),
+                      outcome = "D.3",
+                      model = m,
+                      reference = c("l-l-l", "l-h-h"),
+                      comparison = c("h-h-h", "l-l-h"),
+                      hi_lo_cut = c(0.60, 0.30),
+                      mc_comp_method = "BH",
+                      dose_level = "l",
+                      exp_lab = "Hello",
+                      out_lab = "Goodbye",
+                      colors = "Set1",
+                      save.out = FALSE)
+                      
 }
 \seealso{
 {\code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}},

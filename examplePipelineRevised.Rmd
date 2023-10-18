@@ -303,7 +303,7 @@ If you specify reference and comparison histories, please do so consistently thr
 ```{r}
 
 #optional reference history (required if comparisons are specified)
-reference <- NA 
+reference <- NULL
 reference <- "l-l-l"
 reference <- c("l-l-l", "l-l-h")
 
@@ -557,6 +557,7 @@ weights <- weights.super
 balance_stats.super <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
                                      balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                      verbose = TRUE, save.out = TRUE) #optional
+
 ```
 
 
