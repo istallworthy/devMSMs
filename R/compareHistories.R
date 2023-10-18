@@ -126,7 +126,7 @@
 #'                       
 compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, model, epochs = NULL, hi_lo_cut = NULL,
                              reference = NULL, comparison = NULL, mc_comp_method = NA, dose_level = NA, exp_lab = NA, out_lab = NA,
-                             colors = NA, verbose = TRUE, save.out = TRUE ) {
+                             colors = NULL, verbose = TRUE, save.out = TRUE ) {
   
   if (save.out) {
     if (missing(home_dir)) {
@@ -206,11 +206,11 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     dose_level <- "h"
   }
   
-  if ( !is.character(colors) && !is.na(colors)) {
+  if ( !is.character(colors) && !is.null(colors)) {
     stop ("To specify plotting colors, as character strings, please provide either a list of valid colors equal to the number of exposure main effects + 1 or a valid Brewer palette.",
           .call = FALSE)
   }
-  else if (is.na(colors)) {
+  else if (is.null(colors)) {
     colors <- "Dark2"
   }
   
@@ -839,7 +839,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
                     max(comparisons$high_ci) + 1 * sd(comparisons$high_ci)) +
       ggplot2::theme(text = ggplot2::element_text(size = 14)) +
       ggplot2::theme(panel.grid.major = ggplot2::element_blank(), 
-                     panel.grid.minor = element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
                      panel.background = ggplot2::element_blank(), 
                      axis.line = ggplot2::element_line(colour = "black"))
     

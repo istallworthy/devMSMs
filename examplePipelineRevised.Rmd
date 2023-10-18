@@ -144,11 +144,6 @@ data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, 
                                                      "HomeOwnd", "SurpPreg", "BioDadInHH2"), #list factor variables here
                               save.out = TRUE) 
 
-
-# #making exposure binary for testing purposes only 
-# a <- as.numeric(unlist(data_long_f %>% select(contains(exposure))))
-# data_long_f[, colnames(data_long_f) %in% exposure] <- as.factor(ifelse(a > median(a, na.rm = TRUE), 1, 0))
-
 ```
 
 
@@ -180,6 +175,17 @@ data_wide[, factor_covars] <- as.data.frame(lapply(data_wide[, factor_covars], a
 
 
 
+#if you want to test out median split binary exposure
+library(dplyr)
+e <- data_wide[, paste(exposure, exposure_time_pts, sep = ".")]
+m <- sapply(e, median)
+
+data_wide[, paste(exposure, exposure_time_pts, sep = ".")] <- 
+  as.data.frame(lapply(seq(ncol(e)), function(x) {
+  as.factor(ifelse(e[, x] > m[x], 1, 0))
+}))
+
+
 #if you have no missing data and want to use the package with a single wide data frame
 data <- data_wide
 
@@ -201,7 +207,7 @@ method <- "rf" # provide an imputation method pmm, midastouch, sample, cart , rf
 
 #optional
 maxit <- NA
-maxit <- 0 #maximum iterations for imputation (default is 5)
+maxit <- 1 #maximum iterations for imputation (default is 5)
 
 #optional
 #please see the mice::mice() documentation for more optimal input to customize mice(): https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice
@@ -209,7 +215,7 @@ maxit <- 0 #maximum iterations for imputation (default is 5)
 
 #note: right now (just for testing purposes), the function is set up for maxit = 0 to go fast, default is 5
 imputed_data <- imputeData(data_wide, home_dir, exposure, outcome, 
-                           m = m, method = method, maxit = maxit, para_proc = TRUE, read_imps_from_file = "no", 
+                           m = m, method = method, maxit = maxit, para_proc = FALSE, read_imps_from_file = "no", 
                            save.out = TRUE)
 
 
@@ -765,7 +771,7 @@ If you specify exposure epochs, we recommend doing so consistently throughout th
 ```{r}
 
 #optional family/link information for glm
-family <- NA
+family <- NULL
 family <- gaussian
 
 link <- NA
@@ -778,7 +784,7 @@ int_order <- 3
 #covariates (required for covariate models m1, m3)
 covariates <- NULL
 covariates <- imbalanced_covariates 
-covariates <- c("ESETA1.6", "gov_asst", "B18Raw.6") 
+covariates <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
 
 
 #optional specification of epochs
@@ -793,7 +799,7 @@ weights <- trim_weights
 
 # all inputs
 #required
-model <- "m0"
+model <- "m3"
 models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, #required
                    family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
                    verbose = TRUE, save.out = TRUE) #optional
@@ -876,7 +882,7 @@ out_lab <- NA
 out_lab <- "Executive Functioning" 
 
 # optional list of colors (equal to number of epochs +1) or brewer palette for plotting
-colors <- NA
+colors <- NULL
 colors <- c("Dark2")  #(see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) for plotting default is 'Dark2'); 
 colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2") #list number-of-exposure-main-effects-+1 colors
 

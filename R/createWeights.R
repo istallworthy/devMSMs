@@ -402,11 +402,11 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         }
         
         if (save.out) {
-          ggsave(file.path(home_dir, "weights", "histograms", 
-                           sprintf("Hist_%s-%s_%s_%s_%s.png",
-                                   exposure, outcome, form_name, 
-                                   weights_method, i)),
-                 plot = p, height = 8, width = 14)
+          ggplot2::ggsave(file.path(home_dir, "weights", "histograms", 
+                                    sprintf("Hist_%s-%s_%s_%s_%s.png",
+                                            exposure, outcome, form_name, 
+                                            weights_method, i)),
+                          plot = p, height = 8, width = 14)
         }
         
         fit
