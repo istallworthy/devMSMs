@@ -57,7 +57,8 @@
 
 
 
-trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA, verbose = TRUE, save.out = TRUE) {
+trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA, 
+                        verbose = TRUE, save.out = TRUE) {
   
   if (save.out) {
     if (missing(home_dir)) {
@@ -241,7 +242,8 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA, ver
       if (save.out) {
         
         ggplot2::ggsave(sprintf("Hist_%s-%s_%s_weights_trim_%s.png",
-                                exposure, outcome, weights[[x]]$method, quantile),
+                                exposure, outcome, weights[[x]]$method, 
+                                quantile),
                         path = file.path(home_dir, "weights", "histograms"),
                         plot = p,
                         height = 8,

@@ -198,17 +198,24 @@ add_histories <- function(p, d) {
 #' @export
 
 add_dose <- function(p, dose_level) {
+  
   if ( length(p$history[1]) == 1 ) {
+    
     if (grepl("vs", p$history[1])) {
-      dose_a <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 1), dose_level)
-      dose_b <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 2), dose_level)
+      
+      dose_a <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 1), 
+                                   dose_level)
+      dose_b <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 2), 
+                                   dose_level)
       dose_count <- data.frame(dose = gsub(" ", " vs ", paste(dose_a, dose_b)))
     }
     else {
+      
       dose_count <- stringr::str_count(p$history, dose_level)
     }
   }
   if (length(p$history[1]) > 1) {
+    
     dose_count <- stringr::str_count(p$history, dose_level)
   }
   p <- cbind (p, dose_count = dose_count)
@@ -227,7 +234,8 @@ add_dose <- function(p, dose_level) {
 #' @return comparison table with corrected p-values
 #' @export
 
-perform_multiple_comparison_correction <- function(comps, reference, comp_histories, method, verbose) {
+perform_multiple_comparison_correction <- function(comps, reference, comp_histories, 
+                                                   method, verbose) {
   
   #if there is more than one reference or one reference with more than 1 comparison
   

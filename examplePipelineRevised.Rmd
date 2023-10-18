@@ -38,6 +38,7 @@ Feel free to put feedback in your version of this .rmd, in the notes Google doc,
 ## Getting started
 Until devMSMs is available on CRAN, you will need to install it directly from Github. 
 You will always need to install the devMSMs helper functions from Github (deveMSMsHelpers) if you wish to use them. 
+
 ```{r}
 
 #first, install devtools
@@ -67,6 +68,7 @@ library(devMSMsHelpers)
 
 ## Specifying Required Package Core Inputs
 The user should change all fields in this code chunk to match their home directory and wide data.
+
 ```{r}
 
 #set seed for reproducibility 
@@ -102,7 +104,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "StrDif_Tot.35", "StrDif_Tot.58",    
                     # "EF_avg_perc.35", "EF_avg_perc.58"
                     "fscore.35", "fscore.58"
-                    ) 
+) 
 
 #required
 ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
@@ -123,24 +125,15 @@ Choose from the following preliminary steps with the goal of assigning to 'data'
 Data columns should be either numeric or factor form and the ID column should be numeric.
 
 
-## Read in a single .csv file 
-At this stage, data can be in long or wide format, complete or incomplete. 
+### P1. Format Data
+#### P1a. Format single data frame of long data 
+These data can be complete or have missingness. 
 
 ```{r}
-
-# data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/meriah/imputations/ESETA1-CORTB.154_imp1.csv") #change this to match your folder
 
 #reading a long data file here for use in subsequent steps
 # data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your long data file here if you want to begin with long data
 #                       header = TRUE)
-
-```
-
-
-### P1. Format Data
-#### P1a. Format single data frame of long data 
-
-```{r}
 
 # if you have long data with wrong time, id, and/or missing indicators and need to format
 data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, outcome, 
@@ -159,7 +152,7 @@ data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, 
 ```
 
 
-#### P1b. Convert single data frame from long to wide format
+#### P1b. Convert single long data frame to wide format
 
 ```{r}
 
@@ -178,17 +171,13 @@ data_wide <- data_wide[, colSums(is.na(data_wide)) < nrow(data_wide)]
 # read in formatted wide data
 data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your wide, formatted data file here 
                       header = TRUE)
-#make factors
+
+#make factor variables factor 
 factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                   "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                    "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
 data_wide[, factor_covars] <- as.data.frame(lapply(data_wide[, factor_covars], as.factor))
 
-
-# #removing vars w/no variability; specific to FLP data 
-# library(dplyr)
-# data_wide <- data_wide %>% 
-#   dplyr::select(-c(RHasSO.6, RHasSO.15 , RHasSO.24))
 
 
 #if you have no missing data and want to use the package with a single wide data frame
@@ -244,18 +233,10 @@ data <- mice::complete(imputed_data, 1) #just for testing purposes
 
 #make factors
 factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                   "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                    "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
 data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
 
-# #IS testing multi-level factors
-# data$"PmMrSt2" = as.factor(data$"PmMrSt2")
-# data$HomeOwnd = as.factor(data$HomeOwnd)
-# 
-# library(dplyr)
-# data <- data %>%
-#   dplyr::select(-c(contains(c(":", "Childhood", "Infancy", "Toddlerhood", "pcx")))) #removing these --came from old dataset
-# data$ID <- as.numeric(as.character(unlist(data$ID)))
 
 ```
 
@@ -277,7 +258,7 @@ data <- lapply(files, function(file) {
 
 #make factors
 factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                   "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                    "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
 data <- lapply(data, function(x){
   x[, factor_covars] <- as.data.frame(lapply(x[, factor_covars], as.factor))
@@ -324,6 +305,8 @@ If you specify reference and comparison histories, please do so consistently thr
 #optional reference history (required if comparisons are specified)
 reference <- NA 
 reference <- "l-l-l"
+reference <- c("l-l-l", "l-l-h")
+
 
 #optional comparison history/histories
 comparison <- NULL 
@@ -371,12 +354,11 @@ concur_conf <- "B18Raw.15"
 
 #optional custom formulas
 custom <- NULL
-#note: below is an example of just one of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what output looks like 
-custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr + ...
-                                     mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth +...
-                                     RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
-names(custom) <- c("full_form-6")
-# custom <- full_formulas #for testing only 
+#note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
+custom <- list("full_form-6" = as.formula ("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst"),
+               "full_form-15" = as.formula ("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_asst")
+)
+
 
 
 #required
@@ -387,8 +369,8 @@ full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, 
                                 tv_confounders = tv_confounders, concur_conf = concur_conf, custom = custom, #optional
                                 verbose = TRUE, save.out = TRUE) #optional
 
-#or minimum inputs
-full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
+# #or minimum inputs
+# full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
 
 
 ```
@@ -416,8 +398,8 @@ prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, o
                                   balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                   verbose = TRUE, save.out = TRUE) #optional
 
-# #or minimum inputs
-prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas)
+# # #or minimum inputs
+# prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas)
 
 ```
 
@@ -437,11 +419,10 @@ keep_conf <- "InRatioCor.6"
 
 #optional custom formulas
 custom <- NULL
-custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr + ...
-                                     mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth +...
-                                     RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
-names(custom) <- c("full_form-6")
-# custom <- short_formulas
+#note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
+custom <- list("short_form-6" = as.formula ("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst"),
+               "short_form-15" = as.formula ("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_asst")
+)
 
 
 #required
@@ -470,7 +451,7 @@ formulas <- short_formulas
 method <- "ps"
 
 # other optional input for each weighting method
- # We suggest reviewing the WeightIt documentation (https://ngreifer.github.io/WeightIt/reference/weightitMSM.html) for more information about the additional optional arguments available for each of the weighting methods.
+# We suggest reviewing the WeightIt documentation (https://ngreifer.github.io/WeightIt/reference/weightitMSM.html) for more information about the additional optional arguments available for each of the weighting methods.
 
 
 #all input
@@ -520,6 +501,7 @@ weights.super <- createWeights(home_dir, data, exposure, outcome, formulas, #req
 
 ```
 
+
 #### 2c. Assess all weighting methods
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
 
@@ -553,28 +535,28 @@ balance_stats.ps <- assessBalance(home_dir, data, exposure, exposure_time_pts, o
 
 weights <- weights.cbps 
 balance_stats.cbps <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
-                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
-                                  verbose = TRUE, save.out = TRUE) #optional
+                                    balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                    verbose = TRUE, save.out = TRUE) #optional
 
 weights <- weights.glm 
 balance_stats.glm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
-                       
-                                              balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
-                                  verbose = TRUE, save.out = TRUE) #optional
+                                   
+                                   balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                   verbose = TRUE, save.out = TRUE) #optional
 weights <- weights.gbm
 balance_stats.gbm <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
-                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
-                                  verbose = TRUE, save.out = TRUE) #optional
+                                   balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                   verbose = TRUE, save.out = TRUE) #optional
 
 weights <- weights.bart
 balance_stats.bart <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
-                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
-                                  verbose = TRUE, save.out = TRUE) #optional
+                                    balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                    verbose = TRUE, save.out = TRUE) #optional
 
 weights <- weights.super 
 balance_stats.super <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
-                                  balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
-                                  verbose = TRUE, save.out = TRUE) #optional
+                                     balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
+                                     verbose = TRUE, save.out = TRUE) #optional
 ```
 
 
@@ -617,9 +599,10 @@ If you specify concurrent confounders to retain and/or confounders to keep in ba
 
 #optional custom formulas
 custom <- NULL
-custom <- list(formulas = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst + HomeOwnd + KFASTScr +  mat_health + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2"))
-names(custom) <- c("full_form-6")
-# custom <- updated_formulas
+#note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
+custom <- list("update_form-6" = as.formula ("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst"),
+               "update_form-15" = as.formula ("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_asst")
+)
 
 
 #optional list of concurrent confounder
@@ -840,13 +823,13 @@ in the model folder:
 #sensitivity tests
 weights <- trim_weights.s1
 models.s1 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, #required
-                   family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
-                   verbose = TRUE, save.out = TRUE) #optional
+                      family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
+                      verbose = TRUE, save.out = TRUE) #optional
 
 weights <- trim_weights.s2
 models.s2 <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, #required
-                   family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
-                   verbose = TRUE, save.out = TRUE) #optional
+                      family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
+                      verbose = TRUE, save.out = TRUE) #optional
 ```
 
 
@@ -870,7 +853,7 @@ reference <- NULL
 reference <- "l-l-l"
 reference <- c("l-l-l", "l-l-h") #multiple
 
-#optional comparison history/historis
+#optional comparison history/histories (required if reference specified)
 comparison <- NULL 
 comparison <- "h-h-h" #single
 comparison <- c("h-h-h", "h-h-l") #multiple
@@ -933,15 +916,15 @@ in the plots folder, .jpeg images of:
 #sensitivity tests
 model <- models.s1 
 results.s1 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, #required
-                            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
-                            mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
-                            verbose = FALSE, save.out = TRUE) #optional
+                               epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
+                               mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                               verbose = FALSE, save.out = TRUE) #optional
 
 model <- models.s2 
 results.s2 <- compareHistories(home_dir, exposure, exposure_time_pts, outcome, model, #required
-                            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
-                            mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
-                            verbose = FALSE, save.out = TRUE) #optional
+                               epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
+                               mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                               verbose = FALSE, save.out = TRUE) #optional
 
 ```
 
@@ -951,7 +934,7 @@ We are grateful to the authors of many existing packages that devMSMs draws from
 
 ```{r}
 
-grateful::cite_packages(out.dir = home_dir, omit = "devMSMs", include.Rstudio = TRUE, out.format = "docx")
+grateful::cite_packages(out.dir = home_dir, omit = c("devMSMs", "devMSMsHelpers"),  out.format = "docx")
 
 ```
 

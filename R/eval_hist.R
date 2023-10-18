@@ -52,7 +52,8 @@
 #'                ref = "l-l-l",
 #'                comps = "h-h-h")
 
-eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL, ref = NULL, comps = NULL, verbose = TRUE) {
+eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL, 
+                      ref = NULL, comps = NULL, verbose = TRUE) {
   
   exposure_type <- if (inherits(data[, paste0(exposure, '.', time_pts[1])], "numeric")) "continuous" else "binary"
   
@@ -67,6 +68,7 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
     new <- data[, c("ID", paste(exposure, time_pts, sep = "."))]
     
   } else {
+    
     #new will have cols for epochs
     
     new <- data.frame(ID = data_wide[, "ID"])
@@ -84,7 +86,8 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
       
       for (l in seq_len(length(as.numeric(unlist(epochs[e, 2]))))) {
         level <- as.numeric(unlist(epochs[e, 2]))[l]
-        z <- as.data.frame(data_wide[, names(data_wide)[grepl(exposure, names(data_wide))]]) #finds exposure vars
+        z <- as.data.frame(data_wide[, names(data_wide)[grepl(exposure, 
+                                                              names(data_wide))]]) #finds exposure vars
         cols <- colnames(z)[as.logical(sapply(strsplit(names(z), "\\."), "[", 2) == as.character(level))]
         cols <- cols[!is.na(cols)]
         z <- as.numeric(as.character(unlist(z[, cols])))
@@ -188,9 +191,9 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
   
   else if (exposure_type == "binary") {
     
-    new$history <- lapply(seq_len(nrow(new)), function(x) {
+    new$history <- lapply(seq_len(nrow(new)), function (x) {
       
-      paste(lapply(seq_len(nrow(epochs)), function(y) {
+      paste(lapply(seq_len(nrow(epochs)), function (y) {
         
         if (is.na(new[x, y + 1])) {
           return(NA)
@@ -259,7 +262,8 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
       
       warning (sprintf("USER ALERT: There are no individuals in your sample that fall into %s exposure history/histories.
                   You may wish to consider different high/low cutoffs (for continuous exposures), alternative epochs, or choose a different measure to avoid extrapolation.\n",
-                       paste(tot_hist[!tot_hist %in% his_summ$history], collapse = " & ")), 
+                       paste(tot_hist[!tot_hist %in% his_summ$history], 
+                             collapse = " & ")), 
                call. = FALSE)
       cat("\n")
     }
@@ -268,7 +272,9 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
     cat(knitr::kable(his_summ,
                      caption = sprintf("Summary of user-specified exposure %s histories based on exposure main effects %s
                                containing time points %s:",
-                                       exposure, paste(epochs$epochs, collapse = ", "), paste(epochs$values, collapse = ", ")),
+                                       exposure, paste(epochs$epochs, 
+                                                       collapse = ", "), 
+                                       paste(epochs$values, collapse = ", ")),
                      format = 'pipe',
                      row.names = F),
         sep = "\n")
