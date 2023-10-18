@@ -103,7 +103,7 @@
 #'               save.out = FALSE)
 
 fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
-                     family = NA, link = NA, int_order = NA, covariates = NULL, epochs = NULL,
+                     family = NULL, link = NA, int_order = NA, covariates = NULL, epochs = NULL,
                      verbose = TRUE, save.out = TRUE) {
   
   if (save.out) {
@@ -208,7 +208,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
           call. = FALSE)
   }
   
-  if (!inherits(family, "function") && !is.na(family)) {
+  if (!inherits(family, "function") && !is.null(family)) {
     stop ("Please provide a valid family in the form of a function (without quotations).",
           call. = FALSE)
   }
@@ -216,7 +216,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ("Please provide a single valid family in the form of a function (without quotations).",
           call. = FALSE)
   } 
-  if (is.na(family)) {
+  if (is.null(family)) {
     family <- gaussian
   }
   
@@ -409,7 +409,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
   
   
-  if (inherits(data, "mids") || (is.list(data)) && !is.data.frame(data)) {
+  if (inherits(data, "mids") || ((is.list(data)) && !is.data.frame(data))) {
     
     names(fits) <- seq_len(length(fits))
     
@@ -426,9 +426,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     
     if (save.out) {
       
-      print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
+      print(sjPlot::tab_model(fits, auto.label = TRUE, show.se = TRUE, 
+                              dv.labels = paste("Imp", c(1:length(data)), sep = " "),
                               file = file.path(home_dir, "models",
-                                               sprintf("%s-%s_%s_table_mod_ev.docx",
+                                               sprintf("%s-%s_%s_table_mod_ev.doc",
                                                        exposure, outcome, model))))
     }
     
@@ -447,7 +448,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       
       print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
                               file = file.path(home_dir, "models",
-                                               sprintf("%s-%s_%s_table_mod_ev.docx",
+                                               sprintf("%s-%s_%s_table_mod_ev.doc",
                                                        exposure, outcome, model))))
     }
     

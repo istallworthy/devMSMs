@@ -193,7 +193,8 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
       
       if (save.out) {
         ggplot2::ggsave(sprintf("Hist_%s-%s_%s_weights_trim_%s_imp_%s.png",
-                                exposure, outcome, weights[[x]]$method, quantile, x),
+                                exposure, outcome, weights[[x]]$method, 
+                                quantile, x),
                         path = file.path(home_dir, "weights", "histograms"),
                         plot = p,
                         height = 8, width = 14)
@@ -260,12 +261,12 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
   if (save.out) {
     saveRDS(trim_weights,
             file.path(home_dir, "weights", "values", 
-                      sprintf("%s-%s_%s_weights_trim.rds",
-                              exposure, outcome,weights[[1]]$method )))
+                      sprintf("%s-%s_%s_%s_weights_trim.rds",
+                              exposure, outcome, weights[[1]]$method, 
+                              quantile)))
   }
   
   trim_weights
 }
-
 
 

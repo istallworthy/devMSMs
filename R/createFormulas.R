@@ -10,8 +10,8 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders (optional) list of time-varying confounders with ".timepoint"
-#'   suffix
+#' @param tv_confounders (optional) list of time-varying confounders with
+#'   ".timepoint" suffix
 #' @param ti_confounders (optional) list of time invariant confounders
 #' @param type type of formula to create from 'full' (includes all lagged
 #'   time-varying confounders), 'short' (includes time-varying confounders at
@@ -37,6 +37,13 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
+#'                     ti_confounders = "C",
+#'                     type = "full",
+#'                     save.out = FALSE)
+#'
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
 #'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                     ti_confounders = "C",
 #'                     type = "full",
@@ -46,15 +53,21 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
+#'                     ti_confounders = "C",
+#'                     type = "short",
+#'                     save.out = FALSE)
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
 #'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                     ti_confounders = "C",
 #'                     type = "short",
 #'                     save.out = FALSE)
-#'                     
+#'
 #' c <- list("short_form-1" = as.formula(A.1 ~ C),
 #'           "short_form-2" = as.formula(A.2 ~ A.1 + B.1 + C),
 #'           "short_form-3" = as.formula(A.3 ~ A.2 + B.2 + C))
-#' 
+#'
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
@@ -93,14 +106,21 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
+#'                     ti_confounders = "C",
+#'                     type = "update",
+#'                     save.out = FALSE)
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
 #'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                     ti_confounders = "C",
 #'                     type = "update",
 #'                     bal_stats = b,
 #'                     save.out = FALSE)
-#'
+#' 
 
-createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = NULL, bal_stats = NULL, concur_conf = NULL,
+createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, 
+                           tv_confounders = NULL, bal_stats = NULL, concur_conf = NULL,
                            keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ) {
   
   if (save.out) {
@@ -153,6 +173,12 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   else if (!is.character(tv_confounders)) {
     stop ("Please provide a list of time-varying confounders as character strings.",
           call. = FALSE)
+  }
+  else if (length(exposure_time_pts) > 1) {
+    if (any(!paste(exposure, exposure_time_pts, sep = ".") %in% tv_confounders)) {
+      stop ("Please include all exposure variables in wide format in tv_confounders.",
+            call. = FALSE)
+    }
   }
   
   if (missing(ti_confounders)) {
@@ -390,13 +416,18 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       #adding in any user-specified concurrent confounders (default is only lagged)
       
       if (!is.null(concur_conf)) {
+        if (length(tv_confounders) == 0) {
+          warning ("Concurrent confounders will be ignored as no time-varying confounders are specified.",
+                   call. = FALSE)
+          next
+        }
         
         if (!inherits(concur_conf, "character")) {
           stop ("Please provide as a character string a list of concurrent confounders to include.",
                 call. = FALSE)
         }
         
-        if (sapply(strsplit(concur_conf, "\\."), "[", 1) %in% exposure) {
+        else if (sapply(strsplit(concur_conf, "\\."), "[", 1) %in% exposure) {
           stop ("Do not include the exposure concurrently. Please revise the concur_conf field.",
                 call. = FALSE)
         }
@@ -416,6 +447,12 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       #adding in any user-specified confounders to retain in all formulas
       
       if (!is.null(keep_conf)) {
+        
+        if (length(tv_confounders) == 0) {
+          warning ("Keep confounders will be ignored as no time-varying confounders are specified.",
+                   call. = FALSE)
+          next
+        }
         
         if (!is.character(keep_conf)) {
           stop ("Please provide as a character string a list of confounders to include in all formulas.",
@@ -463,7 +500,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       if (save.out) {
         forms_csv <- c(forms_csv,
                        sprintf("%s formula for %s-%s at %s time point %s:",
-                               type, exposure, outcome, exposure, as.character(time)))
+                               type, exposure, outcome, exposure, 
+                               as.character(time)))
         
         forms_csv <- c(forms_csv, paste(exposure, "~",
                                         paste0(vars_to_include[order(vars_to_include)], 
