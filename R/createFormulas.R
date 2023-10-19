@@ -147,13 +147,28 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
     stop ("Please supply a single exposure as a character.",
           call. = FALSE)
   }
+  else if (grepl("\\.", exposure)) {
+    stop ("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
+          call. = FALSE)
+  }
   
   if (missing(outcome)) {
     stop ("Please supply a single outcome.",
           call. = FALSE)
   }
   else if (!is.character(outcome) || length(outcome) != 1) {
-    stop ("Please supply a single outcome as a character.",
+    stop ("Please supply a single outcome as a character with a '.time' suffix denoting the outcome time point.",
+          call. = FALSE)
+  }
+  else if (!grepl("\\.", outcome)) {
+    stop ("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
+          call. = FALSE)
+  }
+  else if (as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) != 
+           exposure_time_pts[length(exposure_time_pts)] && 
+           !as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) > 
+           exposure_time_pts[length(exposure_time_pts)] ) {
+    stop ("Please supply an outcome variable with a time point that is equal to or greater than the last exposure time point.",
           call. = FALSE)
   }
   
@@ -163,6 +178,10 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   }
   else if (!is.numeric(exposure_time_pts)) {
     stop ("Please supply a list of exposure time points as integers.",
+          call. = FALSE)
+  }
+  else if (!length(exposure_time_pts) > 1) {
+    stop ("Please supply at least two exposure time points.",
           call. = FALSE)
   }
   
@@ -175,15 +194,31 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
     stop ("Please provide a list of time-varying confounders as character strings.",
           call. = FALSE)
   }
-  else if (length(exposure_time_pts) > 1) {
-    if (any(!paste(exposure, exposure_time_pts, sep = ".") %in% tv_confounders)) {
-      stop ("Please include all exposure variables in wide format in tv_confounders.",
-            call. = FALSE)
-    }
+  else if (any(!grepl("\\.", tv_confounders))) {
+    stop ("Please list all time-varying confounders with suffix '.time' that should match variables in dataset.",
+          call. = FALSE)
+  }
+  else if (any(!paste(exposure, exposure_time_pts, sep = ".") %in% tv_confounders)) {
+    stop ("Please include all emeasured exposure variables in wide format in tv_confounders.",
+          call. = FALSE)
+  }
+  # else if (any(!outcome %in% tv_confounders)) {
+  #   stop ("Please include all outcome variables in wide format in tv_confounders.",
+  #         call. = FALSE)
+  # }
+  else if (!is.null(custom) && 
+           any(!exposure_time_pts %in% as.numeric(unlist(sapply(strsplit(tv_confounders, 
+                                                                         "\\."), "[", 2))))) {
+    stop ("Exposure time points and the time points at which time-varying confounders are measured must fully overlap.",
+          call. = FALSE) 
   }
   
   if (missing(ti_confounders)) {
     stop ("You have not specified time invariant confounders.",
+          call. = FALSE)
+  }
+  else if (any(grepl("\\.", ti_confounders))) {
+    stop ("Time invariant confounders should not include the suffix '.time' or any '.' special characters.",
           call. = FALSE)
   }
   
@@ -281,11 +316,9 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
     covars <- lapply(covars, function(x) {
       sapply(strsplit(x, "\\~"), "[", 2)
     })
-    
     covars <- lapply(covars, function(x){
       as.character(unlist(strsplit(x, "\\+")))
     })
-    
     covars <- lapply(covars, function(x) {
       gsub(" ", "", x)
     })
@@ -298,10 +331,10 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
         x[!x %in% tv_confounders & !x %in% 
             ti_confounders]
       })
-      stop(sprintf("Please make sure all variables in your custom formulas are included as either time-varying or time invariant confounders.
+      stop (sprintf("Please make sure all variables in your custom formulas are included as either time-varying or time invariant confounders.
            The following variables are not: %s",
-                   paste(miss, sep = ", ")),
-           call. = FALSE)
+                    paste(miss, sep = ", ")),
+            call. = FALSE)
     }
     
   }
@@ -342,7 +375,8 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
           message("USER ALERT: Please manually inspect the full balancing formula below:")
         }
         
-        time_var_include <- tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), "[", 2)) < time]
+        time_var_include <- tv_confounders[as.numeric(sapply(strsplit(tv_confounders, 
+                                                                      "\\."), "[", 2)) < time]
         
       }
       
@@ -468,10 +502,14 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
         
         keep_conf <- keep_conf[!paste0(exposure, ".", time) %in% keep_conf]
         
-        if (length(keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time]) > 0) {
+        if (length(keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), 
+                                               "[", 2)) < time]) > 0) {
           
-          if (! keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time] %in% vars_to_include) {
-            vars_to_include <- c(vars_to_include, keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) < time])
+          if (! keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) 
+                          < time] %in% vars_to_include) {
+            vars_to_include <- c(vars_to_include, 
+                                 keep_conf[as.numeric(sapply(strsplit(keep_conf, 
+                                                                      "\\."), "[", 2)) < time])
           }
         }
       }

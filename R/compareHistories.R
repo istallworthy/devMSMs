@@ -151,6 +151,10 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     stop ("Please supply a single exposure as a character.",
           call. = FALSE)
   }
+  else if (grepl("\\.", exposure)) {
+    stop ("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
+          call. = FALSE)
+  }
   
   if (missing(outcome)) {
     stop ("Please supply a single outcome.",
@@ -160,6 +164,17 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     stop ("Please supply a single outcome as a character.",
           call. = FALSE)
   }
+  else if (!grepl("\\.", outcome)) {
+    stop ("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
+          call. = FALSE)
+  }
+  else if (as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) != 
+           exposure_time_pts[length(exposure_time_pts)] && 
+           !as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) > 
+           exposure_time_pts[length(exposure_time_pts)] ) {
+    stop ("Please supply an outcome variable and time point that is equal to or greater than the last exposure time point.",
+          call. = FALSE)
+  }
   
   if (missing(exposure_time_pts)) {
     stop ("Please supply the exposure time points at which you wish to create weights.",
@@ -167,6 +182,10 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   }
   else if (!is.numeric(exposure_time_pts)) {
     stop ("Please supply a list of exposure time points as integers.",
+          call. = FALSE)
+  }
+  else if (!length(exposure_time_pts) > 1) {
+    stop ("Please supply at least two exposure time points.",
           call. = FALSE)
   }
   
@@ -257,7 +276,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     "continuous" else "binary"
   
   
-  ints <- gsub(" ", "", as.character(unlist(strsplit(as.character(unlist(model[[1]]$terms)), "\\+"))))
+  ints <- gsub(" ", "", 
+               as.character(unlist(strsplit(as.character(unlist(model[[1]]$terms)), 
+                                            "\\+"))))
   ints <- ifelse(sum(grepl(":", ints)) > 0, 1, 0)
   
   
@@ -303,7 +324,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   }
   
   terms  <- model[[1]]$formula
-  terms <- gsub(" ", "", as.character(unlist(strsplit(as.character(unlist(terms[3])), "\\+"))))
+  terms <- gsub(" ", "", as.character(unlist(strsplit(as.character(unlist(terms[3])), 
+                                                      "\\+"))))
   exp_epochs <- apply(expand.grid(exposure, as.character(epochs[, 1])), 1, 
                       paste, sep = "", collapse = ".")
   
@@ -401,7 +423,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
                   l = epoch_info$low,
                   h = epoch_info$high)
   d$v <- paste(d$l, d$h, sep=",")
-  d$z <- lapply(seq_len(nrow(d)), function(x) {
+  d$z <- lapply(seq_len(nrow(d)), function (x) {
     c(as.numeric(unlist(strsplit(unlist(strsplit(d$v[x], " ")), "\\,")))) })
   args <- d$z # creating vector of each epoch and each corresponding h/l value
   names(args) <- (c(d$e))
@@ -413,7 +435,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   # STEP 1: Estimated marginal predictions for each history
   # Gets estimated marginal predictions
   
-  preds <- lapply(seq_len(length(model)), function(y) { # Goes through dsifferent fitted model
+  preds <- lapply(seq_len(length(model)), function (y) { # Goes through dsifferent fitted model
     final_model <- model[[y]]
     p <- marginaleffects::avg_predictions(final_model,
                                           variables = args,
@@ -525,7 +547,8 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     # If the user specified reference and comparison groups, subset pred_pool for inspection and plotting
     
     if (!is.null(reference) && !is.null(comp_histories)) {
-      preds_pool <- preds_pool[preds_pool$history %in% c(reference, comp_histories), , 
+      preds_pool <- preds_pool[preds_pool$history %in% c(reference, 
+                                                         comp_histories), , 
                                drop = FALSE ]
     }
     
@@ -714,8 +737,6 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     #STEP 3: conduct multiple comparison correction
     
-    # comps <- comps[[1]]
-    
     # if (length(reference) > 1) {
     comps <- do.call(rbind.data.frame, comps)
     # }
@@ -729,9 +750,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     # comps <- lapply(comps, function(x){
     #   add_dose(x, dose_level)
     # })
-    
-    # # transforms into df 
-    # comps <- do.call(rbind.data.frame, comps)
+
     
     
     comps <- perform_multiple_comparison_correction(comps, 
