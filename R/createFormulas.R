@@ -10,9 +10,10 @@
 #' @param exposure_time_pts list of integers at which weights will be
 #'   created/assessed that correspond to time points when exposure wass measured
 #' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param tv_confounders (optional) list of time-varying confounders with
-#'   ".timepoint" suffix
-#' @param ti_confounders (optional) list of time invariant confounders
+#' @param tv_confounders list of time-varying confounders with ".timepoint"
+#'   suffix, should include exposure and outcome variables (at least
+#'   time-varying exposure variables required here)
+#' @param ti_confounders list of time invariant confounders (at least one required)
 #' @param type type of formula to create from 'full' (includes all lagged
 #'   time-varying confounders), 'short' (includes time-varying confounders at
 #'   t-1 lag only), or 'update' (adds to 'short' formulas any imbalanced
@@ -37,6 +38,7 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
+#'                     tv_confounders = c("A.1", "A.2", "A.3"),
 #'                     ti_confounders = "C",
 #'                     type = "full",
 #'                     save.out = FALSE)
@@ -53,6 +55,7 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
+#'                     tv_confounders = c("A.1", "A.2", "A.3"),
 #'                     ti_confounders = "C",
 #'                     type = "short",
 #'                     save.out = FALSE)
@@ -106,6 +109,7 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
+#'                     tv_confounders = c("A.1", "A.2", "A.3"),
 #'                     ti_confounders = "C",
 #'                     type = "update",
 #'                     bal_stats = b,
@@ -121,7 +125,7 @@
 #' 
 
 createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, 
-                           tv_confounders = NULL, bal_stats = NULL, concur_conf = NULL,
+                           tv_confounders, bal_stats = NULL, concur_conf = NULL,
                            keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ) {
   
   if (save.out) {
@@ -186,31 +190,32 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
   }
   
   if (missing(tv_confounders)) {
-    warning ("You have not specified any time-varying confounders. If you have time-varying exposure, please list all wide exposure variables as tv_confounders.",
+    stop( "Please list at least all wide exposure variables as tv_confounders.",
              call. = FALSE)
-    tv_confounders <- character(0)
   }
   else if (!is.character(tv_confounders)) {
     stop ("Please provide a list of time-varying confounders as character strings.",
           call. = FALSE)
+  }
+  else if (!length(tv_confounders) > 1) {
+    warning ("Please make sure to include all exposure variables as time-varying confounders.",
+             call. = FALSE)
   }
   else if (any(!grepl("\\.", tv_confounders))) {
     stop ("Please list all time-varying confounders with suffix '.time' that should match variables in dataset.",
           call. = FALSE)
   }
   else if (any(!paste(exposure, exposure_time_pts, sep = ".") %in% tv_confounders)) {
-    stop ("Please include all emeasured exposure variables in wide format in tv_confounders.",
+    stop ("Please include all measured exposure variables in wide format in tv_confounders.",
           call. = FALSE)
   }
-  # else if (any(!outcome %in% tv_confounders)) {
-  #   stop ("Please include all outcome variables in wide format in tv_confounders.",
-  #         call. = FALSE)
-  # }
-  else if (!is.null(custom) && 
-           any(!exposure_time_pts %in% as.numeric(unlist(sapply(strsplit(tv_confounders, 
-                                                                         "\\."), "[", 2))))) {
-    stop ("Exposure time points and the time points at which time-varying confounders are measured must fully overlap.",
-          call. = FALSE) 
+
+  else if (is.null(custom)) {
+    if (any(!exposure_time_pts %in% 
+            as.numeric(unlist(sapply(strsplit(tv_confounders, "\\."), "[", 2))))) {
+      stop ("Exposure time points and the time points at which time-varying confounders are measured must fully overlap.",
+            call. = FALSE) 
+    }
   }
   
   if (missing(ti_confounders)) {
@@ -451,11 +456,6 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       #adding in any user-specified concurrent confounders (default is only lagged)
       
       if (!is.null(concur_conf)) {
-        if (length(tv_confounders) == 0) {
-          warning ("Concurrent confounders will be ignored as no time-varying confounders are specified.",
-                   call. = FALSE)
-          next
-        }
         
         if (!inherits(concur_conf, "character")) {
           stop ("Please provide as a character string a list of concurrent confounders to include.",
@@ -463,7 +463,7 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
         }
         
         else if (sapply(strsplit(concur_conf, "\\."), "[", 1) %in% exposure) {
-          stop ("Do not include the exposure concurrently. Please revise the concur_conf field.",
+          stop ("Do not include the exposure concurrently as a confounder. Please revise the concur_conf field.",
                 call. = FALSE)
         }
         
@@ -482,12 +482,6 @@ createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type,
       #adding in any user-specified confounders to retain in all formulas
       
       if (!is.null(keep_conf)) {
-        
-        if (length(tv_confounders) == 0) {
-          warning ("Keep confounders will be ignored as no time-varying confounders are specified.",
-                   call. = FALSE)
-          next
-        }
         
         if (!is.character(keep_conf)) {
           stop ("Please provide as a character string a list of confounders to include in all formulas.",

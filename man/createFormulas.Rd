@@ -11,7 +11,7 @@ createFormulas(
   outcome,
   type,
   ti_confounders,
-  tv_confounders = NULL,
+  tv_confounders,
   bal_stats = NULL,
   concur_conf = NULL,
   keep_conf = NULL,
@@ -35,10 +35,11 @@ time-varying confounders), 'short' (includes time-varying confounders at
 t-1 lag only), or 'update' (adds to 'short' formulas any imbalanced
 time-varying confounders at lags great than t-1)}
 
-\item{ti_confounders}{(optional) list of time invariant confounders}
+\item{ti_confounders}{list of time invariant confounders (at least one required)}
 
-\item{tv_confounders}{(optional) list of time-varying confounders with
-".timepoint" suffix}
+\item{tv_confounders}{list of time-varying confounders with ".timepoint"
+suffix, should include exposure and outcome variables (at least
+time-varying exposure variables required here)}
 
 \item{bal_stats}{list of balance statistics from assessBalance(), required
 for 'update' type}
@@ -71,6 +72,7 @@ IPTW weights.
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
                     outcome = "D.3",
+                    tv_confounders = c("A.1", "A.2", "A.3"),
                     ti_confounders = "C",
                     type = "full",
                     save.out = FALSE)
@@ -87,6 +89,7 @@ f <- createFormulas(exposure = "A",
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
                     outcome = "D.3",
+                    tv_confounders = c("A.1", "A.2", "A.3"),
                     ti_confounders = "C",
                     type = "short",
                     save.out = FALSE)
@@ -140,6 +143,7 @@ b <- assessBalance(data = test,
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
                     outcome = "D.3",
+                    tv_confounders = c("A.1", "A.2", "A.3"),
                     ti_confounders = "C",
                     type = "update",
                     bal_stats = b,
