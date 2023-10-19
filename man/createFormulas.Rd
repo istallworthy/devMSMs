@@ -37,8 +37,8 @@ time-varying confounders at lags great than t-1)}
 
 \item{ti_confounders}{(optional) list of time invariant confounders}
 
-\item{tv_confounders}{(optional) list of time-varying confounders with ".timepoint"
-suffix}
+\item{tv_confounders}{(optional) list of time-varying confounders with
+".timepoint" suffix}
 
 \item{bal_stats}{list of balance statistics from assessBalance(), required
 for 'update' type}
@@ -71,6 +71,13 @@ IPTW weights.
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
                     outcome = "D.3",
+                    ti_confounders = "C",
+                    type = "full",
+                    save.out = FALSE)
+
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                     ti_confounders = "C",
                     type = "full",
@@ -80,11 +87,17 @@ f <- createFormulas(exposure = "A",
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
                     outcome = "D.3",
+                    ti_confounders = "C",
+                    type = "short",
+                    save.out = FALSE)
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
                     ti_confounders = "C",
                     type = "short",
                     save.out = FALSE)
-                    
+
 c <- list("short_form-1" = as.formula(A.1 ~ C),
           "short_form-2" = as.formula(A.2 ~ A.1 + B.1 + C),
           "short_form-3" = as.formula(A.3 ~ A.2 + B.2 + C))
@@ -124,6 +137,13 @@ b <- assessBalance(data = test,
                    weights = w,
                    formulas = f,
                    save.out = FALSE)
+f <- createFormulas(exposure = "A",
+                    exposure_time_pts = c(1, 2, 3),
+                    outcome = "D.3",
+                    ti_confounders = "C",
+                    type = "update",
+                    bal_stats = b,
+                    save.out = FALSE)
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
                     outcome = "D.3",

@@ -18,7 +18,7 @@ compareHistories(
   dose_level = NA,
   exp_lab = NA,
   out_lab = NA,
-  colors = NA,
+  colors = NULL,
   verbose = TRUE,
   save.out = TRUE
 )
