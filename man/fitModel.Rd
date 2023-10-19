@@ -12,7 +12,7 @@ fitModel(
   exposure_time_pts,
   outcome,
   model,
-  family = NA,
+  family = NULL,
   link = NA,
   int_order = NA,
   covariates = NULL,

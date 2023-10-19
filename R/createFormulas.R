@@ -108,6 +108,7 @@
 #'                     outcome = "D.3",
 #'                     ti_confounders = "C",
 #'                     type = "update",
+#'                     bal_stats = b,
 #'                     save.out = FALSE)
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),

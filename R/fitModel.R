@@ -212,7 +212,7 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop ("Please provide a valid family in the form of a function (without quotations).",
           call. = FALSE)
   }
-  else if (length(family) != 1) {
+  else if (!is.null(family) && length(family) != 1) {
     stop ("Please provide a single valid family in the form of a function (without quotations).",
           call. = FALSE)
   } 

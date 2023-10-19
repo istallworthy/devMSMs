@@ -23,7 +23,7 @@
 #' f <- createFormulas(exposure = "A",
 #'                     exposure_time_pts = c(1, 2, 3),
 #'                     outcome = "D.3",
-#'                     tv_confounders = c("B.1", "B.2", "B.3"),
+#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
 #'                     ti_confounders = "C",
 #'                     type = "full",
 #'                     save.out = FALSE)
@@ -160,7 +160,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
   
   if (is.null(names(weights))) {
     
-    trim_weights <- lapply(seq_len(length(weights)), function(x) {
+    trim_weights <- lapply(seq_len(length(weights)), function (x) {
       w <- weights[[x]]
       t <- WeightIt::trim(w$weights, at = quantile)
       
@@ -210,7 +210,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
   # df
   
   else if ( !is.null(names(weights)) ) {
-    trim_weights <- lapply(1, function(x) {
+    trim_weights <- lapply(1, function (x) {
       w <- weights[[1]]
       t <- WeightIt::trim(w$weights, at = quantile)
       
