@@ -1,5 +1,6 @@
 #' Create love plots showing balancing statistics
 #'
+#' @param balance_stats data frame of balance statistics
 #' @param home_dir path to home directory (required if save.out = TRUE)
 #' @param folder folder path for saving
 #' @param exposure name of exposure variable
@@ -7,7 +8,6 @@
 #' @param exposure_type character indicating binary or continuous exposure type
 #' @param k imputation number
 #' @param form_name formula name
-#' @param balance_stats data frame of balance statistics
 #' @param data_type single or imputed data type
 #' @param balance_thresh one or two numbers between 0 and 1 indicating a single
 #'   balancing threshold or thresholds for more and less important confounders,
@@ -15,8 +15,6 @@
 #' @param weights_method method character string of WeightItMSM() balancing
 #'   method abbreviation
 #' @param imp_conf list of variable names reflecting important confounders
-#' @param verbose TRUE or FALSE indicator for user output (default is
-#'   TRUE)
 #' @param save.out TRUE or FALSE indicator to save output and intermediary
 #'   output locally
 #' @return none
@@ -56,34 +54,32 @@
 #'                    formulas = f,
 #'                    save.out = FALSE)
 #'
-#' p <- make_love_plot(folder = "prebalance/",
-#'                     exposure = "A",
-#'                     exposure_time_pt = 1,
-#'                     exposure_type = "continuous",
-#'                     form_name = "form_name",
-#'                     balance_stats = b,
-#'                     data_type = "single",
-#'                     balance_thresh = 0.1,
-#'                     imp_conf = NULL,
-#'                     weights_method = w[[1]]$method,
-#'                     save.out = FALSE,
-#'                     verbose = TRUE)
-#' p <- make_love_plot(folder = "weighted/",
-#'                     exposure = "A",
-#'                     exposure_time_pt = 2,
-#'                     exposure_type = "continuous",
-#'                     form_name = "form_name",
-#'                     balance_stats = b,
-#'                     data_type = "single",
-#'                     balance_thresh = c(0.05, 0.1),
-#'                     imp_conf = "A.2",
-#'                     weights_method = w[[1]]$method,
-#'                     save.out = FALSE,
-#'                     verbose = TRUE)
+#' make_love_plot(balance_stats = b,
+#'                exposure = "A",
+#'                exposure_time_pt = 1,
+#'                exposure_type = "continuous",
+#'                form_name = "form_name",
+#'                data_type = "single",
+#'                balance_thresh = 0.1,
+#'                imp_conf = NULL,
+#'                weights_method = w[[1]]$method,
+#'                save.out = FALSE,
+#'                folder = "prebalance/")
+#' make_love_plot(balance_stats = b,
+#'                exposure = "A",
+#'                exposure_time_pt = 2,
+#'                exposure_type = "continuous",
+#'                form_name = "form_name",
+#'                data_type = "single",
+#'                balance_thresh = c(0.05, 0.1),
+#'                imp_conf = "A.2",
+#'                weights_method = w[[1]]$method,
+#'                save.out = FALSE,
+#'                folder = "weighted/")
 
 
-make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposure_type, k = 0, form_name, balance_stats, data_type,
-                           balance_thresh, weights_method, imp_conf, verbose, save.out) {
+make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_type, k = 0, form_name, data_type,
+                           balance_thresh, weights_method, imp_conf, save.out = FALSE, home_dir = NULL, folder = NULL) {
   
   stat_var <- colnames(balance_stats)[grepl("_bal", colnames(balance_stats))]
   colnames(balance_stats)[colnames(balance_stats) == stat_var] <- "avg_bal"
@@ -193,9 +189,5 @@ make_love_plot <- function(home_dir, folder, exposure, exposure_time_pt, exposur
                                        height = 8))
     }
   }
-  
-  if (verbose) {
-    print(lp)
-  }
-  
+  lp
 }

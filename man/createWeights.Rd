@@ -13,7 +13,7 @@ createWeights(
   method = "cbps",
   SL.library = "SL.glm",
   criterion = NA,
-  read_in_from_file = "no",
+  read_in_from_file = FALSE,
   verbose = TRUE,
   save.out = TRUE,
   ...
@@ -42,8 +42,8 @@ SuperLearner::listWrappers() for options}
 "p.mean" minimizing avg Pearson correlation for continuous exposures and
 "smd.mean" for binary exposures) (requird for "gbm" method)}
 
-\item{read_in_from_file}{(optional) "yes" or "no" indicator to read in
-weights that have been previously run and saved locally (default is "no")}
+\item{read_in_from_file}{(optional) TRUE or FALSE indicator to read in
+weights that have been previously run and saved locally (default is FALSE)}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
@@ -87,43 +87,39 @@ w <- createWeights(data = test,
                    formulas = f,
                    save.out = FALSE)
 
+\dontshow{if (requireNamespace("CBPS", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 w <- createWeights(data = test,
                    exposure = "A",
                    outcome = "D.3",
                    formulas = f,
                    method = "cbps",
                    save.out = FALSE)
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   method = "ps",
-                   save.out = FALSE)
+\dontshow{\}) # examplesIf}
+\dontshow{if (requireNamespace("gbm", quietly = TRUE)                   ) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 w <- createWeights(data = test,
                    exposure = "A",
                    outcome = "D.3",
                    formulas = f,
                    method = "gbm",
                    save.out = FALSE)                    
+\dontshow{\}) # examplesIf}
+\dontshow{if (requireNamespace("dbarts", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 w <- createWeights(data = test,
                    exposure = "A",
                    outcome = "D.3",
                    formulas = f,
                    method = "bart",
                    save.out = FALSE)
+\dontshow{\}) # examplesIf}
+\dontshow{if (requireNamespace("SuperLearner", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 w <- createWeights(data = test,
                    exposure = "A",
                    outcome = "D.3",
                    formulas = f,
                    method = "super",
                    save.out = FALSE)   
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   method = "glm",
-                   save.out = FALSE)
                                                      
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 {\code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}},

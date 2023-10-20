@@ -27,26 +27,22 @@ Imports:
     WeightIt,
     marginaleffects,
     stats,
+    utils,
     ggplot2,
-    matrixStats,
-    knitr,
     survey,
-    mice,
-    mitml,
-    stargazer,
-    gtools,
     cobalt,
-    stringr,
-    huxtable,
-    officer,
-    flextable,
-    sjPlot,
+    rlang
+Suggests: 
     CBPS,
     gbm,
-    dbarts,
     SuperLearner,
-    modelsummary
-Suggests: 
+    dbarts,
+    mice,
+    mitml,
+    knitr,
+    kableExtra,
+    stargazer,
+    sjPlot,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://istallworthy.github.io/devMSMs/

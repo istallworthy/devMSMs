@@ -59,32 +59,63 @@
 #'                   exposure = "A",
 #'                   exposure_time_pts = c(1, 2, 3),
 #'                   outcome = "D.3",
-#'                   balance_thresh = 0.1)
+#'                   balance_thresh = 0.1,
+#'                   save.out = FALSE)
 #' c <- calcBalStats(data = test,
 #'                   formulas = f,
 #'                   exposure = "A",
 #'                   exposure_time_pts = c(1, 2, 3),
 #'                   outcome = "D.3",
 #'                   balance_thresh = c(0.05, 0.1),
-#'                   imp_conf = "B2")
+#'                   imp_conf = "B2",
+#'                   save.out = FALSE)
 #' c <- calcBalStats(data = test,
 #'                   formulas = f,
 #'                   exposure = "A",
 #'                   exposure_time_pts = c(1, 2, 3),
 #'                   outcome = "D.3",
 #'                   balance_thresh = 0.1,
-#'                   weights = w[[1]])
+#'                   weights = w[[1]],
+#'                   save.out = FALSE)
 
-calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL,
+calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL,
                          imp_conf = NULL, verbose = TRUE, save.out = TRUE) {
   
   if (!is.list(formulas) | is.data.frame(formulas)) {
-    stop ("Please provide a list of formulas for each exposure time point",
+    stop("Please provide a list of formulas for each exposure time point",
           call. = FALSE)
   }
   if (!is.null(weights) && !inherits(weights, "weightitMSM")) {
-    stop ("Please supply a list of weights output from the createWeights function (via WeightIt::WeightItMSM).",
+    stop("Please supply a list of weights output from the createWeights function (via WeightIt::WeightItMSM).",
           call. = FALSE)
+  }
+  
+  if (save.out) {
+    if (missing(home_dir)) {
+      stop("Please supply a home directory.",
+           call. = FALSE)
+    }
+    if (!is.character(home_dir)) {
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
+           call. = FALSE)
+    }
+    if (!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.",
+           call. = FALSE)
+    }
+  }
+  
+  if (!is.logical(verbose)) {
+    stop("Please set verbose to either TRUE or FALSE.",
+         call. = FALSE)
+  }
+  if (length(verbose) != 1) {
+    stop("Please provide a single TRUE or FALSE value to verbose.",
+         call. = FALSE)
+  }
+  
+  if (verbose) {
+    rlang::check_installed("knitr")
   }
   
   form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
@@ -133,7 +164,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
   #checking for char vars
   
   if (any(sapply(data, is.character))) {
-    stop (sprintf("The following variables are characters. Please convert them to factor variables: %s",
+    stop(sprintf("The following variables are characters. Please convert them to factor variables: %s",
                   paste(names(data[sapply(data, is.character)]), collapse = ", ")),
           call. = FALSE)
   }
@@ -176,14 +207,14 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     #checking covariates from formulas 
     
     if (any(duplicated(covars))) {
-      stop (sprintf("The following variable(s) are duplicated in the formula for exposure at time point %s: %s.",
+      stop(sprintf("The following variable(s) are duplicated in the formula for exposure at time point %s: %s.",
                     exposure_time_pt, paste(covars[duplicated(covars)], 
                                             collapse = ", ")),
             call. = FALSE)
     }
     
-    if (any(covars %in% names(data) == FALSE)) {
-      stop (sprintf("The following variable(s) included in the balancing formulas are not present in your data: %s,",
+    if (!all(covars %in% names(data))) {
+      stop(sprintf("The following variable(s) included in the balancing formulas are not present in your data: %s,",
                     paste(covars[! covars %in% names(data)], collapse = ", ")),
             call. = FALSE
       )
@@ -263,8 +294,7 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
       
       # finding histories up until exp time point T
       
-      histories <- apply(gtools::permutations(2, length(lagged_time_pts), c(1, 0), 
-                                              repeats.allowed = TRUE),
+      histories <- apply(perm2(length(lagged_time_pts), c(1, 0)),
                          1, paste, sep = "", collapse = "-")
       histories <- as.data.frame(histories)
       
@@ -582,10 +612,13 @@ calcBalStats <- function(home_dir = NA, data, formulas, exposure, exposure_time_
     all_bal_stats$covar_time[is.na(all_bal_stats$covar_time)] <- 0
     
     # Make love plot per exposure time point
-    
-    make_love_plot(home_dir, folder, exposure, exposure_time_pt, exposure_type, k,
-                   form_name, bal_stats, data_type, balance_thresh, weights_method, 
-                   imp_conf, verbose, save.out)
+    make_love_plot(home_dir = home_dir, folder = folder, exposure = exposure,
+                   exposure_time_pt = exposure_time_pt,
+                   exposure_type = exposure_type, 
+                   k = k, form_name = form_name, balance_stats = bal_stats,
+                   data_type = data_type, balance_thresh = balance_thresh, 
+                   weights_method = weights_method, imp_conf = imp_conf,
+                   save.out = save.out)
     
   }     # Ends exp_time_pt loop
   

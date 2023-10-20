@@ -55,6 +55,10 @@
 eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL, 
                       ref = NULL, comps = NULL, verbose = TRUE) {
   
+  if (verbose) {
+    rlang::check_installed("knitr")
+  }
+  
   exposure_type <- if (inherits(data[, paste0(exposure, '.', time_pts[1])], "numeric")) "continuous" else "binary"
   
   data_wide <- data
@@ -67,7 +71,8 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
                          values = time_pts)
     new <- data[, c("ID", paste(exposure, time_pts, sep = "."))]
     
-  } else {
+  }
+  else {
     
     #new will have cols for epochs
     
@@ -105,21 +110,20 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
     cat("\n")
   }
   
-  tot_hist <- apply(gtools::permutations(2, nrow(epochs), c("l", "h"),
-                                         repeats.allowed = TRUE), 1,
+  tot_hist <- apply(perm2(nrow(epochs), c("l", "h")), 1,
                     paste, sep = "", collapse = "-")
   
   # Assigning history (e.g., h-h-h) based on user-specified hi/lo cutoffs
   
-  if ( !is.null(ref) && !is.null(comps)) {
+  if (!is.null(ref) && !is.null(comps)) {
     tot_hist <- tot_hist[tot_hist %in% c(ref, comps)]
   }
   
   epochs$epochs <- as.character(epochs$epochs)
   
-  if (exposure_type == "continuous"){
+  if (exposure_type == "continuous") {
     
-    if (is.null(hi_lo_cut)){
+    if (is.null(hi_lo_cut)) {
       
       # use median as hi/lo split (default)
       
@@ -149,17 +153,17 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
         lo_cutoff <- hi_lo_cut[2]
         
         if (hi_cutoff > 1 || hi_cutoff < 0) {
-          stop ('Please select a high cutoff value between 0 and 1',
+          stop('Please select a high cutoff value between 0 and 1',
                 call. = FALSE)
         }
         if (lo_cutoff > 1 || lo_cutoff < 0) {
-          stop ('Please select low cutoff value between 0 and 1',
+          stop('Please select low cutoff value between 0 and 1',
                 call. = FALSE)
         }
       }
       else {
         if (hi_lo_cut > 1 || hi_lo_cut < 0) {
-          stop ('Please select a hi_lo cutoff value between 0 and 1',
+          stop('Please select a hi_lo cutoff value between 0 and 1',
                 call. = FALSE)
         }
         
@@ -218,12 +222,12 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
                          FUN = length)
   colnames(his_summ) <- c("history", "n")
   
-  if ( !is.null(ref) && !is.null(comps)) {
-    his_sum <- his_summ[his_summ$history %in% c(ref, comps), ]
+  if (!is.null(ref) && !is.null(comps)) {
+    his_summ <- his_summ[his_summ$history %in% c(ref, comps), ]
   }
   
-  his_summ <- his_summ[! grepl("NA", his_summ$history), ]
-  his_summ <- his_summ[! grepl("NULL", his_summ$history), ]
+  his_summ <- his_summ[!grepl("NA", his_summ$history), ]
+  his_summ <- his_summ[!grepl("NULL", his_summ$history), ]
   
   if (verbose) {
     if (!is.null(hi_lo_cut)) {
@@ -260,7 +264,7 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
     
     if (nrow(his_summ) != length(tot_hist)) {
       
-      warning (sprintf("USER ALERT: There are no individuals in your sample that fall into %s exposure history/histories.
+      warning(sprintf("USER ALERT: There are no individuals in your sample that fall into %s exposure history/histories.
                   You may wish to consider different high/low cutoffs (for continuous exposures), alternative epochs, or choose a different measure to avoid extrapolation.\n",
                        paste(tot_hist[!tot_hist %in% his_summ$history], 
                              collapse = " & ")), 
@@ -278,7 +282,6 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
                      format = 'pipe',
                      row.names = F),
         sep = "\n")
+    cat("\n")
   }
-  
-  cat("\n")
 }

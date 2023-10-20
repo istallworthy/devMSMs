@@ -57,7 +57,6 @@ test <- data.frame(ID = 1:50,
                    B.3 = rnorm(n = 50),
                    C = rnorm(n = 50),
                    D.3 = rnorm(n = 50))
-test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
 
 w <- createWeights(data = test,
                    exposure = "A",

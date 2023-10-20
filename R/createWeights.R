@@ -5,7 +5,6 @@
 #' relevant confounders.
 #'
 #' @export
-#' @importFrom SuperLearner SuperLearner
 #' @seealso {[WeightIt::weightitMSM()],
 #'   <https://ngreifer.github.io/WeightIt/reference/weightitMSM.html>}
 #' @param home_dir path to home directory (required if 'save.out' = TRUE)
@@ -22,8 +21,8 @@
 #' @param criterion (optional) criterion used to select best weights (default is
 #'   "p.mean" minimizing avg Pearson correlation for continuous exposures and
 #'   "smd.mean" for binary exposures) (requird for "gbm" method)
-#' @param read_in_from_file (optional) "yes" or "no" indicator to read in
-#'   weights that have been previously run and saved locally (default is "no")
+#' @param read_in_from_file (optional) TRUE or FALSE indicator to read in
+#'   weights that have been previously run and saved locally (default is FALSE)
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and
@@ -56,85 +55,84 @@
 #'                    outcome = "D.3",
 #'                    formulas = f,
 #'                    save.out = FALSE)
-#'
+#' 
+#' @examplesIf requireNamespace("CBPS", quietly = TRUE)
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
 #'                    formulas = f,
 #'                    method = "cbps",
 #'                    save.out = FALSE)
-#' w <- createWeights(data = test,
-#'                    exposure = "A",
-#'                    outcome = "D.3",
-#'                    formulas = f,
-#'                    method = "ps",
-#'                    save.out = FALSE)
+#' 
+#' @examplesIf requireNamespace("gbm", quietly = TRUE)                   
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
 #'                    formulas = f,
 #'                    method = "gbm",
 #'                    save.out = FALSE)                    
+#' 
+#' @examplesIf requireNamespace("dbarts", quietly = TRUE)
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
 #'                    formulas = f,
 #'                    method = "bart",
 #'                    save.out = FALSE)
+#' 
+#' @examplesIf requireNamespace("SuperLearner", quietly = TRUE)
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
 #'                    formulas = f,
 #'                    method = "super",
 #'                    save.out = FALSE)   
-#' w <- createWeights(data = test,
-#'                    exposure = "A",
-#'                    outcome = "D.3",
-#'                    formulas = f,
-#'                    method = "glm",
-#'                    save.out = FALSE)
 #'                                                      
-createWeights <- function(home_dir, data, exposure, outcome, formulas, method = "cbps", SL.library = "SL.glm", criterion = NA,
-                          read_in_from_file = "no", verbose = TRUE, save.out = TRUE, ...) {
+createWeights <- function(home_dir, data, exposure, outcome, formulas, method = "cbps",
+                          SL.library = "SL.glm", criterion = NA,
+                          read_in_from_file = FALSE, verbose = TRUE, save.out = TRUE, ...) {
   
   # call <- match.call()
   
   if (save.out) {
     if (missing(home_dir)) {
-      stop ("Please supply a home directory.",
+      stop("Please supply a home directory.",
             call. = FALSE)
     }
-    else if (!is.character(home_dir)) {
-      stop ("Please provide a valid home directory path as a string if you wish to save output locally.",
+    if (!is.character(home_dir)) {
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
             call. = FALSE)
     }
-    else if (!dir.exists(home_dir)) {
-      stop ("Please provide a valid home directory path if you wish to save output locally.",
+    if (!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.",
             call. = FALSE)
     }
   }
   
   if (missing(data)) {
-    stop ("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
+    stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
           call. = FALSE)
   }
-  else if (!inherits(data, "mids") && !is.data.frame(data) && !is.list(data)) {
-    stop ("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.",
+  if (!inherits(data, "mids") && !is.data.frame(data) && !is.list(data)) {
+    stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.",
           call. = FALSE)
   }
-  else if (is.list(data) && !is.data.frame(data)  && !mice::is.mids(data)) {
-    if (sum(sapply(data, is.data.frame)) != length(data)) {
-      stop ("Please supply a list of data frames that have been imputed.",
-            call. = FALSE)
-    }
+  if (is.list(data) && !is.data.frame(data)  && !inherits(data, "mids") &&
+      !all(sapply(data, is.data.frame))) {
+    stop("Please supply a list of data frames that have been imputed.",
+         call. = FALSE)
+  }
+  
+  if (inherits(data, "mids")) {
+    rlang::check_installed("mice")
   }
   
   if (missing(exposure)) {
-    stop ("Please supply a single exposure.",
+    stop("Please supply a single exposure.",
           call. = FALSE)
   }
-  else if (!is.character(exposure) || length(exposure) != 1) {
-    stop ("Please supply a single exposure as a character.",
+  if (!is.character(exposure) || length(exposure) != 1) {
+    stop("Please supply a single exposure as a character.",
           call. = FALSE)
   }
   else if (grepl("\\.", exposure)) {
@@ -143,11 +141,11 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   }
   
   if (missing(outcome)) {
-    stop ("Please supply a single outcome.",
+    stop("Please supply a single outcome.",
           call. = FALSE)
   }
-  else if (!is.character(outcome) || length(outcome) != 1) {
-    stop ("Please supply a single outcome as a character.",
+  if (!is.character(outcome) || length(outcome) != 1) {
+    stop("Please supply a single outcome as a character.",
           call. = FALSE)
   }
   else if (!grepl("\\.", outcome)) {
@@ -156,39 +154,48 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
   }
   
   if (missing(formulas)) {
-    stop ("Please supply a list of balancing formulas.",
+    stop("Please supply a list of balancing formulas.",
           call. = FALSE)
   }
-  else if (!is.list(formulas) | is.data.frame(formulas)) {
-    stop ("Please provide a list of formulas for each exposure time point",
+  if (!is.list(formulas) || is.data.frame(formulas)) {
+    stop("Please provide a list of formulas for each exposure time point",
           call. = FALSE)
   }
   
-  if (!is.character(method)) {
-    stop ("Please provide as a character string a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.",
+  if (!is.character(method) || length(method) != 1) {
+    stop("Please provide as a character string a weights method from this list: 'glm', 'gbm', 'bart', 'super', 'cbps'.",
           call. = FALSE)
   }
-  else if (! method %in% c("ps", "glm", "gbm", "bart", "super", "cbps")) {
-    stop ("Please provide a weights method from this list: 'ps', 'glm', 'gbm', 'bart', 'super', 'cbps'.",
+  if (!method %in% c("glm", "gbm", "bart", "super", "cbps")) {
+    stop("Please provide a weights method from this list: 'glm', 'gbm', 'bart', 'super', 'cbps'.",
           call. = FALSE)
+  }
+  
+  if (!is.logical(read_in_from_file)) {
+    stop("Please set read_in_from_file to either TRUE or FALSE.",
+         call. = FALSE)
+  }
+  if (length(read_in_from_file) != 1) {
+    stop("Please provide a single TRUE or FALSE value to read_in_from_file.",
+         call. = FALSE)
   }
   
   
   if (!is.logical(verbose)) {
-    stop ("Please set verbose to either TRUE or FALSE.",
+    stop("Please set verbose to either TRUE or FALSE.",
           call. = FALSE)
   }
-  else if (length(verbose) != 1) {
-    stop ("Please provide a single TRUE or FALSE value to verbose.",
+  if (length(verbose) != 1) {
+    stop("Please provide a single TRUE or FALSE value to verbose.",
           call. = FALSE)
   }
   
   if (!is.logical(save.out)) {
-    stop ("Please set save.out to either TRUE or FALSE.",
+    stop("Please set save.out to either TRUE or FALSE.",
           call. = FALSE)
   }
-  else if (length(save.out) != 1) {
-    stop ("Please provide a single TRUE or FALSE value to save.out.",
+  if (length(save.out) != 1) {
+    stop("Please provide a single TRUE or FALSE value to save.out.",
           call. = FALSE)
   }
   
@@ -210,7 +217,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     }
   }
   
-  if (read_in_from_file == "yes") {
+  if (read_in_from_file) {
     
     tryCatch ( {
       weights <- readRDS(file.path(home_dir, "weights", 
@@ -223,7 +230,7 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
       }
       
       if (!is.list(weights) || !inherits(weights[[1]], "weightitMSM")) {
-        stop ("The weights saved locally are not the correct class of weightitMSM classed objects saved as a list.",
+        stop("The weights saved locally are not the correct class of weightitMSM classed objects saved as a list.",
               call. = FALSE)
       }
       
@@ -233,56 +240,53 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         l <- 1
         n <- names(data)
       }
+      else if (inherits(data, "mids")) {
+        l <- data$m
+        n <- names(mice::complete(data, 1))
+      }
       else if (is.list(data) && !is.data.frame(data)) {
         l <- length(data)
         n <- names(data[[1]])
       }
-      else if (mice::is.mids(data)){
-        l <- data$m
-        n <- names(mice::complete(data, 1))
-      }
       
-      if (length(weights) !=  l) {
-        stop ("The locally saved weights object does not match the data you have supplied.",
+      if (length(weights) != l) {
+        stop("The locally saved weights object does not match the data you have supplied.",
               call. = FALSE)
       }
       
       if (weights[[1]]$method != weights_method) {
-        stop (sprintf("The weights saved locally are incorrectly labeled and were actually created with %s weighting method.",
+        stop(sprintf("The weights saved locally are incorrectly labeled and were actually created with %s weighting method.",
                       weights[[1]]$method),
               call. = FALSE)
       }
       
       if (length(weights[[1]]$covs.list) != length(formulas)) {
-        stop ("The locally saved weights were created using formulas other than what are supplied here.",
+        stop("The locally saved weights were created using formulas other than what are supplied here.",
               call. = FALSE)
       }
       
-      if (as.logical(unlist(lapply(weights[[1]]$covs.list, function(x){
-        any(!names(x) %in% n)
+      if (as.logical(unlist(lapply(weights[[1]]$covs.list, function(x) {
+        !all(names(x) %in% n)
       })))) {
-        stop ("The locally saved weights were created using data other than what is supplied.",
+        stop("The locally saved weights were created using data other than what is supplied.",
               call. = FALSE)
       }
       
       
     }, error = function(x) {
-      stop ("These weights have not previously been saved locally. Please re-run with read_in_from_file='no'",
+      stop("These weights have not previously been saved locally. Please re-run with read_in_from_file=FALSE",
             call. = FALSE)
     })
-    
-    weights
   }
   else {
     
     # List of formulas for each time point
     
-    form <- formulas
-    form <- unname(form)
+    form <- unname(formulas)
     
     #temp workaround while noah is fixing weightitMSM bug...this will only work for continuous exposures tho
     
-    if (method == "gbm" && is.na(criterion)) {
+    if (weights_method == "gbm" && is.na(criterion)) {
       criterion <- "p.mean"
     }
     
@@ -358,11 +362,11 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         d <- as.data.frame(mice::complete(data, i))
         
         if (anyNA(d)) {
-          stop ("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
+          stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                 call. = FALSE)
         }
-        if (sum(duplicated(d$"ID")) > 0) {
-          stop ("Please provide wide imputed datasets with a single row per ID.",
+        if (any(duplicated(d[["ID"]]))) {
+          stop("Please provide wide imputed datasets with a single row per ID.",
                 call. = FALSE)
         }
         
@@ -435,11 +439,11 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         d <- data[[i]]
         
         if (anyNA(d)) {
-          stop ("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
+          stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
                 call. = FALSE)
         }
-        if (sum(duplicated(d$"ID")) > 0) {
-          stop ("Please provide wide imputed datasets with a single row per ID.",
+        if (any(duplicated(d[["ID"]]))) {
+          stop("Please provide wide imputed datasets with a single row per ID.",
                 call. = FALSE)
         }
         
@@ -504,21 +508,21 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
     }
     
     else if (is.data.frame(data)) {
-      if (sum(duplicated(data$"ID")) > 0) {
-        stop ("Please provide wide dataset with a single row per ID.",
+      if (any(duplicated(data[["ID"]]))) {
+        stop("Please provide wide dataset with a single row per ID.",
               call. = FALSE)
       }
       if (anyNA(data)) {
-        stop ("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
+        stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
               call. = FALSE)
       }
       
       # Creating weights
       
-      weights <-  lapply(1, function(i) {
+      weights <- list(
         calculate_weights(data, form, weights_method, SL.library, criterion, 
                           verbose, ...)
-      })
+      )
       
       data$weights <- weights[[1]]$weights
       
@@ -587,9 +591,9 @@ createWeights <- function(home_dir, data, exposure, outcome, formulas, method = 
         cat("Weights models have been saved as an .rds object in the 'weights' folder.", "\n")
       }
     }
-    
-    weights
   }
+  
+  weights
 }
 
 

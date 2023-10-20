@@ -176,7 +176,7 @@ data_wide[, factor_covars] <- as.data.frame(lapply(data_wide[, factor_covars], a
 
 
 #if you want to test out median split binary exposure
-library(dplyr)
+# library(dplyr)
 e <- data_wide[, paste(exposure, exposure_time_pts, sep = ".")]
 m <- sapply(e, median)
 
