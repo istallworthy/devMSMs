@@ -86,7 +86,7 @@ exposure_time_pts <- c(6, 15, 24, 35, 58)
 #required
 outcome <- "StrDif_Tot.58"
 
-#optional; list in wide format
+#required; list in wide format
 tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "MDI.6", "MDI.15",                                            
                     "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
@@ -95,7 +95,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
                     "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
                     "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                                 
-                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",                                         
+                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",  #exposure variables required                                       
                     "CORTB.6", "CORTB.15", "CORTB.24",                                                                                
                     "EARS_TJo.24", "EARS_TJo.35",                                        
                     "LESMnPos.24", "LESMnPos.35",                                  
@@ -327,8 +327,8 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 ```{r}
 
 #all inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, # required input
-            tv_confounders = tv_confounders, epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
+inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, tv_confounders, # required input
+            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
             verbose = TRUE, save.out = TRUE) #optional input
 
 
@@ -339,7 +339,7 @@ inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders
 # 
 # #or minimum inputs
 # inspectData(data, home_dir, exposure, exposure_time_pts, outcome, 
-#             ti_confounders, tv_confounders = tv_confounders)
+#             ti_confounders, tv_confounders)
 
 ```
 
@@ -371,12 +371,12 @@ custom <- list("full_form-6" = as.formula ("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + 
 type <- "full"
 
 #all inputs
-full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, #required
-                                tv_confounders = tv_confounders, concur_conf = concur_conf, custom = custom, #optional
+full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders, #required
+                                concur_conf = concur_conf, custom = custom, #optional
                                 verbose = TRUE, save.out = TRUE) #optional
 
 # #or minimum inputs
-# full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
+# full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders)
 
 
 ```
@@ -435,12 +435,12 @@ custom <- list("short_form-6" = as.formula ("ESETA1.6 ~ BioDadInHH2 + DrnkFreq +
 type <- "short" 
 
 #all inputs
-short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, #required
-                                 tv_confounders = tv_confounders, concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, #optional
+short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders, #required
+                                 concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, #optional
                                  verbose = TRUE, save.out = TRUE) #optional
 
 # #or minimum inputs
-# short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders)
+# short_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders)
 
 ```
 
@@ -627,12 +627,12 @@ type <- "update"
 bal_stats <- balance_stats
 
 #all inputs
-updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, bal_stats = bal_stats, #required
-                                   tv_confounders = tv_confounders, concur_conf = concur_conf, keep_conf = keep_conf, #optional
+updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders, bal_stats = bal_stats, #required
+                                   concur_conf = concur_conf, keep_conf = keep_conf, #optional
                                    verbose = TRUE, save.out = TRUE) #optional
 
 #minimum inputs
-# updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders = tv_confounders,
+# updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders,
 #                                    bal_stats = bal_stats)
 
 ```

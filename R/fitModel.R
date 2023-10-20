@@ -142,6 +142,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     stop("Please supply a single exposure as a character.",
           call. = FALSE)
   }
+  else if (grepl("\\.", exposure)) {
+    stop ("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
+          call. = FALSE)
+  }
   
   if (missing(outcome)) {
     stop("Please supply a single outcome.",
@@ -149,6 +153,14 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
   if (!is.character(outcome) || length(outcome) != 1) {
     stop("Please supply a single outcome as a character.",
+          call. = FALSE)
+  }
+  else if (!is.character(outcome) || length(outcome) != 1) {
+    stop ("Please supply a single outcome as a character.",
+          call. = FALSE)
+  }
+  else if (!grepl("\\.", outcome)) {
+    stop ("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
           call. = FALSE)
   }
   
@@ -172,6 +184,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
   }
   if (!is.numeric(exposure_time_pts)) {
     stop("Please supply a list of exposure time points as integers.",
+          call. = FALSE)
+  }
+  else if (!length(exposure_time_pts) > 1) {
+    stop ("Please supply at least two exposure time points.",
           call. = FALSE)
   }
   

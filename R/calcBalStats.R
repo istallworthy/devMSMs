@@ -122,7 +122,24 @@ calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, 
   
   exposure_name1 <- paste0(exposure, ".", exposure_time_pts[1])
   
+  
+  #checking exposure type
+  
+  if (any(as.logical(unlist(lapply(data[, paste0(exposure, '.', exposure_time_pts)], function(x){
+    !inherits(x, "numeric") && !inherits(x, "integer")
+  }))))) {
+    stop ("Please provide an exposure in numeric or integer form.",
+          call. = FALSE)
+  }
+  else if (any(as.logical(unlist(lapply(data[, paste0(exposure, '.', exposure_time_pts)], function(x) {
+    inherits(x, "integer") && unique(x) != c(1, 0) } ))))) {
+    stop ("Please make sure your exposure levels are 1s and 0s for integer exposures.",
+          call. = FALSE)
+  }
+  
   exposure_type <- if (is.numeric(data[[exposure_name1]])) "continuous" else "binary"
+  
+  
   weighted <- !is.null(weights)
   
   factor_covariates <- names(data)[sapply(data, is.factor)]
@@ -202,6 +219,7 @@ calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, 
             call. = FALSE
       )
     }
+    
     
     exposure_name <- paste0(exposure, ".", exposure_time_pt)
     

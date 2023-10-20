@@ -172,6 +172,10 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please supply a single exposure as a character.",
           call. = FALSE)
   }
+  else if (grepl("\\.", exposure)) {
+    stop ("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
+          call. = FALSE)
+  }
   
   if (missing(outcome)) {
     stop("Please supply a single outcome.",
@@ -179,6 +183,17 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   }
   if (!is.character(outcome) | length(outcome) != 1) {
     stop("Please supply a single outcome as a character.",
+          call. = FALSE)
+  }
+  else if (!grepl("\\.", outcome)) {
+    stop ("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
+          call. = FALSE)
+  }
+  else if (as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) != 
+           exposure_time_pts[length(exposure_time_pts)] && 
+           !as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) > 
+           exposure_time_pts[length(exposure_time_pts)] ) {
+    stop ("Please supply an outcome variable with a time point that is equal to or greater than the last exposure time point.",
           call. = FALSE)
   }
   
@@ -190,6 +205,10 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please supply a list of exposure time points as integers.",
           call. = FALSE)
   }
+  else if (!length(exposure_time_pts) > 1) {
+    stop ("Please supply at least two exposure time points.",
+          call. = FALSE)
+  }
   
   if (missing(formulas)) {
     stop("Please supply a list of balancing formulas.",
@@ -199,14 +218,16 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop("Please provide a list of formulas for each exposure time point",
           call. = FALSE)
   }
-  if (length(formulas) != length(exposure_time_pts)) {
-    stop("Please provide a list of formulas for each exposure time point",
+  else if (length(formulas) != length(exposure_time_pts)) {
+    stop ("Please provide a list of formulas with one entry for each exposure time point",
           call. = FALSE)
   }
-  if (is.list(formulas) && !is.data.frame(formulas) &&
-      !all(sapply(formulas, inherits, "formula"))) {
-    stop("Please supply a list of formulas for each exposure time point.",
-         call. = FALSE)
+  else if (is.list(formulas) && !is.data.frame(formulas)) {
+    if (sum(sapply(formulas, function(x) {
+      inherits(x, "formula")})) != length(formulas)) {
+      stop ("Please supply a list of formulas for each exposure time point.",
+            call. = FALSE)
+    }
   }
   
   if (missing(type)) {
