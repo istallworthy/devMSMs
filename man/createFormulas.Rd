@@ -68,12 +68,14 @@ IPTW weights.
 }
 \examples{
 #Full Formulas
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    ti_confounders = "C",
-                    type = "full",
-                    save.out = FALSE)
+
+# Error because tv_confounders excludes treatments
+# f <- createFormulas(exposure = "A",
+#                     exposure_time_pts = c(1, 2, 3),
+#                     outcome = "D.3",
+#                     ti_confounders = "C",
+#                     type = "full",
+#                     save.out = FALSE)
 
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
@@ -84,12 +86,14 @@ f <- createFormulas(exposure = "A",
                     save.out = FALSE)
 
 #Short Formulas
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    ti_confounders = "C",
-                    type = "short",
-                    save.out = FALSE)
+
+# Error because tv_confounders excludes treatments
+# f <- createFormulas(exposure = "A",
+#                     exposure_time_pts = c(1, 2, 3),
+#                     outcome = "D.3",
+#                     ti_confounders = "C",
+#                     type = "short",
+#                     save.out = FALSE)
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
                     outcome = "D.3",
@@ -137,13 +141,13 @@ b <- assessBalance(data = test,
                    weights = w,
                    formulas = f,
                    save.out = FALSE)
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    ti_confounders = "C",
-                    type = "update",
-                    bal_stats = b,
-                    save.out = FALSE)
+# f <- createFormulas(exposure = "A",
+#                     exposure_time_pts = c(1, 2, 3),
+#                     outcome = "D.3",
+#                     ti_confounders = "C",
+#                     type = "update",
+#                     bal_stats = b,
+#                     save.out = FALSE)
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
                     outcome = "D.3",

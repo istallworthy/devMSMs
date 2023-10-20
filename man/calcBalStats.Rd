@@ -5,7 +5,7 @@
 \title{Calculate balance stats based on Jackson paper}
 \usage{
 calcBalStats(
-  home_dir = NA,
+  home_dir,
   data,
   formulas,
   exposure,
@@ -93,19 +93,22 @@ c <- calcBalStats(data = test,
                   exposure = "A",
                   exposure_time_pts = c(1, 2, 3),
                   outcome = "D.3",
-                  balance_thresh = 0.1)
+                  balance_thresh = 0.1,
+                  save.out = FALSE)
 c <- calcBalStats(data = test,
                   formulas = f,
                   exposure = "A",
                   exposure_time_pts = c(1, 2, 3),
                   outcome = "D.3",
                   balance_thresh = c(0.05, 0.1),
-                  imp_conf = "B2")
+                  imp_conf = "B2",
+                  save.out = FALSE)
 c <- calcBalStats(data = test,
                   formulas = f,
                   exposure = "A",
                   exposure_time_pts = c(1, 2, 3),
                   outcome = "D.3",
                   balance_thresh = 0.1,
-                  weights = w[[1]])
+                  weights = w[[1]],
+                  save.out = FALSE)
 }

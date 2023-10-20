@@ -9,7 +9,7 @@ getModel(
   exposure,
   exposure_time_pts,
   outcome,
-  epochs,
+  epochs = NULL,
   exp_epochs,
   int_order,
   model,

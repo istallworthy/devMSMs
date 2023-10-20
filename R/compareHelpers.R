@@ -67,7 +67,7 @@ get_comparison_values <- function(d, comp_histories) {
 #' @export
 create_custom_contrasts <- function(d, reference, comp_histories, exposure, preds) {
   
-  if (is.null(reference) | is.null(comp_histories)) {
+  if (is.null(reference) || is.null(comp_histories)) {
     return(NULL)  # Invalid input, return early
   }
   
@@ -82,12 +82,12 @@ create_custom_contrasts <- function(d, reference, comp_histories, exposure, pred
   cus_comps <- lapply(seq_len(ncol(ref_values)), function(x) {
     ref_vals <- ref_values[, x]
     create_custom_comparisons(preds, ref_vals, comp_vals, exposure)
-  } )
+  })
   
   cus_comparisons <- cus_comps
   comps <- lapply(preds, function(y) {
-    lapply(cus_comparisons, function(x){
-      y |> marginaleffects::hypotheses(x)
+    lapply(cus_comparisons, function(x) {
+      marginaleffects::hypotheses(y, x)
     })
   })
   
@@ -142,13 +142,13 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 
 add_histories <- function(p, d) {
   
-  if ((is.list(p)) && length(p) == 1) {
+  if (is.list(p) && length(p) == 1) {
     history <- matrix(data = NA, nrow = nrow(p[[1]]), ncol = 1) # Get histories from the first element
     p <- p[[1]]
   }
   
   #for preds
-  if (sum(d$e %in% colnames(p)) == nrow(d)) {
+  if (all(d$e %in% colnames(p))) {
     for (i in seq_len(nrow(p))) {
       vals <- as.data.frame(p)[i, seq_len(nrow(d))]
       history[i] <- as.data.frame(paste(ifelse(round(as.numeric(as.character(vals)), 3) ==
@@ -172,7 +172,6 @@ add_histories <- function(p, d) {
     }
     else { #comps
       for (i in seq_len(nrow(p))) {
-        
         temp <- as.character(p$term[i])
         pair <- lapply(1:2, function(y) {
           a <- sapply(strsplit(temp, " - "), "[", y)
@@ -185,8 +184,8 @@ add_histories <- function(p, d) {
       }
     }
   }
-  p <- cbind (p, history = history)
-  p
+  
+  cbind(p, history = history)
 }
 
 
@@ -199,29 +198,20 @@ add_histories <- function(p, d) {
 
 add_dose <- function(p, dose_level) {
   
-  if ( length(p$history[1]) == 1 ) {
+  if (length(p$history[1]) == 1 && grepl("vs", p$history[1])) {
     
-    if (grepl("vs", p$history[1])) {
-      
-      dose_a <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 1), 
-                                   dose_level)
-      dose_b <- stringr::str_count(sapply(strsplit(p$history, "vs"), "[", 2), 
-                                   dose_level)
-      dose_count <- data.frame(dose = gsub(" ", " vs ", paste(dose_a, dose_b)))
-    }
-    else {
-      
-      dose_count <- stringr::str_count(p$history, dose_level)
-    }
+    dose_a <- string_count(sapply(strsplit(p$history, "vs"), "[", 1), 
+                                 dose_level)
+    dose_b <- string_count(sapply(strsplit(p$history, "vs"), "[", 2), 
+                                 dose_level)
+    dose_count <- data.frame(dose = gsub(" ", " vs ", paste(dose_a, dose_b)))
   }
-  if (length(p$history[1]) > 1) {
-    
-    dose_count <- stringr::str_count(p$history, dose_level)
+  else {
+    dose_count <- string_count(p$history, dose_level)
   }
-  p <- cbind (p, dose_count = dose_count)
-  p
+  
+  cbind(p, dose_count = dose_count)
 }
-
 
 #' Conduct multiple comparison correction
 #'
@@ -235,7 +225,7 @@ add_dose <- function(p, dose_level) {
 #' @export
 
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, 
-                                                   method, verbose) {
+                                                   method, verbose = TRUE) {
   
   #if there is more than one reference or one reference with more than 1 comparison
   
@@ -258,7 +248,6 @@ perform_multiple_comparison_correction <- function(comps, reference, comp_histor
   }
   
   else {
-    
     if (verbose) {
       cat("\n")
       cat(sprintf("The user specified comparison only between %s and a single comparison, %s,
@@ -266,5 +255,6 @@ perform_multiple_comparison_correction <- function(comps, reference, comp_histor
                   reference, comp_histories))
     }
   }
+  
   comps
 }

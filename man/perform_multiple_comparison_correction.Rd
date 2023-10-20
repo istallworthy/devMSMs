@@ -9,7 +9,7 @@ perform_multiple_comparison_correction(
   reference,
   comp_histories,
   method,
-  verbose
+  verbose = TRUE
 )
 }
 \arguments{

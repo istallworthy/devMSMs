@@ -37,7 +37,6 @@
 #'                    B.3 = rnorm(n = 50),
 #'                    C = rnorm(n = 50),
 #'                    D.3 = rnorm(n = 50))
-#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
 #'
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
@@ -62,84 +61,81 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
   
   if (save.out) {
     if (missing(home_dir)) {
-      stop ("Please supply a home directory.",
-            call. = FALSE)
+      stop("Please supply a home directory.",
+           call. = FALSE)
     }
-    else if (!is.character(home_dir)) {
-      stop ("Please provide a valid home directory path as a string if you wish to save output locally.",
-            call. = FALSE)
+    if (!is.character(home_dir)) {
+      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
+           call. = FALSE)
     }
-    else if (!dir.exists(home_dir)) {
-      stop ("Please provide a valid home directory path if you wish to save output locally.",
-            call. = FALSE)
+    if (!dir.exists(home_dir)) {
+      stop("Please provide a valid home directory path if you wish to save output locally.",
+           call. = FALSE)
     }
   }
   
   if (missing(exposure)) {
-    stop ("Please supply a single exposure.",
-          call. = FALSE)
+    stop("Please supply a single exposure.",
+         call. = FALSE)
   }
-  else if (!is.character(exposure) || length(exposure) != 1) {
-    stop ("Please supply a single exposure as a character.",
-          call. = FALSE)
+  if (!is.character(exposure) || length(exposure) != 1) {
+    stop("Please supply a single exposure as a character.",
+         call. = FALSE)
   }
   
   if (missing(weights)) {
-    stop ("Please supply a list of IPTW weights to trim.",
-          call. = FALSE)
+    stop("Please supply a list of IPTW weights to trim.",
+         call. = FALSE)
   }
-  else if (!is.list(weights) || is.data.frame(weights)) {
-    stop ("Please supply a list of weights output from the createWeights function.",
-          call. = FALSE)
+  if (!is.list(weights) || is.data.frame(weights)) {
+    stop("Please supply a list of weights output from the createWeights function.",
+         call. = FALSE)
   }
-  else if (is.list(weights) && !is.data.frame(weights)) {
-    if (sum(sapply(weights, function(x) {
-      inherits(x, "weightitMSM")})) != length(weights)) {
-      stop ("Please supply a list of weights output from the createWeights function.",
-            call. = FALSE)
-    }
+  if (is.list(weights) && !is.data.frame(weights) &&
+      !all(sapply(weights, inherits, "weightitMSM"))) {
+    stop("Please supply a list of weights output from the createWeights function.",
+         call. = FALSE)
   }
   
   if (missing(outcome)) {
-    stop ("Please supply a single outcome.",
-          call. = FALSE)
+    stop("Please supply a single outcome.",
+         call. = FALSE)
   }
-  else if (!is.character(outcome) || length(outcome) != 1) {
-    stop ("Please supply a single outcome as a character.",
-          call. = FALSE)
+  if (!is.character(outcome) || length(outcome) != 1) {
+    stop("Please supply a single outcome as a character.",
+         call. = FALSE)
   }
   
-  if ((!is.numeric(quantile) && !is.na(quantile)) || length(quantile) != 1) {
-    stop ('Please provide a single numeric quantile value between 0 and 1.',
-          call. = FALSE)
-  }
-  else if (is.na(quantile)) {
+  if (anyNA(quantile)) {
     quantile <- 0.95
   }
-  else if (quantile > 1 || quantile < 0) {
-    stop ('Please provide a quantile value between 0 and 1.',
-          call. = FALSE)
+  if (length(quantile) != 1 || !is.numeric(quantile)) {
+    stop('Please provide a single numeric quantile value between 0 and 1.',
+         call. = FALSE)
   }
-
+  if (quantile > 1 || quantile < 0) {
+    stop('Please provide a quantile value between 0 and 1.',
+         call. = FALSE)
+  }
+  
   
   if (!is.logical(verbose)) {
-    stop ("Please set verbose to either TRUE or FALSE.",
-          call. = FALSE)
+    stop("Please set verbose to either TRUE or FALSE.",
+         call. = FALSE)
   }
-  else if (length(verbose) != 1) {
-    stop ("Please provide a single TRUE or FALSE value to verbose.",
-          call. = FALSE)
+  if (length(verbose) != 1) {
+    stop("Please provide a single TRUE or FALSE value to verbose.",
+         call. = FALSE)
   }
   
   if (!is.logical(save.out)) {
-    stop ("Please set save.out to either TRUE or FALSE.",
-          call. = FALSE)
+    stop("Please set save.out to either TRUE or FALSE.",
+         call. = FALSE)
   }
-  else if (length(save.out) != 1) {
-    stop ("Please provide a single TRUE or FALSE value to save.out.",
-          call. = FALSE)
+  if (length(save.out) != 1) {
+    stop("Please provide a single TRUE or FALSE value to save.out.",
+         call. = FALSE)
   }
-  
   
   if (save.out) {
     weights_dir <- file.path(home_dir, "weights")
@@ -160,7 +156,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
   
   if (is.null(names(weights))) {
     
-    trim_weights <- lapply(seq_len(length(weights)), function (x) {
+    trim_weights <- lapply(seq_len(length(weights)), function(x) {
       w <- weights[[x]]
       t <- WeightIt::trim(w$weights, at = quantile)
       
@@ -204,12 +200,12 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
       w$weights <- t
       w
       
-    } )
+    })
   }
   
   # df
   
-  else if ( !is.null(names(weights)) ) {
+  else {
     trim_weights <- lapply(1, function (x) {
       w <- weights[[1]]
       t <- WeightIt::trim(w$weights, at = quantile)
@@ -251,10 +247,9 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
                         width = 14)
       }
       
-      w$weights <- NA
       w$weights <- t
       w
-    } )
+    })
     names(trim_weights) <- "0"
   }
   

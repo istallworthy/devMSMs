@@ -141,6 +141,5 @@ m <- fitModel(data = test,
               save.out = FALSE)
 }
 \seealso{
-{\code{\link[survey:svyglm]{survey::svyglm()}} for more on family/link specifications,
-\url{https://www.rdocumentation.org/packages/survey/versions/4.2-1/topics/svyglm}}
+\code{\link[survey:svyglm]{survey::svyglm()}} for more on family/link specifications.
 }
