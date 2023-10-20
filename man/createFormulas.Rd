@@ -35,7 +35,8 @@ time-varying confounders), 'short' (includes time-varying confounders at
 t-1 lag only), or 'update' (adds to 'short' formulas any imbalanced
 time-varying confounders at lags great than t-1)}
 
-\item{ti_confounders}{list of time invariant confounders (at least one required)}
+\item{ti_confounders}{list of time invariant confounders (at least one
+required)}
 
 \item{tv_confounders}{list of time-varying confounders with ".timepoint"
 suffix, should include exposure and outcome variables (at least
