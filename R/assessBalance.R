@@ -211,13 +211,12 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     stop ("Please provide a list of formulas for each exposure time point",
           call. = FALSE)
   }
-  else if(length(formulas) != length(exposure_time_pts)) {
-    stop ("Please provide a list of formulas for each exposure time point",
+  else if (length(formulas) != length(exposure_time_pts)) {
+    stop ("Please provide a list of formulas with one entry for each exposure time point",
           call. = FALSE)
   }
   else if (is.list(formulas) && !is.data.frame(formulas)) {
     if (sum(sapply(formulas, function(x) {
-      
       inherits(x, "formula")})) != length(formulas)) {
       stop ("Please supply a list of formulas for each exposure time point.",
             call. = FALSE)

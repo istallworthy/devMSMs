@@ -13,7 +13,8 @@
 #' @param tv_confounders list of time-varying confounders with ".timepoint"
 #'   suffix, should include exposure and outcome variables (at least
 #'   time-varying exposure variables required here)
-#' @param ti_confounders list of time invariant confounders (at least one required)
+#' @param ti_confounders list of time invariant confounders (at least one
+#'   required)
 #' @param type type of formula to create from 'full' (includes all lagged
 #'   time-varying confounders), 'short' (includes time-varying confounders at
 #'   t-1 lag only), or 'update' (adds to 'short' formulas any imbalanced
