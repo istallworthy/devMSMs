@@ -289,8 +289,9 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   #print history sample distribution
   
   if (verbose) {
-    eval_hist(data = model[[1]]$data, exposure, epochs,
-              exposure_time_pts, hi_lo_cut, reference, comparison, verbose)
+    eval_hist(data = model[[1]]$data, exposure = exposure, epochs = epochs,
+              time_pts = exposure_time_pts, hi_lo_cut = hi_lo_cut, 
+              ref = reference, comps = comparison)
   }
   
   

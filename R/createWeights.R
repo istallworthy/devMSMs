@@ -88,8 +88,8 @@
 #'                    method = "super",
 #'                    save.out = FALSE)   
 #'                                                      
-createWeights <- function(home_dir, data, exposure, outcome, formulas, method = "cbps",
-                          SL.library = "SL.glm", criterion = NA,
+createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
+                          SL.library = "SL.glm", criterion = NA, home_dir = NULL,
                           read_in_from_file = FALSE, verbose = TRUE, save.out = TRUE, ...) {
   
   # call <- match.call()

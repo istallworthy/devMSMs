@@ -17,8 +17,6 @@
 #' @param comps (optional) list of one or more strings of "-"-separated "l"
 #'   and "h" values indicative of comparison history/histories to compare to
 #'   reference, required if reference is supplied
-#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
-#'   TRUE)
 #' @return none
 #' @export
 #' @examples
@@ -52,12 +50,11 @@
 #'                ref = "l-l-l",
 #'                comps = "h-h-h")
 
-eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL, 
-                      ref = NULL, comps = NULL, verbose = TRUE) {
+eval_hist <- function(data, exposure, time_pts, epochs = NULL, hi_lo_cut = NULL, 
+                      ref = NULL, comps = NULL) {
   
-  if (verbose) {
-    rlang::check_installed("knitr")
-  }
+  rlang::check_installed("knitr")
+  
   
   exposure_type <- if (inherits(data[, paste0(exposure, '.', time_pts[1])], "numeric")) "continuous" else "binary"
   
@@ -104,11 +101,10 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
     }
   }
   
-  if (verbose) {
-    cat("Summary of Exposure Main Effects:", "\n")
-    summary(new[, !colnames(new) %in% "ID"])
-    cat("\n")
-  }
+  cat("Summary of Exposure Main Effects:", "\n")
+  summary(new[, !colnames(new) %in% "ID"])
+  cat("\n")
+  
   
   tot_hist <- apply(perm2(nrow(epochs), c("l", "h")), 1,
                     paste, sep = "", collapse = "-")
@@ -154,17 +150,17 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
         
         if (hi_cutoff > 1 || hi_cutoff < 0) {
           stop('Please select a high cutoff value between 0 and 1',
-                call. = FALSE)
+               call. = FALSE)
         }
         if (lo_cutoff > 1 || lo_cutoff < 0) {
           stop('Please select low cutoff value between 0 and 1',
-                call. = FALSE)
+               call. = FALSE)
         }
       }
       else {
         if (hi_lo_cut > 1 || hi_lo_cut < 0) {
           stop('Please select a hi_lo cutoff value between 0 and 1',
-                call. = FALSE)
+               call. = FALSE)
         }
         
         hi_cutoff <- hi_lo_cut
@@ -229,59 +225,58 @@ eval_hist <- function(data, exposure, epochs = NULL, time_pts, hi_lo_cut = NULL,
   his_summ <- his_summ[!grepl("NA", his_summ$history), ]
   his_summ <- his_summ[!grepl("NULL", his_summ$history), ]
   
-  if (verbose) {
-    if (!is.null(hi_lo_cut)) {
-      
-      cat(sprintf("USER ALERT: Out of the total of %s individuals in the sample, below is the distribution of the %s (%s%%) individuals
+  if (!is.null(hi_lo_cut)) {
+    
+    cat(sprintf("USER ALERT: Out of the total of %s individuals in the sample, below is the distribution of the %s (%s%%) individuals
                   that fall into %s out of the %s the total user-defined exposure histories created from
                   %sth and %sth percentile values for low and high levels of exposure %s, respectively, across %s. \n",
-                  nrow(data_wide),
-                  sum(his_summ$n),
-                  round((sum(his_summ$n) / nrow(data_wide)) * 100, 2),
-                  nrow(his_summ),
-                  length(tot_hist),
-                  hi_lo_cut[2] * 100,
-                  hi_lo_cut[1] * 100,
-                  exposure,
-                  paste(epochs$epochs, collapse = ", ")))
-    }
-    else {
-      
-      cat(sprintf("USER ALERT: Out of the total of %s individuals in the sample, below is the distribution of the %s (%s%%) individuals that fall into %s
+                nrow(data_wide),
+                sum(his_summ$n),
+                round((sum(his_summ$n) / nrow(data_wide)) * 100, 2),
+                nrow(his_summ),
+                length(tot_hist),
+                hi_lo_cut[2] * 100,
+                hi_lo_cut[1] * 100,
+                exposure,
+                paste(epochs$epochs, collapse = ", ")))
+  }
+  else {
+    
+    cat(sprintf("USER ALERT: Out of the total of %s individuals in the sample, below is the distribution of the %s (%s%%) individuals that fall into %s
                   out of the %s total user-defined exposure histories created from median split values for low and high levels of exposure
                   %s, respectively, across %s. \n",
-                  nrow(data_wide),
-                  sum(his_summ$n),
-                  round((sum(his_summ$n) / nrow(data_wide)) * 100, 2),
-                  nrow(his_summ),
-                  length(tot_hist),
-                  exposure,
-                  paste(epochs$epochs, collapse = ", ")))
-    }
-    
-    cat("USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is
+                nrow(data_wide),
+                sum(his_summ$n),
+                round((sum(his_summ$n) / nrow(data_wide)) * 100, 2),
+                nrow(his_summ),
+                length(tot_hist),
+                exposure,
+                paste(epochs$epochs, collapse = ", ")))
+  }
+  
+  cat("USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is
         sufficient spread to avoid extrapolation and low precision:", "\n")
+  
+  if (nrow(his_summ) != length(tot_hist)) {
     
-    if (nrow(his_summ) != length(tot_hist)) {
-      
-      warning(sprintf("USER ALERT: There are no individuals in your sample that fall into %s exposure history/histories.
+    warning(sprintf("USER ALERT: There are no individuals in your sample that fall into %s exposure history/histories.
                   You may wish to consider different high/low cutoffs (for continuous exposures), alternative epochs, or choose a different measure to avoid extrapolation.\n",
-                       paste(tot_hist[!tot_hist %in% his_summ$history], 
-                             collapse = " & ")), 
-               call. = FALSE)
-      cat("\n")
-    }
-    
-    cat("\n")
-    cat(knitr::kable(his_summ,
-                     caption = sprintf("Summary of user-specified exposure %s histories based on exposure main effects %s
-                               containing time points %s:",
-                                       exposure, paste(epochs$epochs, 
-                                                       collapse = ", "), 
-                                       paste(epochs$values, collapse = ", ")),
-                     format = 'pipe',
-                     row.names = F),
-        sep = "\n")
+                    paste(tot_hist[!tot_hist %in% his_summ$history], 
+                          collapse = " & ")), 
+            call. = FALSE)
     cat("\n")
   }
+  
+  cat("\n")
+  cat(knitr::kable(his_summ,
+                   caption = sprintf("Summary of user-specified exposure %s histories based on exposure main effects %s
+                               containing time points %s:",
+                                     exposure, paste(epochs$epochs, 
+                                                     collapse = ", "), 
+                                     paste(epochs$values, collapse = ", ")),
+                   format = 'pipe',
+                   row.names = F),
+      sep = "\n")
+  cat("\n")
+  
 }

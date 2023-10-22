@@ -5,7 +5,6 @@
 \title{Fit outcome model}
 \usage{
 fitModel(
-  home_dir,
   data,
   weights,
   exposure,
@@ -17,13 +16,12 @@ fitModel(
   int_order = NA,
   covariates = NULL,
   epochs = NULL,
+  home_dir = NULL,
   verbose = TRUE,
   save.out = TRUE
 )
 }
 \arguments{
-\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
-
 \item{data}{data in wide format as: a data frame, list of imputed data
 frames, or mids object}
 
@@ -55,6 +53,8 @@ interaction, required for interaction models ("m2", "m3")}
 required for covariate models ("m1", "m3")}
 
 \item{epochs}{(optional) data frame of exposure epoch labels and values}
+
+\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}

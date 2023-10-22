@@ -5,7 +5,6 @@
 \title{Create balancing formulas}
 \usage{
 createFormulas(
-  home_dir,
   exposure,
   exposure_time_pts,
   outcome,
@@ -15,14 +14,13 @@ createFormulas(
   bal_stats = NULL,
   concur_conf = NULL,
   keep_conf = NULL,
+  home_dir = NULL,
   custom = NULL,
   verbose = TRUE,
   save.out = TRUE
 )
 }
 \arguments{
-\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
-
 \item{exposure}{name of exposure variable}
 
 \item{exposure_time_pts}{list of integers at which weights will be
@@ -50,6 +48,8 @@ confounders to retain in formulas contemporaneously (default is none)}
 
 \item{keep_conf}{(optional) list of variable names reflecting confounders to
 always retain in formulas (default depends on type)}
+
+\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
 
 \item{custom}{(optional) custom list of formulas at each exposure time point
 (default is to create automatically according to type)}

@@ -7,12 +7,11 @@
 eval_hist(
   data,
   exposure,
-  epochs = NULL,
   time_pts,
+  epochs = NULL,
   hi_lo_cut = NULL,
   ref = NULL,
-  comps = NULL,
-  verbose = TRUE
+  comps = NULL
 )
 }
 \arguments{
@@ -21,10 +20,10 @@ data frames, or mids object}
 
 \item{exposure}{name of exposure variable}
 
-\item{epochs}{(optional) data frame of exposure epoch labels and values}
-
 \item{time_pts}{list of integers at which weights will be
 created/assessed that correspond to time points when exposure was measured}
+
+\item{epochs}{(optional) data frame of exposure epoch labels and values}
 
 \item{hi_lo_cut}{list of two numbers indicating quantile values that reflect
 high and low values, respectively, for continuous exposure}
@@ -36,9 +35,6 @@ required if comparison is supplied}
 \item{comps}{(optional) list of one or more strings of "-"-separated "l"
 and "h" values indicative of comparison history/histories to compare to
 reference, required if reference is supplied}
-
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
-TRUE)}
 }
 \value{
 none

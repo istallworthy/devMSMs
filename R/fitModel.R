@@ -101,9 +101,9 @@
 #'               covariates = "C",
 #'               save.out = FALSE)
 
-fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
+fitModel <- function(data, weights, exposure, exposure_time_pts, outcome, model,
                      family = NULL, link = NA, int_order = NA, covariates = NULL, epochs = NULL,
-                     verbose = TRUE, save.out = TRUE) {
+                     home_dir = NULL, verbose = TRUE, save.out = TRUE) {
   
   if (save.out) {
     if (missing(home_dir)) {
@@ -322,8 +322,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d <- mice::complete(data, y)
       d$weights <- weights[[y]]$weights
       
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
-               int_order, model, family, covariates, verbose)
+      getModel(d = d, exposure = exposure, exposure_time_pts = exposure_time_pts, 
+               outcome = outcome, epochs = epochs, exp_epochs = exp_epochs, 
+               int_order = int_order, model = model, fam = family, 
+               covariates = covariates, verbose = verbose)
       
     })
     
@@ -332,8 +334,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d <- mice::complete(data, y)
       d$weights <- weights[[y]]$weights
       
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
-               int_order, model = n, family, covariates, verbose)
+      getModel(d = d, exposure = exposure, exposure_time_pts = exposure_time_pts, 
+               outcome = outcome, epochs = epochs, exp_epochs = exp_epochs, 
+               int_order = int_order, model = n, fam = family, 
+               covariates = covariates, verbose = verbose)
       
     })
     
@@ -351,8 +355,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
-               int_order, model, family, covariates, verbose)
+      getModel(d = d, exposure = exposure, exposure_time_pts = exposure_time_pts, 
+               outcome = outcome, epochs = epochs, exp_epochs = exp_epochs, 
+               int_order = int_order, model = model, fam = family, 
+               covariates = covariates, verbose = verbose)
       
     })
     
@@ -361,8 +367,10 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
       d <- data[[y]]
       d$weights <- NULL
       d$weights <- weights[[y]]$weights
-      getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
-               int_order, model = n, family, covariates, verbose)
+      getModel(d = d, exposure = exposure, exposure_time_pts = exposure_time_pts, 
+               outcome = outcome, epochs = epochs, exp_epochs = exp_epochs, 
+               int_order = int_order, model = n, fam = family, 
+               covariates = covariates, verbose = verbose)
       
     } )
     
@@ -378,11 +386,15 @@ fitModel <- function(home_dir, data, weights, exposure, exposure_time_pts, outco
     d <- data
     d$weights <- weights[["0"]]$weights
     
-    fits <- list(getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
-                          int_order, model, family, covariates, verbose))
+    fits <- list(getModel(d = d, exposure = exposure, exposure_time_pts = exposure_time_pts, 
+                          outcome = outcome, epochs = epochs, exp_epochs = exp_epochs, 
+                          int_order = int_order, model = model, fam = family, 
+                          covariates = covariates, verbose = verbose))
     
-    fits.null <- list(getModel(d, exposure, exposure_time_pts, outcome, epochs, exp_epochs, 
-                               int_order, model = n, family, covariates, verbose))
+    fits.null <- list(getModel(d = d, exposure = exposure, exposure_time_pts = exposure_time_pts, 
+                               outcome = outcome, epochs = epochs, exp_epochs = exp_epochs, 
+                               int_order = int_order, model = n, fam = family, 
+                               covariates = covariates, verbose = verbose))
 
     if (verbose) {
       message("Please inspect the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n\n")

@@ -78,7 +78,6 @@ create_custom_contrasts <- function(d, reference, comp_histories, exposure, pred
   
   # cycle thru ref events
   
-  # cus_comps <- create_custom_comparisons(preds, ref_vals, comp_vals, exposure)
   cus_comps <- lapply(seq_len(ncol(ref_values)), function(x) {
     ref_vals <- ref_values[, x]
     create_custom_comparisons(preds, ref_vals, comp_vals, exposure)
@@ -102,7 +101,6 @@ create_custom_contrasts <- function(d, reference, comp_histories, exposure, pred
 #' @param comp_vals comparison values
 #' @param exposure name of exposure variable
 #' @return custom comparisons
-#' @export
 
 create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
   cus_comps <- matrix(ncol = nrow(comp_vals), 
@@ -138,7 +136,6 @@ create_custom_comparisons <- function(preds, ref_vals, comp_vals, exposure) {
 #' @param p table output from marginaleffects::avg_predictions() or hypotheses()
 #' @param d data frame of high and low values per exposure main effect
 #' @return table with histories labeled
-#' @export
 
 add_histories <- function(p, d) {
   
@@ -194,7 +191,6 @@ add_histories <- function(p, d) {
 #' @param p table output from marginaleffects::avg_predictions() or hypotheses()
 #' @param dose_level "l" or "h" indicating whether low or high doses should be tallied in tables and plots
 #' @return table with dose level tally
-#' @export
 
 add_dose <- function(p, dose_level) {
   
@@ -222,7 +218,6 @@ add_dose <- function(p, dose_level) {
 #' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
 #' @return comparison table with corrected p-values
-#' @export
 
 perform_multiple_comparison_correction <- function(comps, reference, comp_histories, 
                                                    method, verbose = TRUE) {
@@ -238,10 +233,6 @@ perform_multiple_comparison_correction <- function(comps, reference, comp_histor
       cat("\n")
     }
     
-    # #gets values out of list (one list entry per ref event)
-    # 
-    # comps <- do.call(rbind.data.frame, comps)
-    # 
     corr_p <- stats::p.adjust(comps$p.value, method = method)
     
     comps <- cbind(comps, p.value_corr = corr_p)

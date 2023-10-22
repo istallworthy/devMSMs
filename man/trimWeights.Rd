@@ -5,18 +5,16 @@
 \title{Trim IPTW balancing weights}
 \usage{
 trimWeights(
-  home_dir,
   exposure,
   outcome,
   weights,
   quantile = NA,
+  home_dir = NULL,
   verbose = TRUE,
   save.out = TRUE
 )
 }
 \arguments{
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
-
 \item{exposure}{name of exposure variable}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
@@ -25,6 +23,8 @@ trimWeights(
 
 \item{quantile}{(optional) numeric value between 0 and 1 of quantile value at
 which to trim weights (default is 0.95)}
+
+\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}

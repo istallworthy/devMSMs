@@ -17,7 +17,8 @@ make_love_plot(
   imp_conf,
   save.out = FALSE,
   home_dir = NULL,
-  folder = NULL
+  folder = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -50,6 +51,9 @@ output locally}
 \item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{folder}{folder path for saving}
+
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
+TRUE)}
 }
 \value{
 none

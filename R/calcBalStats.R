@@ -78,8 +78,8 @@
 #'                   weights = w[[1]],
 #'                   save.out = FALSE)
 
-calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL,
-                         imp_conf = NULL, verbose = TRUE, save.out = TRUE) {
+calcBalStats <- function(data, formulas, exposure, exposure_time_pts, outcome, balance_thresh, k = 0, weights = NULL,
+                         imp_conf = NULL, home_dir = NULL, verbose = TRUE, save.out = TRUE) {
   
   if (!is.list(formulas) | is.data.frame(formulas)) {
     stop("Please provide a list of formulas for each exposure time point",
@@ -618,7 +618,7 @@ calcBalStats <- function(home_dir, data, formulas, exposure, exposure_time_pts, 
                    k = k, form_name = form_name, balance_stats = bal_stats,
                    data_type = data_type, balance_thresh = balance_thresh, 
                    weights_method = weights_method, imp_conf = imp_conf,
-                   save.out = save.out)
+                   save.out = save.out, verbose = verbose)
     
   }     # Ends exp_time_pt loop
   

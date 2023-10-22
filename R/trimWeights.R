@@ -56,7 +56,7 @@
 
 
 
-trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA, 
+trimWeights <- function(exposure, outcome, weights, quantile = NA, home_dir = NULL, 
                         verbose = TRUE, save.out = TRUE) {
   
   if (save.out) {
@@ -188,7 +188,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
       p <- ggplot2::ggplot(as.data.frame(t), ggplot2::aes(x = t)) +
         ggplot2::geom_histogram(color = 'black',
                                 bins = 15) +
-        ggplot2::ggtitle(sprintf("Weights trimmed at the %s th value",
+        ggplot2::ggtitle(sprintf("Weights trimmed at the %s value",
                                  quantile))
       
       if (verbose) {
@@ -237,7 +237,7 @@ trimWeights <- function(home_dir, exposure, outcome, weights, quantile = NA,
       p <- ggplot2::ggplot(as.data.frame(t), ggplot2::aes(x = t)) +
         ggplot2::geom_histogram(color = 'black',
                                 bins = 15) +
-        ggplot2::ggtitle(sprintf("Weights trimmed at the %sth value",
+        ggplot2::ggtitle(sprintf("Weights trimmed at the %s value",
                                  quantile))
       
       if (verbose) {
