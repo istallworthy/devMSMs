@@ -1,33 +1,22 @@
 ---
-title: "devMSMsTutorialWorkflow"
+title: "Recommended Workflow for using devMSMs with Longitudinal Data"
 author: "Isabella C. Stallworthy", "Meriah L. DeJoseph", "Emily R. Padrutt", "Noah Greifer", "Daniel Berry"
 date: "`r Sys.Date()`"
 output: html_document
 ---
 
-Recommended workflow for using the devMSMs package with longitudinal data.
+This workflow supplements the manuscript, xxxx. Please see this manuscript for a full conceptual and practical introduction to MSMs in the context of developmental data. 
 
-Step-by-step guidance to this workflow in the Supplement: 
+There is step-by-step guidance to this workflow and details about each function in the Supplement: 
 https://docs.google.com/document/d/1WQGtfYAF4e6mREl5_fSgvmSG7nBzvT6w_iVQgROeAno/edit?pli=1, starting around page 11. 
 
-Goals of this round of testing:
+
+***Goals of this round of testing:
 - make sure functions run with your data using both minimal and optional inputs
 - assess the user output in the console and the items saved out from each function
 - make sure the Supplement provides sufficient detail for running this .rmd file
 
-The code is set up to identify all possible inputs to each function (required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function, including a NULL/NA option if the user does not wish to specify an optional input. Alternatively, the user could modify the call to the function and remove the optional input argument entirely. 
-
-Some notes on functions in R:
-For the required arguments  (e.g., arg1, arg2) in a function, you can supply them directly to the function as variables in your global environment.
-arg2 = 9.5
-E.g., function(arg1, arg2).
-
-For optional arguments (e.g., arg3) in a function, you should assign them with an = to indicate to the function that they are being specified. 
-arg3 = 4.5
-E.g., function(arg1, arg2, arg3 = arg3)
-or 
-E.g., function(arg1, arg2, arg3 = 4.5)
-
+The code in each code chunk is set up identifying all possible inputs to each function (required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function, including a NULL/NA option if the user does not wish to specify an optional input. The user should select one of each optional input values. Alternatively, the user could modify the call to the function and remove the optional input argument(s) entirely. 
 
 Please use the Supplement and/or type ?functionName into the console for more guidance on the arguments for each function. These two sources should match but let me know if you see discrepancies. 
 
@@ -44,9 +33,6 @@ You will always need to install the devMSMs helper functions from Github (deveMS
 #first, install devtools
 install.packages("devtools")
 library(devtools)
-
-#you may need to do this if you are having issues installing devMSMs --will talk to NG about it
-# install.packages("SuperLearner")
 
 #install devMSMs from github
 install_github("istallworthy/devMSMs")
@@ -75,6 +61,7 @@ The user should change all fields in this code chunk to match their home directo
 set.seed(1234)
 
 #required if you wish to use save.out = TRUE in the functions
+home_dir <- NA
 home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
 
 #required
@@ -94,9 +81,9 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
                     "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
                     "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
-                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                                 
-                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",  #exposure variables required                                       
-                    "CORTB.6", "CORTB.15", "CORTB.24",                                                                                
+                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                             
+                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",  #exposure variables required                   
+                    "CORTB.6", "CORTB.15", "CORTB.24",                                                                              
                     "EARS_TJo.24", "EARS_TJo.35",                                        
                     "LESMnPos.24", "LESMnPos.35",                                  
                     "LESMnNeg.24", "LESMnNeg.35",       
@@ -130,17 +117,18 @@ These data can be complete or have missingness.
 ```{r}
 
 #reading a long data file here for use in subsequent steps
-# data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your long data file here if you want to begin with long data
-#                       header = TRUE)
+data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_long_missing_unformatted.csv", #add path to your long data file here if you want to begin with long data
+                      header = TRUE)
 
 # if you have long data with wrong time, id, and/or missing indicators and need to format
-data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, outcome, 
-                              time_var = "TAge", #list original time variable here if it's not "WAVE"
+data_long_f <- formatLongData(data = data_long, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
+                              time_var = "Tage", #list original time variable here if it's not "WAVE"
                               id_var = "S_ID", #list original id variable here if it's not "ID"
-                              missing = NA, #list missing value here
-                              factor_confounders = c("state","TcBlac2", "PmBlac2", "RHasSO", "PmMrSt2", 
-                                                     "HomeOwnd", "SurpPreg", "BioDadInHH2"), #list factor variables here
-                              save.out = TRUE) 
+                              missing = -9999, #list missing value here
+                              factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
+                                                     "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                                                     "RHasSO"), #list factor variables here
+                              home_dir = home_dir, save.out = TRUE) 
 
 ```
 
@@ -151,6 +139,7 @@ data_long_f <- formatLongData(home_dir, data_long, exposure, exposure_time_pts, 
 
 v <- sapply(strsplit(tv_confounders, "\\."), "[", 1)
 v <- v[!duplicated(v)]
+library(stats)
 data_wide <- stats::reshape(data = data_long_f, 
                             idvar = "ID", #list ID variable in your dataset
                             v.names = v, 
@@ -164,6 +153,8 @@ data_wide <- data_wide[, colSums(is.na(data_wide)) < nrow(data_wide)]
 # read in formatted wide data
 data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your wide, formatted data file here 
                       header = TRUE)
+
+
 
 #make factor variables factor 
 factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
@@ -231,9 +222,9 @@ maxit <- 1 #maximum iterations for imputation (default is 5)
 
 
 #note: right now (just for testing purposes), the function is set up for maxit = 0 to go fast, default is 5
-imputed_data <- imputeData(data_wide, home_dir, exposure, outcome, 
-                           m = m, method = method, maxit = maxit, para_proc = FALSE, read_imps_from_file = "no", 
-                           save.out = TRUE)
+imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
+                           m = m, method = method, maxit = maxit, para_proc = FALSE, read_imps_from_file = FALSE, 
+                           home_dir = home_dir, save.out = TRUE)
 
 
 #if you want to use the package with imputed data
@@ -253,6 +244,10 @@ data <- imputed_data
 #optional: extract first imputed dataset for testing
 library(mice)
 data <- mice::complete(imputed_data, 1) #just for testing purposes
+anyNA(data) #make sure this is false, meaning no NAs
+
+
+#read in wide, single imputed dataset
 data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')
 
 #make factors
@@ -345,19 +340,10 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 ```{r}
 
 #all inputs
-inspectData(data, home_dir, exposure, exposure_time_pts, outcome, ti_confounders, tv_confounders, # required input
+inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, # required input
+            ti_confounders = ti_confounders, tv_confounders = tv_confounders, # required input
             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
-            verbose = TRUE, save.out = TRUE) #optional input
-
-
-# #or some optional inputs
-# inspectData(data, home_dir, exposure, exposure_time_pts, outcome, tv_confounders, ti_confounders,
-#             hi_lo_cut = hi_lo_cut) #assign w/ = any subset of optional inputs
-# 
-# 
-# #or minimum inputs
-# inspectData(data, home_dir, exposure, exposure_time_pts, outcome, 
-#             ti_confounders, tv_confounders)
+            home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional input
 
 ```
 
@@ -389,7 +375,8 @@ custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + g
 type <- "full"
 
 #all inputs
-full_formulas <- createFormulas(exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders, #required
+full_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, #required
+                                type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, #required
                                 concur_conf = concur_conf, custom = custom, #optional
                                 home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -454,7 +441,8 @@ custom <- list("short_form-6" = as.formula ("ESETA1.6 ~ BioDadInHH2 + DrnkFreq +
 type <- "short" 
 
 #all inputs
-short_formulas <- createFormulas(exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders, #required
+short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, #required
+                                 type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, #required
                                  concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, #optional
                                  home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -475,36 +463,36 @@ formulas <- short_formulas
 # optional weighting method "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
 
 method <- "cbps"
-weights.cbps <- createWeights(data, exposure, outcome, formulas, #required
+weights.cbps <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                               method = method, read_in_from_file = FALSE,  #optional
                               home_dir = home_dir, verbose = TRUE, save.out = TRUE)  #optional
 
 method <- "glm"
-weights.glm <- createWeights(data, exposure, outcome, formulas, #required
+weights.glm <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                              method = method, read_in_from_file = FALSE, #optional
                              home_dir = home_dir, verbose = TRUE, save.out = TRUE)  #optional
 
 method <- "gbm"
-weights.gbm <- createWeights(data, exposure, outcome, formulas, #required
+weights.gbm <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                              method = method, read_in_from_file = FALSE,  #optional
                              home_dir = home_dir, verbose = TRUE, save.out = TRUE)  #optional
 # testing additional arguments
-weights.gbm <- createWeights(data, exposure, outcome, formulas, #required
+weights.gbm <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                              method = method, read_in_from_file = FALSE, #optional
                              home_dir = home_dir, verbose = TRUE, save.out = TRUE, #optional
                              criterion = "p.max", distribution = "laplace") ##optional; can now add any input that weightitMSM() takes for "gbm
 
 method <- "bart"
-weights.bart <- createWeights(data, exposure, outcome, formulas, #required
+weights.bart <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                               method = method, read_in_from_file = FALSE, #optional
                               home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
 method <- "super"
-weights.super <- createWeights(data, exposure, outcome, formulas, #required
+weights.super <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                                method = method, read_in_from_file = FALSE, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 #testing library specification
-weights.super <- createWeights(data, exposure, outcome, formulas, #required
+weights.super <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                                method = method, read_in_from_file = FALSE, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE,
                                SL.library = "SL.mean") #can now specify SuperLearner library (default is "SL.glm")
@@ -532,26 +520,31 @@ type <- "weighted"
 formulas <- short_formulas
 
 weights <- weights.cbps 
-balance_stats.cbps <- assessBalance(data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+balance_stats.cbps <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
+                                    outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                     balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                     home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
 weights <- weights.glm 
-balance_stats.glm <- assessBalance(data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+balance_stats.glm <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
+                                   outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                    balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 weights <- weights.gbm
-balance_stats.gbm <- assessBalance(data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+balance_stats.gbm <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
+                                   outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                    balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
 weights <- weights.bart
-balance_stats.bart <- assessBalance(data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+balance_stats.bart <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
+                                    outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                     balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                     home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
 weights <- weights.super 
-balance_stats.super <- assessBalance(data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+balance_stats.super <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
+                                     outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                      balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                      home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -581,7 +574,8 @@ formulas <- full_formulas
 weights <- weights.cbps
 
 #all inputs
-balance_stats <- assessBalance(data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
+                               outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -618,7 +612,8 @@ type <- "update"
 bal_stats <- balance_stats
 
 #all inputs
-updated_formulas <- createFormulas(exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders, bal_stats = bal_stats, #required
+updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, #required
+                                   type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, bal_stats = bal_stats, #required
                                    concur_conf = concur_conf, keep_conf = keep_conf, #optional
                                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -635,10 +630,10 @@ updated_formulas <- createFormulas(exposure, exposure_time_pts, outcome, type, t
 #required
 formulas <- updated_formulas
 
-method <- "ps"
+method <- "cbps"
 
 #all inputs
-final_weights <- createWeights(data, exposure, outcome, formulas, #required
+final_weights <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                                method = method, read_in_from_file = FALSE, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -662,7 +657,7 @@ weights <- final_weights
 
 
 #all inputs
-trim_weights <- trimWeights(exposure, outcome, weights, #required
+trim_weights <- trimWeights(exposure = exposure, outcome = outcome, weights = weights, #required
                             quantile = quantile, #optional
                             home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -677,12 +672,12 @@ trim_weights <- trimWeights(exposure, outcome, weights, #required
 
 #sensitivity tests   
 quantile <- 0.92 #optional quantile of weights above which weights are trimmed (default is 0.95)
-trim_weights.s1 <- trimWeights(exposure, outcome, weights, #required
+trim_weights.s1 <- trimWeights(exposure = exposure, outcome = outcome, weights = weights, #required
                                quantile = quantile, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
 quantile <- 0.98 #optional quantile of weights above which weights are trimmed (default is 0.95)
-trim_weights.s2 <- trimWeights(exposure, outcome, weights, #required
+trim_weights.s2 <- trimWeights(exposure = exposure, outcome = outcome, weights = weights, #required
                                quantile = quantile, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -711,7 +706,8 @@ weights <- trim_weights
 
 
 #all input
-final_balance_stats <- assessBalance(data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
+final_balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
+                                     outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                      balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                      home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -720,7 +716,7 @@ final_balance_stats <- assessBalance(data, exposure, exposure_time_pts, outcome,
 
 
 #manually list remaining imbalanced covariates that are time-invariant or time-varying at t=1 for use in Step 5
-imbalanced_covars <- c("ESETA1.6", "gov_asst", "B18Raw.6") 
+imbalanced_covars <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
 
 ```
 
@@ -741,13 +737,15 @@ In the balance -> weighted -> plots folder, .jpeg images of:
 
 #sensitivity tests
 weights <- trim_weights.s1
-final_balance_stats.s1 <- assessBalance(data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
-                                        balance_thresh = balane_thresh, imp_conf = imp_conf, #optional
+final_balance_stats.s1 <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
+                                        outcome = outcome, type = type, formulas = formulas, weights = weights, #required
+                                        balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                         home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
 weights <- trim_weights.s2
-final_balance_stats.s2 <- assessBalance(data, exposure, exposure_time_pts, outcome, type, formulas, weights, #required
-                                        balance_thresh = balane_thresh, imp_conf = imp_conf, #optional
+final_balance_stats.s2 <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
+                                        outcome = outcome, type = type, formulas = formulas, weights = weights, #required
+                                        balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                         home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 ```
 
@@ -791,7 +789,8 @@ weights <- trim_weights
 # all inputs
 #required
 model <- "m3"
-models <- fitModel(data, weights, exposure, exposure_time_pts, outcome, model, #required
+models <- fitModel(data = data, weights = weights, exposure = exposure, #required
+                   exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                    family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
@@ -820,12 +819,14 @@ in the model folder:
 
 #sensitivity tests
 weights <- trim_weights.s1
-models.s1 <- fitModel(data, weights, exposure, exposure_time_pts, outcome, model, #required
+models.s1 <- fitModel(data = data, weights = weights, exposure = exposure, #required
+                      exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                       family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
                       home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
 weights <- trim_weights.s2
-models.s2 <- fitModel(data, weights, exposure, exposure_time_pts, outcome, model, #required
+models.s2 <- fitModel(data = data, weights = weights, exposure = exposure, #required
+                      exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                       family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
                       home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 ```
@@ -883,10 +884,10 @@ model <- models #output from fitModel
 
 
 #all inputs
-results <- compareHistories(exposure, exposure_time_pts, outcome, model, #required
+results <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
                             mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
-                            home_dir = home_dir, verbose = FALSE, save.out = TRUE) #optional
+                            home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
 
 # #minimum inputs
@@ -913,13 +914,13 @@ in the plots folder, .jpeg images of:
 
 #sensitivity tests
 model <- models.s1 
-results.s1 <- compareHistories(exposure, exposure_time_pts, outcome, model, #required
+results.s1 <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                                epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
                                mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                                home_dir = home_dir, verbose = FALSE, save.out = TRUE) #optional
 
 model <- models.s2 
-results.s2 <- compareHistories(exposure, exposure_time_pts, outcome, model, #required
+results.s2 <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                                epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
                                mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                                home_dir = home_dir, verbose = FALSE, save.out = TRUE) #optional
@@ -932,7 +933,8 @@ We are grateful to the authors of many existing packages that devMSMs draws from
 
 ```{r}
 
-grateful::cite_packages(out.dir = home_dir, omit = c("devMSMs", "devMSMsHelpers"),  out.format = "docx")
+grateful::cite_packages(out.dir = home_dir, omit = c("devMSMs", "devMSMsHelpers"), 
+                        out.format = "docx")
 
 ```
 
