@@ -841,8 +841,6 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   comparisons$history <- as.factor(comparisons$history)
   comparisons$dose <- as.factor(comparisons$dose)
   
-  # comparisons <- comparisons %>%
-  #   dplyr::arrange(dose) # Order by dose
   comparisons <- comparisons[order(comparisons$dose), , drop = FALSE]
   
   if (length(colors) > 1) { # If user input a list of colors
