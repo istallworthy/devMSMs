@@ -116,8 +116,8 @@
 #'                    save.out = FALSE)
 
 
-assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights = NULL, balance_thresh = NULL,
-                          imp_conf = NULL, verbose = TRUE, save.out = TRUE) {
+assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, formulas, weights = NULL, balance_thresh = NULL,
+                          imp_conf = NULL, home_dir = NULL, verbose = TRUE, save.out = TRUE) {
   
   if (!is.logical(save.out)) {
     stop("Please set save.out to either TRUE or FALSE.",
@@ -130,34 +130,34 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   if (save.out) {
     if (missing(home_dir)) {
       stop("Please supply a home directory.",
-            call. = FALSE)
+           call. = FALSE)
     }
     if (!is.character(home_dir)) {
       stop("Please provide a valid home directory path as a string if you wish to save output locally.",
-            call. = FALSE)
+           call. = FALSE)
     }
     if (!dir.exists(home_dir)) {
       stop("Please provide a valid home directory path if you wish to save output locally.",
-            call. = FALSE)
+           call. = FALSE)
     }
     rlang::check_installed(c("knitr", "kableExtra", "stargazer"))
   }
   
   if (missing(data)) {
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   if (!inherits(data, "mids") && !is.data.frame(data) &&
-           !(is.list(data) && all(vapply(data, is.data.frame, logical(1L))))) {
+      !(is.list(data) && all(vapply(data, is.data.frame, logical(1L))))) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   if (is.list(data) && !is.data.frame(data)  && !inherits(data, "mids") &&
       !all(sapply(data, is.data.frame))) {
-      stop("Please supply a list of data frames that have been imputed.",
-            call. = FALSE)
+    stop("Please supply a list of data frames that have been imputed.",
+         call. = FALSE)
   }
   
   if (inherits(data, "mids")) {
@@ -166,11 +166,11 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   
   if (missing(exposure)) {
     stop("Please supply a single exposure.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!is.character(exposure) | length(exposure) != 1) {
     stop("Please supply a single exposure as a character.",
-          call. = FALSE)
+         call. = FALSE)
   }
   else if (grepl("\\.", exposure)) {
     stop ("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
@@ -179,11 +179,11 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   
   if (missing(outcome)) {
     stop("Please supply a single outcome.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!is.character(outcome) | length(outcome) != 1) {
     stop("Please supply a single outcome as a character.",
-          call. = FALSE)
+         call. = FALSE)
   }
   else if (!grepl("\\.", outcome)) {
     stop ("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
@@ -199,11 +199,11 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   
   if (missing(exposure_time_pts)) {
     stop("Please supply the exposure time points at which you wish to create weights.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!is.numeric(exposure_time_pts)) {
     stop("Please supply a list of exposure time points as integers.",
-          call. = FALSE)
+         call. = FALSE)
   }
   else if (!length(exposure_time_pts) > 1) {
     stop ("Please supply at least two exposure time points.",
@@ -212,11 +212,11 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   
   if (missing(formulas)) {
     stop("Please supply a list of balancing formulas.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!is.list(formulas) | is.data.frame(formulas)) {
     stop("Please provide a list of formulas for each exposure time point",
-          call. = FALSE)
+         call. = FALSE)
   }
   else if (length(formulas) != length(exposure_time_pts)) {
     stop ("Please provide a list of formulas with one entry for each exposure time point",
@@ -232,29 +232,29 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   
   if (missing(type)) {
     stop("Please supply a 'weighted', 'prebalance' type",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!inherits(type, "character") || length(type) != 1 ) {
     stop("Please provide a single type as a character string from the following list: 'prebalance', 'weighted'",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!type %in% c("prebalance", "weighted")) {
     stop("Please provide a type from the following list: 'prebalance', 'weighted'",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (type == "prebalance" && !is.null(weights)) {
     stop("The 'prebalance' mode of this function assesses balance prior to weighting and thus does not take weights.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (type == "weighted" && (is.null(weights) || missing(weights))) {
     stop("The 'weighted' mode of this function requires weights be supplied in the form of output from createWeights.",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   if (!inherits(data, "mids") && !is.data.frame(data) &&
       !(is.list(data) && all(vapply(data, is.data.frame, logical(1L))))) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   
@@ -270,15 +270,15 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   
   if (!is.numeric(balance_thresh) && !is.null(balance_thresh)) {
     stop("Please provide one or two balance thresholds as numbers from 0-1.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!is.null(balance_thresh) && !length(balance_thresh < 3)) {
     stop("Please provide one or two balance thresholds as numbers from 0-1.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (length(balance_thresh) == 2 && is.null(imp_conf)) {
     stop("If you wish to provide different balance threshold for important and less important confounders, please provide a list of important confounders in the 'imp_conf' field.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (is.null(balance_thresh)) {
     balance_thresh <- 0.1
@@ -286,20 +286,20 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   
   if (!is.null(imp_conf) && length(balance_thresh) == 1 && !is.null(balance_thresh) ) {
     stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!is.null(imp_conf) && !is.character(imp_conf)) {
     stop("Please provide a list variable names as characters that are important confounders.",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   if (!is.logical(verbose)) {
     stop("Please set verbose to either TRUE or FALSE.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (length(verbose) != 1) {
     stop("Please provide a single TRUE or FALSE value to verbose.",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   mi <- !is.data.frame(data)
@@ -350,18 +350,21 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
           
           if (anyNA(d)) {
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-                  call. = FALSE)
+                 call. = FALSE)
           }
           
           exposure_type <- if (is.numeric(d[, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
           
           if (sum(duplicated(d$"ID")) > 0) {
             stop("Please provide wide imputed datasets with a single row per ID.",
-                  call. = FALSE)
+                 call. = FALSE)
           }
           
-          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome,
-                       balance_thresh, k = k, weights = NULL, imp_conf, verbose, save.out)
+          calcBalStats(data = d, formulas = formulas, exposure = exposure, 
+                       exposure_time_pts = exposure_time_pts, outcome = outcome,
+                       balance_thresh = balance_thresh, k = k, weights = NULL, 
+                       imp_conf = imp_conf, home_dir = home_dir, 
+                       verbose = verbose, save.out = save.out)
         })
       }
       else {
@@ -373,18 +376,21 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
           
           if (anyNA(d)) {
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-                  call. = FALSE)
+                 call. = FALSE)
           }
           
           exposure_type <- if (is.numeric(d[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
           
           if (sum(duplicated(d[["ID"]])) > 0) {
             stop("Please provide wide imputed datasets with a single row per ID.", 
-                  call. = FALSE)
+                 call. = FALSE)
           }
           
-          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome,
-                       balance_thresh, k = k, weights = NULL, imp_conf, verbose, save.out)
+          calcBalStats(data = d, formulas = formulas, exposure = exposure, 
+                       exposure_time_pts = exposure_time_pts, outcome = outcome,
+                       balance_thresh = balance_thresh, k = k, weights = NULL, 
+                       imp_conf = imp_conf, home_dir = home_dir, 
+                       verbose = verbose, save.out = save.out)
         })
       }
       
@@ -444,19 +450,21 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       
       if (sum(duplicated(data[["ID"]])) > 0) {
         stop("Please provide wide dataset with a single row per ID.",
-              call. = FALSE)
+             call. = FALSE)
       }
       
       if (anyNA(data)) {
         stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-              call. = FALSE)
+             call. = FALSE)
       }
       
       exposure_type <- if (is.numeric(data[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
       
-      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, 
-                                exposure_time_pts, outcome, balance_thresh, 
-                                k = 0, weights = NULL, imp_conf, verbose, save.out)
+      bal_stats <- calcBalStats(data = data, formulas = formulas, exposure = exposure, 
+                                exposure_time_pts = exposure_time_pts, outcome = outcome, 
+                                balance_thresh = balance_thresh, k = 0, weights = NULL, 
+                                imp_conf = imp_conf, home_dir = home_dir, 
+                                verbose = verbose, save.out = save.out)
       
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       
@@ -500,13 +508,16 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
           }
           if (sum(duplicated(d[["ID"]])) > 0) {
             stop("Please provide wide imputed datasets with a single row per ID.", 
-                  call. = FALSE)
+                 call. = FALSE)
           }
           
           w <- weights[[k]]
           
-          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome,
-                       balance_thresh, k = k, weights = w, imp_conf, verbose, save.out)
+          calcBalStats(data = d, formulas = formulas, exposure = exposure, 
+                       exposure_time_pts = exposure_time_pts, outcome = outcome,
+                       balance_thresh = balance_thresh, k = k, weights = w, 
+                       imp_conf = imp_conf, home_dir = home_dir, 
+                       verbose = verbose, save.out = save.out)
         })
       }
       else {
@@ -517,17 +528,20 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
           
           if (anyNA(d)) {
             stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-                  call. = FALSE)
+                 call. = FALSE)
           }
           if (sum(duplicated(d[["ID"]])) > 0) {
             stop("Please provide wide imputed datasets with a single row per ID.", 
-                  call. = FALSE)
+                 call. = FALSE)
           }
           
           w <- weights[[k]]
           
-          calcBalStats(home_dir, d, formulas, exposure, exposure_time_pts, outcome,
-                       balance_thresh, k = k, weights = w, imp_conf, verbose, save.out)
+          calcBalStats(data = d, formulas = formulas, exposure = exposure, 
+                       exposure_time_pts = exposure_time_pts, outcome = outcome,
+                       balance_thresh = balance_thresh, k = k, weights = w, 
+                       imp_conf = imp_conf, home_dir = home_dir, 
+                       verbose = verbose, save.out = save.out)
         })
       }
       
@@ -584,13 +598,15 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       
       if (sum(duplicated(data$"ID")) > 0) {
         stop("Please provide wide dataset with a single row per ID.",
-              call. = FALSE)
+             call. = FALSE)
       }
       
       w <- weights[[1]]
-      bal_stats <- calcBalStats(home_dir, data, formulas, exposure, 
-                                exposure_time_pts, outcome, balance_thresh, k = 0, 
-                                weights = w, imp_conf, verbose, save.out)
+      bal_stats <- calcBalStats(data = data, formulas = formulas, exposure = exposure, 
+                                exposure_time_pts = exposure_time_pts, outcome = outcome, 
+                                balance_thresh = balance_thresh, k = 0, 
+                                weights = w, imp_conf = imp_conf, home_dir = home_dir, 
+                                verbose = verbose, save.out = save.out)
       
       # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
       
@@ -613,37 +629,42 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
   
   tot_cons <- unique(tot_covars) # Total domains/constructs
   
+  
   # Make love plot to summarize imbalance at each exposure time point
   
   data_type <- if (mi) "imputed" else "single"
   
   weights_method <- if (type == "weighted") weights[[1]]$method else "no weights"
   
-  sapply(seq_along(exposure_time_pts), function(i) {
-    exposure_time_pt <- exposure_time_pts[i]
-    
-    if (inherits(data, "mids")) {
-      exposure_type <- if (is.numeric(mice::complete(data, 1)[, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
+  #only making additional love plots for imputed data (averaging)
+  
+  if (mi) {
+    sapply(seq_along(exposure_time_pts), function(i) {
+      exposure_time_pt <- exposure_time_pts[i]
       
-    }
-    else if (!is.data.frame(data)) {
-      exposure_type <- if (is.numeric(data[[1]][, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
-    }
-    else {
-      exposure_type <- if (is.numeric(data[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
-    }
-    
-    
-    temp <- all_bal_stats[all_bal_stats$exp_time == exposure_time_pt, , drop = FALSE]
-
-    make_love_plot(home_dir = home_dir, folder = folder, exposure = exposure,
-                   exposure_time_pt = exposure_time_pt,
-                   exposure_type = exposure_type, 
-                   k = 0, form_name = form_name, balance_stats = temp,
-                   data_type = data_type, balance_thresh = balance_thresh, 
-                   weights_method = weights_method, imp_conf = imp_conf,
-                   save.out = save.out)
-  })
+      if (inherits(data, "mids")) {
+        exposure_type <- if (is.numeric(mice::complete(data, 1)[, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
+        
+      }
+      else if (!is.data.frame(data)) {
+        exposure_type <- if (is.numeric(data[[1]][, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
+      }
+      # else {
+      #   exposure_type <- if (is.numeric(data[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
+      # }
+      # 
+      
+      temp <- all_bal_stats[all_bal_stats$exp_time == exposure_time_pt, , drop = FALSE]
+      
+      make_love_plot(home_dir = home_dir, folder = folder, exposure = exposure,
+                     exposure_time_pt = exposure_time_pt,
+                     exposure_type = exposure_type,
+                     k = 0, form_name = form_name, balance_stats = temp,
+                     data_type = data_type, balance_thresh = balance_thresh,
+                     weights_method = weights_method, imp_conf = imp_conf,
+                     save.out = save.out, verbose = TRUE)
+    })
+  }
   
   if (save.out) {
     outfile <- file.path(home_dir, "balance", type, 
@@ -676,7 +697,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
       }
       cat("\n")
     }
-
+    
     # Saving out all pre-balance associations
     
     write.csv(all_bal_stats, 
@@ -841,7 +862,7 @@ assessBalance <- function(home_dir, data, exposure, exposure_time_pts, outcome, 
     }
     
     if (save.out) {
-    
+      
       # save out summary balance assessment
       
       k <- knitr::kable(summ,

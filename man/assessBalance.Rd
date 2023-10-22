@@ -5,7 +5,6 @@
 \title{Assesses confounder balancing}
 \usage{
 assessBalance(
-  home_dir,
   data,
   exposure,
   exposure_time_pts,
@@ -15,14 +14,12 @@ assessBalance(
   weights = NULL,
   balance_thresh = NULL,
   imp_conf = NULL,
+  home_dir = NULL,
   verbose = TRUE,
   save.out = TRUE
 )
 }
 \arguments{
-\item{home_dir}{(optional) path to home directory (required if save.out =
-TRUE)}
-
 \item{data}{data in wide format as: a data frame, list of imputed data
 frames, or mids object}
 
@@ -47,6 +44,9 @@ important confounders, respectively (default = 0.1)}
 
 \item{imp_conf}{(optional) list of variable names reflecting important
 confounders, required if two balance thresholds are supplied}
+
+\item{home_dir}{(optional) path to home directory (required if save.out =
+TRUE)}
 
 \item{verbose}{(optiona) TRUE or FALSE indicator for user output (default is
 TRUE)}

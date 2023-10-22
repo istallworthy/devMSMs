@@ -125,9 +125,9 @@
 #'                     save.out = FALSE)
 #' 
 
-createFormulas <- function(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, 
+createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confounders, 
                            tv_confounders, bal_stats = NULL, concur_conf = NULL,
-                           keep_conf = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ) {
+                           keep_conf = NULL, home_dir = NULL, custom = NULL, verbose = TRUE, save.out = TRUE ) {
   
   if (save.out) {
     if (missing(home_dir)) {

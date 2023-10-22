@@ -9,13 +9,13 @@ getModel(
   exposure,
   exposure_time_pts,
   outcome,
-  epochs = NULL,
   exp_epochs,
   int_order,
   model,
   fam,
   covariates,
-  verbose
+  verbose,
+  epochs = NULL
 )
 }
 \arguments{
@@ -27,8 +27,6 @@ getModel(
 created/assessed that correspond to time points when exposure was measured}
 
 \item{outcome}{name of outcome variable with ".timepoint" suffix}
-
-\item{epochs}{data frame of exposure epoch labels and values}
 
 \item{exp_epochs}{list of exposure epochs}
 
@@ -51,6 +49,8 @@ interaction for interaction models}
 for covariate models}
 
 \item{verbose}{TRUE or FALSE indicator for user output (default is TRUE)}
+
+\item{epochs}{data frame of exposure epoch labels and values}
 }
 \value{
 list of fitted model(s)

@@ -5,7 +5,6 @@
 \title{Calculate balance stats based on Jackson paper}
 \usage{
 calcBalStats(
-  home_dir,
   data,
   formulas,
   exposure,
@@ -15,14 +14,12 @@ calcBalStats(
   k = 0,
   weights = NULL,
   imp_conf = NULL,
+  home_dir = NULL,
   verbose = TRUE,
   save.out = TRUE
 )
 }
 \arguments{
-\item{home_dir}{(optional) path to home directory (required if save.out =
-TRUE)}
-
 \item{data}{data in wide format as: a data frame, path to folder of imputed
 .csv files, or mids object}
 
@@ -46,6 +43,9 @@ important confounders, respectively}
 
 \item{imp_conf}{(optional) list of variable names reflecting important
 confounders (required if two balance thresholds are provided)}
+
+\item{home_dir}{(optional) path to home directory (required if save.out =
+TRUE)}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}

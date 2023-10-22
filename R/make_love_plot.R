@@ -17,6 +17,8 @@
 #' @param imp_conf list of variable names reflecting important confounders
 #' @param save.out TRUE or FALSE indicator to save output and intermediary
 #'   output locally
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
+#'   TRUE)
 #' @return none
 #' @export
 #' @examples
@@ -78,12 +80,12 @@
 #'                folder = "weighted/")
 
 
-make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_type, k = 0, form_name, data_type,
-                           balance_thresh, weights_method, imp_conf, save.out = FALSE, home_dir = NULL, folder = NULL) {
+make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_type, 
+                           k = 0, form_name, data_type, balance_thresh, weights_method, 
+                           imp_conf, save.out = FALSE, home_dir = NULL, folder = NULL, verbose = TRUE) {
   
   stat_var <- colnames(balance_stats)[grepl("_bal", colnames(balance_stats))]
   colnames(balance_stats)[colnames(balance_stats) == stat_var] <- "avg_bal"
-  # balance_stats <- balance_stats %>% dplyr::arrange(avg_bal)
   balance_stats <- balance_stats[order(balance_stats$avg_bal), , drop = FALSE]
   
   x_lab <- if (exposure_type == "continuous") "Correlation with Exposure" else "Standardized Mean Difference Between Exposures"
@@ -159,6 +161,8 @@ make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_t
     
   }
   
+
+  
   if (data_type == "imputed") {
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", 
                                        exposure_time_pt, 
@@ -189,5 +193,10 @@ make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_t
                                        height = 8))
     }
   }
+  
+  if (verbose) {
+    print(lp)
+  }
+  
   lp
 }

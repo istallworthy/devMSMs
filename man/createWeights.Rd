@@ -5,7 +5,6 @@
 \title{Creates IPTW balancing weights}
 \usage{
 createWeights(
-  home_dir,
   data,
   exposure,
   outcome,
@@ -13,6 +12,7 @@ createWeights(
   method = "cbps",
   SL.library = "SL.glm",
   criterion = NA,
+  home_dir = NULL,
   read_in_from_file = FALSE,
   verbose = TRUE,
   save.out = TRUE,
@@ -20,8 +20,6 @@ createWeights(
 )
 }
 \arguments{
-\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
-
 \item{data}{data in wide format as: a data frame, list of imputed data
 frames, or mids object}
 
@@ -41,6 +39,8 @@ SuperLearner::listWrappers() for options}
 \item{criterion}{(optional) criterion used to select best weights (default is
 "p.mean" minimizing avg Pearson correlation for continuous exposures and
 "smd.mean" for binary exposures) (requird for "gbm" method)}
+
+\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
 
 \item{read_in_from_file}{(optional) TRUE or FALSE indicator to read in
 weights that have been previously run and saved locally (default is FALSE)}

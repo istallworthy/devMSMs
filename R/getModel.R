@@ -64,8 +64,8 @@
 #'               fam = gaussian,
 #'               model = "m0")
 
-getModel <- function(d, exposure, exposure_time_pts, outcome, epochs = NULL, exp_epochs, 
-                     int_order, model, fam, covariates, verbose) {
+getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs, 
+                     int_order, model, fam, covariates, verbose, epochs = NULL) {
   
   if (any(duplicated(d[["ID"]]))) {
     stop("Please provide wide data with a single row per ID.",
