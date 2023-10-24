@@ -87,7 +87,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "EARS_TJo.24", "EARS_TJo.35",                                        
                     "LESMnPos.24", "LESMnPos.35",                                  
                     "LESMnNeg.24", "LESMnNeg.35",       
-                    "ALI_Le.35",
+                    # "ALI_Le.35",
                     "StrDif_Tot.35", "StrDif_Tot.58",    
                     "fscore.35", "fscore.58"
 ) 
@@ -260,13 +260,13 @@ data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
 ```
 
 
-#### P2b. Read in wide imputed data saved locally as .csvs
+#### P2b. Read in as a list wide imputed data saved locally 
 
 ```{r}
 
 #read in imputed csv files to list
 folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa/imputations/" #change this to match your local folder
-files <- list.files(folder, full.names = TRUE, pattern = "\\.csv")
+files <- list.files(folder, full.names = TRUE, pattern = "\\.csv") #make sure pattern mathes suffix of your data
 
 
 #if you want to use the package with a list of imputed data from above
@@ -305,7 +305,7 @@ epochs <- data.frame(epochs = c("Infancy", #list user-specified names
 
 
 ### P4. Recommended: Specify and Inspect Exposure Histories
-#### P4a. Create cutoff values for continuous exposures
+#### P4a. Create high an dlow cutoff values for continuous exposures
 If you specify high and low cutoffs, we recommend doing so consistently throughout this workflow. 
 
 ```{r}
@@ -335,7 +335,7 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 ```
 
 
-#### P4c. Inspect exposure histories (recommended)
+#### P4c. Inspect exposure histories and data
 
 ```{r}
 
@@ -349,10 +349,11 @@ inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_
 
 
 
-## PHASE 1: Balance Confounders
+## PHASE 1: Confounder Adjustment
 
-### STEP 1: Pre-Balance Checking
-#### 1a. Create full formulas
+### STEP 1: Create Full Balancing Formulas & Conduct Pre-Balance Checking
+
+#### 1a. Create full balancing formulas at each exposure time point
 If you specify concurrent confounders to retain, we recommend doing so consistently throughout this workflow. 
 
 ```{r}
@@ -386,7 +387,7 @@ full_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposur
 
 ```
 
-#### 1b. Exploratory prebalance assessment
+#### 1b. Conduct exploratory pre-balance assessment
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
 
 ```{r}
@@ -416,7 +417,8 @@ prebalance_stats <- assessBalance(data = data, exposure = exposure, exposure_tim
 ```
 
 
-### STEP 2: Determine optimal weighting method
+### STEP 2: Creae Simplified Balancing Formulas & Determine Optimal Weighting Method
+
 #### 2a. Create simplified balancing formulas
 If you specify concurrent confounders to retain and/or confounders to keep in balancing formulas, we recommend doing so consistently throughout this workflow. 
 ```{r}
@@ -500,7 +502,7 @@ weights.super <- createWeights(data = data, exposure = exposure, outcome = outco
 ```
 
 
-#### 2c. Assess all weighting methods
+#### 2c. Assess all weighting methods to determien optimal method
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
 
 ```{r}
@@ -551,8 +553,9 @@ balance_stats.super <- assessBalance(data = data, exposure = exposure, exposure_
 ```
 
 
-### STEP 3: Re-specify weights using optimal weighting method
-#### 3a. Assess balance using full formulas
+### STEP 3: Create Updated Formulas & Re-Specify Weights Using Optimal Weighting Method
+
+#### 3a. Assess balance with full balancing formulas
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
 
 ```{r}
@@ -585,8 +588,9 @@ balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_p
 ```
 
 
-#### 3b. Update short formulas 
+#### 3b. Update simplified formulas 
 If you specify concurrent confounders to retain and/or confounders to keep in balancing formulas, we recommend doing so consistently throughout this workflow. 
+
 ```{r}
 
 #optional custom formulas
@@ -623,7 +627,8 @@ updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = expo
 
 ```
 
-#### 3c. Re-create weights
+
+#### 3c. Create final balancing weights
 
 ```{r}
 
@@ -643,7 +648,8 @@ final_weights <- createWeights(data = data, exposure = exposure, outcome = outco
 ```
 
 
-#### 3d. Truncate weights
+#### 3d. Trim final balancing weights
+
 ##### Main
 
 ```{r}
@@ -684,7 +690,8 @@ trim_weights.s2 <- trimWeights(exposure = exposure, outcome = outcome, weights =
 ```
 
 
-### STEP 4: Final Balance Assessment
+### STEP 4: Conduct Final Balance Assessment
+
 #### Main
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
 
@@ -752,8 +759,10 @@ final_balance_stats.s2 <- assessBalance(data = data, exposure = exposure, exposu
 
 ## PHASE 2: Assess Substantive Associations between Exposure and Outcome
 
-### STEP 5: Fit marginal structural model & summarize results
-#### 5a. Fit marginal structural model
+### STEP 5: Fit Marginal Structural Model & Summarize  & Visualize Results
+
+#### 5a. Select and fit a marginal outcome model
+
 ##### Main
 If you specify exposure epochs, we recommend doing so consistently throughout this workflow. 
 
@@ -832,7 +841,8 @@ models.s2 <- fitModel(data = data, weights = weights, exposure = exposure, #requ
 ```
 
 
-#### 5b. Estimate, compare, & visualize histories
+#### 5b. Estimate, compare, & visualize model-predicted outcome as a function of history
+
 ##### Main
 If you specify exposure epochs, we recommend doing so consistently throughout this workflow. 
 
