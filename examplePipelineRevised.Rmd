@@ -881,7 +881,7 @@ exp_lab <- "Economic Strain"
 
 #optional outcome label for plotting 
 out_lab <- NA
-out_lab <- "Executive Functioning" 
+out_lab <- "Behavior Problems" 
 
 # optional list of colors (equal to number of epochs +1) or brewer palette for plotting
 colors <- NULL
@@ -926,13 +926,13 @@ in the plots folder, .jpeg images of:
 model <- models.s1 
 results.s1 <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                                epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
-                               mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                               mc_comp_method = mc_comp_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                                home_dir = home_dir, verbose = FALSE, save.out = TRUE) #optional
 
 model <- models.s2 
 results.s2 <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                                epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
-                               mc_comp_method = mc_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                               mc_comp_method = mc_comp_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                                home_dir = home_dir, verbose = FALSE, save.out = TRUE) #optional
 
 ```
