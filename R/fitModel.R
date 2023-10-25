@@ -427,7 +427,7 @@ fitModel <- function(data, weights, exposure, exposure_time_pts, outcome, model,
       print(sjPlot::tab_model(fits, auto.label = TRUE, show.se = TRUE, 
                               dv.labels = paste("Imp", c(1:length(data)), sep = " "),
                               file = file.path(home_dir, "models",
-                                               sprintf("%s-%s_%s_table_mod_ev.doc",
+                                               sprintf("%s-%s_%s_table_mod_ev.html",
                                                        exposure, outcome, model))))
     }
     
@@ -446,7 +446,7 @@ fitModel <- function(data, weights, exposure, exposure_time_pts, outcome, model,
       
       print(sjPlot::tab_model(fits, auto.label = FALSE, show.se = TRUE,
                               file = file.path(home_dir, "models",
-                                               sprintf("%s-%s_%s_table_mod_ev.doc",
+                                               sprintf("%s-%s_%s_table_mod_ev.html",
                                                        exposure, outcome, model))))
     }
     
