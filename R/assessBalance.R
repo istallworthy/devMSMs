@@ -173,7 +173,7 @@ assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, form
          call. = FALSE)
   }
   else if (grepl("\\.", exposure)) {
-    stop ("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
+    stop("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
           call. = FALSE)
   }
   
@@ -186,14 +186,14 @@ assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, form
          call. = FALSE)
   }
   else if (!grepl("\\.", outcome)) {
-    stop ("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
+    stop("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
           call. = FALSE)
   }
   else if (as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) != 
            exposure_time_pts[length(exposure_time_pts)] && 
            !as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) > 
            exposure_time_pts[length(exposure_time_pts)] ) {
-    stop ("Please supply an outcome variable with a time point that is equal to or greater than the last exposure time point.",
+    stop("Please supply an outcome variable with a time point that is equal to or greater than the last exposure time point.",
           call. = FALSE)
   }
   
@@ -206,7 +206,7 @@ assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, form
          call. = FALSE)
   }
   else if (!length(exposure_time_pts) > 1) {
-    stop ("Please supply at least two exposure time points.",
+    stop("Please supply at least two exposure time points.",
           call. = FALSE)
   }
   
@@ -219,13 +219,13 @@ assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, form
          call. = FALSE)
   }
   else if (length(formulas) != length(exposure_time_pts)) {
-    stop ("Please provide a list of formulas with one entry for each exposure time point",
+    stop("Please provide a list of formulas with one entry for each exposure time point",
           call. = FALSE)
   }
   else if (is.list(formulas) && !is.data.frame(formulas)) {
     if (sum(sapply(formulas, function(x) {
       inherits(x, "formula")})) != length(formulas)) {
-      stop ("Please supply a list of formulas for each exposure time point.",
+      stop("Please supply a list of formulas for each exposure time point.",
             call. = FALSE)
     }
   }
@@ -331,8 +331,7 @@ assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, form
   if (type == "prebalance") {
     
     if (verbose) {
-      message(sprintf("USER ALERT: The following statistics display covariate imbalance at each exposure time point prior to weighting,
-            using %s formulas.\n",
+      message(sprintf("USER ALERT: The following statistics display covariate imbalance at each exposure time point prior to weighting, using %s formulas.\n",
                       form_name))
       cat("\n")
     }
@@ -487,8 +486,8 @@ assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, form
   else if (type == "weighted") {
     
     if (verbose) {
-      message(sprintf("USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting,
-            using %s formulas.\n", form_name))
+      message(sprintf("USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using %s formulas.\n", 
+                      form_name))
       cat("\n")
     }
     

@@ -81,22 +81,22 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
                     "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
                     "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
-                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                             
-                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",  #exposure variables required                   
-                    "CORTB.6", "CORTB.15", "CORTB.24",                                                                              
+                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
+                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",  #exposure variables required               
+                    "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
                     "EARS_TJo.24", "EARS_TJo.35",                                        
                     "LESMnPos.24", "LESMnPos.35",                                  
                     "LESMnNeg.24", "LESMnNeg.35",       
-                    # "ALI_Le.35",
                     "StrDif_Tot.35", "StrDif_Tot.58",    
-                    "fscore.35", "fscore.58"
+                    "fscore.35", "fscore.58", 
+                    "ESETA1.6:B18Raw.6" #testing interactions 
 ) 
 
 #required
 ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
                     "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
-                    "peri_health", 
-                    "caregiv_health", "gov_assist")
+                    "peri_health", "caregiv_health", "gov_assist", 
+                    "state:SmokTotl", "PmAge2:PmBlac2", "PmAge2:PmEd2") #testing interaction terms
 
 ```
 
@@ -127,7 +127,7 @@ data_long_f <- formatLongData(data = data_long, exposure = exposure, exposure_ti
                               missing = -9999, #list missing value here
                               factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                                                      "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                                                     "RHasSO"), #list factor variables here
+                                                     "RHasSO"), #list factor variables in long format here
                               home_dir = home_dir, save.out = TRUE) 
 
 ```
@@ -155,6 +155,11 @@ data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/
                       header = TRUE)
 
 
+
+#check for character variables
+any(sapply(data_wide, class) == "character") #if this is TRUE, run next lines
+names(data_wide)[sapply(data_wide, class) == "character"]
+data_wide[, "state"] <- factor(data_wide[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
 
 #make factor variables factor 
 factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
@@ -250,6 +255,12 @@ anyNA(data) #make sure this is false, meaning no NAs
 #read in wide, single imputed dataset
 data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')
 
+#check for character variables
+any(sapply(data, class) == "character") #if this is TRUE, run next lines
+names(data)[sapply(data, class) == "character"]
+data[, "state"] <- factor(data[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
+
+
 #make factors
 factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
@@ -266,7 +277,7 @@ data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
 
 #read in imputed csv files to list
 folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa/imputations/" #change this to match your local folder
-files <- list.files(folder, full.names = TRUE, pattern = "\\.csv") #make sure pattern mathes suffix of your data
+files <- list.files(folder, full.names = TRUE, pattern = "\\.csv") #make sure pattern matches suffix of your data
 
 
 #if you want to use the package with a list of imputed data from above
@@ -275,16 +286,29 @@ data <- lapply(files, function(file) {
   imp_data
 })
 
+
+#check for character variables
+any(as.logical(unlist(lapply(data, function(x) { #if this is TRUE, run next lines
+  any(sapply(x, class) == "character") 
+}))))
+names(data[[1]])[sapply(data[[1]], class) == "character"]
+data <- lapply(data, function(x){
+  x[, "state"] <- factor(x[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
+})
+
+
 #make factors
 factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                    "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
-data <- lapply(data, function(x){
+data <- lapply(data, function(x) {
   x[, factor_covars] <- as.data.frame(lapply(x[, factor_covars], as.factor))
   x
 })
 
 ```
+
+
 
 
 ### P3. Optional: Identify Exposure Epochs
@@ -366,8 +390,8 @@ concur_conf <- "B18Raw.15"
 #optional custom formulas
 custom <- NULL
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
-custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst"),
-               "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_asst")
+custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
+               "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
 
 
@@ -381,11 +405,8 @@ full_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposur
                                 concur_conf = concur_conf, custom = custom, #optional
                                 home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
-# #or minimum inputs
-# full_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders)
-
-
 ```
+
 
 #### 1b. Conduct exploratory pre-balance assessment
 If you specify balance threshold(s), we recommend doing so consistently throughout this workflow. 
@@ -411,9 +432,6 @@ prebalance_stats <- assessBalance(data = data, exposure = exposure, exposure_tim
                                   balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                   home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
-# # #or minimum inputs
-# prebalance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas)
-
 ```
 
 
@@ -434,8 +452,8 @@ keep_conf <- "InRatioCor.6"
 #optional custom formulas
 custom <- NULL
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
-custom <- list("short_form-6" = as.formula ("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst"),
-               "short_form-15" = as.formula ("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_asst")
+custom <- list("short_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
+               "short_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
 
 
@@ -448,10 +466,8 @@ short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposu
                                  concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, #optional
                                  home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
-# #or minimum inputs
-# short_formulas <- createFormulas(home_,dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders)
-
 ```
+
 
 #### 2b. Create IPTW balancing weights using multiple weighting methods
 
@@ -516,7 +532,6 @@ balance_thresh <- c(0.05, 0.1)
 imp_conf <- NULL
 imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 
-
 #required
 type <- "weighted"
 formulas <- short_formulas
@@ -569,7 +584,6 @@ balance_thresh <- c(0.05, 0.1)
 imp_conf <- NULL
 imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
 
-
 #required
 type <- "weighted"
 formulas <- full_formulas
@@ -582,9 +596,6 @@ balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_p
                                balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
-#minimum inputs
-# balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
-
 ```
 
 
@@ -596,20 +607,17 @@ If you specify concurrent confounders to retain and/or confounders to keep in ba
 #optional custom formulas
 custom <- NULL
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
-custom <- list("update_form-6" = as.formula ("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_asst"),
-               "update_form-15" = as.formula ("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_asst")
+custom <- list("update_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
+               "update_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
-
 
 #optional list of concurrent confounder
 concur_conf <-  NULL 
 concur_conf <- "B18Raw.15"
 
-
 #optional list of tv confounders to always retain (lag t-1)
 keep_conf <- NULL 
 keep_conf <- "InRatioCor.6"
-
 
 #required
 type <- "update"
@@ -620,10 +628,6 @@ updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = expo
                                    type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, bal_stats = bal_stats, #required
                                    concur_conf = concur_conf, keep_conf = keep_conf, #optional
                                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
-#minimum inputs
-# updated_formulas <- createFormulas(home_dir, exposure, exposure_time_pts, outcome, type, ti_confounders, tv_confounders,
-#                                    bal_stats = bal_stats)
 
 ```
 
@@ -642,9 +646,6 @@ final_weights <- createWeights(data = data, exposure = exposure, outcome = outco
                                method = method, read_in_from_file = FALSE, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
-#minimum inputs
-# final_weights <- createWeights(home_dir, data, exposure, outcome, formulas)
-
 ```
 
 
@@ -661,14 +662,10 @@ quantile <- 0.95
 #required
 weights <- final_weights
 
-
 #all inputs
 trim_weights <- trimWeights(exposure = exposure, outcome = outcome, weights = weights, #required
                             quantile = quantile, #optional
                             home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
-# #minimum inputs
-# trim_weights <- trimWeights(home_dir, exposure, outcome, weights)
 
 ```
 
@@ -711,15 +708,11 @@ type <- "weighted"
 formulas <- full_formulas
 weights <- trim_weights
 
-
 #all input
 final_balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
                                      outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                      balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                      home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
-# #minimum input
-# final_balance_stats <- assessBalance(home_dir, data, exposure, exposure_time_pts, outcome, type, formulas, weights)
 
 
 #manually list remaining imbalanced covariates that are time-invariant or time-varying at t=1 for use in Step 5
@@ -784,16 +777,13 @@ covariates <- NULL
 covariates <- imbalanced_covariates 
 covariates <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
 
-
 #optional specification of epochs
 epochs <- NULL
 epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
                      values = I(list(c(6, 15), c(24, 35), c(58)))) 
 
-
 #required
 weights <- trim_weights
-
 
 # all inputs
 #required
@@ -802,15 +792,6 @@ models <- fitModel(data = data, weights = weights, exposure = exposure, #require
                    exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                    family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
-#minimum inputs
-# model <- "m0"
-# models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model, 
-#                    epochs = epochs)
-
-# #some optional inputs
-# models <- fitModel(home_dir, data, weights, exposure, exposure_time_pts, outcome, model,
-#                    int_order = int_order)
 
 ```
 
@@ -888,10 +869,8 @@ colors <- NULL
 colors <- c("Dark2")  #(see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) for plotting default is 'Dark2'); 
 colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2") #list number-of-exposure-main-effects-+1 colors
 
-
 #required
 model <- models #output from fitModel
-
 
 #all inputs
 results <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
@@ -926,13 +905,13 @@ in the plots folder, .jpeg images of:
 model <- models.s1 
 results.s1 <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                                epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
-                               mc_comp_method = mc_comp_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                               mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                                home_dir = home_dir, verbose = FALSE, save.out = TRUE) #optional
 
 model <- models.s2 
 results.s2 <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                                epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
-                               mc_comp_method = mc_comp_method , dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
+                               mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                                home_dir = home_dir, verbose = FALSE, save.out = TRUE) #optional
 
 ```

@@ -49,11 +49,29 @@
 #'                     ti_confounders = "C",
 #'                     type = "short",
 #'                     save.out = FALSE)
-#'
+#' @examplesIf requireNamespace("CBPS", quietly = TRUE)
 #' w <- createWeights(data = test,
 #'                    exposure = "A",
 #'                    outcome = "D.3",
 #'                    formulas = f,
+#'                    save.out = FALSE)
+#' c <- list("short_form-1" = as.formula(A.1 ~ C),
+#'           "short_form-2" = as.formula(A.2 ~ A.1 + B.1 + C + I(C^2)),
+#'           "short_form-3" = as.formula(A.3 ~ A.2 + B.2 + C + poly(B.2, 3)))
+#' 
+#' f <- createFormulas(exposure = "A",
+#'                     exposure_time_pts = c(1, 2, 3),
+#'                     outcome = "D.3",
+#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+#'                     ti_confounders = "C",
+#'                     type = "short",
+#'                     custom = c,
+#'                     save.out = FALSE)
+#' w <- createWeights(data = test,
+#'                    exposure = "A",
+#'                    outcome = "D.3",
+#'                    formulas = f,
+#'                    method = "cbps",
 #'                    save.out = FALSE)
 #' 
 #' @examplesIf requireNamespace("CBPS", quietly = TRUE)
@@ -97,25 +115,25 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
   if (save.out) {
     if (missing(home_dir)) {
       stop("Please supply a home directory.",
-            call. = FALSE)
+           call. = FALSE)
     }
     if (!is.character(home_dir)) {
       stop("Please provide a valid home directory path as a string if you wish to save output locally.",
-            call. = FALSE)
+           call. = FALSE)
     }
     if (!dir.exists(home_dir)) {
       stop("Please provide a valid home directory path if you wish to save output locally.",
-            call. = FALSE)
+           call. = FALSE)
     }
   }
   
   if (missing(data)) {
     stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!inherits(data, "mids") && !is.data.frame(data) && !is.list(data)) {
     stop("Please provide either a 'mids' object, a data frame, or a list of imputed data frames in the 'data' field.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (is.list(data) && !is.data.frame(data)  && !inherits(data, "mids") &&
       !all(sapply(data, is.data.frame))) {
@@ -129,11 +147,11 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
   
   if (missing(exposure)) {
     stop("Please supply a single exposure.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!is.character(exposure) || length(exposure) != 1) {
     stop("Please supply a single exposure as a character.",
-          call. = FALSE)
+         call. = FALSE)
   }
   else if (grepl("\\.", exposure)) {
     stop ("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
@@ -142,33 +160,33 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
   
   if (missing(outcome)) {
     stop("Please supply a single outcome.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!is.character(outcome) || length(outcome) != 1) {
     stop("Please supply a single outcome as a character.",
-          call. = FALSE)
+         call. = FALSE)
   }
   else if (!grepl("\\.", outcome)) {
-    stop ("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
-          call. = FALSE)
+    stop("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
+         call. = FALSE)
   }
   
   if (missing(formulas)) {
     stop("Please supply a list of balancing formulas.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!is.list(formulas) || is.data.frame(formulas)) {
     stop("Please provide a list of formulas for each exposure time point",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   if (!is.character(method) || length(method) != 1) {
     stop("Please provide as a character string a weights method from this list: 'glm', 'gbm', 'bart', 'super', 'cbps'.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (!method %in% c("glm", "gbm", "bart", "super", "cbps")) {
     stop("Please provide a weights method from this list: 'glm', 'gbm', 'bart', 'super', 'cbps'.",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   if (!is.logical(read_in_from_file)) {
@@ -183,20 +201,20 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
   
   if (!is.logical(verbose)) {
     stop("Please set verbose to either TRUE or FALSE.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (length(verbose) != 1) {
     stop("Please provide a single TRUE or FALSE value to verbose.",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   if (!is.logical(save.out)) {
     stop("Please set save.out to either TRUE or FALSE.",
-          call. = FALSE)
+         call. = FALSE)
   }
   if (length(save.out) != 1) {
     stop("Please provide a single TRUE or FALSE value to save.out.",
-          call. = FALSE)
+         call. = FALSE)
   }
   
   weights_method <- method
@@ -231,7 +249,7 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
       
       if (!is.list(weights) || !inherits(weights[[1]], "weightitMSM")) {
         stop("The weights saved locally are not the correct class of weightitMSM classed objects saved as a list.",
-              call. = FALSE)
+             call. = FALSE)
       }
       
       #checking weights
@@ -251,31 +269,31 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
       
       if (length(weights) != l) {
         stop("The locally saved weights object does not match the data you have supplied.",
-              call. = FALSE)
+             call. = FALSE)
       }
       
       if (weights[[1]]$method != weights_method) {
         stop(sprintf("The weights saved locally are incorrectly labeled and were actually created with %s weighting method.",
-                      weights[[1]]$method),
-              call. = FALSE)
+                     weights[[1]]$method),
+             call. = FALSE)
       }
       
       if (length(weights[[1]]$covs.list) != length(formulas)) {
         stop("The locally saved weights were created using formulas other than what are supplied here.",
-              call. = FALSE)
+             call. = FALSE)
       }
       
       if (as.logical(unlist(lapply(weights[[1]]$covs.list, function(x) {
         !all(names(x) %in% n)
       })))) {
         stop("The locally saved weights were created using data other than what is supplied.",
-              call. = FALSE)
+             call. = FALSE)
       }
       
       
     }, error = function(x) {
       stop("These weights have not previously been saved locally. Please re-run with read_in_from_file=FALSE",
-            call. = FALSE)
+           call. = FALSE)
     })
   }
   else {
@@ -283,6 +301,7 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
     # List of formulas for each time point
     
     form <- unname(formulas)
+    
     
     #temp workaround while noah is fixing weightitMSM bug...this will only work for continuous exposures tho
     
@@ -294,6 +313,84 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
     
     calculate_weights <- function(data, form, weights_method, SL.library, 
                                   criterion, verbose, ...) {
+      
+      
+      #adding in any covars interactions to data2
+      
+      all_covars <- lapply(form, function(x) {
+        covars <- deparse1(x[[3]], collapse = "") # gets covariates
+        covar_time <- sapply(strsplit(unlist(strsplit(as.character(covars), "\\+")), 
+                                      "\\."), "[", 2)
+        covars <- as.character(unlist(strsplit(covars, "\\+")))
+        covars <- gsub(" ", "", covars)
+      })
+      all_covars <- unname(do.call(c, all_covars))
+      all_covars <- all_covars[!duplicated(all_covars)]
+      
+      if (any(!all_covars[! grepl("\\:", all_covars)] %in% names(data))) {
+        stop(sprintf("The following variable(s) specified in the formulas is/are not present in the data: %s",
+                     paste(all_covars[! grepl("\\:", all_covars)][!all_covars[! grepl("\\:", all_covars)] %in% names(data)], 
+                           collapse = ", ")),
+             call. = FALSE)
+      }
+      
+      factor_covariates <- names(data)[sapply(data, is.factor)]
+      factor_covariates <- setdiff(factor_covariates, "ID")
+      
+      if (any(grepl("\\:", all_covars))) {
+        ints <- all_covars[grepl("\\:", all_covars)]
+        
+        #making interactions 
+        
+        for (x in seq_len(length(ints))) {
+          vars <- as.character(unlist(strsplit(ints[x], "\\:")))
+          f_vars <- vars[vars %in% factor_covariates]
+          
+          ints2 <- combn(vars, 2)
+          ints2 <- as.data.frame(ints2[, sapply(strsplit(ints2[1, ], "\\_"), "[", 1) != 
+                                         sapply(strsplit(ints2[2, ], "\\_"), "[", 1)])
+          ints2 <- unlist(lapply(1:ncol(ints2), 
+                                 function(x) {paste(ints2[, x], collapse = ":")} ))
+          ints2 <- ints2[!duplicated(ints2)]
+          
+          prods <- lapply(ints2, function(x) {
+            v <- as.character(unlist(strsplit(x, "\\:")))
+            temp <- as.data.frame(data[, v])
+            
+            #make factors numeric to multiply 
+            if (length(f_vars) > 0) {
+              temp[, names(temp) %in% f_vars] <- t(as.data.frame(lapply(temp[, names(temp) %in% f_vars], unlist)))
+              temp[, names(temp) %in% f_vars] <- t(as.data.frame(lapply(temp[, names(temp) %in% f_vars], as.numeric)))
+            }
+            
+            prod <- apply(as.matrix(temp), 1, prod)
+            prod
+          })
+          prods <- do.call(rbind.data.frame, prods)
+          prods <- as.data.frame(t(prods))
+          names(prods) <- ints2
+          
+          #make factor class if both components are factors
+          if (length(f_vars) == length(vars)) {
+            for (x in seq_len(length(ints2))) {
+              vars <- as.character(unlist(strsplit(ints2[x], "\\:")))
+              if (all(vars %in% factor_covariates)) {
+                prods[, names(prods)[any(as.logical(unlist(lapply(names(prods), 
+                                                                  function(x) { as.character(unlist(strsplit(x, "\\:"))) %in% f_vars}))))]] <- 
+                  t(as.data.frame(lapply(prods[, names(prods)[any(as.logical(unlist(lapply(names(prods), 
+                                                                                           function(x) {as.character(unlist(strsplit(x, "\\:"))) %in% f_vars}))))]], 
+                                         as.factor)))
+              }
+            }
+          }
+          #adding to dataset
+          
+          data <- cbind(data, prods)
+        }
+      }
+      
+      
+      #fitting weights model
       
       if (weights_method == "super") {
         fit <- WeightIt::weightitMSM(form,
@@ -363,11 +460,11 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
         
         if (anyNA(d)) {
           stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-                call. = FALSE)
+               call. = FALSE)
         }
         if (any(duplicated(d[["ID"]]))) {
           stop("Please provide wide imputed datasets with a single row per ID.",
-                call. = FALSE)
+               call. = FALSE)
         }
         
         fit <- calculate_weights(d, form, weights_method, SL.library, 
@@ -377,8 +474,7 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
         
         if (verbose) {
           
-          cat(sprintf("For imputation %s and the %s weighting method, the median weight value is %s
-                     (SD= %s; range= %s-%s ). \n",
+          cat(sprintf("For imputation %s and the %s weighting method, the median weight value is %s (SD= %s; range= %s-%s ). \n",
                       i,
                       weights_method,
                       round(median(fit$weights), 2),
@@ -440,11 +536,11 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
         
         if (anyNA(d)) {
           stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-                call. = FALSE)
+               call. = FALSE)
         }
         if (any(duplicated(d[["ID"]]))) {
           stop("Please provide wide imputed datasets with a single row per ID.",
-                call. = FALSE)
+               call. = FALSE)
         }
         
         fit <- calculate_weights(d, form, weights_method, SL.library, 
@@ -454,8 +550,7 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
         
         if (verbose) {
           
-          cat(sprintf("For imputation %s and the %s weighting method, the median weight value is %s
-                     (SD= %s; range= %s-%s ). \n",
+          cat(sprintf("For imputation %s and the %s weighting method, the median weight value is %s (SD= %s; range= %s-%s ). \n",
                       i,
                       weights_method,
                       round(median(fit$weights), 2),
@@ -510,11 +605,11 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
     else if (is.data.frame(data)) {
       if (any(duplicated(data[["ID"]]))) {
         stop("Please provide wide dataset with a single row per ID.",
-              call. = FALSE)
+             call. = FALSE)
       }
       if (anyNA(data)) {
         stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-              call. = FALSE)
+             call. = FALSE)
       }
       
       # Creating weights
@@ -527,8 +622,7 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
       data$weights <- weights[[1]]$weights
       
       if (verbose) {
-        cat(sprintf("For the %s weighting method, the median weight value is %s
-                    (SD = %s; range = %s-%s). \n",
+        cat(sprintf("For the %s weighting method, the median weight value is %s (SD = %s; range = %s-%s). \n",
                     weights_method,
                     round(median(data$weights), 2),
                     round(sd(data$weights), 2),
