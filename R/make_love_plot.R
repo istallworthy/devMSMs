@@ -105,11 +105,11 @@ make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_t
   }
   
   # Make love plot per exposure time point
-  lp <- ggplot2::ggplot(ggplot2::aes(x = avg_bal,
-                                     y = reorder(as.factor(covariate), avg_bal)),
+  lp <- ggplot2::ggplot(ggplot2::aes(x = .data$avg_bal,
+                                     y = reorder(as.factor(.data$covariate), .data$avg_bal)),
                         data = balance_stats) +
-    ggplot2::geom_point(ggplot2::aes(y = reorder(as.factor(covariate), avg_bal),
-                                     x = avg_bal,
+    ggplot2::geom_point(ggplot2::aes(y = reorder(as.factor(.data$covariate), .data$avg_bal),
+                                     x = .data$avg_bal,
                                      fill = "white",
                                      alpha = 1)) +
     ggplot2::geom_text(ggplot2::aes(label = labels,
@@ -175,7 +175,11 @@ make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_t
                                                             folder, 
                                                             "plots", 
                                                             sprintf("%s_imp_%s_%s_%s_%s_summary_balance_plot.jpeg",
-                                                                    form_name, k, exposure, exposure_time_pt, weights_method)),
+                                                                    form_name, 
+                                                                    k, 
+                                                                    exposure, 
+                                                                    exposure_time_pt, 
+                                                                    weights_method)),
                                        width = 6,
                                        height = 8))
     }
@@ -186,9 +190,15 @@ make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_t
     
     if (save.out) {
       suppressMessages(ggplot2::ggsave(lp,
-                                       filename =  file.path(home_dir, "balance", folder, "plots", 
+                                       filename =  file.path(home_dir, 
+                                                             "balance", 
+                                                             folder, 
+                                                             "plots", 
                                                              sprintf("%s_%s_%s_%s_summary_balance_plot.jpeg",
-                                                                     form_name, exposure, exposure_time_pt, weights_method)),
+                                                                     form_name, 
+                                                                     exposure, 
+                                                                     exposure_time_pt, 
+                                                                     weights_method)),
                                        width = 6,
                                        height = 8))
     }
