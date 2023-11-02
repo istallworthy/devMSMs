@@ -117,11 +117,91 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
   
   if (model %in% c("m1", "m3", "covs")) {
     
+    if (any(grepl("\\:", covariates))) {
+      cov_ints <- covariates[grepl("\\:", covariates)]
+      covariates <- covariates[!grepl("\\:",covariates)]
+    }
+    else {cov_ints = NULL}
+    
+    if (sum(as.numeric(sapply(strsplit(covariates, "\\."), "[", 2)) > 
+            exposure_time_pts[1], na.rm = T) > 0) {
+      warning("Please only include covariates that are time invariant or measured at the first exposure time point.",
+              call. = FALSE)
+    }
+    
     if (!all(covariates %in% colnames(d))) {
       stop("Please only include covariates that correspond to variables in the wide dataset.",
            call. = FALSE)
     }
-    covariate_list <- paste(as.character(covariates), sep = "", 
+    
+    
+    #adding in any covars interactions to data2
+    
+    factor_covariates <- names(d)[sapply(d, is.factor)]
+    factor_covariates <- setdiff(factor_covariates, "ID")
+    
+    if (!is.null(cov_ints)) {
+      ints <- cov_ints
+      
+      #making covariate interactions 
+      
+      for (x in seq_len(length(ints))) {
+        vars <- as.character(unlist(strsplit(ints[x], "\\:")))
+        
+        if (any(!vars %in% names(d))) {
+          stop("Please only supply covariate interactions between variables present in the data.",
+               call. = FALSE)
+        }
+        
+        f_vars <- vars[vars %in% factor_covariates]
+        
+        ints2 <- combn(vars, 2)
+        ints2 <- as.data.frame(ints2[, sapply(strsplit(ints2[1, ], "\\_"), "[", 1) != 
+                                       sapply(strsplit(ints2[2, ], "\\_"), "[", 1)])
+        ints2 <- unlist(lapply(1:ncol(ints2), 
+                               function(x) {paste(ints2[, x], collapse = ":")} ))
+        ints2 <- ints2[!duplicated(ints2)]
+        
+        prods <- lapply(ints2, function(x) {
+          v <- as.character(unlist(strsplit(x, "\\:")))
+          temp <- as.data.frame(d[, v])
+          
+          #make factors numeric to multiply 
+          if (length(f_vars) > 0) {
+            temp[, names(temp) %in% f_vars] <- 
+              t(as.data.frame(lapply(temp[, names(temp) %in% f_vars], unlist)))
+            temp[, names(temp) %in% f_vars] <- 
+              t(as.data.frame(lapply(temp[, names(temp) %in% f_vars], as.numeric)))
+          }
+          
+          prod <- apply(as.matrix(temp), 1, prod)
+          prod
+        })
+        prods <- do.call(rbind.data.frame, prods)
+        prods <- as.data.frame(t(prods))
+        names(prods) <- ints2
+        
+        #make factor class if both components are factors
+        if (length(f_vars) == length(vars)) {
+          for (x in seq_len(length(ints2))) {
+            vars <- as.character(unlist(strsplit(ints2[x], "\\:")))
+            if (all(vars %in% factor_covariates)) {
+              prods[, names(prods)[any(as.logical(unlist(lapply(names(prods), 
+                                                                function(x) { as.character(unlist(strsplit(x, "\\:"))) %in% f_vars}))))]] <- 
+                t(as.data.frame(lapply(prods[, names(prods)[any(as.logical(unlist(lapply(names(prods), 
+                                                                                         function(x) {as.character(unlist(strsplit(x, "\\:"))) %in% f_vars}))))]], 
+                                       as.factor)))
+            }
+          }
+        }
+        #adding to dataset
+        
+        d <- cbind(d, prods)
+      }
+    }
+    
+    
+    covariate_list <- paste(c(as.character(covariates), cov_ints), sep = "", 
                             collapse = " + ")
     
   }

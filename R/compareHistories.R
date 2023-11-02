@@ -524,6 +524,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   }
   
   
+  
   #IMPUTED DATA
   #pooling predicted values and contrasts for imputed data
   
@@ -532,7 +533,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     # STEP 1b: Create custom tidy method; not called directly but used in mice::pool()
     
-    ## ALERT ##
+    ## ALERT ## <-- how to send this function to mice::pool() without assigning 
     tidy.pred_custom <<- function(x, ...) {
       out <- NextMethod("tidy", x)
       out$term <- do.call(sprintf, c(paste0(paste(names(args), 
@@ -624,11 +625,14 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     comps_pool$term <- unlist(lapply(1:length(comps_pool$term), function(x) {
       x = as.character(comps_pool$term[x])
-      a = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))[
+      a = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", 
+                                                                               sapply(strsplit(x, "\\ - "), "[", 1)), " "))[
         !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
         collapse = ", ", sep = ", "), ")")
-      b = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 2)), " "))[
-        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
+      b = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", 
+                                                                               sapply(strsplit(x, "\\ - "), "[", 2)), " "))[
+        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", 
+                                               sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
         collapse = ", ", sep = ", "), ")")
       new = paste(a, b, sep = " - ")
       new
@@ -766,11 +770,15 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
     comps$term <- unlist(lapply(1:length(comps$term), function(x) {
       x = comps$term[x]
-      a = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))[
-        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
+      a = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", 
+                                                                               sapply(strsplit(x, "\\ - "), "[", 1)), " "))[
+        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", 
+                                               sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
         collapse = ", ", sep = ", "), ")")
-      b = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 2)), " "))[
-        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
+      b = paste0("(", paste(round(as.numeric(as.character(unlist(strsplit(gsub("[^0-9.-]", " ", 
+                                                                               sapply(strsplit(x, "\\ - "), "[", 2)), " "))[
+        !is.na(as.numeric(unlist(strsplit(gsub("[^0-9.-]", " ", 
+                                               sapply(strsplit(x, "\\ - "), "[", 1)), " "))))])), 4),
         collapse = ", ", sep = ", "), ")")
       new = paste(a, b, sep = " - ")
       new
@@ -844,13 +852,15 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
   comparisons <- comparisons[order(comparisons$dose), , drop = FALSE]
   
   if (length(colors) > 1) { # If user input a list of colors
-    p <- ggplot2::ggplot(data = comparisons, ggplot2::aes(x = estimate, 
-                                                          y = history, 
-                                                          color = dose)) +
+    p <- ggplot2::ggplot(data = comparisons, ggplot2::aes(x = .data$estimate, 
+                                                          y = .data$history, 
+                                                          color = .data$dose)) +
       ggplot2::geom_point(size = 5) +
       ggplot2::scale_color_manual(values = colors) +
-      ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), expand = c(0, 0.2)) +
-      ggplot2::geom_errorbarh(ggplot2::aes(xmin = low_ci, xmax = high_ci), 
+      ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), 
+                                expand = c(0, 0.2)) +
+      ggplot2::geom_errorbarh(ggplot2::aes(xmin = .data$low_ci, 
+                                           xmax = .data$high_ci), 
                               height = 0.6) +
       ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
       ggplot2::ylab(paste0(exp_lab, " Exposure History")) +
@@ -874,15 +884,15 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
     
   }
   else { # If user lists a palette (default)
-    p <- ggplot2::ggplot(data = comparisons, ggplot2::aes(x = estimate, 
-                                                          y = history, 
-                                                          color = dose)) +
+    p <- ggplot2::ggplot(data = comparisons, ggplot2::aes(x = .data$estimate, 
+                                                          y = .data$history, 
+                                                          color = .data$dose)) +
       ggplot2::geom_point(size = 5) +
       ggplot2::scale_colour_brewer(palette = colors) +
       ggplot2::scale_y_discrete(limits = c(as.character(comparisons$history)), 
                                 expand = c(0, 0.2)) +
-      ggplot2::geom_errorbarh(ggplot2::aes(xmin = low_ci, 
-                                           xmax = high_ci), 
+      ggplot2::geom_errorbarh(ggplot2::aes(xmin = .data$low_ci, 
+                                           xmax = .data$high_ci), 
                               height = 0.6) +
       ggplot2::xlab(paste0("Predicted ", out_lab, " Value")) +
       ggplot2::ylab(paste0(exp_lab, " Exposure History")) +

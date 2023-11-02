@@ -86,18 +86,20 @@ w <- createWeights(data = test,
                    outcome = "D.3",
                    formulas = f,
                    save.out = FALSE)
-c <- list("short_form-1" = as.formula(A.1 ~ C),
-          "short_form-2" = as.formula(A.2 ~ A.1 + B.1 + C + I(C^2)),
-          "short_form-3" = as.formula(A.3 ~ A.2 + B.2 + C + poly(B.2, 3)))
-
+                   
 f <- createFormulas(exposure = "A",
                     exposure_time_pts = c(1, 2, 3),
                     outcome = "D.3",
-                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
+                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3", "A.1:B.1"),
                     ti_confounders = "C",
                     type = "short",
-                    custom = c,
                     save.out = FALSE)
+w <- createWeights(data = test,
+                   exposure = "A",
+                   outcome = "D.3",
+                   formulas = f,
+                   save.out = FALSE)
+                   
 w <- createWeights(data = test,
                    exposure = "A",
                    outcome = "D.3",

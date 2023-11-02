@@ -178,7 +178,8 @@ calcBalStats <- function(data, formulas, exposure, exposure_time_pts, outcome, b
     data2 <- data
   }
   
-  factors_split <- names(data2)[sapply(strsplit(names(data2), "\\_"), "[", 1) %in% factor_covariates]
+  factors_split <- names(data2)[sapply(strsplit(names(data2), "\\_"), "[", 1) 
+                                %in% factor_covariates]
   
   
   
@@ -688,13 +689,12 @@ calcBalStats <- function(data, formulas, exposure, exposure_time_pts, outcome, b
     # ADDS INFO TO BAL STATS
     
     bal_stats <- as.data.frame(bal_stats)
-    
 
     bal_stats$covariate <- rownames(bal_stats)
     
     
     #averages across factor levels to create one bal stat per factor variable?
-    
+    covariate <- NULL #to avoid check() binding problem
     data$ID <- as.numeric(data$ID)
     f_vars <- colnames(data)[sapply(data, is.factor)]
     
