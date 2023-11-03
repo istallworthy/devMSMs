@@ -89,16 +89,16 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "LESMnPos.24", "LESMnPos.35",                                  
                     "LESMnNeg.24", "LESMnNeg.35",       
                     "StrDif_Tot.35", "StrDif_Tot.58",    
-                    "fscore.35", "fscore.58", 
-                    "ESETA1.6:B18Raw.6" #testing interactions
+                    "fscore.35", "fscore.58"
+                    #, "ESETA1.6:B18Raw.6", "ESETA1.6:B18Raw.15:RHasSO.6", "state:EARS_TJo.35" #testing interactions
 ) 
 
 #required
 ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
                     "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
-                    "peri_health", "caregiv_health", "gov_assist",
-                    "state:SmokTotl", "PmAge2:PmBlac2", "PmAge2:PmEd2") #testing interaction terms
-
+                    "peri_health", "caregiv_health", "gov_assist"
+                    #, "state:SmokTotl", "PmAge2:PmBlac2", "PmAge2:PmEd2" #testing interaction terms
+)
 ```
 
 
@@ -172,6 +172,9 @@ factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",
                    "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
 data_wide[, factor_covars] <- as.data.frame(lapply(data_wide[, factor_covars], as.factor))
 
+
+#or, read in from rds to preserve variable classes
+data_wide <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.rds" )
 
 
 #if you have no missing data and want to use the package with a single wide data frame
@@ -309,7 +312,7 @@ If you specify high and low cutoffs, we recommend doing so consistently througho
 ```{r}
 
 #optional list of quantiles specifying high and low cutoff values, respectively, for continuous exposures; default is median
-hi_lo_cut <- c(0.6, 0.3)
+hi_lo_cut <- c(0.6, 0.3) #empirical example 
 
 ```
 
@@ -321,14 +324,14 @@ If you specify reference and comparison histories, please do so consistently thr
 
 #optional reference history (required if comparisons are specified)
 reference <- NULL
-reference <- "l-l-l"
+reference <- "l-l-l" #empirical example final choice
 reference <- c("l-l-l", "l-l-h")
 
 
 #optional comparison history/histories
 comparison <- NULL 
 comparison <- "h-h-h" #single
-comparison <- c("h-h-h", "h-h-l") #multiple
+comparison <- c("h-h-h", "h-l-l", "l-l-h", "h-h-l", "l-h-h") #empirical example final choice
 
 ```
 
@@ -357,12 +360,12 @@ If you specify concurrent confounders to retain, we recommend doing so consisten
 ```{r}
 
 #optional concurrent confounders
-concur_conf <- NULL 
+concur_conf <- NULL #empirical example 
 concur_conf <- "B18Raw.15"
 
 
 #optional custom formulas
-custom <- NULL
+custom <- NULL #empirical example 
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
@@ -390,11 +393,11 @@ If you specify balance threshold(s), we recommend doing so consistently througho
 #optional balance threshold specification
 balance_thresh <- NULL
 balance_thresh <- 0.1 
-balance_thresh <- c(0.05, 0.1) 
+balance_thresh <- c(0.05, 0.1) #empirical example 
 
 #optional list of important confounders
 imp_conf <- NULL
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") #empirical example 
 
 #required
 type <- "prebalance"
@@ -417,15 +420,15 @@ If you specify concurrent confounders to retain and/or confounders to keep in th
 ```{r}
 
 #optional list of concurrent confounder
-concur_conf <-  NULL 
+concur_conf <-  NULL #empirical example 
 concur_conf <- "B18Raw.15"
 
 #optional list of tv confounders to always retain (lag t-1)
-keep_conf  <-  NULL 
+keep_conf  <-  NULL #empirical example 
 keep_conf <- "InRatioCor.6"
 
 #optional custom formulas
-custom <- NULL
+custom <- NULL #empirical example 
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("short_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "short_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
@@ -456,6 +459,7 @@ formulas <- short_formulas
 method <- "cbps"
 weights.cbps <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                               method = method, read_in_from_file = FALSE,  #optional
+                              ints = TRUE,  #trying out optional weightitMSM inputs
                               home_dir = home_dir, verbose = TRUE, save.out = TRUE)  #optional
 
 method <- "glm"
@@ -468,10 +472,10 @@ weights.gbm <- createWeights(data = data, exposure = exposure, outcome = outcome
                              method = method, read_in_from_file = FALSE,  #optional
                              home_dir = home_dir, verbose = TRUE, save.out = TRUE)  #optional
 # testing additional arguments
-weights.gbm <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
-                             method = method, read_in_from_file = FALSE, #optional
-                             home_dir = home_dir, verbose = TRUE, save.out = TRUE, #optional
-                             criterion = "p.max", distribution = "laplace") ##optional; can now add any input that weightitMSM() takes for "gbm
+# weights.gbm <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
+#                              method = method, read_in_from_file = FALSE, #optional
+#                              home_dir = home_dir, verbose = TRUE, save.out = TRUE, #optional
+#                              criterion = "p.max", distribution = "laplace") ##optional; can now add any input that weightitMSM() takes for "gbm
 
 method <- "bart"
 weights.bart <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
@@ -482,11 +486,11 @@ method <- "super"
 weights.super <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                                method = method, read_in_from_file = FALSE, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-#testing library specification
-weights.super <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
-                               method = method, read_in_from_file = FALSE, #optional
-                               home_dir = home_dir, verbose = TRUE, save.out = TRUE,
-                               SL.library = "SL.mean") #can now specify SuperLearner library (default is "SL.glm")
+# #testing library specification
+# weights.super <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
+#                                method = method, read_in_from_file = FALSE, #optional
+#                                home_dir = home_dir, verbose = TRUE, save.out = TRUE,
+#                                SL.library = "SL.mean") #can now specify SuperLearner library (default is "SL.glm")
 
 ```
 
@@ -499,11 +503,11 @@ If you specify balance threshold(s), we recommend doing so consistently througho
 #optional balance threshold specification
 balance_thresh <- NULL
 balance_thresh <- 0.1 
-balance_thresh <- c(0.05, 0.1) 
+balance_thresh <- c(0.05, 0.1) #empirical example 
 
 #optional list of important confounders
 imp_conf <- NULL
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") #empirical example 
 
 #required
 type <- "weighted"
@@ -551,17 +555,17 @@ If you specify balance threshold(s), we recommend doing so consistently througho
 #optional balance threshold specification
 balance_thresh <- NULL
 balance_thresh <- 0.1 
-balance_thresh <- c(0.05, 0.1) 
+balance_thresh <- c(0.05, 0.1) #empirical example 
 
 #optional list of important confounders
 imp_conf <- NULL
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") #empirical example 
 
 #required
 type <- "weighted"
 formulas <- full_formulas
 
-weights <- weights.cbps
+weights <- weights.glm
 
 #all inputs
 balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
@@ -578,19 +582,20 @@ If you specify concurrent confounders to retain and/or confounders to keep in ba
 ```{r}
 
 #optional custom formulas
-custom <- NULL
+custom <- NULL #empirical example 
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("update_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "update_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
 
 #optional list of concurrent confounder
-concur_conf <-  NULL 
+concur_conf <-  NULL #empirical example 
 concur_conf <- "B18Raw.15"
 
 #optional list of tv confounders to always retain (lag t-1)
-keep_conf <- NULL 
+keep_conf <- NULL #empirical example 
 keep_conf <- "InRatioCor.6"
+
 
 #required
 type <- "update"
@@ -612,7 +617,7 @@ updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = expo
 #required
 formulas <- updated_formulas
 
-method <- "cbps"
+method <- "glm"
 
 #all inputs
 final_weights <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
@@ -630,7 +635,7 @@ final_weights <- createWeights(data = data, exposure = exposure, outcome = outco
 
 # optional quantile of weights above which weights are trimmed (default is 0.95)
 quantile <- NA 
-quantile <- 0.95 
+quantile <- 0.95 #empirical example 
 
 #required
 weights <- final_weights
@@ -669,11 +674,11 @@ If you specify balance threshold(s), we recommend doing so consistently througho
 #optional balance threshold specification
 balance_thresh <- NULL
 balance_thresh <- 0.1 
-balance_thresh <- c(0.05, 0.1) 
+balance_thresh <- c(0.05, 0.1)  #empirical example 
 
 #optional list of important confounders
 imp_conf <- NULL
-imp_conf <- c("PmAge2", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58") 
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") #empirical example 
 
 #required
 type <- "weighted"
@@ -688,7 +693,7 @@ final_balance_stats <- assessBalance(data = data, exposure = exposure, exposure_
 
 
 #manually list remaining imbalanced covariates that are time-invariant or time-varying at t=1 for use in Step 5
-imbalanced_covars <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
+covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist","PmEd2", "B18Raw.6") 
 
 ```
 
@@ -734,10 +739,10 @@ If you specify exposure epochs, we recommend doing so consistently throughout th
 ```{r}
 
 #optional family/link information for glm
-family <- NULL
+family <- NULL #empirical example
 family <- gaussian
 
-link <- NA
+link <- NA  #empirical example
 link <- "identity" 
 
 # max interaction order (required for interaction models m2-3)
@@ -748,11 +753,13 @@ int_order <- 3
 covariates <- NULL
 covariates <- imbalanced_covariates 
 covariates <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
-covariates <- c("ESETA1.6", "state:SmokTotl", "PmAge2:PmBlac2")
+covariates <- c("ESETA1.6", "state:SmokTotl", "PmAge2:PmBlac2", "ESETA1.6:B18Raw.15:RHasSO.6") #testing interactions
+covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist","PmEd2", "B18Raw.6")  #empirical example
+
 
 #optional specification of epochs
 epochs <- NULL
-epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
+epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"),  #empirical example
                      values = I(list(c(6, 15), c(24, 35), c(58)))) 
 
 #required
@@ -760,7 +767,7 @@ weights <- trim_weights
 
 # all inputs
 #required
-model <- "m3"
+model <- "m0"
 models <- fitModel(data = data, weights = weights, exposure = exposure, #required
                    exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                    family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
@@ -808,17 +815,19 @@ epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"),
 
 #optional list of quantiles specifying high and low cutoff values for continuous exposures; 
 hi_lo_cut <- NULL
-hi_lo_cut <- c(0.6, 0.3) #default are median split
+hi_lo_cut <- c(0.6, 0.3) #empirical example final choice
 
 #optional reference history (required if comparisons are specified)
 reference <- NULL
-reference <- "l-l-l"
+reference <- "l-l-l" #empirical example final choice
 reference <- c("l-l-l", "l-l-h") #multiple
 
 #optional comparison history/histories (required if reference specified)
 comparison <- NULL 
 comparison <- "h-h-h" #single
 comparison <- c("h-h-h", "h-h-l") #multiple
+comparison <- c("h-h-h", "h-l-l", "l-l-h", "h-h-l", "l-h-h") #empirical example final choice
+
 
 #optional multiple comparion method
 mc_comp_method <- NA

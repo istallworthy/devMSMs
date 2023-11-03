@@ -210,18 +210,60 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
     stop("Please include all measured exposure variables in wide format in tv_confounders.",
          call. = FALSE)
   }
-  if (any(grepl("\\:", tv_confounders))){
+  
+  
+  if (any(grepl("\\:", tv_confounders))) {
     if (any(as.logical(unlist(lapply(tv_confounders[grepl("\\:", tv_confounders)], function(x) {
-      any(!as.character(unlist(strsplit(x, "\\:"))) %in% c(tv_confounders, ti_confounders))
-    }))))) {
-      stop("At least one variable in a time-varying confounder interaction is not listed as a time-varying confounder.",
+      all(!as.character(unlist(strsplit(x, "\\:"))) %in% 
+          c(tv_confounders, ti_confounders))} ))))) {
+      stop("At least one variable in a time-varying confounder interaction must be a time-varying confounder.",
            call. = FALSE)
     }
+    
+    tv_confounders <- c(tv_confounders[!grepl("\\:", tv_confounders)],
+                        as.character(unlist(lapply(tv_confounders[grepl("\\:", tv_confounders)], function(x) {
+                          
+                          #makes tv confounder last always 
+                          
+                          if (!grepl("\\.", sapply(strsplit(x, "\\:"), "[", 
+                                                   length(as.character(unlist(strsplit(x, "\\:"))))))) {
+                            tv <- as.character(unlist(strsplit(x, "\\:")))[grepl("\\.", 
+                                                                                 as.character(unlist(strsplit(x, "\\:"))))]
+                            m <- tv[which(as.numeric(sapply(strsplit(tv, "\\."), "[", 2)) == 
+                                            max(as.numeric(sapply(strsplit(tv, "\\."), "[", 2))))]
+                            new <- c(as.character(unlist(strsplit(x, "\\:")))[!as.character(unlist(strsplit(x, "\\:"))) %in% m],
+                                   m)
+                            x <- paste(new, collapse = ":")
+                          }
+                          
+                          #makes last component have highest time point if both tv --for determining which formula it goes in
+                          
+                          if (all(grepl("\\.", as.character(unlist(strsplit(x, "\\:")))))) {
+                            
+                            t <- do.call(c, lapply(as.character(unlist(strsplit(x, "\\:"))), function(y) {
+                              as.numeric(sapply(strsplit(y, "\\."), "[", 2))
+                            }))
+                            
+                            if (any(as.logical(unlist(lapply(1:(length(t) - 1), function(z){
+                              t[(length(t))] < t[z]
+                            }))))) {
+                              
+                              new <- c(as.character(unlist(strsplit(x, "\\:")))[which(t != max(t))],
+                                       as.character(unlist(strsplit(x, "\\:")))[which(t == max(t))])
+                              
+                              x <- paste(new, collapse = ":")
+                              
+                            }
+                          }
+                          x
+                        }))))
+    
   }
   
-  else if (is.null(custom)) {
+  
+  if (is.null(custom)) {
     if (any(!exposure_time_pts %in% 
-            as.numeric(unlist(sapply(strsplit(tv_confounders, "\\."), "[", 2))))) {
+            as.numeric(unlist(sapply(strsplit(tv_confounders, "\\."), tail, 1))))) {
       stop("Exposure time points and the time points at which time-varying confounders are measured must fully overlap.",
            call. = FALSE) 
     }
@@ -236,9 +278,10 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
          call. = FALSE)
   }
   else if (any(grepl("\\:", ti_confounders))){
-    if (any(as.logical(unlist(lapply(ti_confounders[grepl("\\:", ti_confounders)], function(x) {
-      any(!as.character(unlist(strsplit(x, "\\:"))) %in% c(tv_confounders, ti_confounders))
-    }))))) {
+    if (any(as.logical(unlist(lapply(ti_confounders[grepl("\\:", ti_confounders)], 
+                                     function(x) { any(!as.character(unlist(strsplit(x, "\\:"))) 
+                                                       %in% c(tv_confounders, ti_confounders))
+                                     }))))) {
       stop("At least one variable in a time invariant confounder interaction is not listed as a time invariant confounder.",
            call. = FALSE)
     }
@@ -287,6 +330,7 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
   
   all_covars <- c(tv_confounders, ti_confounders)
   
+  
   #for custom formulas
   
   if (!is.null(custom)) {
@@ -313,7 +357,6 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
       names(forms) <- paste(paste0(type, "_form"), exposure_time_pts, sep = "-")
     }
     
-    
     #checking custom formulas
     
     covars <- lapply(forms, deparse1, collapse = "") # gets covariates
@@ -321,7 +364,7 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
     if (any(as.logical(unlist(lapply(covars, function(x) {
       sapply(strsplit(sapply(strsplit(x, "\\~"), "[", 1), "\\."), "[", 1) != 
         exposure }))))) {
-      stop("Please make each formula in your custom formula list a function of exposure at each time point.",
+      stop("Please make each formula in your custom formula lists a function of exposure at each time point.",
            call. = FALSE)
     }
     
@@ -337,17 +380,15 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
     })
     
     covars <- lapply(covars, function(x) {
-      
       as.character(unlist(strsplit(x, "\\+")))
     })
     covars <- lapply(covars, function(x) {
       gsub(" ", "", x)
     })
     
-    if (any(as.logical(unlist(lapply(covars, function(x) {
-      any(!x %in% tv_confounders & !x  %in% ti_confounders)
-    }))))) {
-      miss <- lapply(covars, function(x) {
+    if (any(as.logical(unlist(lapply(covars[!grepl("\\:", covars)], function(x) {
+      any(!x %in% tv_confounders & !x  %in% ti_confounders)}))))) {
+      miss <- lapply(covars[!grepl("\\:", covars)], function(x) {
         x[!x %in% tv_confounders & !x %in% ti_confounders]
       })
       warning(sprintf("Please make sure all variables in your custom formulas are included as either time-varying or time invariant confounders.
@@ -382,11 +423,11 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
     factor_covariates <- names(data)[sapply(data, is.factor)]
     factor_covariates <- setdiff(factor_covariates, "ID")
     
-    if (any(grepl("\\:", tv_confounders))) {
-      tv_ints <- tv_confounders[grepl("\\:", tv_confounders)]
-      tv_confounders <- tv_confounders[!grepl("\\:", tv_confounders)]
-    }
-    else {tv_ints = NULL}
+    # if (any(grepl("\\:", tv_confounders))) {
+    #   tv_ints <- tv_confounders[grepl("\\:", tv_confounders)]
+    #   tv_confounders <- tv_confounders[!grepl("\\:", tv_confounders)]
+    # }
+    # else {tv_ints = NULL}
     
     forms_csv <- character()
     forms <- list()
@@ -403,13 +444,13 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
         }
         
         time_var_include <- tv_confounders[as.numeric(sapply(strsplit(tv_confounders, 
-                                                                      "\\."), "[", 2)) < time]
-        if (!is.null(tv_ints)) {
-          time_var_include <- c(time_var_include, 
-                                tv_ints[as.logical(unlist(lapply(tv_ints, function(y) {
-                                  as.numeric(unlist(sapply(strsplit(y, "\\."), tail, 1))) < time
-                                })))])
-        }
+                                                                      "\\."), tail, 1)) < time]
+        # if (!is.null(tv_ints)) {
+        #   time_var_include <- c(time_var_include, 
+        #                         tv_ints[as.logical(unlist(lapply(tv_ints, function(y) {
+        #                           as.numeric(unlist(sapply(strsplit(y, "\\."), tail, 1))) < time
+        #                         })))])
+        # }
         
       }
       
@@ -419,15 +460,16 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
           message("USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:")
         }
         
-        time_var_include <- tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), "[", 2)) ==
-                                             exposure_time_pts[x - 1]]
+        time_var_include <- 
+          tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), 
+                                           tail, 1)) == exposure_time_pts[x - 1]]
         
-        if (!is.null(tv_ints)) {
-          time_var_include <- c(time_var_include, 
-                                tv_ints[as.logical(unlist(lapply(tv_ints, function(y) {
-                                  as.numeric(unlist(sapply(strsplit(y, "\\."), tail, 1))) == exposure_time_pts[x - 1]
-                                })))])
-        }
+        # if (!is.null(tv_ints)) {
+        #   time_var_include <- c(time_var_include, 
+        #                         tv_ints[as.logical(unlist(lapply(tv_ints, function(y) {
+        #                           as.numeric(unlist(sapply(strsplit(y, "\\."), tail, 1))) == exposure_time_pts[x - 1]
+        #                         })))])
+        # }
         
       }
       
@@ -446,22 +488,24 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
           message("USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:")
         }
         
-        time_var_include <- tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), "[", 2)) ==
-                                             exposure_time_pts[x - 1]]
+        time_var_include <- 
+          tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), 
+                                           tail, 1)) == exposure_time_pts[x - 1]]
         
-        if (!is.null(tv_ints)) {
-          time_var_include <- c(time_var_include, 
-                                tv_ints[as.logical(unlist(lapply(tv_ints, function(y) {
-                                  as.numeric(unlist(sapply(strsplit(y, "\\."), tail, 1))) == exposure_time_pts[x - 1]
-                                })))])
-        }
+        # if (!is.null(tv_ints)) {
+        #   time_var_include <- c(time_var_include, 
+        #                         tv_ints[as.logical(unlist(lapply(tv_ints, function(y) {
+        #                           as.numeric(unlist(sapply(strsplit(y, "\\."), tail, 1))) == exposure_time_pts[x - 1]
+        #                         })))])
+        # }
         
         
         if (x > 1) {
           
           new <- bal_stats[bal_stats$balanced == 0 &
                              bal_stats$exp_time == time &
-                             as.numeric(bal_stats$covar_time) < exposure_time_pts[x - 1] &
+                             as.numeric(bal_stats$covar_time) < 
+                             exposure_time_pts[x - 1] &
                              as.numeric(bal_stats$covar_time) > 0, ]
           
           
@@ -469,7 +513,10 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
             
             if (any(!new$covariate %in% c(tv_confounders, ti_confounders))) {
               warning(sprintf("The following imbalanced covaraite(s) being added to the short formula(s) is/are not present in the time-varying or time invariant confounders: %s",
-                              paste(new$covariate[!new$covariate %in% c(tv_confounders, ti_confounders)], collapse = ", ")),
+                              paste(new$covariate[!new$covariate %in% 
+                                                    c(tv_confounders, 
+                                                      ti_confounders)], 
+                                    collapse = ", ")),
                       call. = FALSE)
             }
             
@@ -511,7 +558,7 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
                call. = FALSE)
         }
         
-        else if (sapply(strsplit(concur_conf, "\\."), "[", 1) %in% exposure) {
+        else if (sapply(strsplit(concur_conf, "\\."), head, 1) %in% exposure) {
           stop ("Do not include the exposure concurrently as a confounder. Please revise the concur_conf field.",
                 call. = FALSE)
         }
@@ -521,10 +568,10 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
                all. = FALSE)
         }
         
-        if (as.numeric(sapply(strsplit(concur_conf, "\\."), "[", 2)) %in% time) {
+        if (as.numeric(sapply(strsplit(concur_conf, "\\."), tail, 1)) %in% time) {
           vars_to_include <- c(vars_to_include,
                                concur_conf[as.numeric(sapply(strsplit(concur_conf, 
-                                                                      "\\."), "[", 2)) %in% time] )
+                                                                      "\\."), tail, 1)) %in% time] )
         }
       }
       
@@ -546,13 +593,13 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
         keep_conf <- keep_conf[!paste0(exposure, ".", time) %in% keep_conf]
         
         if (length(keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), 
-                                               "[", 2)) < time]) > 0) {
+                                               tail, 1)) < time]) > 0) {
           
-          if (! keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), "[", 2)) 
+          if (! keep_conf[as.numeric(sapply(strsplit(keep_conf, "\\."), tail, 1)) 
                           < time] %in% vars_to_include) {
             vars_to_include <- c(vars_to_include, 
                                  keep_conf[as.numeric(sapply(strsplit(keep_conf, 
-                                                                      "\\."), "[", 2)) < time])
+                                                                      "\\."), tail, 1)) < time])
           }
         }
       }

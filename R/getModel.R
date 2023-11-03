@@ -80,6 +80,13 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
   }
   else { #add epochs by averaging exposure time points
     
+    #checks epoch time points
+    if (!is.numeric(unlist(epochs$values))|| 
+        any(!as.numeric(unlist(epochs$values)) %in% exposure_time_pts)) {
+      stop("Please supply epochs with numeric values that are included in the exposure time points.",
+           call. = FALSE)
+    }
+    
     #adds exposure epochs
     #calculates the mean value for each exposure epoch
     
@@ -113,67 +120,54 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
   }
   
   
-  # Covariate models checking
+  #adding in any covars interactions to d --unfortunately, even though svyglm doesn't need this per se,
+  # i think we have to do this in order for these interaction variables to show up in the data field 
+  # of the output from this function (which we will need in compareHistories, specifically in avg_predictions()) --otherwise, int variable names don't seem to show up 
+  #split factors
+  factor_covariates <- names(d)[sapply(d, is.factor)]
+  factor_covariates <- setdiff(factor_covariates, "ID")
+  if (length(factor_covariates) > 0) {
+    d <- cobalt::splitfactor(d, factor_covariates, drop.first = "if2")
+    
+    factors_split <- names(d)[sapply(strsplit(names(d), "\\_"), "[", 1) 
+                              %in% factor_covariates]
+  }
   
-  if (model %in% c("m1", "m3", "covs")) {
-    
+  if (!missing(covariates)) {
     if (any(grepl("\\:", covariates))) {
-      cov_ints <- covariates[grepl("\\:", covariates)]
-      covariates <- covariates[!grepl("\\:",covariates)]
-    }
-    else {cov_ints = NULL}
-    
-    if (sum(as.numeric(sapply(strsplit(covariates, "\\."), "[", 2)) > 
-            exposure_time_pts[1], na.rm = T) > 0) {
-      warning("Please only include covariates that are time invariant or measured at the first exposure time point.",
-              call. = FALSE)
-    }
-    
-    if (!all(covariates %in% colnames(d))) {
-      stop("Please only include covariates that correspond to variables in the wide dataset.",
-           call. = FALSE)
-    }
-    
-    
-    #adding in any covars interactions to data2
-    
-    factor_covariates <- names(d)[sapply(d, is.factor)]
-    factor_covariates <- setdiff(factor_covariates, "ID")
-    
-    if (!is.null(cov_ints)) {
-      ints <- cov_ints
+      ints <- covariates[grepl("\\:", covariates)]
       
-      #making covariate interactions 
+      #making interactions w/ split factors 
       
       for (x in seq_len(length(ints))) {
         vars <- as.character(unlist(strsplit(ints[x], "\\:")))
+        num_comp <- length(vars)
         
-        if (any(!vars %in% names(d))) {
-          stop("Please only supply covariate interactions between variables present in the data.",
+        if (any(vars %in% factor_covariates)) {
+          vars <- do.call(c, lapply(vars, function(y) {
+            if (y %in% factor_covariates) {
+              f_vars <- factors_split[sapply(strsplit(factors_split, "\\_"), "[", 1) %in% y]
+              y <- f_vars } 
+            y
+          }))
+        }
+        
+        if (any(as.logical(unlist(lapply(vars, function(x) {
+          any(!x %in% names(d))}))))) {
+          stop("Please only include covariate interactions between variables in your data",
                call. = FALSE)
         }
         
-        f_vars <- vars[vars %in% factor_covariates]
-        
-        ints2 <- combn(vars, 2)
+        ints2 <- combn(vars, num_comp)
         ints2 <- as.data.frame(ints2[, sapply(strsplit(ints2[1, ], "\\_"), "[", 1) != 
                                        sapply(strsplit(ints2[2, ], "\\_"), "[", 1)])
         ints2 <- unlist(lapply(1:ncol(ints2), 
-                               function(x) {paste(ints2[, x], collapse = ":")} ))
+                               function(y) {paste(ints2[, y], collapse = ":")} ))
         ints2 <- ints2[!duplicated(ints2)]
         
-        prods <- lapply(ints2, function(x) {
-          v <- as.character(unlist(strsplit(x, "\\:")))
+        prods <- lapply(ints2, function(z) {
+          v <- as.character(unlist(strsplit(z, "\\:")))
           temp <- as.data.frame(d[, v])
-          
-          #make factors numeric to multiply 
-          if (length(f_vars) > 0) {
-            temp[, names(temp) %in% f_vars] <- 
-              t(as.data.frame(lapply(temp[, names(temp) %in% f_vars], unlist)))
-            temp[, names(temp) %in% f_vars] <- 
-              t(as.data.frame(lapply(temp[, names(temp) %in% f_vars], as.numeric)))
-          }
-          
           prod <- apply(as.matrix(temp), 1, prod)
           prod
         })
@@ -182,16 +176,15 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
         names(prods) <- ints2
         
         #make factor class if both components are factors
-        if (length(f_vars) == length(vars)) {
-          for (x in seq_len(length(ints2))) {
-            vars <- as.character(unlist(strsplit(ints2[x], "\\:")))
-            if (all(vars %in% factor_covariates)) {
-              prods[, names(prods)[any(as.logical(unlist(lapply(names(prods), 
-                                                                function(x) { as.character(unlist(strsplit(x, "\\:"))) %in% f_vars}))))]] <- 
-                t(as.data.frame(lapply(prods[, names(prods)[any(as.logical(unlist(lapply(names(prods), 
-                                                                                         function(x) {as.character(unlist(strsplit(x, "\\:"))) %in% f_vars}))))]], 
-                                       as.factor)))
-            }
+        
+        for (f in seq_len(length(ints2))) {
+          vars <- as.character(unlist(strsplit(ints2[f], "\\:")))
+          if (all(vars %in% factor_covariates)) {
+            prods[, names(prods)[any(as.logical(unlist(lapply(names(prods), function(k) { 
+              as.character(unlist(strsplit(k, "\\:"))) %in% f_vars}))))]] <- 
+              as.data.frame(lapply(prods[, names(prods)[any(as.logical(unlist(lapply(names(prods),function(l) {
+                as.character(unlist(strsplit(l, "\\:"))) %in% f_vars}))))]], 
+                as.factor))
           }
         }
         #adding to dataset
@@ -200,8 +193,30 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
       }
     }
     
+    covariates <- c(covariates[!grepl("\\:", covariates)], 
+                    names(d)[grepl("\\:", names(d))])
+  }
+  
+  # Covariate models checking
+  
+  if (model %in% c("m1", "m3", "covs")) {
     
-    covariate_list <- paste(c(as.character(covariates), cov_ints), sep = "", 
+    if (any(grepl("\\.", covariates))) {
+      tv_cov <- covariates[grepl("\\.", covariates)]
+      if (any(as.numeric(gsub("_.*", "", gsub(".*\\.(.)", "\\1", 
+                                              as.character(unlist(strsplit(tv_cov, "\\:")))))) > exposure_time_pts[1])) {
+        warning("Please only include covariates (including interaction instituents) that are time invariant or measured only at the first exposure time point.",
+                call. = FALSE)
+        cat("\n")
+      }
+    }
+    
+    if (!all(covariates[!grepl("\\:", covariates)] %in% colnames(d))) {
+      stop("Please only include covariates that correspond to variables in the wide dataset.",
+           call. = FALSE)
+    }
+    
+    covariate_list <- paste(c(as.character(covariates)), sep = "", 
                             collapse = " + ")
     
   }
