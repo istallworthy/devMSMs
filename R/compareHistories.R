@@ -321,8 +321,14 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
             call. = FALSE)
     }
     if (anyNA(epochs$values)) {
-      stop("Please provide one or a list of several values for each epoch.",
+      stop("Please provide one or a list of several numeric time values for each epoch.",
             call. = FALSE)
+    }
+    #checks epoch time points
+    if (!is.numeric(unlist(epochs$values)) || 
+        any(!as.numeric(unlist(epochs$values)) %in% exposure_time_pts)) {
+      stop("Please supply epochs with numeric values that are included in the exposure time points.",
+           call. = FALSE)
     }
   }
   

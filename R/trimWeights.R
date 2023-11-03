@@ -83,7 +83,7 @@ trimWeights <- function(exposure, outcome, weights, quantile = NA, home_dir = NU
          call. = FALSE)
   }
   else if (grepl("\\.", exposure)) {
-    stop ("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
+    stop("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
           call. = FALSE)
   }
   
@@ -110,7 +110,7 @@ trimWeights <- function(exposure, outcome, weights, quantile = NA, home_dir = NU
          call. = FALSE)
   }
   else if (!grepl("\\.", outcome)) {
-    stop ("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
+    stop("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
           call. = FALSE)
   }
   
@@ -170,8 +170,7 @@ trimWeights <- function(exposure, outcome, weights, quantile = NA, home_dir = NU
       
       if (verbose) {
         cat('\n')
-        cat(sprintf("For imputation %s and the %s-%s relation, following trimming at the %s quantile, the median weight value is
-                  %s (SD= %s; range= %s-%s). \n",
+        cat(sprintf("For imputation %s and the %s-%s relation, following trimming at the %s quantile, the median weight value is %s (SD= %s; range= %s-%s). \n",
                     x,
                     exposure,
                     outcome,
@@ -220,8 +219,7 @@ trimWeights <- function(exposure, outcome, weights, quantile = NA, home_dir = NU
       
       if (verbose) {
         cat('\n')
-        cat(sprintf("For the %s-%s relation, following trimming at the %s quantile, the median weight value is
-                  %s (SD= %s; range= %s-%s). \n",
+        cat(sprintf("For the %s-%s relation, following trimming at the %s quantile, the median weight value is %s (SD= %s; range= %s-%s). \n",
                     exposure,
                     outcome,
                     quantile,

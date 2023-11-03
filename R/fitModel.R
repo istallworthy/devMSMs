@@ -339,7 +339,7 @@ fitModel <- function(data, weights, exposure, exposure_time_pts, outcome, model,
     
     if (verbose) {
       message("Please inspect the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.", "\n\n")
-      message("We strongly suggest not conducting history comparisons if the likelihood ratio test is non-significant.", "\n\n")
+      message("We strongly suggest only conducting history comparisons if the likelihood ratio test is significant.", "\n\n")
     }
     
     print(mitml::testModels(fits, fits.null))
