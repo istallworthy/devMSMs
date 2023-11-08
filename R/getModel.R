@@ -87,6 +87,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
            call. = FALSE)
     }
     
+    
     #adds exposure epochs
     #calculates the mean value for each exposure epoch
     
@@ -203,8 +204,9 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
     
     if (any(grepl("\\.", covariates))) {
       tv_cov <- covariates[grepl("\\.", covariates)]
-      if (any(as.numeric(gsub("_.*", "", gsub(".*\\.(.)", "\\1", 
-                                              as.character(unlist(strsplit(tv_cov, "\\:")))))) > exposure_time_pts[1])) {
+      if (any(as.numeric(gsub("_.*", "", sub(".*\\.(.)", "\\1", 
+                                             as.character(unlist(strsplit(tv_cov, "\\:")))))) > 
+              exposure_time_pts[1])) {
         warning("Please only include covariates (including interaction instituents) that are time invariant or measured only at the first exposure time point.",
                 call. = FALSE)
         cat("\n")
@@ -248,7 +250,10 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
       name <- gsub(" ", "", unlist(strsplit(interactions, "\\+"))[x])
       
       if (!name %in% colnames(d)) {
-        temp <- d[, c(gsub(" ", "", as.character(unlist(strsplit(unlist(strsplit(interactions, "\\+"))[x], "\\:"))))) ]
+        temp <- d[, c(gsub(" ", "", 
+                           as.character(unlist(strsplit(unlist(strsplit(interactions, 
+                                                                        "\\+"))[x], 
+                                                        "\\:"))))) ]
         new <- apply(as.matrix(temp), 1, prod, na.rm = TRUE)
         names(new) <- name
         d <- cbind(d, new)
@@ -286,6 +291,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
   
   
   # Fitting baseline model w/ main effects only (m0) for all models
+  
   f <- paste(outcome, "~", paste0(exp_epochs, sep = "", collapse = " + "))
   
   # Baseline + sig covar model OR baseline + sig covar + int model
@@ -294,11 +300,15 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
     f <- paste(f, "+", covariate_list) # Baseline + covariate model
   }
   else if (model == "m2") {
+    
     # Baseline + interactions
+    
     f <- paste(f, "+", paste(interactions, sep = "", collapse = " + "))
   }
   else if (model == "m3") {
+    
     # Baseline + covars + interactions
+    
     f <- paste(f, "+", covariate_list) # Baseline + covariate model
     f <- paste(f, "+", paste(interactions, sep = "", collapse = " + "))
   }

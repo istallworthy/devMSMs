@@ -88,17 +88,20 @@ make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_t
   colnames(balance_stats)[colnames(balance_stats) == stat_var] <- "avg_bal"
   balance_stats <- balance_stats[order(balance_stats$avg_bal), , drop = FALSE]
   
-  x_lab <- if (exposure_type == "continuous") "Correlation with Exposure" else "Standardized Mean Difference Between Exposures"
+  x_lab <- if (exposure_type == "continuous") "Correlation with Exposure" else 
+    "Standardized Mean Difference Between Exposures"
   
   labels <- ifelse(balance_stats$balanced == 0, balance_stats$covariate, "")
   
-  min_val <- if (min(balance_stats[, "avg_bal"]) < 0) min(balance_stats[, "avg_bal"]) - 0.05 else min(balance_thresh) - 0.05
+  min_val <- if (min(balance_stats[, "avg_bal"]) < 0) 
+    min(balance_stats[, "avg_bal"]) - 0.05 else min(balance_thresh) - 0.05
   
   if (min_val > -(max(balance_thresh))){
     min_val <- -(max(balance_thresh)) - 0.05 #to make sure user-supplied balance thresh is on the figure
   }
   
-  max_val <- if (max(balance_stats[, "avg_bal"]) > 0) max(balance_stats[, "avg_bal"]) + 0.05 else max(balance_thresh) + 0.05
+  max_val <- if (max(balance_stats[, "avg_bal"]) > 0) 
+    max(balance_stats[, "avg_bal"]) + 0.05 else max(balance_thresh) + 0.05
   
   if (max_val < max(balance_thresh)) {
     max_val <- max(balance_thresh) + 0.05 #to make sure user-supplied balance thresh is on the figure
@@ -106,9 +109,11 @@ make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_t
   
   # Make love plot per exposure time point
   lp <- ggplot2::ggplot(ggplot2::aes(x = .data$avg_bal,
-                                     y = reorder(as.factor(.data$covariate), .data$avg_bal)),
+                                     y = reorder(as.factor(.data$covariate), 
+                                                 .data$avg_bal)),
                         data = balance_stats) +
-    ggplot2::geom_point(ggplot2::aes(y = reorder(as.factor(.data$covariate), .data$avg_bal),
+    ggplot2::geom_point(ggplot2::aes(y = reorder(as.factor(.data$covariate), 
+                                                 .data$avg_bal),
                                      x = .data$avg_bal,
                                      fill = "white",
                                      alpha = 1)) +
@@ -161,7 +166,7 @@ make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_t
     
   }
   
-
+  
   
   if (data_type == "imputed") {
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", 
@@ -185,8 +190,13 @@ make_love_plot <- function(balance_stats, exposure, exposure_time_pt, exposure_t
     }
   }
   else {
+    if (k != 0){
+      lp <- lp + ggplot2::ggtitle(sprintf("%s (t=%s) Balance %s", 
+                                          exposure, exposure_time_pt, k))
+    } else{
     lp <- lp + ggplot2::ggtitle(paste0(exposure, " (t = ", exposure_time_pt, 
                                        ") Balance"))
+    }
     
     if (save.out) {
       suppressMessages(ggplot2::ggsave(lp,

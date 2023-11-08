@@ -55,7 +55,6 @@ eval_hist <- function(data, exposure, time_pts, epochs = NULL, hi_lo_cut = NULL,
   
   rlang::check_installed("knitr")
   
-  
   exposure_type <- if (inherits(data[, paste0(exposure, '.', time_pts[1])], "numeric")) "continuous" else "binary"
   
   data_wide <- data

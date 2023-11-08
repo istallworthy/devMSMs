@@ -423,12 +423,6 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
     factor_covariates <- names(data)[sapply(data, is.factor)]
     factor_covariates <- setdiff(factor_covariates, "ID")
     
-    # if (any(grepl("\\:", tv_confounders))) {
-    #   tv_ints <- tv_confounders[grepl("\\:", tv_confounders)]
-    #   tv_confounders <- tv_confounders[!grepl("\\:", tv_confounders)]
-    # }
-    # else {tv_ints = NULL}
-    
     forms_csv <- character()
     forms <- list()
     
@@ -445,12 +439,6 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
         
         time_var_include <- tv_confounders[as.numeric(sapply(strsplit(tv_confounders, 
                                                                       "\\."), tail, 1)) < time]
-        # if (!is.null(tv_ints)) {
-        #   time_var_include <- c(time_var_include, 
-        #                         tv_ints[as.logical(unlist(lapply(tv_ints, function(y) {
-        #                           as.numeric(unlist(sapply(strsplit(y, "\\."), tail, 1))) < time
-        #                         })))])
-        # }
         
       }
       
@@ -463,14 +451,6 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
         time_var_include <- 
           tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), 
                                            tail, 1)) == exposure_time_pts[x - 1]]
-        
-        # if (!is.null(tv_ints)) {
-        #   time_var_include <- c(time_var_include, 
-        #                         tv_ints[as.logical(unlist(lapply(tv_ints, function(y) {
-        #                           as.numeric(unlist(sapply(strsplit(y, "\\."), tail, 1))) == exposure_time_pts[x - 1]
-        #                         })))])
-        # }
-        
       }
       
       else if (type == "update") {
@@ -491,14 +471,6 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
         time_var_include <- 
           tv_confounders[as.numeric(sapply(strsplit(tv_confounders, "\\."), 
                                            tail, 1)) == exposure_time_pts[x - 1]]
-        
-        # if (!is.null(tv_ints)) {
-        #   time_var_include <- c(time_var_include, 
-        #                         tv_ints[as.logical(unlist(lapply(tv_ints, function(y) {
-        #                           as.numeric(unlist(sapply(strsplit(y, "\\."), tail, 1))) == exposure_time_pts[x - 1]
-        #                         })))])
-        # }
-        
         
         if (x > 1) {
           

@@ -711,9 +711,6 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
       
       # Makes table of average estimates a
       
-      # lapply(seq_len(length(preds)), function(x) {
-      #   y <- preds[[x]]
-      
       outfile <- file.path(home_dir, "histories", 
                            sprintf("%s-%s_estimated_means_hi_lo=%s.html",
                                    exposure, outcome, 
@@ -731,8 +728,7 @@ compareHistories <- function(home_dir, exposure, exposure_time_pts, outcome, mod
         out = outfile
       )
       sink()
-      
-      # })
+
     }
     
     if (verbose) {
