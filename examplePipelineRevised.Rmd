@@ -27,7 +27,7 @@ Feel free to put feedback on the Slack channel, in the notes Google doc, or in t
 
 ## Getting started
 Until devMSMs is available on CRAN, you will need to install it directly from Github. 
-You will always need to install the devMSMs helper functions from Github (deveMSMsHelpers) if you wish to use them. 
+You will always need to install the devMSMs helper functions from Github (devMSMsHelpers) if you wish to conduct the preliminary steps below. 
 
 ```{r}
 
@@ -370,7 +370,7 @@ custom <- NULL #empirical example
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
-)
+) #add warning about future variables 
 
 
 #required
@@ -412,7 +412,7 @@ prebalance_stats <- assessBalance(data = data, exposure = exposure, exposure_tim
 ```
 
 
-### STEP 2: Creae Simplified Balancing Formulas & Determine Optimal Weighting Method
+### STEP 2: Create Simplified Balancing Formulas & Determine Optimal Weighting Method
 
 #### 2a. Create simplified balancing formulas
 If you specify concurrent confounders to retain and/or confounders to keep in these short balancing formulas, we recommend doing so consistently throughout this workflow. 
@@ -451,7 +451,7 @@ short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposu
 
 ```{r}
 
-#required
+#required; say what default estimand is in weightitMSM(); some dont work for all methods --add to supplement
 formulas <- short_formulas
 
 # optional weighting method "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
@@ -753,7 +753,7 @@ int_order <- 2
 covariates <- NULL
 covariates <- imbalanced_covariates 
 covariates <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
-covariates <- c("ESETA1.6", "state:SmokTotl", "PmAge2:PmBlac2", "ESETA1.6:B18Raw.15:RHasSO.6") #testing interactions
+covariates <- c("ESETA1.6", "state:SmokTotl", "PmAge2:PmBlac2", "ESETA1.6:B18Raw.6:RHasSO.6") #testing interactions
 covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist","PmEd2")  #empirical example
 covariates <- c("PmEd2")  #empirical example
 

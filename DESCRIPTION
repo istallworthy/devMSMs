@@ -43,6 +43,8 @@ Suggests:
     kableExtra,
     stargazer,
     sjPlot,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    rmarkdown
 Config/testthat/edition: 3
 URL: https://istallworthy.github.io/devMSMs/
+VignetteBuilder: knitr
