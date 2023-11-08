@@ -32,7 +32,13 @@ values above a given quantile with the weight value of that quantile."><!-- math
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/istallworthy/devMSMs/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -40,7 +46,7 @@ values above a given quantile with the weight value of that quantile."><!-- math
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Trim IPTW balancing weights</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/R/trimWeights.R" class="external-link"><code>R/trimWeights.R</code></a></small>
       <div class="d-none name"><code>trimWeights.Rd</code></div>
     </div>
 
@@ -120,17 +126,17 @@ this function wraps</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x561f486b0f58&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cbd1475c18&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x561f486b0f58&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cbd1475c18&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.1 + A.2 + B.1 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x561f486b0f58&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cbd1475c18&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span>,</span></span>
@@ -148,7 +154,7 @@ this function wraps</p></div>
 <span class="r-in"><span>                   outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.05 (SD = 0.45; range = 0.24-3). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 0.91 (SD = 0.75; range = 0.42-4). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="trimWeights-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -158,7 +164,7 @@ this function wraps</p></div>
 <span class="r-in"><span>                 save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Trimming weights to 95%.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the A-D.3 relation, following trimming at the 0.95 quantile, the median weight value is 1.05 (SD= 0.4; range= 0.24-2). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the A-D.3 relation, following trimming at the 0.95 quantile, the median weight value is 0.91 (SD= 0.62; range= 0.42-3). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="trimWeights-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu">trimWeights</span><span class="op">(</span>exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
@@ -168,7 +174,7 @@ this function wraps</p></div>
 <span class="r-in"><span>                 save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Trimming weights to 75%.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the A-D.3 relation, following trimming at the 0.75 quantile, the median weight value is 1.05 (SD= 0.32; range= 0.24-1). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the A-D.3 relation, following trimming at the 0.75 quantile, the median weight value is 0.91 (SD= 0.33; range= 0.42-1). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="trimWeights-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
@@ -178,7 +184,7 @@ this function wraps</p></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Isabella Stallworthy, Meriah DeJoseph, Emily Padrutt, Noah Greifer, Daniel Berry.</p>
+  <p></p><p>Developed by Isabella Stallworthy, Noah Greifer, Meriah DeJoseph, Emily Padrutt, Daniel Berry.</p>
 </div>
 
 <div class="pkgdown-footer-right">
