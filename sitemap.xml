@@ -1,69 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/404.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/articles/demodevMSMsWorkflow.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/articles/index.html</loc>
   </url>
   <url>
-    <loc>/reference/add_dose.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/authors.html</loc>
   </url>
   <url>
-    <loc>/reference/add_histories.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/index.html</loc>
   </url>
   <url>
-    <loc>/reference/assessBalance.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/add_dose.html</loc>
   </url>
   <url>
-    <loc>/reference/calcBalStats.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/add_histories.html</loc>
   </url>
   <url>
-    <loc>/reference/compareHistories.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/assessBalance.html</loc>
   </url>
   <url>
-    <loc>/reference/createFormulas.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/calcBalStats.html</loc>
   </url>
   <url>
-    <loc>/reference/createWeights.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/compareHistories.html</loc>
   </url>
   <url>
-    <loc>/reference/create_custom_comparisons.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/createFormulas.html</loc>
   </url>
   <url>
-    <loc>/reference/create_custom_contrasts.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/createWeights.html</loc>
   </url>
   <url>
-    <loc>/reference/devMSMs-package.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/create_custom_comparisons.html</loc>
   </url>
   <url>
-    <loc>/reference/eval_hist.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/create_custom_contrasts.html</loc>
   </url>
   <url>
-    <loc>/reference/fitModel.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/devMSMs-package.html</loc>
   </url>
   <url>
-    <loc>/reference/getModel.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/eval_hist.html</loc>
   </url>
   <url>
-    <loc>/reference/get_comparison_values.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/fitModel.html</loc>
   </url>
   <url>
-    <loc>/reference/get_reference_values.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/getModel.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/get_comparison_values.html</loc>
   </url>
   <url>
-    <loc>/reference/make_love_plot.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/get_reference_values.html</loc>
   </url>
   <url>
-    <loc>/reference/perform_multiple_comparison_correction.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/trimWeights.html</loc>
+    <loc>https://istallworthy.github.io/devMSMs/reference/make_love_plot.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/perform_multiple_comparison_correction.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/trimWeights.html</loc>
   </url>
 </urlset>
