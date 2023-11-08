@@ -313,6 +313,11 @@ fitModel <- function(data, weights, exposure, exposure_time_pts, outcome, model,
   
   if (inherits(data, "mids")) { #imputed dataset
     
+    if (length(weights) != data$m) {
+      stop("Please supply a list of weights with an entry for each imputed dataset.",
+           call. = FALSE)
+    }
+    
     fits <- lapply(seq_len(data$m), function(y) {
       
       d <- mice::complete(data, y)
@@ -345,7 +350,14 @@ fitModel <- function(data, weights, exposure, exposure_time_pts, outcome, model,
     print(mitml::testModels(fits, fits.null))
     cat("\n")
   }
+  
   else if (is.list(data) && !is.data.frame(data)) { #imputed dataset
+    
+    if (length(weights) != length(data)) {
+      stop("Please supply a list of weights with an entry for each imputed dataset.",
+           call. = FALSE)
+    }
+    
     fits <- lapply(seq_len(length(data)), function(y) {
       
       d <- data[[y]]

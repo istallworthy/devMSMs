@@ -14,7 +14,7 @@ https://docs.google.com/document/d/1WQGtfYAF4e6mREl5_fSgvmSG7nBzvT6w_iVQgROeAno/
 ***Goals of this round of testing:
 - make sure functions run with your data using both minimal and optional inputs
 - assess the user output in the console and the items saved out from each function
-- make sure the Supplement provides sufficient detail for running this .rmd file
+- make sure the Supplement provides sufficient detail for running the entirety of this .rmd file
 ***
 
 The code in each code chunk is set up identifying all possible inputs to each function (required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function, including a NULL/NA option if the user does not wish to specify an optional input. The user should select one of each optional input values. Alternatively, the user could modify the call to the function and remove the optional input argument(s) entirely. 
@@ -90,7 +90,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "LESMnNeg.24", "LESMnNeg.35",       
                     "StrDif_Tot.35", "StrDif_Tot.58",    
                     "fscore.35", "fscore.58"
-                    #, "ESETA1.6:B18Raw.6", "ESETA1.6:B18Raw.15:RHasSO.6", "state:EARS_TJo.35" #testing interactions
+                    # , "ESETA1.6:B18Raw.6", "ESETA1.6:B18Raw.15:RHasSO.6", "state:EARS_TJo.35" #testing interactions
 ) 
 
 #required
@@ -121,9 +121,10 @@ These data can be complete or have missingness.
 data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_long_missing_unformatted.csv", #add path to your long data file here if you want to begin with long data
                       header = TRUE)
 
+
 #check for character variables
 any(sapply(data_long, class) == "character") #if this is TRUE, run next lines
-names(data_long)[sapply(data_long, class) == "character"]
+names(data_long)[sapply(data_long, class) == "character"] #find names of any character variables
 data_long[, "state"] <- factor(data_long[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
 
 
@@ -144,7 +145,7 @@ data_long_f <- formatLongData(data = data_long, exposure = exposure, exposure_ti
 
 ```{r}
 
-v <- sapply(strsplit(tv_confounders, "\\."), "[", 1)
+v <- sapply(strsplit(tv_confounders[!grepl("\\:", tv_confounders)], "\\."), "[", 1)
 v <- v[!duplicated(v)]
 library(stats)
 data_wide <- stats::reshape(data = data_long_f, 
@@ -157,13 +158,14 @@ data_wide <- data_wide[, colSums(is.na(data_wide)) < nrow(data_wide)]
 
 
 
-# read in formatted wide data
+# read in formatted wide data with missing values
 data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your wide, formatted data file here 
                       header = TRUE)
 
+
 #check for character variables
 any(sapply(data_wide, class) == "character") #if this is TRUE, run next lines
-names(data_wide)[sapply(data_wide, class) == "character"]
+names(data_wide)[sapply(data_wide, class) == "character"] #find names of any character variables
 data_wide[, "state"] <- factor(data_wide[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
 
 #make factor variables factor 
@@ -188,23 +190,22 @@ data <- data_wide
 
 ```{r}
 
-#optional
+#optional; number of imputations (default is 5)
 m <- NA
-m <- 1 #number of imputations (default is 5)
+m <- 5 #empirical example
 
-#optional
+#optional; provide an imputation method pmm, midastouch, sample, cart , rf (default)
 method <- NA
-method <- "rf" # provide an imputation method pmm, midastouch, sample, cart , rf (default)
+method <- "rf" #empirical example
 
-#optional
+#optional maximum iterations for imputation (default is 5)
 maxit <- NA
-maxit <- 1 #maximum iterations for imputation (default is 5)
+maxit <- 5 #empirical example
 
 #optional
 #please see the mice::mice() documentation for more optimal input to customize mice(): https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice
 
 
-#note: right now (just for testing purposes), the function is set up for maxit = 0 to go fast, default is 5
 imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
                            m = m, method = method, maxit = maxit, para_proc = FALSE, read_imps_from_file = FALSE, 
                            home_dir = home_dir, save.out = TRUE)
@@ -216,7 +217,7 @@ data <- imputed_data
 
 
 #OR, read in a saved mids object
-imputed_data <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/imputations_10.18.23/ESETA1-StrDif_Tot.58_all_imp.rds") # final imputations for empirical example; place your .rds file in your home directory and change the name of file here
+imputed_data <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed_mids.rds") # final imputations for empirical example; place your .rds file in your home directory and change the name of file here
 
 #if you want to use the package with imputed data
 data <- imputed_data
@@ -236,7 +237,7 @@ data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/
 
 #check for character variables
 any(sapply(data, class) == "character") #if this is TRUE, run next lines
-names(data)[sapply(data, class) == "character"]
+names(data)[sapply(data, class) == "character"] #find names of any character variables
 data[, "state"] <- factor(data[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
 
 
@@ -255,7 +256,8 @@ data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
 ```{r}
 
 #read in imputed csv files to list
-folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/imputations_10.18.23/" # these are final imputations for empirical example; change this to match your local folder
+folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/imputations/" # these are final imputations for empirical example; change this to match your local folder
+
 files <- list.files(folder, full.names = TRUE, pattern = "\\.csv") #make sure pattern matches suffix of your data
 
 
@@ -269,7 +271,7 @@ data <- lapply(files, function(file) {
 #check for character variables
 any(as.logical(unlist(lapply(data, function(x) { #if this is TRUE, run next lines
   any(sapply(x, class) == "character") }))))
-names(data[[1]])[sapply(data[[1]], class) == "character"]
+names(data[[1]])[sapply(data[[1]], class) == "character"] #find names of any character variables
 data <- lapply(data, function(x){
   x[, "state"] <- factor(x[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
 })
@@ -340,7 +342,6 @@ comparison <- c("h-h-h", "h-l-l", "l-l-h", "h-h-l", "l-h-h") #empirical example 
 
 ```{r}
 
-#all inputs
 inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, # required input
             ti_confounders = ti_confounders, tv_confounders = tv_confounders, # required input
             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
@@ -370,7 +371,6 @@ custom <- NULL #empirical example
 custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
-
 
 
 #required
@@ -459,7 +459,7 @@ formulas <- short_formulas
 method <- "cbps"
 weights.cbps <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                               method = method, read_in_from_file = FALSE,  #optional
-                              ints = TRUE,  #trying out optional weightitMSM inputs
+                              # ints = TRUE,  #trying out optional weightitMSM inputs
                               home_dir = home_dir, verbose = TRUE, save.out = TRUE)  #optional
 
 method <- "glm"
@@ -519,7 +519,7 @@ balance_stats.cbps <- assessBalance(data = data, exposure = exposure, exposure_t
                                     balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                     home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
-weights <- weights.glm 
+weights <- weights.glm
 balance_stats.glm <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
                                    outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                    balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
@@ -565,7 +565,7 @@ imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35",
 type <- "weighted"
 formulas <- full_formulas
 
-weights <- weights.glm
+weights <- weights.cbps
 
 #all inputs
 balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
@@ -617,7 +617,7 @@ updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = expo
 #required
 formulas <- updated_formulas
 
-method <- "glm"
+method <- "cbps"
 
 #all inputs
 final_weights <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
@@ -693,7 +693,7 @@ final_balance_stats <- assessBalance(data = data, exposure = exposure, exposure_
 
 
 #manually list remaining imbalanced covariates that are time-invariant or time-varying at t=1 for use in Step 5
-covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist","PmEd2", "B18Raw.6") 
+covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist", "PMEd2") 
 
 ```
 
@@ -747,14 +747,15 @@ link <- "identity"
 
 # max interaction order (required for interaction models m2-3)
 int_order <- NA
-int_order <- 3
+int_order <- 2
 
 #covariates (required for covariate models m1, m3)
 covariates <- NULL
 covariates <- imbalanced_covariates 
 covariates <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
 covariates <- c("ESETA1.6", "state:SmokTotl", "PmAge2:PmBlac2", "ESETA1.6:B18Raw.15:RHasSO.6") #testing interactions
-covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist","PmEd2", "B18Raw.6")  #empirical example
+covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist","PmEd2")  #empirical example
+covariates <- c("PmEd2")  #empirical example
 
 
 #optional specification of epochs
@@ -767,7 +768,7 @@ weights <- trim_weights
 
 # all inputs
 #required
-model <- "m0"
+model <- "m1"
 models <- fitModel(data = data, weights = weights, exposure = exposure, #required
                    exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                    family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
@@ -811,7 +812,7 @@ If you specify exposure epochs, we recommend doing so consistently throughout th
 #optional specification of epochs; only specify this if you did in model fitting (5a) --must be identical
 epochs <- NULL
 epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
-                     values = I(list(c(6, 15), c(24, 35), c(58)))) 
+                     values = I(list(c(6, 15), c(24, 35), c(58)))) #empirical example 
 
 #optional list of quantiles specifying high and low cutoff values for continuous exposures; 
 hi_lo_cut <- NULL
@@ -829,25 +830,25 @@ comparison <- c("h-h-h", "h-h-l") #multiple
 comparison <- c("h-h-h", "h-l-l", "l-l-h", "h-h-l", "l-h-h") #empirical example final choice
 
 
-#optional multiple comparion method
+#optional multiple comparion method; default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
 mc_comp_method <- NA
-mc_comp_method <- "bonferroni" # default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
+mc_comp_method <- "BH" #empirical example 
 
-#optional specification of dose level (high or low) for dose count
+#optional specification of dose level (high or low) for dose count (default is "h")
 dose_level <- NA
-dose_level <- "h" #(default is "h")
+dose_level <- "h" #empirical example 
 
 #optional exposure label for plotting
 exp_lab <- NA
-exp_lab <- "Economic Strain" 
+exp_lab <- "Economic Strain" #empirical example 
 
 #optional outcome label for plotting 
 out_lab <- NA
-out_lab <- "Behavior Problems" 
+out_lab <- "Behavior Problems" #empirical example 
 
-# optional list of colors (equal to number of epochs +1) or brewer palette for plotting
+# optional list of colors (equal to number of epochs +1) or brewer palette for plotting #(see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) for plotting default is 'Dark2'); 
 colors <- NULL
-colors <- c("Dark2")  #(see RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) for plotting default is 'Dark2'); 
+colors <- c("Dark2") #empirical example
 colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2") #list number-of-exposure-main-effects-+1 colors
 
 #required

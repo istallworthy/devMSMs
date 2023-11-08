@@ -649,6 +649,7 @@ assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, form
   
   weights_method <- if (type == "weighted") weights[[1]]$method else "no weights"
   
+  
   #only making additional love plots for imputed data (averaging)
   
   if (mi) {
@@ -662,18 +663,16 @@ assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, form
       else if (!is.data.frame(data)) {
         exposure_type <- if (is.numeric(data[[1]][, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
       }
-      # else {
-      #   exposure_type <- if (is.numeric(data[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
-      # }
-      # 
       
       temp <- all_bal_stats[all_bal_stats$exp_time == exposure_time_pt, , drop = FALSE]
       
       make_love_plot(home_dir = home_dir, folder = folder, exposure = exposure,
                      exposure_time_pt = exposure_time_pt,
                      exposure_type = exposure_type,
-                     k = 0, form_name = form_name, balance_stats = temp,
-                     data_type = data_type, balance_thresh = balance_thresh,
+                     k = "Averaged Across Imputations", form_name = form_name, balance_stats = temp,
+                     # data_type = data_type, 
+                     data_type = "single", #indicating single averages (across imputed data) 
+                     balance_thresh = balance_thresh,
                      weights_method = weights_method, imp_conf = imp_conf,
                      save.out = save.out, verbose = TRUE)
     })
