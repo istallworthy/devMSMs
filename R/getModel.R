@@ -144,6 +144,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
         vars <- as.character(unlist(strsplit(ints[x], "\\:")))
         num_comp <- length(vars)
         
+        f_vars <- NULL
         if (any(vars %in% factor_covariates)) {
           vars <- do.call(c, lapply(vars, function(y) {
             if (y %in% factor_covariates) {
@@ -177,7 +178,6 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
         names(prods) <- ints2
         
         #make factor class if both components are factors
-        
         for (f in seq_len(length(ints2))) {
           vars <- as.character(unlist(strsplit(ints2[f], "\\:")))
           if (all(vars %in% factor_covariates)) {

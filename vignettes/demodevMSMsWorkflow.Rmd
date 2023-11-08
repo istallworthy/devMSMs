@@ -1,0 +1,39 @@
+---
+title: "Demo of devMSMs Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{demodevMSMsWorkflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#library(devMSMs)
+```
+
+## Data
+devMSMs was designed for use with longitudinal data. Here, we provide an example dataset simulated from developmental data. 
+
+
+
+
+Build vignette when done: 
+```{r}
+# devtools::build_vignettes()
+
+#view
+# browseURL("doc/demodevMSMsWorkflow.html")
+
+# devtools::check()
+
+# usethis::use_package("dplyr", "Suggests")
+
+```
+
