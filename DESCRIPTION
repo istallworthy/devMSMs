@@ -7,7 +7,7 @@ Authors@R: c(person("Isabella", "Stallworthy",
             role = c("aut", "cre")),
             person("Noah", "Greifer",
             email = "ngreifer@iq.harvard.edu",
-            role = c("aut", "cre")),
+            role = c("aut", "ctb")),
             person("Meriah", "DeJoseph",
             email = "meriahd@stanford.edu",
             role = c("aut")),
@@ -46,5 +46,5 @@ Suggests:
     testthat (>= 3.0.0),
     rmarkdown
 Config/testthat/edition: 3
-URL: https://istallworthy.github.io/devMSMs/
+URL: https://istallworthy.github.io/devMSMs/, https://github.com/istallworthy/devMSMs
 VignetteBuilder: knitr
