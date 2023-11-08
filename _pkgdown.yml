@@ -11,5 +11,11 @@ footer:
     left: developed_by
     right: built_with
 home:
+  title: An R package for conducting marginal structural models (MSMs) with longitudinal data
+  description: add description here
   sidebar:
     structure: [links, license, community, citation, authors, dev]
+    
+    
+ 
+ 
