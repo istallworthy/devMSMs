@@ -66,23 +66,33 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="devmsms">devMSMs<a class="anchor" aria-label="anchor" href="#devmsms"></a>
 </h1></div>
-<p><code>devMSMs</code> is an R package for implementing marginal structural models with longitudinal data to answer causal questions in developmental science. This package has an accompanying tutorial paper, Investigating Causal Questions in Human Development using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R, that is forthcoming.</p>
+<p><em>devMSMs</em> is an R package for implementing marginal structural models (MSMs) with longitudinal data to answer causal questions in developmental science. This package has an accompanying tutorial paper, <em>Investigating Causal Questions in Human Development using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R</em>, that is forthcoming. We suggest reading this paper for a brief conceptual introdcution to MSMs prior to implementing this package. We have provided additional resources on this page for more in-depth material on this method and its application.</p>
 <p>Core features of this package include: - step-by-step user guidance for users new to the MSM technique and R programming - flexible functions for implementing IPTW weighting and outcome modeling to answer substantive causal questions about dose and timing</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
+<p>The package contains 6 core functions for conducting confounder adjustment and outcome modeling of longitudinal data with time-varying exposures.</p>
 <p><img width="742" alt="Screen Shot 2023-11-08 at 4 00 24 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/cbab3b78-ffa8-4ffc-9b97-d082a9f145b5"></p>
+<p><a href="https://github.com/istallworthy/devMSMs/files/13313050/Table.1.pdf" class="external-link">Table 1.pdf</a></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>devMSMs can be installed in R Studio from Github using the <em>devtools</em> package:<br><code><a href="https://devtools.r-lib.org/" class="external-link">library(devtools)</a></code><br><code>install_github("istallworthy/devMSMs")</code><br><code><a href="https://istallworthy.github.io/devMSMs/">library(devMSMs)</a></code></p>
-<p>The helper functions can be installed from the devMSMsHelpers repo:<br><code>install_github("istallworthy/devMSMsHelpers</code><br><code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(devMSMsHelpers)</a></code></p>
+<p>The helper functions can be installed from the accompanying <em>devMSMsHelpers</em> repo:<br><code>install_github("istallworthy/devMSMsHelpers</code><br><code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(devMSMsHelpers)</a></code></p>
 </div>
 <div class="section level2">
 <h2 id="recommended-workflow">Recommended Workflow<a class="anchor" aria-label="anchor" href="#recommended-workflow"></a>
 </h2>
 <p><img width="651" alt="Screen Shot 2023-11-08 at 4 00 44 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/91216ef3-e4c3-4c8a-a522-f683105bfc66"></p>
+</div>
+<div class="section level2">
+<h2 id="additional-resources">Additional Resources<a class="anchor" aria-label="anchor" href="#additional-resources"></a>
+</h2>
+<p>Fong, C., Hazlett, C., &amp; Imai, K. (2018). Covariate balancing propensity score for a continuous treatment: Application to the efficacy of political advertisements. The Annals of Applied Statistics, 12(1), 156–177. <a href="https://doi.org/10.1214/17-AOAS1101" class="external-link uri">https://doi.org/10.1214/17-AOAS1101</a></p>
+<p>Hirano, K., &amp; Imbens, G. W. (2004). The Propensity Score with Continuous Treatments. In Applied Bayesian Modeling and Causal Inference from Incomplete-Data Perspectives (pp. 73–84). John Wiley &amp; Sons, Ltd. <a href="https://doi.org/10.1002/0470090456.ch7" class="external-link uri">https://doi.org/10.1002/0470090456.ch7</a></p>
+<p>Robins, J. M., Hernán, M. Á., &amp; Brumback, B. (2000). Marginal Structural Models and Causal Inference in Epidemiology. Epidemiology, 11(5), 550–560.</p>
+<p>Thoemmes, F., &amp; Ong, A. D. (2016). A Primer on Inverse Probability of Treatment Weighting and Marginal Structural Models. <a href="https://doi.org/10.1177/2167696815621645" class="external-link uri">https://doi.org/10.1177/2167696815621645</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
