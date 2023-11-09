@@ -5,7 +5,7 @@
 Core features of this package include: 
 - step-by-step user guidance for users new to the MSM technique and R programming
 - flexible functions for implementing IPTW weighting and outcome modeling to answer substantive causal questions about dose and timing
-  
+    
 ## Overview
 The package contains 6 core functions for conducting confounder adjustment and outcome modeling of longitudinal data with time-varying exposures.  
 
@@ -13,9 +13,9 @@ The package contains 6 core functions for conducting confounder adjustment and o
 <img width="742" alt="Screen Shot 2023-11-08 at 4 00 24 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/cbab3b78-ffa8-4ffc-9b97-d082a9f145b5">
 
     
-  [Table 1.pdf](https://github.com/istallworthy/devMSMs/files/13313050/Table.1.pdf)
+<img width="658" alt="Screen Shot 2023-11-09 at 4 54 22 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/4b62730e-3975-4002-a06b-205c93d04224">
 
-
+  
 ## Installation
 devMSMs can be installed in R Studio from Github using the *devtools* package:  
 `library(devtools)`  
@@ -26,7 +26,7 @@ The helper functions can be installed from the accompanying *devMSMsHelpers* rep
 `install_github("istallworthy/devMSMsHelpers`  
 `library(devMSMsHelpers)`
   
-
+  
 ## Recommended Workflow
 
 <img width="651" alt="Screen Shot 2023-11-08 at 4 00 44 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/91216ef3-e4c3-4c8a-a522-f683105bfc66">
