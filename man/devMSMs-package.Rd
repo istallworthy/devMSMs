@@ -12,6 +12,7 @@ Functions for preparing, assessing, and implementing MSMS.
 Useful links:
 \itemize{
   \item \url{https://istallworthy.github.io/devMSMs/}
+  \item \url{https://github.com/istallworthy/devMSMs}
 }
 
 }
@@ -20,9 +21,9 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Noah Greifer \email{ngreifer@iq.harvard.edu} [contributor]
   \item Meriah DeJoseph \email{meriahd@stanford.edu}
   \item Emily Padrutt \email{padru004@umn.edu}
-  \item Noah Greifer \email{ngreifer@iq.harvard.edu}
   \item Daniel Berry \email{dberry@umn.edu}
 }
 

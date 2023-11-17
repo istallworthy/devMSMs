@@ -1,0 +1,120 @@
+---
+title: "Specify Core Inputs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Specify_Core_Inputs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(devMSMs)
+```
+
+Users should first view the Terminology and Data Requirements vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, exposure time points, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the devMSMs package (see Workflows vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (verbose = FALSE) and elect not to save out locally any intermediate and final output (save.out = FALSE). Following completion of this vignette, the user should complete the Preliminary Steps followed by a Workflow vignette to implement *devMSMs* with their longitudinal data. 
+  
+The following steps also correspond to code chunks in the examplePipeline.rmd file. 
+  
+  
+  
+## Home Directory
+Users are required to specify home directory, or in quotations, a path to a designated folder for all output from the package, if they plan to save out intermediary and final outputs in the package (default) by setting ‘save.out’ = TRUE for any of the functions. All sub directories will be created within this home directory by the *devMSMs* functions automatically when ‘save.out’ = TRUE.  
+
+```{r}
+
+#set seed for reproducibility 
+set.seed(1234)
+
+#required if you wish to use save.out = TRUE in the functions
+home_dir <- NA
+home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
+
+```
+  
+## Exposure Variable
+Users are required to specify an exposure variable as input to all functions in devMSMs. The user must specify exposure, or the variable name of the exposure in quotations, without any time information appended (e.g., “variable”). Note that in your dataset, the exposure variables should be in wide format labeled with a “.time” suffix (e.g., “variable.t”).   
+
+```{r}
+#required
+exposure <- "ESETA1"
+
+```
+
+## Exposure Time Points
+Next, users are required to provide information about the time points at which the exposure was assessed to *exposure_time_pts*, as required input to the createFormulas(), assessBalance(), fitModel(), and compareHistories() *devMSMs* functions (see *Workflows* vignettes). The user has two options when specifying exposure time points and should select the option that best serves their theory regarding developmental timing and the practical constraints of their data and the modeling process.  
+  
+First, they may specify all time points at which the exposure was measured in their data. This means that balancing formulas will be created (Steps 1a, 2a, 3b in the Workflow vignettes) and IPTW weights will be created (Steps 2b, 3c in the *Workflow* vignettes) and assessed (Steps 2c, 3a, 4 in the Workflow vignettes) for all time points. In this case, if no epochs are specified, all time points will be included as exposure main effects in the final substantive model and history comparison (Step 5 in the *Workflow* vignettes).   
+  
+Second, they may specify a subset of theoretically important time points at which the exposure was measured in their data. This means that balancing formulas will be created and IPTW weights will be created and assessed for only those time points. Further, if no epochs are specified, only those subsetted time points will be included as exposure main effects in the final substantive models. Importantly, exposure variables at all time points at which the exposure was assessed should be included as time-varying confounders for balancing purposes only.    
+The specification of exposure epochs should be kept consistent throughout the use of the *devMSMs* package. If the user intends to specify exposure epochs (Preliminary Steps Vignette Step P3), the user should include all time points encompassed in the epochs in exposure_time_pts. If the user does not intend to specify exposure epochs (Preliminary Steps Vignette Step P3), the exposure_time_pts will constitute the exposure main effects in the final outcome model and form the basis of the histories used for history comparison. In this case, if the user specifies more than 4 exposure time points, they will be required to conduct only a subset of history comparisons (Step 5b in the *Workflows* vignettes), given that the base code (see the hypotheses() function from the *marginaleffects* package) cannot accommodate all pairwise history comparisons for more than 5 time points.   
+
+We elected to create epochs of infancy (6 and 15 months), toddlerhood (24 and 35 months), and early childhood (58 months). Thus, we input 6, 15, 24, 35, and 58 to *exposure_time_pts*.   
+
+```{r}
+#required
+exposure_time_pts <- c(6, 15, 24, 35, 58)
+
+```
+
+
+## Outcome Variable
+Users are also required to specify an outcome variable at a designated final time point, as required input to all functions in the *devMSMs* package. This final time point should be equal to (or, ideally greater than) the final exposure time point. Note that instances of the outcome variable measured at any prior time points should be included as time-varying confounders for balancing purposes. Specifying the outcome, or the variable name of the outcome with the time point at which it was collected appended following a period (e.g., “variable.t”) corresponding to the variable name in the wide data, is required for the package. Outcome variables in your dataset should be in wide format labeled with a “.time” suffix.  
+  
+```{r}
+#required
+outcome <- "StrDif_Tot.58"
+
+```
+
+  
+## Confounders 
+###Time invariant.  
+Specifying at least one time invariant confounder is required for the use of this package as required input for the createFormulas() function. Time invariant confounders could include core demographic or birth characteristics (e.g., sex, racial group membership, birth complications) that might cause either the exposure or outcome, either directly or as a proxy, as suggested by theory and/or evidenced by strong associations in the existing literature. Here, the user can also include any interaction terms between time invariant variables (e.g., “variable:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level. For *ti_confounders*, as a list, in quotations, provide the names of all confounders (e.g., “variable”, “variable:variable”) in your dataset that are time invariant.  
+  
+```{r}
+#required; list in wide format
+ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
+                    "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
+                    "peri_health", "caregiv_health", "gov_assist"
+)
+
+```
+  
+  
+###Time-varying.
+Specifying at least time-varying exposures as time-varying confounders is required for the use of this package as required input for the createFormulas() *devMSMs* function (see *Workflows* vignettes). In *tv_confounders* as a list, in quotations, provide the names of all variables in wide format (e.g., “variable.t”) in your dataset that are time-varying (including time-varying confounders, exposures, and outcomes). These should include all time-varying exposure variables and all outcome variables present in the dataset (e.g., “variable.t”). Note that time-varying confounders should also include any confounders measured repeatedly at all time points (e.g., InRatioCor) or any collected only at one or several specific time points, and missing at other time points, but are not time invariant. Here, the user can also include any interaction terms between time-varying variables (e.g., “variable.t:variable.t”) or between time invariant and time-varying variables (e.g., “variable.t:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level.  
+  
+```{r}
+#required
+
+tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
+                    "MDI.6", "MDI.15",                                            
+                    "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
+                    "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
+                    "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
+                    "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
+                    "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
+                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
+                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",  #exposure variables required               
+                    "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
+                    "EARS_TJo.24", "EARS_TJo.35",                                        
+                    "LESMnPos.24", "LESMnPos.35",                                  
+                    "LESMnNeg.24", "LESMnNeg.35",       
+                    "StrDif_Tot.35", "StrDif_Tot.58",    
+                    "fscore.35", "fscore.58"
+) 
+```
+  
+  
+##References
+Arel-Bundock, Vincent. 2023. marginaleffects: Predictions, Comparisons, Slopes, 
+Marginal  Means, and Hypothesis Tests. 
+https://CRAN.R-project.org/package=marginaleffects.
+
