@@ -47,20 +47,16 @@ data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/
 We first check to see if there are any character variables present in the data and convert them to integers.
   
 ```{r}
-
 any(sapply(data, class) == "character") #if this is TRUE, run next lines
 
 names(data)[sapply(data, class) == "character"] #find names of any character variables
 
 data[, "state"] <- factor(data[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
-
 ```
   
 We then make factor variables factor class. 
   
 ```{r}
-
-#make factors
 factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                    "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
@@ -120,35 +116,30 @@ The goal of this first phase is to minimize the associations between confounders
 ### Step 1. Create Full Balancing Formulas & Conduct Pre-Balance Checking
 
 #### Step 1a. Create Full Balancing Formulas & Conduct Pre-Balance Checking
-We first create comprehensive, full balancing formulas relating exposure to confounders at each time point using the `createFormulas` function (`type = “full”`). This step creates full formulas containing all measured confounding variables at each exposure time point, including all time-invariant confounders, lagged time-varying confounders, as well as past levels of the exposure and outcome (make sure they are listed as time-varying confounders). The code automatically excludes time-varying confounders at the contemporaneous time point given that they cannot be decisively differentiated from mediators which should not be balanced on (Thoemmes & Ong, 2016), although this can be modified by the user if they have strong reason to believe a concurrent variable is not a mediator (see below).   
+We first create comprehensive, full balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type = “full”`). This step creates full formulas containing all measured confounding variables at each exposure time point, including all time-invariant confounders, lagged time-varying confounders, as well as past levels of the exposure and outcome (make sure they are listed as time-varying confounders). The code automatically excludes time-varying confounders at the contemporaneous time point given that they cannot be decisively differentiated from mediators which should not be balanced on (Thoemmes & Ong, 2016), although this can be modified by the user if they have strong reason to believe a concurrent variable is not a mediator (see below).   
 
 To include interactions between covariates in the balancing formulas, please list those composed of only time invariant covariates (e.g., “variable:variable” or “variable.t:variable.t”) as time invariant confounders, and those composed of both or only time-varying covariates (e.g., “variable.t:variable” or “variable.t:variable.t”) in the time-varying confounders list. Interactions containing time-varying covariates will be treated as time-varying confounders measured at the highest measurement time point of the constituent time points. Of note, interactions between factor variables with multiple levels can produce a large number of additional variables in the balancing formulas.  
 
-The required input to create full balancing formulas using the `createFormulas` function are: exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of time-varying confounders (e.g. “variable.time”), a list of time invariant confounders (e.g., “variable”), and setting `type = “full”`.   
+The required input to create full balancing formulas using the `createFormulas()` function are: exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of time-varying confounders (e.g. “variable.time”), a list of time invariant confounders (e.g., “variable”), and setting `type = “full”`.   
 
-Optional inputs to create full balancing formulas using the `createFormulas` function are as follows.  
+Optional inputs to create full balancing formulas using the `createFormulas()` function are as follows.  
   
 For `concur_conf`: as a list, provide the names of any time-varying confounders (e.g., “variable.time”) that you wish to be included concurrently in the balancing formulas (overriding the default which is to only include lagged confounders).  
 
 ```{r}
-
 concur_conf <- "B18Raw.15"
 
 concur_conf <- NULL #empirical example 
-
 ```
 
-The user may also specify a list of custom formulas by specifying to custom a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format, with each entry named with the formula type and exposure time point (e.g., "full_form-6"). An abridged example is shown below. The `createFormulas` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating.  
-  
+The user may also specify a list of custom formulas by specifying to custom a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format, with each entry named with the formula type and exposure time point (e.g., "full_form-6"). An abridged example is shown below. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating.  
 
 ```{r}
-
 custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 ) #add warning about future variables 
 
 custom <- NULL 
-
 ```
 
 The `createFormulas` function saves out .csv and .rds files containing balancing formulas at each exposure time point for the specified `type` ("full”) in the ‘formulas/full/’ folder.  
@@ -156,35 +147,31 @@ The `createFormulas` function saves out .csv and .rds files containing balancing
 The function returns a list of formulas labeled by type, exposure, outcome, and exposure time point.
 
 ```{r}
-
 type <- "full"
 
 full_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, #required
                                 type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, #required
                                 concur_conf = concur_conf, custom = custom, #optional
                                 home_dir = home_dir, verbose = verbose, save.out = save.out) #optional
-
 ```
 
 
 #### 1b. Conduct Exploratory Pre-Balance Assessment
-The next step examines the initial imbalance, or how strongly exposure relates to each confounder at each time point, for all measured confounders prior to weighting using the `assessBalance` function (`type = “prebalance”`). This function draws on the `calcBalStats` function (see the Assessing Balance for Time-Varying Exposure section in the accompanyingm manuscript. The `assessBalance` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).  
+The next step examines the initial imbalance, or how strongly exposure relates to each confounder at each time point, for all measured confounders prior to weighting using the `assessBalance()` function (`type = “prebalance”`). This function draws on the `calcBalStats()` function (see the Assessing Balance for Time-Varying Exposure section in the accompanyingm manuscript. The `assessBalance()` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).  
 
-The required inputs for using the `assessBalance` function to conduct pre balance testing are: data (data frame, a mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), the full formulas (see Step 1a), and set type = “prebalance”. 
+The required inputs for using the `assessBalance()` function to conduct pre balance testing are: data (data frame, a mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), the full formulas (see Step 1a), and set `type = “prebalance”`. 
 
 The optional inputs are as follows. The user may specify `balance_thresh`: provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced and above which they are considered imbalanced (default is 0.1; Stuart, 2010). The user also has the option to supply a list of two values indicating different thresholds for important and less important confounders, respectively, accompanied by a list of important confounders (time-varying: “variable.t”, time invariant: “variable”) to the `imp_conf` field.
 
 ```{r}
+balance_thresh <- c(0.05, 0.1) 
 
-balance_thresh <- c(0.05, 0.1) #empirical example 
-
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") #empirical example 
-
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") 
 ```
 
 We recommend thresholds of 0.05 and 0.1 for important and less important confounders, respectively. The relative importance of confounders should be determined based on existing theory and conceptual consideration. The specification of balance threshold(s) should be kept consistent throughout the use of the *devMSMs* package. 
 
-The `assessBalance` function saves out the following .csv and .html files into the ‘balance/prebalance’ folder: tables of balance statistics for all confounders (Table 1), tables of balance statistics for covariates that are imbalanced (Table 2), and an overall balance summary table (averaged across any imputed datasets) (Table 3). Within the ‘balance/prebalance/plots’ folder, the function outputs  .jpeg files of summary love plots depicting confounder balance for each exposure time point  ( Figure 1).  
+The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/prebalance’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/prebalance/plots’ folder, the function outputs  .jpeg files of summary love plots depicting confounder balance for each exposure time point. 
 
 The function returns a data frame (or list) of balance statistics, balance thresholds, and binary balanced tag for each confounder relevant to each exposure time point. 
 
@@ -200,16 +187,15 @@ prebalance_stats <- assessBalance(data = data, exposure = exposure, exposure_tim
 ```
 
 
-
 ### Step 2: Create Simplified Balancing Formulas & Determine Optimal Weighting Method 
 The goal of this second step is to create shortened, more parsimonious balancing formulas for determining the optimal IPTW weighting method that most successfully reduces imbalance.  
 
 #### 2a. Create Simplified Balancing Formulas
-First, we create shorter, more parsimonious balancing formulas relating exposure to confounders at each time point using the `createFormulas` function (`type = ”short”`). These formulas contain time-varying confounders measured only at the *t*-1 lag for each exposure time point. The logic here is that balancing on confounders at the most recent prior time point (*t*-1 only) may achieve balance on levels at more distal time points given the stability of many confounders over time. Importantly, we will empirically assess and relax this assumption if needed at a subsequent step. 
+First, we create shorter, more parsimonious balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type = ”short”`). These formulas contain time-varying confounders measured only at the *t*-1 lag for each exposure time point. The logic here is that balancing on confounders at the most recent prior time point (*t*-1 only) may achieve balance on levels at more distal time points given the stability of many confounders over time. Importantly, we will empirically assess and relax this assumption if needed at a subsequent step. 
 
 See Step 1a for instructions on how to include confounder interactions.   
 
-The required input to create shortened balancing formulas using the `createFormulas` function are exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of time-varying confounders (e.g., “variable.time”), a list of time invariant confounders, and setting `type = “short”`. 
+The required input to create shortened balancing formulas using the `createFormulas()` function are exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of time-varying confounders (e.g., “variable.time”), a list of time invariant confounders, and setting `type = “short”`. 
 
 In addition to the optional input outlined in Step 1a, the user also has the option to specify in `keep_conf`, a list of any time-varying confounders (e.g., “variable.t”) to always retain in all formulas for exposure measured at a subsequent time point. The user may use this argument to retain specific time-varying confounders that would otherwise may have been excluded at this step if they occur at lags greater than *t*-1 for each formula. 
 
@@ -217,10 +203,9 @@ In addition to the optional input outlined in Step 1a, the user also has the opt
 keep_conf <- "InRatioCor.6"
 
 keep_conf  <-  NULL 
-
 ```
   
-The `createFormulas` function saves out .csv and .rds files containing balancing formulas at each exposure time point (e.g., see below) for the specified type (in this case, “short”) in the ‘formulas/short’ folder.  
+The `createFormulas()` function saves out .csv and .rds files containing balancing formulas at each exposure time point (e.g., see below) for the specified type (in this case, “short”) in the ‘formulas/short’ folder.  
 
 The function returns a list of balancing formulas labeled by type, exposure, outcome, and exposure time point.  
 
@@ -232,26 +217,25 @@ short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposu
                                  tv_confounders = tv_confounders, concur_conf = concur_conf, 
                                  keep_conf = keep_conf, custom = custom, 
                                  home_dir = home_dir, verbose = verbose, save.out = save.out) 
-
 ```
   
      
 #### 2b. Create IPTW Balancing Weights using Multiple Weighting Methods
-Having created shorter, simplified balancing formulas  we now create the first round of IPTW balancing weights (Thoemmes & Ong, 2016) using the `createWeights` function, the shortened balancing formulas, and all available weighting methods. The function calls the `weightitMSM` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point and automatically multiplies them together to create one weight per person. Weights are stabilized, as recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016), and distributions are saved for inspection. 
+Having created shorter, simplified balancing formulas  we now create the first round of IPTW balancing weights (Thoemmes & Ong, 2016) using the `createWeights()` function, the shortened balancing formulas, and all available weighting methods. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point and automatically multiplies them together to create one weight per person. Weights are stabilized, as recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016), and distributions are saved for inspection. 
   
-The required inputs for using the `createWeights` function to create the initial around of IPTW balancing weights are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), outcome (e.g., “variable.time”), and provide the short formulas (see Step 2a). 
+The required inputs for using the `createWeights()` function to create the initial around of IPTW balancing weights are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), outcome (e.g., “variable.time”), and provide the short formulas (see Step 2a). 
 
-The optional inputs are as follows. For `method`, provide one of the following methods for calculating balancing weights for use by `weightitMSM` from the that have been validated for longitudinal exposures: "cbps" (Covariate Balancing Propensity Score weighting; default), “gbm” (generalized boosted model), “glm” (generalized linear model), or “super” (SuperLearner via the SuperLearner package; Polley et al., 2013). 
+The optional inputs are as follows. For `method`, provide one of the following methods for calculating balancing weights for use by `weightitMSM()` from the that have been validated for longitudinal exposures: "cbps" (Covariate Balancing Propensity Score weighting; default), “gbm” (generalized boosted model), “glm” (generalized linear model), or “super” (SuperLearner via the SuperLearner package; Polley et al., 2013). 
 
 ```{r}
 method <- "cbps"
 ```
 
-The `createWeights` function can also take any number of additional arguments that will be passed to the `weightitMSM` function (e.g., ‘ints’, ‘criterion’, distribution’, ‘SL.library’). For instance, if the user wishes to include first-order interactions of supplied covariates in the weights model, they can include the argument `ints = TRUE`.  If the user selects the SuperLearner (“super”) method, the default super learner library (‘SL.library’) is xx but an alternative library can be entered as an input to the `createWeights` function. For binary exposures, the “cbps” method allows you to specify `estimand` as either ATE, ATT, or ATC. With “glm”, “super”, and “bart” you can specify ATE, ATT, ATC, ATO, ATM, or ATOS. With “gbm” you can specify ATE, ATT, ATC, ATO, or ATM. The default estimand for binary exposures is ATE. We advise the interested user to review the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a> for more information about the additional optional arguments available for each of the weighting methods.  
+The `createWeights()` function can also take any number of additional arguments that will be passed to the `weightitMSM ()` function (e.g., ‘ints’, ‘criterion’, distribution’, ‘SL.library’). For instance, if the user wishes to include first-order interactions of supplied covariates in the weights model, they can include the argument `ints = TRUE`.  If the user selects the SuperLearner (“super”) method, the default super learner library (‘SL.library’) is xx but an alternative library can be entered as an input to the `createWeights` function. For binary exposures, the “cbps” method allows you to specify `estimand` as either ATE, ATT, or ATC. With “glm”, “super”, and “bart” you can specify ATE, ATT, ATC, ATO, ATM, or ATOS. With “gbm” you can specify ATE, ATT, ATC, ATO, or ATM. The default estimand for binary exposures is ATE. We advise the interested user to review the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a> for more information about the additional optional arguments available for each of the weighting methods.  
   
-The user can also specify `read_in_from_file = TRUE `if the user has previously created weights for these data, formula, and weight type using this function and wishes to read them in from a local file instead of recreating them. The `createWeights` function automatically conducts some basic checks that the saved weights match the data type, weights method, and number of formulas provided. The user is responsible for making sure these weights were created appropriately.  
+The user can also specify `read_in_from_file = TRUE `if the user has previously created weights for these data, formula, and weight type using this function and wishes to read them in from a local file instead of recreating them. The `createWeights()` function automatically conducts some basic checks that the saved weights match the data type, weights method, and number of formulas provided. The user is responsible for making sure these weights were created appropriately.  
   
-The `createWeights` function saves out an .rds file of the weights in the ‘weights’ folder, a histogram of the weights distribution in the ‘weights/histograms’ folder, and a .csv file of data with the weights appended in the ‘weights/values/’ folder.   
+The `createWeights()` function saves out an .rds file of the weights in the ‘weights’ folder, a histogram of the weights distribution in the ‘weights/histograms’ folder, and a .csv file of data with the weights appended in the ‘weights/values/’ folder.   
   
 The function returns a list of weights objects each in the form of WeightItMSM output in a single nested list (labeled “0” if data are in data frame format) or with nested lists for each imputed dataset (if data are imputed). 
 
@@ -262,7 +246,7 @@ weights.cbps <- createWeights(data = data, exposure = exposure, outcome = outcom
 ```
   
 
-We then create IPTW balancing weights using all other avaiable methods.   
+We then create IPTW balancing weights using all other available methods.   
 
 ```{r}
 method <- "glm"
@@ -298,9 +282,9 @@ weights.super <- createWeights(data = data, exposure = exposure, outcome = outco
 
 
 #### 2c. Assess All Weighting Methods to Determine Optimal Method
-Next, we evaluate how well weights created using each of the different weighting methods reduced imbalance for the confounders that we provided in the short balancing formula using the `assessBalance` function (`type = “weighted”`). This function calls the `calcBalStats` function using the short formulas and specifying that the balance statistics should be calculated using the IPTW weights that we just created. The `assessBalance` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied). 
+Next, we evaluate how well weights created using each of the different weighting methods reduced imbalance for the confounders that we provided in the short balancing formula using the `assessBalance()` function (`type = “weighted”`). This function calls the `calcBalStats()` function using the short formulas and specifying that the balance statistics should be calculated using the IPTW weights that we just created. The `assessBalance()` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied). 
 
-The required inputs for using the `assessBalance` function to assess balance for the first round of IPTW weights are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), providing the short formulas (see Step 2a), setting `type = “weighted”`, and providing the weights that were just created. 
+The required inputs for using the `assessBalance()` function to assess balance for the first round of IPTW weights are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), providing the short formulas (see Step 2a), setting `type = “weighted”`, and providing the weights that were just created. 
 
 The optional inputs are described in Step 1b. 
 
@@ -308,10 +292,9 @@ The optional inputs are described in Step 1b.
 balance_thresh <- c(0.05, 0.1) 
 
 imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") 
-
 ```
 
-The `assessBalance` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders (Figure x), tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets) ( Figure x). Within the ‘balance/weighted/plots’ folder, the function outputs .jpeg files of summary love plots depicting confounder balance for each exposure time point (Figure x). 
+The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/weighted/plots’ folder, the function outputs .jpeg files of summary love plots depicting confounder balance for each exposure time point. 
   
 The function returns a data frame (or list) of balance statistics, balance thresholds, and binary balanced tag (1 = balanced, 0 = imbalanced) for each confounder relevant to each exposure time point. 
 
@@ -323,6 +306,7 @@ type <- "weighted"
 formulas <- short_formulas
 
 weights <- weights.cbps 
+
 balance_stats.cbps <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
                                     outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                     balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
@@ -335,6 +319,7 @@ For the CBPS weighting method, ...
 
 ```{r}
 weights <- weights.glm
+
 balance_stats.glm <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
                                    outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                    balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
@@ -346,6 +331,7 @@ For the GLM weighting method, ...
 
 ```{r}
 weights <- weights.gbm
+
 balance_stats.gbm <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
                                    outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                    balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
@@ -357,6 +343,7 @@ For the GBM weighting method, ...
 
 ```{r}
 weights <- weights.bart
+
 balance_stats.bart <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
                                     outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                     balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
@@ -368,6 +355,7 @@ For the BART weighting method, ...
 
 ```{r}
 weights <- weights.super 
+
 balance_stats.super <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
                                      outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                      balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
@@ -386,9 +374,9 @@ In this example, ...
 The goal of this next step is to assess the the weights from the best-performing weights method, created by the shortened balancing formulas (containing time-varying confounders at only *t*-1), relative to the full balancing formulas, and add to the shortened formulas any time-varying confounders at lags > *t*-1 that were not successfully balanced to create a final round of weights.
   
 #### 3a. Assess balance with full balancing formulas 
-We next assess whether the weights created in the previous step with the best-performing weights method (e.g., x) using the simplified balancing formulas also achieve balance for all of the confounders in the full formulas. We use the `assessBalance` function (`type = “weighted”`) with the full balancing formulas to examine how successfully the best-performing weights created in the previous step achieve balance for all time-varying confounders. We revisit our assumption that balancing on the most proximal time-varying confounders (*t*-1) confers balance for those same confounders at more distal prior time points (*t*-1+). We do this by assessing at each time point how well the weights just created using the short formulas successfully balance all confounders (including time-varying confounders at all time points prior) in the original, full formulas.  
+We next assess whether the weights created in the previous step with the best-performing weights method (e.g., x) using the simplified balancing formulas also achieve balance for all of the confounders in the full formulas. We use the `assessBalance()` function (`type = “weighted”`) with the full balancing formulas to examine how successfully the best-performing weights created in the previous step achieve balance for all time-varying confounders. We revisit our assumption that balancing on the most proximal time-varying confounders (*t*-1) confers balance for those same confounders at more distal prior time points (*t*-1+). We do this by assessing at each time point how well the weights just created using the short formulas successfully balance all confounders (including time-varying confounders at all time points prior) in the original, full formulas.  
   
-The required inputs for using the `assessBalance` function to assess how the best weights achieve balance for the full formulas are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), providing the full formulas (see Step 1a), setting type = “weighted”, and providing the best weights (see Step 2c). 
+The required inputs for using the `assessBalance()` function to assess how the best weights achieve balance for the full formulas are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), providing the full formulas (see Step 1a), setting type = “weighted”, and providing the best weights (see Step 2c). 
 
 The optional inputs are detailed in Step 1b. We select the following:  
 
@@ -398,7 +386,7 @@ balance_thresh <- c(0.05, 0.1)
 imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") 
 ```
    
-The `assessBalance` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/type/plots’ folder, the function outputs  .jpeg files of summary love plots depicting confounder balance for each exposure time point.   
+The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/type/plots’ folder, the function outputs  .jpeg files of summary love plots depicting confounder balance for each exposure time point.   
   
 The function returns a data frame (or list) of balance statistics, balance thresholds, and binary balanced tag for each confounder relevant to each exposure time point.   
 
@@ -419,13 +407,13 @@ Using the x weighting method and the full formulas, we find...
 
   
 #### 3b. Update simplified formulas
-Subsequently, we create a final round of balancing formulas using the `createFormulas` function (setting `type = “update"` and providing the balance statistics of the `bal_stats` field). We update the shortened formulas to include any time-varying confounders (*t*-1 +) that were not successfully balanced by the weights created using the original simplified formulas. The `createFormulas` function draws from user-provided balance statistics to automatically identify and add to the formulas at each exposure time point any time-varying confounders at lags greater than 1 that remain imbalanced after weighting. The function displays each balancing formula in the console with a message to the user about any time-varying confounders that were added. 
+Subsequently, we create a final round of balancing formulas using the `createFormulas()` function (setting `type = “update"` and providing the balance statistics of the `bal_stats` field). We update the shortened formulas to include any time-varying confounders (*t*-1 +) that were not successfully balanced by the weights created using the original simplified formulas. The `createFormulas()` function draws from user-provided balance statistics to automatically identify and add to the formulas at each exposure time point any time-varying confounders at lags greater than 1 that remain imbalanced after weighting. The function displays each balancing formula in the console with a message to the user about any time-varying confounders that were added. 
   
-The required input to update the shortened balancing formulas with any imbalanced time-varying confounders at greater lags using the `createFormulas` function are: exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of time-varying confounders (e.g., “variable.time”), a list of time invariant confounders, setting `type = “update”`, and providing to `bal_stats` the balance statistics that were just created. 
+The required input to update the shortened balancing formulas with any imbalanced time-varying confounders at greater lags using the `createFormulas()` function are: exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of time-varying confounders (e.g., “variable.time”), a list of time invariant confounders, setting `type = “update”`, and providing to `bal_stats` the balance statistics that were just created. 
 
 The optional input are detailed in Step 1a. 
 
-The `createFormulas` function saves out .csv and .rds files containing balancing formulas at each exposure time point for the specified type in the ‘formulas/update’ folder.  
+The `createFormulas()` function saves out .csv and .rds files containing balancing formulas at each exposure time point for the specified type in the ‘formulas/update’ folder.  
   
 The function returns a list of balancing formulas labeled by type, exposure, outcome, and exposure time point.  
 
@@ -434,7 +422,6 @@ type <- "update"
 
 bal_stats <- balance_stats
 
-#all inputs
 updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, #required
                                    type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, bal_stats = bal_stats, #required
                                    concur_conf = concur_conf, keep_conf = keep_conf, #optional
@@ -443,11 +430,11 @@ updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = expo
 
 
 #### 3c. Create final balancing weights
-Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the final, updated simplified formulas from the previous step using the `createWeights` function (`method = “x’`), with ‘x’ being the optimal weighting method identified in Step 2c. The function calls the `weightitMSM` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point and automatically multiplies them together to create one weight per person. Weights are stabilized, as is recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016) and distributions are saved out in the home directory for inspection. 
+Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the final, updated simplified formulas from the previous step using the `createWeights()` function (`method = “x’`), with ‘x’ being the optimal weighting method identified in Step 2c. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point and automatically multiplies them together to create one weight per person. Weights are stabilized, as is recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016) and distributions are saved out in the home directory for inspection. 
 
-The required inputs for using the `createWeights` function to create the final round of IPTW balancing weights using the updated short balancing formulas are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (variable with no time points), outcome (e.g., “variable.time”), providing the best-performing weights method, and providing the updated formulas (see Step 3a). 
+The required inputs for using the `createWeights()` function to create the final round of IPTW balancing weights using the updated short balancing formulas are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (variable with no time points), outcome (e.g., “variable.time”), providing the best-performing weights method, and providing the updated formulas (see Step 3a). 
 
-The optional input for the `createWeights` function are listed in Step 2b.
+The optional input for the `createWeights()` function are listed in Step 2b.
 
 The `createWeights` function saves out an .rds file of the weights in the ‘weights’ folder, a histogram of the weights distribution in the ‘weights/histograms’ folder, and a .csv file of data with the weights appended in the ‘weights/values/’ folder.  
   
@@ -466,15 +453,14 @@ final_weights <- createWeights(data = data, exposure = exposure, outcome = outco
 
 
 #### 3d. Trim final balancing weights
-The next step is to trim or winsorize this final set of weights to eliminate the heavy right tail of its distribution using the `trimWeights` function that draws on the *Weightit* package (Griefer, 2023) and then plots and summarizes trimmed weights. This function outputs a list of trimmed weights with either a single nested list (labeled “0” if data are in data frame format) or with nested lists for each imputed dataset (if data are imputed). 
+The next step is to trim or winsorize this final set of weights to eliminate the heavy right tail of its distribution using the `trimWeights()` function that draws on the *Weightit* package (Griefer, 2023) and then plots and summarizes trimmed weights. This function outputs a list of trimmed weights with either a single nested list (labeled “0” if data are in data frame format) or with nested lists for each imputed dataset (if data are imputed). 
 
-The required inputs for the trimWeights function are: the exposure (variable with no time points), outcome (e.g., “variable.time”), and the final weights we just created. 
+The required inputs for the `trimWeights()` function are: the exposure (variable with no time points), outcome (e.g., “variable.time”), and the final weights we just created. 
 
 The optional inputs are as follows. The user has the option to specify a quantile value (0-1; default is 0.95) above which the weights will be replaced with the weight value of that quantile to reduce the heavy right tail. 
 
 ```{r}
-quantile <- 0.95 #empirical example 
-
+quantile <- 0.95 
 ```
 
 The `trimWeights` function saves out an .rds file of trimmed weights in the ‘weights/values’ folder and a histogram of trimmed weights (Figure x) in the ‘weights/histograms’ folder.   
@@ -484,7 +470,6 @@ The function returns a list of weights objects, containing trimmed weights, each
 ```{r}
 weights <- final_weights
 
-#all inputs
 trim_weights <- trimWeights(exposure = exposure, outcome = outcome, weights = weights, #required
                             quantile = quantile, #optional
                             home_dir = home_dir, verbose = verbose, save.out = save.out) #optional
@@ -516,20 +501,19 @@ We find comparable descriptive statistics for all sets of weights, with the uppe
 
 
 ### Step 4: Conduct Final Balance Assessment
-Having created and trimmed the finalized set of IPTW balancing weights, the next step is to conduct a final evaluation of how well they reduce imbalance for all possible confounders. We assess the performance of the final weights from the previous step using `assessBalance` function (`type = “weighted”`) and the full formulas. 
+Having created and trimmed the finalized set of IPTW balancing weights, the next step is to conduct a final evaluation of how well they reduce imbalance for all possible confounders. We assess the performance of the final weights from the previous step using `assessBalance()` function (`type = “weighted”`) and the full formulas. 
 
-The required inputs for using the `assessBalance` function to assess how the final, trimmed weights achieve balance for the full formulas are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), and provide the full formulas (see Step 1a), set type = “weighted”, and provide the final, trimmed weights (see Step 3b). 
+The required inputs for using the `assessBalance()` function to assess how the final, trimmed weights achieve balance for the full formulas are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), and provide the full formulas (see Step 1a), set type = “weighted”, and provide the final, trimmed weights (see Step 3b). 
 
-The optional inputs for the `assessBalance` function are detailed in Step 1b. 
+The optional inputs for the `assessBalance()` function are detailed in Step 1b. 
 
 ```{r}
-balance_thresh <- c(0.05, 0.1)  #empirical example 
+balance_thresh <- c(0.05, 0.1)  
 
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") #empirical example 
-
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2")  
 ```
 
-The `assessBalance` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/weighted/plots’ folder, the function outputs .jpeg files of summary love plots depicting confounder balance for each exposure time point.   
+The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/weighted/plots’ folder, the function outputs .jpeg files of summary love plots depicting confounder balance for each exposure time point.   
 
 The function returns a data frame (or list) of balance statistics, balance thresholds, and binary balanced tag for each confounder relevant to each exposure time point. 
 
@@ -549,7 +533,7 @@ final_balance_stats <- assessBalance(data = data, exposure = exposure, exposure_
 From this assessment, we find...
 
 
-At this step, the user must manually list out any confounders that are time invariant or measured at the first time point (6 months) that remain imbalanced following this final balance assessment as “covariates”. These can be supplied when selecting a covariate model in Step 5 to account for remaining confounding. 
+At this step, the user must manually list out any confounders that are time invariant or measured at the first time point (6 months) that remain imbalanced following this final balance assessment as `covariates`. These can be supplied when selecting a covariate model in Step 5 to account for remaining confounding. 
 
 ```{r}
 covariates <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
@@ -589,15 +573,15 @@ Overall, the sensitivity analyses indicate....
 
 
 ## Phase 2: Assess Substantive Associations between Exposure & Outcome
-Having created IPTW balancing weights that minimize or attentuate associations between confounders and exposure at each time point, we can move to the substantive modeling phase. 
+Having created IPTW balancing weights that minimize or attentuate associations between confounders and exposure at each time point, we can move to the substantive modeling phase.  
 
 ### Step 5: Fit Marginal Structural Model & Summarize & Visualize Results
 The goal of this final step is to fit a weighted model of the user’s choosing relating exposure at meaningful epochs of developmental time to the outcome, before summarizing and visualizing the results. In this step, the user models and compares various counterfactuals, or the effects of different developmental histories of exposure on the outcome, to test their substantive hypotheses about dose and timing.  
   
 #### Step 5a. Select & fit a marginal outcome model
-First, we use the `fitModel` function to fit a weighted generalized linear model of the user’s choosing relating exposure to outcome. The function draws on the `svyglm` function of the *survey* package (Lumley, 2023). If the user specifies exposure epochs, exposure levels are averaged for any epochs that consist of two or more time point values. One of the benefits of creating balancing weights is that they can be used in a variety of different marginal outcome models and those encompassed in this function are only a subset of possible models. Note that these models can get complex and we do not advise interpreting the individual terms. 
+First, we use the `fitModel()` function to fit a weighted generalized linear model of the user’s choosing relating exposure to outcome. The function draws on the `svyglm()` function of the *survey* package (Lumley, 2023). If the user specifies exposure epochs, exposure levels are averaged for any epochs that consist of two or more time point values. One of the benefits of creating balancing weights is that they can be used in a variety of different marginal outcome models and those encompassed in this function are only a subset of possible models. Note that these models can get complex and we do not advise interpreting the individual terms. 
   
-The required inputs for using the `fitModel` function are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of trimmed weights, and a model from the list below (“m0”, “m1”, “m2”, or “m3”):  
+The required inputs for using the `fitModel()` function are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of trimmed weights, and a model from the list below (“m0”, “m1”, “m2”, or “m3”):  
   
 * *M0*: Baseline model regressing the outcome on the main effects of exposure (e.g., infancy, toddlerhood, childhood). 
   
@@ -616,18 +600,18 @@ If you select a covariate model (“m1” or “m3”), you are required to supp
 If you select an interaction model (“m2” or “m3”), you are required to provide a interaction order integer in the `int_order` field that reflects the maximum interaction (e.g., 3) (that will automatically include all lower order interactions (e.g., 2-way)). The interaction order cannot exceed the number of exposure main effects.   
 
 ```{r}
-
 int_order <- NA
 
 int_order <- 2
 ```
 
-The optional inputs to the `fitModel` function are as follows. Additionally, the user has the option to specify epochs that differ from the measurement time points using the optional `epochs` data frame field: for epochs: provide a list of user-created names in quotations (that each constitute a meaningful developmental time period that will constitute time units for your exposure histories); for values: as a list, for each epoch, provide a single integer or a list of integers from the time points at which exposure was measured that constitute that epoch. If no epochs are specified, the time points at which exposure was measured will be used in the creation of exposure histories in the final step of the process. Each specified epoch must have a corresponding value (but the values can differ in number of entries as shown below). Epochs must be specified in this step if they were used to fit the model in the previous step, and the specification of exposure epochs should be kept consistent throughout the use of the *devMSMs* package. 
+The optional inputs to the `fitModel()` function are as follows.   
+  
+The user has the option to specify epochs that differ from the measurement time points using the optional `epochs` data frame field. For epochs: provide a list of user-created names in quotations (that each constitute a meaningful developmental time period that will constitute time units for your exposure histories); for values: as a list, for each epoch, provide a single integer or a list of integers from the time points at which exposure was measured that constitute that epoch. If no epochs are specified, the time points at which exposure was measured will be used in the creation of exposure histories in the final step of the process. Each specified epoch must have a corresponding value (but the values can differ in number of entries as shown below). Epochs must be specified in this step if they will be used in the subsequent step comparing histories, and the specification of exposure epochs should be kept consistent throughout the use of the *devMSMs* package. 
 
 ```{r}
-epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"),  #empirical example
+epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
                      values = I(list(c(6, 15), c(24, 35), c(58)))) 
-
 ```
   
 The user can also specify a `family` (as a function, not in quotations; e.g., gaussian) and `link` (in quotations, e.g., “link”) functions for the generalized linear model (defaults are gaussian and “link”, respectively). The possible families are: binomial, gaussian, Gama, inverse.gaussian, poisson, quasi, quasibinomial, and quasipoisson. For binomial and Poisson families, set family to quasibinomial and quasipoisson, respectively, to avoid a warning about non-integer numbers of successes. The `quasi' versions of the family objects give the same point estimates and standard errors and do not give the warning. The gaussian family accepts the links: “identity”, “log” and “inverse”; the binomial family the links “logit”, “probit”, “cauchit”, (corresponding to logistic, normal and Cauchy CDFs respectively) “log” and “cloglog” (complementary log-log); the Gamma family the links “inverse”, “identity”, and “log”; the poisson family the links “log”, “identity”, and “sqrt”; and the inverse.gaussian family the links 1/mu^2, inverse, identity and log. The quasi family accepts the links “logit”, “probit”, “cloglog”, “identity”, “inverse”, “log”, “1/mu^2”, and “sqrt”, and the function power can be used to create a power link function. See the *survey* and *stats* R package documentations for more information. 
@@ -638,11 +622,13 @@ family <- gaussian
 link <- "identity" 
 ```
 
-The `fitModel` function outputs a .rds file of the fitted model(s) and a .html table of model evidence (can display models for up to 12 imputed datasets) in the ‘models’ folder. Importantly, this function also outputs into the console the result of a likelihood ratio test comparing the user-specified model to a nested version of that model that omits all exposure variables to test whether exposure predicts variation in the outcome. If this test is not significant and there is no evidence that exposure predicts outcome, we do not advise proceeding to the subsequent history comparison step. Models are pooled prior to conducting the likelihood ratio test for imputed data.   
+The `fitModel()` function outputs a .rds file of the fitted model(s) and a .html table of model evidence (can display models for up to 12 imputed datasets) in the ‘models’ folder.   
+  
+Importantly, this function also outputs into the console the result of a likelihood ratio test comparing the user-specified model to a nested version of that model that omits all exposure variables to test whether exposure predicts variation in the outcome. If this test is not significant and there is no evidence that exposure predicts outcome, we do not advise proceeding to the subsequent history comparison step. Models are pooled prior to conducting the likelihood ratio test for imputed data.   
+  
 This function returns a list of fitted model objects, each as svyglm output (labeled “0” if data are in data frame format). 	
 
 ```{r}
-
 weights <- trim_weights
 
 models <- fitModel(data = data, weights = weights, exposure = exposure, #required
@@ -688,37 +674,35 @@ In general, from the sensitivity analyeses, we find...
 
 
 #### Step 5b. Estimate, compare, and visualize model-predicted outcome as a function of exposure history
-In this final step, we use the fitted model results to test substantive hypotheses about dose and timing. We estimate and then compare the average marginal estimates of the outcome for each user-specified exposure history (i.e., permutation of high (“h) and low (“l”)  levels of exposure at each exposure epoch) using the `compareHistories` function. This draws primarily from the `avg_predictions` and `hypotheses` functions in the *marginaleffects* package (Arel-Bundock, 2023).   
+In this final step, we use the fitted model results to test substantive hypotheses about dose and timing. We estimate and then compare the average marginal estimates of the outcome for each user-specified exposure history (i.e., permutation of high (“h) and low (“l”)  levels of exposure at each exposure epoch) using the `compareHistories()` function. This draws primarily from the `avg_predictions()` and `hypotheses()` functions in the *marginaleffects* package (Arel-Bundock, 2023).   
   
 First, this function creates average predictions of the outcome for each exposure history. For each of the *n* combinations of user-specified exposure histories, we set the value of those predictors in the full dataset to the values in that combination, leaving all other variables as they are. This gives us *n* datasets, each the same size as our original dataset used to fit the model. For the *n* datasets, we then compute the predicted values given the model before taking the average predicted value for each of the *n* datasets. These *n* averaged predicted values are the expected potential outcomes under each combination. For imputed data, the function outputs pooled predicted values using Rubin’s Rules.  
   
 Next, using the predicted values (per imputed dataset, where applicable), the function conducts comparisons of the different histories (pooling across imputed datasets for imputed data using Rubin’s Rules). Lastly, the function implements correction for multiple comparisons (treating each iteration of the function as a family) before plotting the results. Box plots display outcome on the x-axis and exposure history on the y-axis and whiskers display standard errors.  
   
-The required inputs for using the `compareHistories` function are: exposure (e.g., “variable”), outcome (e.g., “variable.t”),  and a list of model output from Step 5a.  
+The required inputs for using the `compareHistories()` function are: exposure (e.g., “variable”), outcome (e.g., “variable.t”), and a list of model output from Step 5a.  
 
 The optional inputs are as follows.  
   
 For continuous exposures, in `hi_lo_cut` the user can specify a list of two quantile values (0-1; default is median split +/- 0.001) demarcating high and low levels of exposure, respectively. Imputed data are stacked to calculate cutoff values. We suggest drawing on existing hypotheses and examining the variability in the exposure variable to determine high and low cutoffs. We recommend users begin by specifying meaningful high and low percentile cutoffs and examining how many individuals in the sample fall into each of the user-specified exposure histories created by those percentile cutoffs (see Preliminary Steps vignette). While there are no gold standard recommendations for sufficient cell numbers per history, users should ensure that there is  is reasonable coverage in all of their histories to avoid extrapolation and maximize precision.  
 
 ```{r}
-hi_lo_cut <- c(0.6, 0.3) #empirical example 
-
+hi_lo_cut <- c(0.6, 0.3) 
 ```
   
-Additionally, the user has the option to specify epochs that differ from the measurement time points using the optional `epochs` data frame field (see Step 5a above). If you specified epochs in Step 5a for the `fitModel` function, you must specify them at this step. 
+Additionally, the user has the option to specify epochs that differ from the measurement time points using the optional `epochs` data frame field (see Step 5a above). If you specified epochs in Step 5a for the `fitModel()` function, you must specify them at this step. 
 
 ```{r}
 epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
-                     values = I(list(c(6, 15), c(24, 35), c(58)))) #empirical example 
+                     values = I(list(c(6, 15), c(24, 35), c(58)))) 
 ```
 
 The user also has the option to estimate and compare only a custom subset of user-specified exposure histories (i.e., sequences of high and low levels of exposure at each epoch or time point) using the `reference` and `comparison` fields. To conduct these customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels (“low” or “high”, respectively). If you supply a reference history, in comparisons provide at least one unique and valid history for comparison by, in quotations, providing a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference. If you supply one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be supplied for multiple comparison correction. If no reference or comparison is specified, all histories will be compared to each other. If there are more than 4 exposure main effects (either as epochs or exposure time points), the user is required to select a subset of history comparisons (Step 5b), given that the base code (see the `hypotheses()` function from the *marginaleffects* package; Arel-Bundock, 2023) cannot accommodate all pairwise history comparisons for more than 5 time points.  
 
 ```{r}
+reference <- "l-l-l" 
 
-reference <- "l-l-l" #empirical example final choice
-
-comparison <- c("h-h-h", "h-h-l") #multiple
+comparison <- c("h-h-h", "h-h-l") 
 ```
 
 The user can also specify a multiple comparison method in `mc_method` by in quotations, providing the shorthand for the method ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", or "n" (see stats::p.adjust documentation; R Core Team) for multiple comparison correction to be applied to the final pooled contrasts comparing effects of different exposure histories on outcome (default is Benjamini-Hochburg). Each code run is considered a family. If the user iterates through this function specifying different comparisons each time, we strongly recommend interpreting the outcome of the most inclusive set of comparisons to avoid false discovery.  
@@ -733,34 +717,27 @@ Based on their substantive interests, the user also has the option to choose whi
 dose_level <- "h"
 ```
 
-Lastly, the user can provide alternate plotting labels for exposure and outcome in the exp_lab and out_lab fields (defaults are variable names) as well as a list (equal to number of epochs +1) of colors or a Brewer color palette (colors; default is “Dark2”). See RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).  
+Lastly, the user can provide alternate plotting labels for exposure and outcome in the exp_lab and out_lab fields (defaults are variable names) as well as a list (equal to number of exposure main effects +1) of colors or a Brewer color palette (colors; default is “Dark2”). See RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).  
 
 ```{r}
-#optional exposure label for plotting
-exp_lab <- NA
 exp_lab <- "Economic Strain" #empirical example 
 
-#optional outcome label for plotting 
-out_lab <- NA
 out_lab <- "Behavior Problems" #empirical example 
 
 colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2")
 ```
 
-The `compareHistories` function saves out .html tables of the estimated mean outcome values for each history and history comparisons in the ‘histories’ folder and a boxplot of predicted values for the histories in the ‘plots’ folder.   
+The `compareHistories()` function saves out .html tables of the estimated mean outcome values for each history and history comparisons in the ‘histories’ folder and a boxplot of predicted values for the histories in the ‘plots’ folder.   
   
 The function returns a data frame of user-specified history comparisons containing contrast estimates, standard errors, statistics, p-values, low and high confidence intervals, and corrected p-values, labeled by history and dose.   
 
 ```{r}
-#required
-model <- models #output from fitModel
+model <- models 
 
-#all inputs
 results <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
                             mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                             home_dir = home_dir, verbose = verbose, save.out = save.out) #optional
-
 ```
   
 We find, ....
@@ -818,7 +795,7 @@ Learner Prediction. https://CRAN.R-project.org/package=SuperLearner.
   
 R Core Team (2013). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0, URLhttp://www.R-project.org/. 
   
-Stuart, E. A. (2010). Matching methods for causal inference: A review and a look forward. Statistical Science : A Review Journal of the Institute of Mathematical Statistics, 25(1), 1–21. https://doi.org/10.1214/09-STS313. 
+Stuart, E. A. (2010). Matching methods for causal inference: A review and a look forward. Statistical Science: A Review Journal of the Institute of Mathematical Statistics, 25(1), 1–21. https://doi.org/10.1214/09-STS313. 
   
 Thoemmes, F., & Ong, A. D. (2016). A Primer on Inverse Probability of Treatment Weighting
 and Marginal Structural Models. https://doi.org/10.1177/2167696815621645. 
