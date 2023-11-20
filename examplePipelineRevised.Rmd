@@ -281,6 +281,7 @@ data <- lapply(data, function(x){
 factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                    "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
+
 data <- lapply(data, function(x) {
   x[, factor_covars] <- as.data.frame(lapply(x[, factor_covars], as.factor))
   x })
