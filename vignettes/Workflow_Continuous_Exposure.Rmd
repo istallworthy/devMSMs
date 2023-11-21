@@ -34,7 +34,6 @@ devtools::install_github("istallworthy/devMSMsHelpers")
 library(devMSMsHelpers)
 ```
   
-```
 
 This vignette guides a user through the process of using *devMSMs* with a continuousy distributed exposure variable. The users should first view the Terminology, Data Requirements, Specifying Core Inputs, and Preliminary Steps vignettes.  
 
@@ -53,8 +52,21 @@ verbose = TRUE
 We first load a data frame of complete data. (See Preliminary Steps vignette for beginning with other data types, including missing data).  
   
 ```{r}
-data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')
-
+# data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')
+#temporary data until we get sim data
+data <- data.frame(ID = 1:50,
+                   ESETA1.6 = rnorm(n = 50),
+                   ESETA1.15 = rnorm(n = 50),
+                   ESETA1.24 = rnorm(n = 50),
+                   peri_health = rnorm(n = 50),
+                   gov_assist = rnorm(n = 50),
+                   InRatioCor.6 = rnorm(n = 50),
+                   InRatioCor.15 = rnorm(n = 50),
+                   InRatioCor.24 = rnorm(n = 50),
+                   WndNbrhood.6 = rnorm(n = 50),
+                   WndNbrhood.15 = rnorm(n = 50),
+                   WndNbrhood.24 = rnorm(n = 50),
+                   StrDif_Tot.58 = rnorm(n = 50))
 ```
 
 We first check to see if there are any character variables present in the data and convert them to integers.
@@ -64,17 +76,17 @@ any(sapply(data, class) == "character") #if this is TRUE, run next lines
 
 names(data)[sapply(data, class) == "character"] #find names of any character variables
 
-data[, "state"] <- factor(data[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
+#data[, "state"] <- factor(data[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
 ```
   
 We then make factor variables factor class. 
   
 ```{r}
-factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                   "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                   "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
-
-data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
+# factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
+#                    "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+#                    "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
+# 
+# data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
 ```
 
 
@@ -87,39 +99,48 @@ set.seed(1234)
 
 #required if you wish to use save.out = TRUE in the functions
 home_dir <- NA
+# home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
 
 #required
 exposure <- "ESETA1"
 
 #required
-exposure_time_pts <- c(6, 15, 24, 35, 58)
+exposure_time_pts <- c(6, 15, 24)
 
 #required
 outcome <- "StrDif_Tot.58"
 
 #required; list in wide format
-tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
-                    "MDI.6", "MDI.15",                                            
-                    "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
-                    "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
-                    "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
-                    "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
-                    "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
-                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
-                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",               
-                    "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
-                    "EARS_TJo.24", "EARS_TJo.35",                                        
-                    "LESMnPos.24", "LESMnPos.35",                                  
-                    "LESMnNeg.24", "LESMnNeg.35",       
-                    "StrDif_Tot.35", "StrDif_Tot.58",    
-                    "fscore.35", "fscore.58"
+tv_confounders <- c(
+                    # "SAAmylase.6","SAAmylase.15", "SAAmylase.24",
+                    # "MDI.6", "MDI.15",                                            
+                    # "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
+                    "WndNbrhood.6","WndNbrhood.15", "WndNbrhood.24", #"WndNbrhood.35", "WndNbrhood.58",                                       
+                    # "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
+                    # "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
+                    # "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
+                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", #"InRatioCor.35", "InRatioCor.58",                         
+                    "ESETA1.6", "ESETA1.15", "ESETA1.24"# "ESETA1.35", "ESETA1.58",  #exposure variables required               
+                    # "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
+                    # "EARS_TJo.24", "EARS_TJo.35",                                        
+                    # "LESMnPos.24", "LESMnPos.35",                                  
+                    # "LESMnNeg.24", "LESMnNeg.35",       
+                    # "StrDif_Tot.35", 
+                    # "StrDif_Tot.58"    
+                    # "fscore.35", "fscore.58"
+                    # , "ESETA1.6:B18Raw.6", "ESETA1.6:B18Raw.15:RHasSO.6", "state:EARS_TJo.35" #testing interactions
 ) 
 
 #required
-ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
-                    "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
-                    "peri_health", "caregiv_health", "gov_assist"
+ti_confounders <- c(
+                    # "state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
+                    # "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
+                    "peri_health", 
+                    # "caregiv_health", 
+                    "gov_assist"
+                    #, "state:SmokTotl", "PmAge2:PmBlac2", "PmAge2:PmEd2" #testing interaction terms
 )
+
 ```
 
 
@@ -304,7 +325,7 @@ The optional inputs are described in Step 1b.
 ```{r}
 balance_thresh <- c(0.05, 0.1) 
 
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") 
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24") # "InRatioCor.35", "InRatioCor.58", "PmEd2") 
 ```
 
 The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/weighted/plots’ folder, the function outputs .jpeg files of summary love plots depicting confounder balance for each exposure time point. 
@@ -396,7 +417,7 @@ The optional inputs are detailed in Step 1b. We select the following:
 ```{r}
 balance_thresh <- c(0.05, 0.1) 
 
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") 
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24") #"InRatioCor.35", "InRatioCor.58", "PmEd2") 
 ```
    
 The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/type/plots’ folder, the function outputs  .jpeg files of summary love plots depicting confounder balance for each exposure time point.   
@@ -523,7 +544,7 @@ The optional inputs for the `assessBalance()` function are detailed in Step 1b.
 ```{r}
 balance_thresh <- c(0.05, 0.1)  
 
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2")  
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24") #"InRatioCor.35", "InRatioCor.58", "PmEd2")  
 ```
 
 The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/weighted/plots’ folder, the function outputs .jpeg files of summary love plots depicting confounder balance for each exposure time point.   
@@ -549,7 +570,7 @@ From this assessment, we find...
 At this step, the user must manually list out any confounders that are time invariant or measured at the first time point (6 months) that remain imbalanced following this final balance assessment as `covariates`. These can be supplied when selecting a covariate model in Step 5 to account for remaining confounding. 
 
 ```{r}
-covariates <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
+covariates <- c("ESETA1.6", "gov_assist")# "B18Raw.6") 
 ```
 
 We also assess balance for the weights trimmed at the two additional quantile values to assess whether the final balance assessment is sensitive to the trim value. Importantly, if `save.out = TRUE`, running these analyses will overwrite the output from the main history comparison above if the main output is not rename or re-located to a new folder first. Additionally, after running the first sensitivity check, the output from that check will be overwritten by the second sensitivity check if it is not renamed or re-located to a new folder first.  
@@ -624,7 +645,7 @@ The user has the option to specify epochs that differ from the measurement time 
 
 ```{r}
 epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
-                     values = I(list(c(6, 15), c(24, 35), c(58)))) 
+                     values = I(list(c(6), c(15), c(24)))) 
 ```
   
 The user can also specify a `family` (as a function, not in quotations; e.g., gaussian) and `link` (in quotations, e.g., “link”) functions for the generalized linear model (defaults are gaussian and “link”, respectively). The possible families are: binomial, gaussian, Gama, inverse.gaussian, poisson, quasi, quasibinomial, and quasipoisson. For binomial and Poisson families, set family to quasibinomial and quasipoisson, respectively, to avoid a warning about non-integer numbers of successes. The `quasi' versions of the family objects give the same point estimates and standard errors and do not give the warning. The gaussian family accepts the links: “identity”, “log” and “inverse”; the binomial family the links “logit”, “probit”, “cauchit”, (corresponding to logistic, normal and Cauchy CDFs respectively) “log” and “cloglog” (complementary log-log); the Gamma family the links “inverse”, “identity”, and “log”; the poisson family the links “log”, “identity”, and “sqrt”; and the inverse.gaussian family the links 1/mu^2, inverse, identity and log. The quasi family accepts the links “logit”, “probit”, “cloglog”, “identity”, “inverse”, “log”, “1/mu^2”, and “sqrt”, and the function power can be used to create a power link function. See the *survey* and *stats* R package documentations for more information. 
@@ -707,7 +728,7 @@ Additionally, the user has the option to specify epochs that differ from the mea
 
 ```{r}
 epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
-                     values = I(list(c(6, 15), c(24, 35), c(58)))) 
+                     values = I(list(c(6), c(15), c(24)))) 
 ```
 
 The user also has the option to estimate and compare only a custom subset of user-specified exposure histories (i.e., sequences of high and low levels of exposure at each epoch or time point) using the `reference` and `comparison` fields. To conduct these customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels (“low” or “high”, respectively). If you supply a reference history, in comparisons provide at least one unique and valid history for comparison by, in quotations, providing a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference. If you supply one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be supplied for multiple comparison correction. If no reference or comparison is specified, all histories will be compared to each other. If there are more than 4 exposure main effects (either as epochs or exposure time points), the user is required to select a subset of history comparisons (Step 5b), given that the base code (see the `hypotheses()` function from the *marginaleffects* package; Arel-Bundock, 2023) cannot accommodate all pairwise history comparisons for more than 5 time points.  
