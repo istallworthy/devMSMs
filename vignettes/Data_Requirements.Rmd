@@ -1,0 +1,56 @@
+---
+title: "Data Requirements"
+author: "Isabella Stallworthy"
+date: "`r Sys.Date()`"
+output:
+    html_vignette:
+        df_print: kable
+        toc: false
+vignette: >
+  %\VignetteIndexEntry{Data_Requirements}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+options(rmarkdown.html_vignette.check_title = FALSE)
+
+```
+
+```{r setup}
+#library(devMSMs)
+```
+  
+  
+We recommend considering several data requirements prior to using *devMSMs* and any of the vignettes.  
+  
+MSMs are most useful for strengthening causal inference using longitudinal data that include an exposure and confounders that vary in time prior to an outcome. At a minimum, devMSMs requires two-time-point data with a time-varying exposure measured at least two time points, outcome measured at the second time point, and at least one time invariant confounder. The exposure can be binary (with integer class) or continuous (with numeric class) and there are no assumptions about the distributions of outcome or confounders. We highly recommend using continuous variables when appropriate and possible to avoid the information loss inherent to binarizing a continuous variable. Although there is no gold standard recommendation, we suggest users select exposures that have some within-person variation from which it would be reasonable to delineate different histories of “high” and “low” levels (see step P3 in the recommended <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps Vignette</a>) and avoid extrapolation.  
+  
+The outcome time point must be the last time point when exposure was measured or a time point after the last exposure measurement time point. For cases in which the outcome variable constitutes a growth process at the final time point, we advise choosing a reasonable measure for balancing purposes (e.g., baseline or average levels) before subsequently using the generated weights to separately conduct a weighted growth model of the outcome.   
+  
+We advise the user to specify and include in the dataset any time invariant and time-varying variables that could possibly confound the relation between exposure and outcome. We also suggest using multiple measured variables within each construct to help reduce any effects from measurement bias (Kainz et al., 2017). Time varying confounders are ideal for maximizing the power of MSMs. However, specifying time-varying confounders in addition to the time-varying exposures variables is not required for using this package. Additional time-varying confounders could include developmental indicators that tend to track with the exposure over time that could also cause the outcome, including past levels of the exposure. Of note, the time points at which the confounders were collected must be equal to, or a subset of, the time points at which the exposure and outcome were collected in the data. In a perfect world, all exposures and potential confounders would be measured at all time points prior to the outcome. However, with real-world data due to planned and unplanned missingness, this is often not the case. Users should consider discussing the implications and limitations conferred by variables that could be confounders that were not collected at all time points. As a basis for specifying confounders, users should turn to the literature to delineate a causal model that lays out hypothesized relations between confounders, exposures, and outcome.  
+  
+*devMSMs* requires data in wide format (i.e., one row per individual, with and “ID” column for identifiers), in one of three ways:   
+  
+(1) a data frame with no missing data; or   
+  
+(2) imputed data in the form of a mids object (output from `mice::mice()`); or   
+  
+(3) imputed data as a list of imputed data frames.   
+  
+
+All variables should be classed as integers, numeric, or factors. The recommended <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary Steps Vignette</a> offers guidance for transforming data into each of those three types. All time-varying variables (including exposure and outcome) should have “.time” suffixes (e.g., “variable.t”). All time invariant variables should be labeled with only their variable names. Variable names should not contain special characters other than underscores. An abridged example data structure is shown in Figure 1 below.
+  
+[*insert Figure 1 here*]
+
+  
+### References
+Kainz, K., Greifer, N., Givens, A., Swietek, K., Lombardi, B. M., Zietz, S., & Kohn, J. L. (2017). Improving Causal Inference: Recommendations for Covariate Selection and Balance in Propensity Score Methods. Journal of the Society for Social Work and Research, 8(2), 279–303. https://doi.org/10.1086/691464
+
+
+  
