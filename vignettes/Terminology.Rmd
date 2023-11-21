@@ -21,8 +21,9 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 #library(devMSMs)
+#![Summary of terms.](/Users/isabella/Documents/GitHub/devMSMs/man/figures/Table 1.png)
+
 ```
 
 This vignette contains some key definitions for using the Data Requirements, Specify Core Inputs, Preliminary Steps, and Workflows vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: [insert link].  
   
-![Summary of terms.](/Users/isabella/Documents/GitHub/devMSMs/man/figures/Table 1.png)
