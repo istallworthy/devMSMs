@@ -28,16 +28,18 @@ These four recommended preliminary steps are designed to assist the user in prep
 
 The user who has already formatted their data in wide format according to the Data Requirements vignette and imputed to accommodate any missing data (P2), can focus only on subsections P3 Identifying Optional Exposure Epochs and P4 Verifying History Distributions prior to using the package. Following completion of this vignette, users should use one of the Workflows vignettes to implement *devMSMs* with their longitudinal data.   
 
-
+  
 *insert Table 1 here*.   
 
 
 ```{r setup}
 install.packages("devtools")
 install.packages("stats")
+install.packages("missMethods")
 
 library(devtools)
 library(stats)
+library(missMethods)
 
 devtools::install_github("istallworthy/devMSMs")
 library(devMSMs)
@@ -45,7 +47,7 @@ library(devMSMs)
 devtools::install_github("istallworthy/devMSMsHelpers")
 library(devMSMsHelpers)
 ```
-
+  
 Choose from the following preliminary steps with the goal of assigning to 'data' one of the following for use in the package:
 - a single data frame of data in wide format with no missing data 
 - a mids object (output from mice::mice()) of data imputed in wide format
