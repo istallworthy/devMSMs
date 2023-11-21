@@ -35,7 +35,7 @@ The user who has already formatted their data in wide format according to the Da
 ```{r setup}
 require(devtools)
 library(stats)
-devtool::install_github("istallworthy/devMSMs")
+devtools::install_github("istallworthy/devMSMs")
 library(devMSMs)
 
 devtools::install_github("istallworthy/devMSMsHelpers")
