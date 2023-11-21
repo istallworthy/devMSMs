@@ -34,7 +34,7 @@ The user who has already formatted their data in wide format according to the Da
 
 ```{r setup}
 install.packages("devtools")
-install.package("stats")
+install.packages("stats")
 
 library(devtools)
 library(stats)
