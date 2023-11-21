@@ -27,17 +27,17 @@ install.packages("devtools")
 
 library(devtools)
 
-devtools::install_github("istallworthy/devMSMs")
+devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 library(devMSMs)
 
-devtools::install_github("istallworthy/devMSMsHelpers")
+devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 library(devMSMsHelpers)
 ```
-  
+<br>
 
-This vignette guides a user through the process of using *devMSMs* with a continuousy distributed exposure variable. The users should first view the Terminology, Data Requirements, Specifying Core Inputs, and Preliminary Steps vignettes.  
+This vignette guides a user through the process of using *devMSMs* with a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, Data Requirements, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a> vignettes.  
 
-The following suggested workflow and constituent steps are also reflected in examplePipeline.rmd.  This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript. We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow. 
+The following suggested workflow and constituent steps are also reflected in <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">examplePipeline.rmd file</a>.  This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript [add link here]. We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow. 
 
 All *devMSMs* functions have optional arguments to suppress saving output locally (`save.out = FALSE`) and printing it to the console ( `verbose = FALSE`). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out = TRUE`. 
 
@@ -46,10 +46,10 @@ save.out = FALSE
 
 verbose = TRUE
 ```
-
+<br>
 
 ### Load data
-We first load a data frame of complete data. (See Preliminary Steps vignette for beginning with other data types, including missing data).  
+We first load a data frame of complete data. (See <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps vignette</a> for beginning with other data types, including missing data).  
   
 ```{r}
 # data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')
@@ -69,7 +69,7 @@ data <- data.frame(ID = 1:50,
                    StrDif_Tot.58 = rnorm(n = 50))
 ```
 
-We first check to see if there are any character variables present in the data and convert them to integers.
+We then check to see if there are any character variables present in the data and convert them to integers.
   
 ```{r}
 any(sapply(data, class) == "character") #if this is TRUE, run next lines
@@ -88,7 +88,7 @@ We then make factor variables factor class.
 # 
 # data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
 ```
-
+<br>
 
 ### Core inputs
 Please see the Specifying Core Inputs vignette for more detail on the following core inputs.  
@@ -142,12 +142,15 @@ ti_confounders <- c(
 )
 
 ```
-
+<br>
+<br>
 
 ## Phase 1: Confounder Adjustment
 The goal of this first phase is to minimize the associations between confounders and exposure using IPTW balancing weights. We strongly advise the user to carefully inspect each balancing formula to ensure weights are created and evaluated appropriately at each step. 
+<br>
 
 ### Step 1. Create Full Balancing Formulas & Conduct Pre-Balance Checking
+<br>
 
 #### Step 1a. Create Full Balancing Formulas & Conduct Pre-Balance Checking
 We first create comprehensive, full balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type = “full”`). This step creates full formulas containing all measured confounding variables at each exposure time point, including all time-invariant confounders, lagged time-varying confounders, as well as past levels of the exposure and outcome (make sure they are listed as time-varying confounders). The code automatically excludes time-varying confounders at the contemporaneous time point given that they cannot be decisively differentiated from mediators which should not be balanced on (Thoemmes & Ong, 2016), although this can be modified by the user if they have strong reason to believe a concurrent variable is not a mediator (see below).   
@@ -188,7 +191,7 @@ full_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposur
                                 concur_conf = concur_conf, custom = custom, #optional
                                 home_dir = home_dir, verbose = verbose, save.out = save.out) #optional
 ```
-
+<br>
 
 #### 1b. Conduct Exploratory Pre-Balance Assessment
 The next step examines the initial imbalance, or how strongly exposure relates to each confounder at each time point, for all measured confounders prior to weighting using the `assessBalance()` function (`type = “prebalance”`). This function draws on the `calcBalStats()` function (see the Assessing Balance for Time-Varying Exposure section in the accompanyingm manuscript. The `assessBalance()` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).  
@@ -219,10 +222,11 @@ prebalance_stats <- assessBalance(data = data, exposure = exposure, exposure_tim
                                   balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                   home_dir = home_dir, verbose = verbose, save.out = save.out) #optional
 ```
-
-
+<br>
+<br>
 ### Step 2: Create Simplified Balancing Formulas & Determine Optimal Weighting Method 
 The goal of this second step is to create shortened, more parsimonious balancing formulas for determining the optimal IPTW weighting method that most successfully reduces imbalance.  
+<br>
 
 #### 2a. Create Simplified Balancing Formulas
 First, we create shorter, more parsimonious balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type = ”short”`). These formulas contain time-varying confounders measured only at the *t*-1 lag for each exposure time point. The logic here is that balancing on confounders at the most recent prior time point (*t*-1 only) may achieve balance on levels at more distal time points given the stability of many confounders over time. Importantly, we will empirically assess and relax this assumption if needed at a subsequent step. 
@@ -252,7 +256,7 @@ short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposu
                                  keep_conf = keep_conf, custom = custom, 
                                  home_dir = home_dir, verbose = verbose, save.out = save.out) 
 ```
-  
+<br>
      
 #### 2b. Create IPTW Balancing Weights using Multiple Weighting Methods
 Having created shorter, simplified balancing formulas  we now create the first round of IPTW balancing weights (Thoemmes & Ong, 2016) using the `createWeights()` function, the shortened balancing formulas, and all available weighting methods. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point and automatically multiplies them together to create one weight per person. Weights are stabilized, as recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016), and distributions are saved for inspection. 
@@ -314,6 +318,7 @@ weights.super <- createWeights(data = data, exposure = exposure, outcome = outco
 ```
 
 
+<br>
 
 #### 2c. Assess All Weighting Methods to Determine Optimal Method
 Next, we evaluate how well weights created using each of the different weighting methods reduced imbalance for the confounders that we provided in the short balancing formula using the `assessBalance()` function (`type = “weighted”`). This function calls the `calcBalStats()` function using the short formulas and specifying that the balance statistics should be calculated using the IPTW weights that we just created. The `assessBalance()` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied). 
@@ -343,7 +348,7 @@ balance_stats.cbps <- assessBalance(data = data, exposure = exposure, exposure_t
 ```
 
 For the CBPS weighting method, ...
-
+<br>
 
 ```{r}
 weights <- weights.glm
@@ -355,7 +360,7 @@ balance_stats.glm <- assessBalance(data = data, exposure = exposure, exposure_ti
 ```
 
 For the GLM weighting method, ...
-
+<br>
 
 ```{r}
 weights <- weights.gbm
@@ -367,7 +372,7 @@ balance_stats.gbm <- assessBalance(data = data, exposure = exposure, exposure_ti
 ```
 
 For the GBM weighting method, ...
-
+<br>
 
 ```{r}
 weights <- weights.bart
@@ -379,7 +384,7 @@ balance_stats.bart <- assessBalance(data = data, exposure = exposure, exposure_t
 ```
 
 For the BART weighting method, ...
-
+<br>
 
 ```{r}
 weights <- weights.super 
@@ -391,16 +396,19 @@ balance_stats.super <- assessBalance(data = data, exposure = exposure, exposure_
 ```
 
 For the SuperLearner weighting method, ...
-
+<br>
 
 The optimal weighting method for a dataset is the method that yields the best confounder balance. From these iterations, we identify the best performing weighting method that most reduces the imbalance between exposure and confounder as indicated by the lowest median correlation/standardized mean difference and the fewest number of confounders left imbalanced.
 
 In this example, ...
 
+<br>
+<br>
 
-### Create Updated Formulas & Re-Specify Weights Using Optimal Weighting Method
+### Step 3: Create Updated Formulas & Re-Specify Weights Using Optimal Weighting Method
 The goal of this next step is to assess the the weights from the best-performing weights method, created by the shortened balancing formulas (containing time-varying confounders at only *t*-1), relative to the full balancing formulas, and add to the shortened formulas any time-varying confounders at lags > *t*-1 that were not successfully balanced to create a final round of weights.
-  
+<br>
+
 #### 3a. Assess balance with full balancing formulas 
 We next assess whether the weights created in the previous step with the best-performing weights method (e.g., x) using the simplified balancing formulas also achieve balance for all of the confounders in the full formulas. We use the `assessBalance()` function (`type = “weighted”`) with the full balancing formulas to examine how successfully the best-performing weights created in the previous step achieve balance for all time-varying confounders. We revisit our assumption that balancing on the most proximal time-varying confounders (*t*-1) confers balance for those same confounders at more distal prior time points (*t*-1+). We do this by assessing at each time point how well the weights just created using the short formulas successfully balance all confounders (including time-varying confounders at all time points prior) in the original, full formulas.  
   
@@ -427,7 +435,7 @@ balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_p
 
 Using the x weighting method and the full formulas, we find...
 
-  
+<br>
 #### 3b. Update simplified formulas
 Subsequently, we create a final round of balancing formulas using the `createFormulas()` function (setting `type = “update"` and providing the balance statistics of the `bal_stats` field). We update the shortened formulas to include any time-varying confounders (*t*-1 +) that were not successfully balanced by the weights created using the original simplified formulas. The `createFormulas()` function draws from user-provided balance statistics to automatically identify and add to the formulas at each exposure time point any time-varying confounders at lags greater than 1 that remain imbalanced after weighting. The function displays each balancing formula in the console with a message to the user about any time-varying confounders that were added. 
   
@@ -450,6 +458,7 @@ updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = expo
                                    home_dir = home_dir, verbose = verbose, save.out = save.out) #optional
 ```
 
+<br>
 
 #### 3c. Create final balancing weights
 Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the final, updated simplified formulas from the previous step using the `createWeights()` function (`method = “x’`), with ‘x’ being the optimal weighting method identified in Step 2c. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point and automatically multiplies them together to create one weight per person. Weights are stabilized, as is recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016) and distributions are saved out in the home directory for inspection. 
@@ -473,6 +482,7 @@ final_weights <- createWeights(data = data, exposure = exposure, outcome = outco
                                home_dir = home_dir, verbose = verbose, save.out = save.out) #optional
 ```
 
+<br>
 
 #### 3d. Trim final balancing weights
 The next step is to trim or winsorize this final set of weights to eliminate the heavy right tail of its distribution using the `trimWeights()` function that draws on the *Weightit* package (Griefer, 2023) and then plots and summarizes trimmed weights. This function outputs a list of trimmed weights with either a single nested list (labeled “0” if data are in data frame format) or with nested lists for each imputed dataset (if data are imputed). 
@@ -520,7 +530,7 @@ trim_weights.s2 <- trimWeights(exposure = exposure, outcome = outcome, weights =
 ```
   
 We find comparable descriptive statistics for all sets of weights, with the upper range value varying by quantile cutoff. All sets of weights have heavy right tails, as expected with real-world data. These tails represent individuals who experienced statistically unexpected levels of exposure given their levels of confounders. 
-
+<br>
 
 ### Step 4: Conduct Final Balance Assessment
 Having created and trimmed the finalized set of IPTW balancing weights, the next step is to conduct a final evaluation of how well they reduce imbalance for all possible confounders. We assess the performance of the final weights from the previous step using `assessBalance()` function (`type = “weighted”`) and the full formulas. 
@@ -586,14 +596,17 @@ From this, we find...
 
 Overall, the sensitivity analyses indicate....
 
-
+<br>
+<br>
 
 ## Phase 2: Assess Substantive Associations between Exposure & Outcome
 Having created IPTW balancing weights that minimize or attentuate associations between confounders and exposure at each time point, we can move to the substantive modeling phase.  
+<br>
 
 ### Step 5: Fit Marginal Structural Model & Summarize & Visualize Results
 The goal of this final step is to fit a weighted model of the user’s choosing relating exposure at meaningful epochs of developmental time to the outcome, before summarizing and visualizing the results. In this step, the user models and compares various counterfactuals, or the effects of different developmental histories of exposure on the outcome, to test their substantive hypotheses about dose and timing.  
-  
+<br>
+
 #### Step 5a. Select & fit a marginal outcome model
 First, we use the `fitModel()` function to fit a weighted generalized linear model of the user’s choosing relating exposure to outcome. The function draws on the `svyglm()` function of the *survey* package (Lumley, 2023). If the user specifies exposure epochs, exposure levels are averaged for any epochs that consist of two or more time point values. One of the benefits of creating balancing weights is that they can be used in a variety of different marginal outcome models and those encompassed in this function are only a subset of possible models. Note that these models can get complex and we do not advise interpreting the individual terms. 
   
@@ -688,6 +701,7 @@ We find, ....
   
 In general, from the sensitivity analyeses, we find...  
 
+<br>
 
 #### Step 5b. Estimate, compare, and visualize model-predicted outcome as a function of exposure history
 In this final step, we use the fitted model results to test substantive hypotheses about dose and timing. We estimate and then compare the average marginal estimates of the outcome for each user-specified exposure history (i.e., permutation of high (“h) and low (“l”)  levels of exposure at each exposure epoch) using the `compareHistories()` function. This draws primarily from the `avg_predictions()` and `hypotheses()` functions in the *marginaleffects* package (Arel-Bundock, 2023).   
@@ -788,28 +802,24 @@ In general, from the sensitivity analyses, we find...
 
   
   
-  
+<br>
+<br>
 ## References
-Arel-Bundock, V. 2023. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means,
-and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.  
+Arel-Bundock, V. 2023. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means,and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.  
   
-Cole, S. R., & Hernán, M. A. (2008). Constructing Inverse Probability Weights for Marginal
-Structural Models. American Journal of Epidemiology, 168(6), 656–664. https://doi.org/10.1093/aje/kwn164. 
+Cole, S. R., & Hernán, M. A. (2008). Constructing Inverse Probability Weights for Marginal Structural Models. American Journal of Epidemiology, 168(6), 656–664. https://doi.org/10.1093/aje/kwn164. 
   
-Greifer, Noah. 2023.WeightIt: Weighting for Covariate Balance in Observational Studies.
-https://CRAN.R-project.org/package=WeightIt.  
+Greifer, Noah. 2023.WeightIt: Weighting for Covariate Balance in Observational Studies. https://CRAN.R-project.org/package=WeightIt.  
   
 Lumley, Thomas. 2023. “survey: Analysis of Complex Survey Samples.”  
   
-Polley, Eric, Erin LeDell, Chris Kennedy, and Mark van der Laan. 2023. SuperLearner: Super
-Learner Prediction. https://CRAN.R-project.org/package=SuperLearner.  
+Polley, Eric, Erin LeDell, Chris Kennedy, and Mark van der Laan. 2023. SuperLearner: SuperLearner Prediction. https://CRAN.R-project.org/package=SuperLearner.  
   
 R Core Team (2013). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0, URLhttp://www.R-project.org/. 
   
 Stuart, E. A. (2010). Matching methods for causal inference: A review and a look forward. Statistical Science: A Review Journal of the Institute of Mathematical Statistics, 25(1), 1–21. https://doi.org/10.1214/09-STS313. 
   
-Thoemmes, F., & Ong, A. D. (2016). A Primer on Inverse Probability of Treatment Weighting
-and Marginal Structural Models. https://doi.org/10.1177/2167696815621645. 
+Thoemmes, F., & Ong, A. D. (2016). A Primer on Inverse Probability of Treatment Weighting and Marginal Structural Models. https://doi.org/10.1177/2167696815621645. 
  
  
 
