@@ -386,6 +386,20 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
       gsub(" ", "", x)
     })
     
+    if (any(as.logical(unlist(lapply(1:length(covars), function(x) {
+      any(na.omit(as.numeric(sapply(strsplit(unlist(covars[x]), "\\."), "[", 2))) > 
+          as.numeric(sapply(strsplit(names(covars[x]), "-"), "[", 2)))}))))) {
+      stop(sprintf("Balancing formula cannot contain time-varying confounders measured after the exposure time point for that formula."),
+           call. = FALSE)
+    }
+    
+    if (any(as.logical(unlist(lapply(1:length(covars), function(x) {
+      any(na.omit(as.numeric(sapply(strsplit(unlist(covars[x]), "\\."), "[", 2))) == 
+          as.numeric(sapply(strsplit(names(covars[x]), "-"), "[", 2)))}))))) {
+      warning(sprintf("Be sure that time-varying confounders included in balancing formulas contemporaneously are not mediators."),
+           call. = FALSE)
+    }
+    
     if (any(as.logical(unlist(lapply(covars[!grepl("\\:", covars)], function(x) {
       any(!x %in% tv_confounders & !x  %in% ti_confounders)}))))) {
       miss <- lapply(covars[!grepl("\\:", covars)], function(x) {
@@ -397,9 +411,14 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
               call. = FALSE)
     }
     
+    if (verbose) {
+      message("The user-supplied custom balancing formula for each exposure time point are below: ")
+      lapply(formulas, print)
+      
+    }
   }
   
-  
+
   
   #create formulas 
   
