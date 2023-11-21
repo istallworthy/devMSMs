@@ -171,7 +171,7 @@ The user may also specify a list of custom formulas by specifying to custom a li
 ```{r}
 custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
-) #add warning about future variables 
+) 
 
 custom <- NULL 
 ```
@@ -200,7 +200,7 @@ The optional inputs are as follows. The user may specify `balance_thresh`: provi
 ```{r}
 balance_thresh <- c(0.05, 0.1) 
 
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") 
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24") #"InRatioCor.35", "InRatioCor.58", "PmEd2") 
 ```
 
 We recommend thresholds of 0.05 and 0.1 for important and less important confounders, respectively. The relative importance of confounders should be determined based on existing theory and conceptual consideration. The specification of balance threshold(s) should be kept consistent throughout the use of the *devMSMs* package. 
@@ -322,12 +322,6 @@ The required inputs for using the `assessBalance()` function to assess balance f
 
 The optional inputs are described in Step 1b. 
 
-```{r}
-balance_thresh <- c(0.05, 0.1) 
-
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24") # "InRatioCor.35", "InRatioCor.58", "PmEd2") 
-```
-
 The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/weighted/plots’ folder, the function outputs .jpeg files of summary love plots depicting confounder balance for each exposure time point. 
   
 The function returns a data frame (or list) of balance statistics, balance thresholds, and binary balanced tag (1 = balanced, 0 = imbalanced) for each confounder relevant to each exposure time point. 
@@ -412,14 +406,8 @@ We next assess whether the weights created in the previous step with the best-pe
   
 The required inputs for using the `assessBalance()` function to assess how the best weights achieve balance for the full formulas are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), providing the full formulas (see Step 1a), setting type = “weighted”, and providing the best weights (see Step 2c). 
 
-The optional inputs are detailed in Step 1b. We select the following:  
-
-```{r}
-balance_thresh <- c(0.05, 0.1) 
-
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24") #"InRatioCor.35", "InRatioCor.58", "PmEd2") 
-```
-   
+The optional inputs are detailed in Step 1b.   
+  
 The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/type/plots’ folder, the function outputs  .jpeg files of summary love plots depicting confounder balance for each exposure time point.   
   
 The function returns a data frame (or list) of balance statistics, balance thresholds, and binary balanced tag for each confounder relevant to each exposure time point.   
@@ -541,12 +529,6 @@ The required inputs for using the `assessBalance()` function to assess how the f
 
 The optional inputs for the `assessBalance()` function are detailed in Step 1b. 
 
-```{r}
-balance_thresh <- c(0.05, 0.1)  
-
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24") #"InRatioCor.35", "InRatioCor.58", "PmEd2")  
-```
-
 The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/weighted’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced, and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/weighted/plots’ folder, the function outputs .jpeg files of summary love plots depicting confounder balance for each exposure time point.   
 
 The function returns a data frame (or list) of balance statistics, balance thresholds, and binary balanced tag for each confounder relevant to each exposure time point. 
@@ -626,7 +608,7 @@ The required inputs for using the `fitModel()` function are: data (data frame, m
 * *M3*: Full model regressing the outcome on the main effects of exposure, user-specified covariates, as well as all user-specified exposure main effect interactions. 
 
 ```{r}
-model <- "m1"
+model <- "m2"
 ```
 
 If you select a covariate model (“m1” or “m3”), you are required to supply a list to `covariates` that corresponds to covariates in your wide data that you wish to adjust for. Here, we recommend including any confounders that remain imbalanced at the final balance assessment (Step 4) and are time-invariant or measured at the first time point.   
@@ -725,11 +707,6 @@ hi_lo_cut <- c(0.6, 0.3)
 ```
   
 Additionally, the user has the option to specify epochs that differ from the measurement time points using the optional `epochs` data frame field (see Step 5a above). If you specified epochs in Step 5a for the `fitModel()` function, you must specify them at this step. 
-
-```{r}
-epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
-                     values = I(list(c(6), c(15), c(24)))) 
-```
 
 The user also has the option to estimate and compare only a custom subset of user-specified exposure histories (i.e., sequences of high and low levels of exposure at each epoch or time point) using the `reference` and `comparison` fields. To conduct these customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels (“low” or “high”, respectively). If you supply a reference history, in comparisons provide at least one unique and valid history for comparison by, in quotations, providing a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference. If you supply one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be supplied for multiple comparison correction. If no reference or comparison is specified, all histories will be compared to each other. If there are more than 4 exposure main effects (either as epochs or exposure time points), the user is required to select a subset of history comparisons (Step 5b), given that the base code (see the `hypotheses()` function from the *marginaleffects* package; Arel-Bundock, 2023) cannot accommodate all pairwise history comparisons for more than 5 time points.  
 
