@@ -41,6 +41,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements</a>
     <a class="dropdown-item" href="../articles/Preliminary_Steps.html">Preliminary Steps</a>
     <a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a>
     <a class="dropdown-item" href="../articles/Terminology.html">Terminology</a>
@@ -83,13 +84,16 @@ Stallworthy</h4>
 
     
     
+<p><br></p>
 <p>These four recommended preliminary steps are designed to assist the
 user in preparing and inspecting their data to ensure appropriate use of
-the package. Users should first view the Terminology vignette and
-complete the Data Requirements and Specify Core Inputs vignettes. The
-following recommended preliminary steps (using helper functions
-summarized in Table 1 are not included in the <em>devMSMs</em> package
-that can be found at the following
+the package. Users should first view the
+<a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>
+vignette and complete the Data Requirements and
+<a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying
+Core Inputs</a> vignettes. The following recommended preliminary steps
+(using helper functions summarized in Table 1 are not included in the
+<em>devMSMs</em> package that can be found at the following
 <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">Github</a> are
 designed to assist the user in preparing and inspecting their data and
 guide specification of required function inputs to ensure appropriate
@@ -104,11 +108,11 @@ using the package. Following completion of this vignette, users should
 use one of the Workflows vignettes to implement <em>devMSMs</em> with
 their longitudinal data.</p>
 <p><em>insert Table 1 here</em>.</p>
+<p><br></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Installing package into '/home/runner/work/_temp/Library'</span></span>
 <span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
-<span><span class="co">#&gt; also installing the dependencies 'credentials', 'zip', 'gitcreds', 'httr2', 'ini', 'httpuv', 'xtable', 'sourcetools', 'later', 'promises', 'gert', 'gh', 'shiny', 'htmlwidgets', 'xopen', 'brew', 'commonmark', 'cpp11', 'usethis', 'miniUI', 'profvis', 'rcmdcheck', 'remotes', 'roxygen2', 'rversions', 'urlchecker'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"stats"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Installing package into '/home/runner/work/_temp/Library'</span></span>
 <span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
@@ -122,54 +126,17 @@ their longitudinal data.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">stats</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/torockel/missMethods" class="external-link">missMethods</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT</span></span>
-<span><span class="co">#&gt; Downloading GitHub repo istallworthy/devMSMs@HEAD</span></span>
-<span><span class="co">#&gt; RcppEigen (NA -&gt; 0.3.3.9.4) [CRAN]</span></span>
-<span><span class="co">#&gt; Installing 1 packages: RcppEigen</span></span>
-<span><span class="co">#&gt; Installing package into '/home/runner/work/_temp/Library'</span></span>
-<span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB;">R CMD build</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; * checking for file ‘/tmp/RtmpbiQtVP/remotes1b7973548182/istallworthy-devMSMs-f4eb42a/DESCRIPTION’ ... OK</span></span>
-<span><span class="co">#&gt; * preparing ‘devMSMs’:</span></span>
-<span><span class="co">#&gt; * checking DESCRIPTION meta-information ... OK</span></span>
-<span><span class="co">#&gt; * checking for LF line-endings in source and make files and shell scripts</span></span>
-<span><span class="co">#&gt; * checking for empty or unneeded directories</span></span>
-<span><span class="co">#&gt; Omitted ‘LazyData’ from DESCRIPTION</span></span>
-<span><span class="co">#&gt; * building ‘devMSMs_0.0.0.9000.tar.gz’</span></span>
-<span><span class="co">#&gt; Installing package into '/home/runner/work/_temp/Library'</span></span>
-<span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMsHelpers"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT</span></span>
-<span><span class="co">#&gt; Downloading GitHub repo istallworthy/devMSMsHelpers@HEAD</span></span>
-<span><span class="co">#&gt; plyr       (NA -&gt; 1.8.9  ) [CRAN]</span></span>
-<span><span class="co">#&gt; progress   (NA -&gt; 1.2.2  ) [CRAN]</span></span>
-<span><span class="co">#&gt; rngtools   (NA -&gt; 1.5.2  ) [CRAN]</span></span>
-<span><span class="co">#&gt; reshape2   (NA -&gt; 1.4.4  ) [CRAN]</span></span>
-<span><span class="co">#&gt; doRNG      (NA -&gt; 1.8.6  ) [CRAN]</span></span>
-<span><span class="co">#&gt; ranger     (NA -&gt; 0.16.0 ) [CRAN]</span></span>
-<span><span class="co">#&gt; ggcorrplot (NA -&gt; 0.1.4.1) [CRAN]</span></span>
-<span><span class="co">#&gt; Installing 7 packages: plyr, progress, rngtools, reshape2, doRNG, ranger, ggcorrplot</span></span>
-<span><span class="co">#&gt; Installing packages into '/home/runner/work/_temp/Library'</span></span>
-<span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB;">R CMD build</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; * checking for file ‘/tmp/RtmpbiQtVP/remotes1b7961ffe426/istallworthy-devMSMsHelpers-d71042d/DESCRIPTION’ ... OK</span></span>
-<span><span class="co">#&gt; * preparing ‘devMSMsHelpers’:</span></span>
-<span><span class="co">#&gt; * checking DESCRIPTION meta-information ... OK</span></span>
-<span><span class="co">#&gt; * checking for LF line-endings in source and make files and shell scripts</span></span>
-<span><span class="co">#&gt; * checking for empty or unneeded directories</span></span>
-<span><span class="co">#&gt; Omitted ‘LazyData’ from DESCRIPTION</span></span>
-<span><span class="co">#&gt; * building ‘devMSMsHelpers_0.0.0.9000.tar.gz’</span></span>
-<span><span class="co">#&gt; Installing package into '/home/runner/work/_temp/Library'</span></span>
-<span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMsHelpers"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">devMSMsHelpers</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
 <p>Choose from the following preliminary steps with the goal of
 assigning to ‘data’ one of the following for use in the package: - a
 single data frame of data in wide format with no missing data - a mids
 object (output from mice::mice()) of data imputed in wide format - a
-list of data imputed in wide format as data frames</p>
+list of data imputed in wide format as data frames.</p>
 <p>Data columns should be either numeric or factor form and the ID
 column should be numeric.</p>
 <p>Some helper functions have optional arguments to suppress saving
@@ -181,12 +148,12 @@ are TRUE. Users must supply a path to a home directory if
 <code class="sourceCode R"><span><span class="va">save.out</span> <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span></span>
 <span><span class="va">verbose</span> <span class="op">=</span> <span class="cn">TRUE</span></span></code></pre></div>
+<p><br></p>
 <div class="section level3">
 <h3 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># data &lt;- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')</span></span>
+<code class="sourceCode R"><span><span class="co"># data &lt;- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')</span></span>
 <span></span>
 <span><span class="co">#temporary data until we get sim data</span></span>
 <span><span class="va">wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S_ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span>,</span>
@@ -214,6 +181,7 @@ are TRUE. Users must supply a path to a home directory if
 <span>                                                    cols_mis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ESETA1"</span>,</span>
 <span>                                                                 <span class="st">"WndNbrhood"</span><span class="op">)</span>,</span>
 <span>                                                    cols_ctrl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"InRatioCor"</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
 </div>
 <div class="section level3">
 <h3 id="core-inputs">Core inputs<a class="anchor" aria-label="anchor" href="#core-inputs"></a>
@@ -267,6 +235,7 @@ following core inputs.</p>
 <span>                    <span class="st">"gov_assist"</span></span>
 <span>                    <span class="co">#, "state:SmokTotl", "PmAge2:PmBlac2", "PmAge2:PmEd2" #testing interaction terms</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p><br><br></p>
 </div>
 <div class="section level3">
 <h3 id="p1--format-data">P1. Format Data<a class="anchor" aria-label="anchor" href="#p1--format-data"></a>
@@ -280,8 +249,9 @@ All variables should be classed as integer, numeric, or a factor (not
 character). Auxiliary or nuisance covariates that are not confounders
 (e.g, assessment version) can be included in the dataset for use and
 specification in the final modeling step (<em>Workflow</em> vignettes
-Step 5).</p>
+Step 5).<br><br></p>
 <p><em>insert Figure 1 here</em>.</p>
+<p><br></p>
 <div class="section level4">
 <h4 id="p1a--format-single-data-frame-of-long-data">P1a. Format single data frame of long data<a class="anchor" aria-label="anchor" href="#p1a--format-single-data-frame-of-long-data"></a>
 </h4>
@@ -306,17 +276,17 @@ as numeric.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; | WAVE|       mean|        sd|       min|      max|</span></span>
 <span><span class="co">#&gt; |----:|----------:|---------:|---------:|--------:|</span></span>
-<span><span class="co">#&gt; |    6|  0.0979146| 0.9194020| -1.759420| 2.382418|</span></span>
-<span><span class="co">#&gt; |   15| -0.0178304| 1.0706330| -1.931497| 2.399647|</span></span>
-<span><span class="co">#&gt; |   24| -0.0352698| 0.9972152| -1.836704| 2.541099|</span></span>
+<span><span class="co">#&gt; |    6|  0.0378583| 0.8805963| -1.708582| 2.370463|</span></span>
+<span><span class="co">#&gt; |   15| -0.1689015| 0.9042307| -2.099902| 1.601213|</span></span>
+<span><span class="co">#&gt; |   24| -0.0793099| 1.0295984| -1.906230| 2.328068|</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Summary of Outcome StrDif_Tot.58 Information</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; | WAVE|      mean|       sd|      min|      max|</span></span>
-<span><span class="co">#&gt; |----:|---------:|--------:|--------:|--------:|</span></span>
-<span><span class="co">#&gt; |    6| 0.0976727| 1.081317| -2.16208| 2.249099|</span></span>
-<span><span class="co">#&gt; |   15| 0.0976727| 1.081317| -2.16208| 2.249099|</span></span>
-<span><span class="co">#&gt; |   24| 0.0976727| 1.081317| -2.16208| 2.249099|</span></span>
+<span><span class="co">#&gt; | WAVE|      mean|       sd|       min|      max|</span></span>
+<span><span class="co">#&gt; |----:|---------:|--------:|---------:|--------:|</span></span>
+<span><span class="co">#&gt; |    6| 0.0985709| 1.113742| -1.741084| 2.442707|</span></span>
+<span><span class="co">#&gt; |   15| 0.0985709| 1.113742| -1.741084| 2.442707|</span></span>
+<span><span class="co">#&gt; |   24| 0.0985709| 1.113742| -1.741084| 2.442707|</span></span>
 <span></span>
 <span><span class="va">data_long_f_no_missing</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatLongData.html" class="external-link">formatLongData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_long</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, </span>
 <span>                              exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, </span>
@@ -329,17 +299,18 @@ as numeric.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; | WAVE|       mean|        sd|       min|      max|</span></span>
 <span><span class="co">#&gt; |----:|----------:|---------:|---------:|--------:|</span></span>
-<span><span class="co">#&gt; |    6|  0.1081659| 0.8985958| -1.759420| 2.382418|</span></span>
-<span><span class="co">#&gt; |   15|  0.0627853| 1.1063451| -1.931497| 2.665899|</span></span>
-<span><span class="co">#&gt; |   24| -0.0377793| 0.9935615| -1.836704| 2.541099|</span></span>
+<span><span class="co">#&gt; |    6|  0.0155557| 0.8494673| -1.708582| 2.370463|</span></span>
+<span><span class="co">#&gt; |   15| -0.2355847| 0.9991753| -2.192502| 1.601213|</span></span>
+<span><span class="co">#&gt; |   24| -0.0173328| 1.0256234| -1.906230| 2.328068|</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Summary of Outcome StrDif_Tot.58 Information</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; | WAVE|      mean|       sd|      min|      max|</span></span>
-<span><span class="co">#&gt; |----:|---------:|--------:|--------:|--------:|</span></span>
-<span><span class="co">#&gt; |    6| 0.0976727| 1.081317| -2.16208| 2.249099|</span></span>
-<span><span class="co">#&gt; |   15| 0.0976727| 1.081317| -2.16208| 2.249099|</span></span>
-<span><span class="co">#&gt; |   24| 0.0976727| 1.081317| -2.16208| 2.249099|</span></span></code></pre></div>
+<span><span class="co">#&gt; | WAVE|      mean|       sd|       min|      max|</span></span>
+<span><span class="co">#&gt; |----:|---------:|--------:|---------:|--------:|</span></span>
+<span><span class="co">#&gt; |    6| 0.0985709| 1.113742| -1.741084| 2.442707|</span></span>
+<span><span class="co">#&gt; |   15| 0.0985709| 1.113742| -1.741084| 2.442707|</span></span>
+<span><span class="co">#&gt; |   24| 0.0985709| 1.113742| -1.741084| 2.442707|</span></span></code></pre></div>
+<p><br></p>
 </div>
 <div class="section level4">
 <h4 id="p1b--convert-single-long-data-frame-to-wide-format">P1b. Convert single long data frame to wide format<a class="anchor" aria-label="anchor" href="#p1b--convert-single-long-data-frame-to-wide-format"></a>
@@ -386,6 +357,7 @@ formatted, wide dataset ready for use with <em>devMSMs</em>.</p>
 <span><span class="va">data_wide_no_missing</span> <span class="op">&lt;-</span> <span class="va">data_wide</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">data_wide</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_wide</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data_wide_no_missing</span></span></code></pre></div>
+<p><br></p>
 </div>
 </div>
 <div class="section level3">
@@ -404,7 +376,7 @@ superiority, <em>devMSMS</em> implements the ‘within’ approach for
 imputed data, conducting all steps on each imputed dataset before
 pooling estimates using Rubin’s rules to create final average
 predictions and contrast comparisons in <em>Worfklows</em> vignettes
-Step 5 (Leyrat et al, 2021; Granger et al., 2019).</p>
+Step 5 (Leyrat et al, 2021; Granger et al., 2019). <br></p>
 <div class="section level4">
 <h4 id="p2a--multiply-impute-single-wide-formatted-data-frame-using-mice">P2a. Multiply impute single wide, formatted data frame using
 mice<a class="anchor" aria-label="anchor" href="#p2a--multiply-impute-single-wide-formatted-data-frame-using-mice"></a>
@@ -434,17 +406,19 @@ datasets. Any variables that have missing data following imputation may
 need to be removed due to high collinearity and/or low variability.</p>
 <p>The required inputs for this function are a data frame in wide format
 (formatted according to pre-requirements listed above), m number of
-imputed datasets to create, a path to the home directory, (if ‘save.out’
-= TRUE), exposure (e.g., “variable”), and outcome (e.g., “variable.t”).
-The home directory path, exposure, and outcome should already be defined
-if the user completed the Specifying Core Inputs vignette.</p>
-<p>Optional inputs are as follows. The user can specify an imputation
-method compatible with <code>mice()</code> (see above). Additionally,
-the user can specify in <code>maxit</code> the number of interactions
-for <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice::mice()</a></code> to conduct (default is 5). The user can
-also specify <code>para_proc</code>, a logical indicator indicating
-whether or not to speed up imputing using parallel processing (default =
-TRUE). This uses 2 cores using functions from the <em>parallel</em>,
+imputed datasets to create, a path to the home directory, (if
+<code>save.out = TRUE</code>), exposure (e.g., “variable”), and outcome
+(e.g., “variable.t”). The home directory path, exposure, and outcome
+should already be defined if the user completed the Specifying Core
+Inputs vignette.</p>
+<p>Optional inputs are as follows.</p>
+<p>The user can specify an imputation method compatible with
+<code>mice()</code> (see above). Additionally, the user can specify in
+<code>maxit</code> the number of interactions for
+<code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice::mice()</a></code> to conduct (default is 5). The user can also
+specify <code>para_proc</code>, a logical indicator indicating whether
+or not to speed up imputing using parallel processing (default = TRUE).
+This uses 2 cores using functions from the <em>parallel</em>,
 <em>doRNG</em>, and <em>doParallel</em> packages.</p>
 <p>The user may also specify any additional inputs accepted by
 <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice::mice()</a></code> and we advise consulting the
@@ -480,6 +454,7 @@ random forest method and 5 iterations and assign the output to
 <p>We can also read in previously saved imputed data.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># data &lt;- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed_mids.rds") </span></span></code></pre></div>
+<p><br></p>
 </div>
 <div class="section level4">
 <h4 id="p2b--read-in-as-a-list-wide-imputed-data-saved-locally">P2b. Read in as a list wide imputed data saved locally<a class="anchor" aria-label="anchor" href="#p2b--read-in-as-a-list-wide-imputed-data-saved-locally"></a>
@@ -496,6 +471,7 @@ single folder.</p>
 <span><span class="co">#   imp_data &lt;- read.csv(file)</span></span>
 <span><span class="co">#   imp_data</span></span>
 <span><span class="co"># })</span></span></code></pre></div>
+<p><br></p>
 </div>
 </div>
 <div class="section level3">
@@ -538,6 +514,7 @@ time points at which exposure was measured will be used in Step 5 of the
 <span>                                     <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span><span class="op">)</span>, </span>
 <span>                                     <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">24</span><span class="op">)</span></span>
 <span>                     <span class="op">)</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
+<p><br></p>
 </div>
 <div class="section level3">
 <h3 id="p4--recommended-specify-inspect-exposure-histories">P4. Recommended: Specify &amp; Inspect Exposure Histories<a class="anchor" aria-label="anchor" href="#p4--recommended-specify-inspect-exposure-histories"></a>
@@ -546,7 +523,7 @@ time points at which exposure was measured will be used in Step 5 of the
 substantive hypotheses and their construction should be determined by
 both theoretical and practical reasoning. We strongly recommend users
 verify and inspect exposure histories a priori in relation to their data
-and hypotheses.</p>
+and hypotheses.<br><br></p>
 </div>
 <div class="section level3">
 <h3 id="p4a--create-high-and-low-cutoff-values-for-continuous-exposures">P4a. Create high and low cutoff values for continuous exposures<a class="anchor" aria-label="anchor" href="#p4a--create-high-and-low-cutoff-values-for-continuous-exposures"></a>
@@ -565,6 +542,7 @@ the subsequent steps. These final values should be used in creating
 exposure histories in Step 5 of the <em>Workflows</em> vignettes.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hi_lo_cut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span> <span class="co">#empirical example </span></span></code></pre></div>
+<p><br></p>
 </div>
 <div class="section level3">
 <h3 id="p4b--specify-hypotheses-relevant-exposure-histories">P4b. Specify hypotheses-relevant exposure histories<a class="anchor" aria-label="anchor" href="#p4b--specify-hypotheses-relevant-exposure-histories"></a>
@@ -613,6 +591,7 @@ than 5 time points).</p>
 <code class="sourceCode R"><span><span class="va">reference</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l-l-l"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"h-h-h"</span>, <span class="st">"h-l-l"</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
 </div>
 <div class="section level3">
 <h3 id="p4c--inspect-exposure-histories-and-data">P4c. Inspect exposure histories and data<a class="anchor" aria-label="anchor" href="#p4c--inspect-exposure-histories-and-data"></a>
@@ -635,38 +614,62 @@ percentile cutoffs, there were histories that represented less than two
 cases and thus we re-evaluated our cutoffs. Users may wish to revise any
 epoch designation and high and low cutoff values, where applicable. The
 function conducts summaries and history distribution inspection for each
-imputed dataset if imputed data are supplied.</p>
+imputed dataset if imputed data are supplied. <br></p>
 <p><em>insert Table 2</em></p>
+<p><br></p>
 <p>The required inputs for <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/inspectData.html" class="external-link">inspectData()</a></code> are: data (as a
 data frame in wide or long format, a list of imputed data frames in wide
 format, or a mids object), a path to the home directory, exposure (e.g.,
 “variable”), and outcome (e.g., “variable.t”).</p>
 <p>Optional inputs are time-varying confounders (e.g., “variable.t”),
-epochs, high/low cutoff values for continuous exposures and
-specification of reference and comparison histories (see above), setting
-<code>verbose = FALSE</code> to suppress console output (recommended and
-default is TRUE), and setting <code>save.out = FALSE</code> to suppress
-saving intermediate and final output to local home directory
-(recommended and default = TRUE). The specification of exposure epochs
-should be kept consistent throughout the use of the <em>devMSMs</em>
-package (see <em>Workflows</em> vignettes). The home directory path,
-exposure, exposure time points, confounders, and outcome should already
-be defined if the user completed the Specify Required Package Core
-Inputs vignette.</p>
+epochs, high/low cutoff values for continuous exposures, and
+specification of reference and comparison histories (see above). The
+specification of exposure epochs should be kept consistent throughout
+the use of the <em>devMSMs</em> package (see <em>Workflows</em>
+vignettes). The home directory path, exposure, exposure time points,
+confounders, and outcome should already be defined if the user completed
+the
+<a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying
+Core Inputs vignette</a>.</p>
 <p>The helper <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/inspectData.html" class="external-link">inspectData()</a></code> function outputs the following
 files into the home directory: a correlation plot of all variables in
-the dataset (Figure 2), tables of exposure (Table 3) and outcome (Table
-4) descriptive statistics, and two summary tables of the confounders
-considered at each time point (Table 5 &amp; 6).</p>
+the dataset, tables of exposure and outcome descriptive statistics, and
+two summary tables of the confounders considered at each time point.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/inspectData.html" class="external-link">inspectData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, <span class="co"># required input</span></span>
 <span>            ti_confounders <span class="op">=</span> <span class="va">ti_confounders</span>, tv_confounders <span class="op">=</span> <span class="va">tv_confounders</span>, <span class="co"># required input</span></span>
 <span>            epochs <span class="op">=</span> <span class="va">epochs</span>, hi_lo_cut <span class="op">=</span> <span class="va">hi_lo_cut</span>, reference <span class="op">=</span> <span class="va">reference</span>, comparison <span class="op">=</span> <span class="va">comparison</span>, <span class="co">#optional input</span></span>
 <span>            home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional input</span></span>
 <span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT</span></span>
-<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (f4eb42a3) has not changed since last install.</span></span>
+<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (ba059176) has not changed since last install.</span></span>
 <span><span class="co">#&gt;   Use `force = TRUE` to force installation</span></span>
 <span><span class="co">#&gt; Imputation 1</span></span>
+<span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 5 (10%) individuals that fall into 3 out of the 3 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
+<span><span class="co">#&gt; USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Table: Summary of user-specified exposure ESETA1 histories based on exposure main effects Infancy, Toddlerhood, Childhood containing time points 6, 15, 24:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; |history |  n|</span></span>
+<span><span class="co">#&gt; |:-------|--:|</span></span>
+<span><span class="co">#&gt; |h-h-h   |  3|</span></span>
+<span><span class="co">#&gt; |h-l-l   |  1|</span></span>
+<span><span class="co">#&gt; |l-l-l   |  1|</span></span>
+<span><span class="co">#&gt; Imputation 2</span></span>
+<span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 10 (20%) individuals that fall into 3 out of the 3 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
+<span><span class="co">#&gt; USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Table: Summary of user-specified exposure ESETA1 histories based on exposure main effects Infancy, Toddlerhood, Childhood containing time points 6, 15, 24:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; |history |  n|</span></span>
+<span><span class="co">#&gt; |:-------|--:|</span></span>
+<span><span class="co">#&gt; |h-h-h   |  5|</span></span>
+<span><span class="co">#&gt; |h-l-l   |  3|</span></span>
+<span><span class="co">#&gt; |l-l-l   |  2|</span></span>
+<span><span class="co">#&gt; Imputation 3</span></span>
 <span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 8 (16%) individuals that fall into 3 out of the 3 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
@@ -676,48 +679,22 @@ considered at each time point (Table 5 &amp; 6).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; |history |  n|</span></span>
 <span><span class="co">#&gt; |:-------|--:|</span></span>
-<span><span class="co">#&gt; |h-h-h   |  3|</span></span>
-<span><span class="co">#&gt; |h-l-l   |  3|</span></span>
-<span><span class="co">#&gt; |l-l-l   |  2|</span></span>
-<span><span class="co">#&gt; Imputation 2</span></span>
-<span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 7 (14%) individuals that fall into 3 out of the 3 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
-<span><span class="co">#&gt; USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Table: Summary of user-specified exposure ESETA1 histories based on exposure main effects Infancy, Toddlerhood, Childhood containing time points 6, 15, 24:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; |history |  n|</span></span>
-<span><span class="co">#&gt; |:-------|--:|</span></span>
-<span><span class="co">#&gt; |h-h-h   |  3|</span></span>
-<span><span class="co">#&gt; |h-l-l   |  3|</span></span>
-<span><span class="co">#&gt; |l-l-l   |  1|</span></span>
-<span><span class="co">#&gt; Imputation 3</span></span>
-<span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 6 (12%) individuals that fall into 3 out of the 3 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
-<span><span class="co">#&gt; USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Table: Summary of user-specified exposure ESETA1 histories based on exposure main effects Infancy, Toddlerhood, Childhood containing time points 6, 15, 24:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; |history |  n|</span></span>
-<span><span class="co">#&gt; |:-------|--:|</span></span>
-<span><span class="co">#&gt; |h-h-h   |  3|</span></span>
+<span><span class="co">#&gt; |h-h-h   |  6|</span></span>
 <span><span class="co">#&gt; |h-l-l   |  1|</span></span>
-<span><span class="co">#&gt; |l-l-l   |  2|</span></span>
+<span><span class="co">#&gt; |l-l-l   |  1|</span></span>
 <span><span class="co">#&gt; Imputation 4</span></span>
 <span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 7 (14%) individuals that fall into 3 out of the 3 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
+<span><span class="co">#&gt; USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 10 (20%) individuals that fall into 3 out of the 3 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
 <span><span class="co">#&gt; USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Summary of user-specified exposure ESETA1 histories based on exposure main effects Infancy, Toddlerhood, Childhood containing time points 6, 15, 24:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; |history |  n|</span></span>
 <span><span class="co">#&gt; |:-------|--:|</span></span>
-<span><span class="co">#&gt; |h-h-h   |  3|</span></span>
-<span><span class="co">#&gt; |h-l-l   |  1|</span></span>
-<span><span class="co">#&gt; |l-l-l   |  3|</span></span>
+<span><span class="co">#&gt; |h-h-h   |  5|</span></span>
+<span><span class="co">#&gt; |h-l-l   |  3|</span></span>
+<span><span class="co">#&gt; |l-l-l   |  2|</span></span>
 <span><span class="co">#&gt; Imputation 5</span></span>
 <span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -728,8 +705,8 @@ considered at each time point (Table 5 &amp; 6).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; |history |  n|</span></span>
 <span><span class="co">#&gt; |:-------|--:|</span></span>
-<span><span class="co">#&gt; |h-h-h   |  2|</span></span>
-<span><span class="co">#&gt; |h-l-l   |  3|</span></span>
+<span><span class="co">#&gt; |h-h-h   |  3|</span></span>
+<span><span class="co">#&gt; |h-l-l   |  2|</span></span>
 <span><span class="co">#&gt; |l-l-l   |  1|</span></span>
 <span><span class="co">#&gt; The following inspection is conducted on the first imputed dataset.</span></span>
 <span><span class="co">#&gt; USER ALERT: Below are the 11 variables spanning 5 unique domains that will be treated as confounding variables for the relation between ESETA1 and StrDif_Tot.58.</span></span>
@@ -746,7 +723,7 @@ considered at each time point (Table 5 &amp; 6).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 8 (16%) individuals that fall into 3 out of the 3 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
+<span><span class="co">#&gt; USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 5 (10%) individuals that fall into 3 out of the 3 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
 <span><span class="co">#&gt; USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Summary of user-specified exposure ESETA1 histories based on exposure main effects Infancy, Toddlerhood, Childhood containing time points 6, 15, 24:</span></span>
@@ -754,10 +731,11 @@ considered at each time point (Table 5 &amp; 6).</p>
 <span><span class="co">#&gt; |history |  n|</span></span>
 <span><span class="co">#&gt; |:-------|--:|</span></span>
 <span><span class="co">#&gt; |h-h-h   |  3|</span></span>
-<span><span class="co">#&gt; |h-l-l   |  3|</span></span>
-<span><span class="co">#&gt; |l-l-l   |  2|</span></span>
+<span><span class="co">#&gt; |h-l-l   |  1|</span></span>
+<span><span class="co">#&gt; |l-l-l   |  1|</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Your outcome variable(s) have the following type(s): numeric</span></span></code></pre></div>
+<p><br></p>
 </div>
 <div class="section level3">
 <h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
