@@ -22,7 +22,16 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ```{r setup}
+
+require(devtools)
+
+devtools::install_github("istallworthy/devMSMs")
 library(devMSMs)
+
+devtools::install_github("istallworthy/devMSMsHelpers")
+library(devMSMsHelpers)
+```
+  
 ```
 
 This vignette guides a user through the process of using *devMSMs* with a continuousy distributed exposure variable. The users should first view the Terminology, Data Requirements, Specifying Core Inputs, and Preliminary Steps vignettes.  
