@@ -41,8 +41,10 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/Preliminary_Steps.html">Preliminary Steps</a>
     <a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a>
-    <a class="dropdown-item" href="../articles/demodevMSMsWorkflow.html">Demo of devMSMs Workflow</a>
+    <a class="dropdown-item" href="../articles/Terminology.html">Terminology</a>
+    <a class="dropdown-item" href="../articles/Workflow_Continuous_Exposure.html">Workflow: Continuous Exposure</a>
   </div>
 </li>
       </ul>
@@ -70,7 +72,10 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Specify Core Inputs</h1>
+                        <h4 data-toc-skip class="author">Isabella
+Stallworthy</h4>
             
+            <h4 data-toc-skip class="date">2023-11-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Specify_Core_Inputs.Rmd" class="external-link"><code>vignettes/Specify_Core_Inputs.Rmd</code></a></small>
       <div class="d-none name"><code>Specify_Core_Inputs.Rmd</code></div>
@@ -79,72 +84,76 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span></code></pre></div>
-<p>Users should first view the Terminology and Data Requirements
-vignettes. This vignette helps users specify core inputs (e.g., home
-directory, exposure, exposure time points, time-varying confounders,
-time invariant confounders, outcome, reference, comparison, high/low
-cutoff for continuous exposure, and balance threshold) that are used by
-multiple functions in the devMSMs package (see Workflows vignettes).
+<code class="sourceCode R"><span><span class="co">#library(devMSMs)</span></span></code></pre></div>
+<p>This vignette guides users through the specification of the core
+inputs required by the <em>deMSMs</em> functions (and helper functions).
+Users should first view the Terminology and Data Requirements vignettes.
+This vignette helps users specify core inputs (e.g., home directory,
+exposure, exposure time points, time-varying confounders, time invariant
+confounders, outcome, reference, comparison, high/low cutoff for
+continuous exposure, and balance threshold) that are used by multiple
+functions in the <em>devMSMs</em> package (see Workflows vignettes).
 Their use and values should be kept consistent throughout the package.
 Additionally, all functions have two optional inputs allowing the user
-to override defaults to suppress all messaging to the console (verbose =
-FALSE) and elect not to save out locally any intermediate and final
-output (save.out = FALSE). Following completion of this vignette, the
-user should complete the Preliminary Steps followed by a Workflow
-vignette to implement <em>devMSMs</em> with their longitudinal data.</p>
+to override defaults to suppress all messaging to the console
+(<code>verbose = FALSE</code>) and elect not to save out locally any
+intermediate and final output (<code>save.out = FALSE</code>).</p>
+<p>Following completion of this vignette, the user should complete the
+Preliminary Steps followed by a Workflow vignette to implement
+<em>devMSMs</em> with their longitudinal data.</p>
 <p>The following steps also correspond to code chunks in the
-examplePipeline.rmd file.</p>
-<div class="section level2">
-<h2 id="home-directory">Home Directory<a class="anchor" aria-label="anchor" href="#home-directory"></a>
-</h2>
+<a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd" class="external-link">examplePipeline.rmd
+file</a>.</p>
+<div class="section level3">
+<h3 id="home-directory">Home Directory<a class="anchor" aria-label="anchor" href="#home-directory"></a>
+</h3>
 <p>Users are required to specify home directory, or in quotations, a
 path to a designated folder for all output from the package, if they
 plan to save out intermediary and final outputs in the package (default)
-by setting ‘save.out’ = TRUE for any of the functions. All sub
-directories will be created within this home directory by the
-<em>devMSMs</em> functions automatically when ‘save.out’ = TRUE.</p>
+by setting <code>save.out = TRUE</code> for any of the functions. All
+sub directories will be created within this home directory by the
+<em>devMSMs</em> functions automatically when
+<code>save.out’ = TRUE</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="co">#set seed for reproducibility </span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co">#required if you wish to use save.out = TRUE in the functions</span></span>
 <span><span class="va">home_dir</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span><span class="va">home_dir</span> <span class="op">&lt;-</span> <span class="st">'/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa'</span> <span class="co">#note: no / after</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="exposure-variable">Exposure Variable<a class="anchor" aria-label="anchor" href="#exposure-variable"></a>
-</h2>
+<div class="section level3">
+<h3 id="exposure-variable">Exposure Variable<a class="anchor" aria-label="anchor" href="#exposure-variable"></a>
+</h3>
 <p>Users are required to specify an exposure variable as input to all
-functions in devMSMs. The user must specify exposure, or the variable
-name of the exposure in quotations, without any time information
-appended (e.g., “variable”). Note that in your dataset, the exposure
-variables should be in wide format labeled with a “.time” suffix (e.g.,
-“variable.t”).</p>
+functions in <em>devMSMs</em>. The user must specify exposure, or the
+variable name of the exposure in quotations, without any time
+information appended (e.g., “variable”). Note that in your dataset, the
+exposure variables should be in wide format labeled with a “.time”
+suffix (e.g., “variable.t”).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#required</span></span>
 <span><span class="va">exposure</span> <span class="op">&lt;-</span> <span class="st">"ESETA1"</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="exposure-time-points">Exposure Time Points<a class="anchor" aria-label="anchor" href="#exposure-time-points"></a>
-</h2>
+<div class="section level3">
+<h3 id="exposure-time-points">Exposure Time Points<a class="anchor" aria-label="anchor" href="#exposure-time-points"></a>
+</h3>
 <p>Next, users are required to provide information about the time points
 at which the exposure was assessed to <em>exposure_time_pts</em>, as
-required input to the createFormulas(), assessBalance(), fitModel(), and
-compareHistories() <em>devMSMs</em> functions (see <em>Workflows</em>
-vignettes). The user has two options when specifying exposure time
-points and should select the option that best serves their theory
-regarding developmental timing and the practical constraints of their
-data and the modeling process.</p>
+required input to the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>,
+<code><a href="../reference/assessBalance.html">assessBalance()</a></code>, <code><a href="../reference/fitModel.html">fitModel()</a></code>, and
+<code><a href="../reference/compareHistories.html">compareHistories()</a></code> <em>devMSMs</em> functions (see
+<em>Workflows</em> vignettes). The user has two options when specifying
+exposure time points and should select the option that best serves their
+theory regarding developmental timing and the practical constraints of
+their data and the modeling process.</p>
 <p>First, they may specify all time points at which the exposure was
 measured in their data. This means that balancing formulas will be
-created (Steps 1a, 2a, 3b in the Workflow vignettes) and IPTW weights
-will be created (Steps 2b, 3c in the <em>Workflow</em> vignettes) and
-assessed (Steps 2c, 3a, 4 in the Workflow vignettes) for all time
-points. In this case, if no epochs are specified, all time points will
-be included as exposure main effects in the final substantive model and
-history comparison (Step 5 in the <em>Workflow</em> vignettes).</p>
+created (Steps 1a, 2a, 3b in the <em>Workflows</em> vignettes) and IPTW
+weights will be created (Steps 2b, 3c in the <em>Workflows</em>
+vignettes) and assessed (Steps 2c, 3a, 4 in the <em>Workflows</em>
+vignettes) for all time points. In this case, if no epochs are
+specified, all time points will be included as exposure main effects in
+the final substantive model and history comparison (Step 5 in the
+<em>Workflows</em> vignettes).</p>
 <p>Second, they may specify a subset of theoretically important time
 points at which the exposure was measured in their data. This means that
 balancing formulas will be created and IPTW weights will be created and
@@ -152,32 +161,31 @@ assessed for only those time points. Further, if no epochs are
 specified, only those subsetted time points will be included as exposure
 main effects in the final substantive models. Importantly, exposure
 variables at all time points at which the exposure was assessed should
-be included as time-varying confounders for balancing purposes
-only.<br>
-The specification of exposure epochs should be kept consistent
+be included as time-varying confounders for balancing purposes only.</p>
+<p>The specification of exposure epochs should be kept consistent
 throughout the use of the <em>devMSMs</em> package. If the user intends
 to specify exposure epochs (Preliminary Steps Vignette Step P3), the
 user should include all time points encompassed in the epochs in
-exposure_time_pts. If the user does not intend to specify exposure
-epochs (Preliminary Steps Vignette Step P3), the exposure_time_pts will
-constitute the exposure main effects in the final outcome model and form
-the basis of the histories used for history comparison. In this case, if
-the user specifies more than 4 exposure time points, they will be
-required to conduct only a subset of history comparisons (Step 5b in the
-<em>Workflows</em> vignettes), given that the base code (see the
-hypotheses() function from the <em>marginaleffects</em> package) cannot
-accommodate all pairwise history comparisons for more than 5 time
-points.</p>
+<code>exposure_time_pts</code>. If the user does not intend to specify
+exposure epochs (Preliminary Steps Vignette Step P3), the
+<code>exposure_time_pts</code> will constitute the exposure main effects
+in the final outcome model and form the basis of the histories used for
+history comparison. In this case, if the user specifies more than 4
+exposure time points, they will be required to conduct only a subset of
+history comparisons (Step 5b in the <em>Workflows</em> vignettes), given
+that the base code (see the <code>hypotheses()</code> function from the
+<em>marginaleffects</em> package) cannot accommodate all pairwise
+history comparisons for more than 5 time points.</p>
 <p>We elected to create epochs of infancy (6 and 15 months), toddlerhood
 (24 and 35 months), and early childhood (58 months). Thus, we input 6,
-15, 24, 35, and 58 to <em>exposure_time_pts</em>.</p>
+15, 24, 35, and 58 to <code>exposure_time_pts</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#required</span></span>
+<code class="sourceCode R"><span></span>
 <span><span class="va">exposure_time_pts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">15</span>, <span class="fl">24</span>, <span class="fl">35</span>, <span class="fl">58</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="outcome-variable">Outcome Variable<a class="anchor" aria-label="anchor" href="#outcome-variable"></a>
-</h2>
+<div class="section level3">
+<h3 id="outcome-variable">Outcome Variable<a class="anchor" aria-label="anchor" href="#outcome-variable"></a>
+</h3>
 <p>Users are also required to specify an outcome variable at a
 designated final time point, as required input to all functions in the
 <em>devMSMs</em> package. This final time point should be equal to (or,
@@ -190,38 +198,45 @@ corresponding to the variable name in the wide data, is required for the
 package. Outcome variables in your dataset should be in wide format
 labeled with a “.time” suffix.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#required</span></span>
+<code class="sourceCode R"><span></span>
 <span><span class="va">outcome</span> <span class="op">&lt;-</span> <span class="st">"StrDif_Tot.58"</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="confounders">Confounders<a class="anchor" aria-label="anchor" href="#confounders"></a>
-</h2>
-<p>###Time invariant.<br>
-Specifying at least one time invariant confounder is required for the
-use of this package as required input for the createFormulas() function.
-Time invariant confounders could include core demographic or birth
-characteristics (e.g., sex, racial group membership, birth
-complications) that might cause either the exposure or outcome, either
-directly or as a proxy, as suggested by theory and/or evidenced by
-strong associations in the existing literature. Here, the user can also
-include any interaction terms between time invariant variables (e.g.,
-“variable:variable”) for inclusion in the balancing formula. Keep in
-mind that any interactions that include factor variables will be
-decomposed into interactions at each factor level. For
-<em>ti_confounders</em>, as a list, in quotations, provide the names of
-all confounders (e.g., “variable”, “variable:variable”) in your dataset
-that are time invariant.</p>
+<div class="section level3">
+<h3 id="confounders">Confounders<a class="anchor" aria-label="anchor" href="#confounders"></a>
+</h3>
+<div class="section level4">
+<h4 id="time-invariant-confounders">Time invariant confounders<a class="anchor" aria-label="anchor" href="#time-invariant-confounders"></a>
+</h4>
+<p>Specifying at least one time invariant confounder is required for the
+use of this package as required input for the
+<code><a href="../reference/createFormulas.html">createFormulas()</a></code> function. Time invariant confounders could
+include core demographic or birth characteristics (e.g., sex, racial
+group membership, birth complications) that might cause either the
+exposure or outcome, either directly or as a proxy, as suggested by
+theory and/or evidenced by strong associations in the existing
+literature.</p>
+<p>Here, the user can also include any interaction terms between time
+invariant variables (e.g., “variable:variable”) for inclusion in the
+balancing formula. Keep in mind that any interactions that include
+factor variables will be decomposed into interactions at each factor
+level. For <code>ti_confounders</code>, as a list, in quotations,
+provide the names of all confounders (e.g., “variable”,
+“variable:variable”) in your dataset that are time invariant.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#required; list in wide format</span></span>
+<code class="sourceCode R"><span></span>
 <span><span class="va">ti_confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"BioDadInHH2"</span>, <span class="st">"PmAge2"</span>, <span class="st">"PmBlac2"</span>, <span class="st">"TcBlac2"</span>, <span class="st">"PmMrSt2"</span>, <span class="st">"PmEd2"</span>, <span class="st">"KFASTScr"</span>,</span>
 <span>                    <span class="st">"RMomAgeU"</span>, <span class="st">"RHealth"</span>, <span class="st">"HomeOwnd"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
 <span>                    <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span>, <span class="st">"gov_assist"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>###Time-varying. Specifying at least time-varying exposures as
-time-varying confounders is required for the use of this package as
-required input for the createFormulas() <em>devMSMs</em> function (see
-<em>Workflows</em> vignettes). In <em>tv_confounders</em> as a list, in
-quotations, provide the names of all variables in wide format (e.g.,
+</div>
+<div class="section level4">
+<h4 id="time-varying-confounders">Time-varying confounders<a class="anchor" aria-label="anchor" href="#time-varying-confounders"></a>
+</h4>
+<p>Specifying at least time-varying exposures as time-varying
+confounders is required for the use of this package as required input
+for the <code><a href="../reference/createFormulas.html">createFormulas()</a></code> <em>devMSMs</em> function (see
+<em>Workflows</em> vignettes). In <code>tv_confounders</code> as a list,
+in quotations, provide the names of all variables in wide format (e.g.,
 “variable.t”) in your dataset that are time-varying (including
 time-varying confounders, exposures, and outcomes). These should include
 all time-varying exposure variables and all outcome variables present in
@@ -229,7 +244,8 @@ the dataset (e.g., “variable.t”). Note that time-varying confounders
 should also include any confounders measured repeatedly at all time
 points (e.g., InRatioCor) or any collected only at one or several
 specific time points, and missing at other time points, but are not time
-invariant. Here, the user can also include any interaction terms between
+invariant.</p>
+<p>Here, the user can also include any interaction terms between
 time-varying variables (e.g., “variable.t:variable.t”) or between time
 invariant and time-varying variables (e.g., “variable.t:variable”) for
 inclusion in the balancing formula. Keep in mind that any interactions
@@ -254,9 +270,13 @@ each factor level.</p>
 <span>                    <span class="st">"StrDif_Tot.35"</span>, <span class="st">"StrDif_Tot.58"</span>,    </span>
 <span>                    <span class="st">"fscore.35"</span>, <span class="st">"fscore.58"</span></span>
 <span><span class="op">)</span> </span></code></pre></div>
-<p>##References Arel-Bundock, Vincent. 2023. marginaleffects:
-Predictions, Comparisons, Slopes, Marginal Means, and Hypothesis Tests.
-<a href="https://CRAN.R-project.org/package=marginaleffects" class="external-link uri">https://CRAN.R-project.org/package=marginaleffects</a>.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h3>
+<p>Arel-Bundock, Vincent. 2023. marginaleffects: Predictions,
+Comparisons, Slopes, Marginal Means, and Hypothesis Tests. <a href="https://CRAN.R-project.org/package=marginaleffects" class="external-link uri">https://CRAN.R-project.org/package=marginaleffects</a>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
