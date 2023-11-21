@@ -23,7 +23,9 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 
 ```{r setup}
 
-require(devtools)
+install.packages(devtools)
+
+library(devtools)
 
 devtools::install_github("istallworthy/devMSMs")
 library(devMSMs)
