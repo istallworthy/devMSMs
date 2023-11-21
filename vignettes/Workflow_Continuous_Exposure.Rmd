@@ -23,7 +23,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 
 ```{r setup}
 
-install.packages(devtools)
+install.packages("devtools")
 
 library(devtools)
 
