@@ -174,24 +174,24 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A - D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55b9f3826318&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5621bd6f9cb0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A - D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55b9f3826318&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5621bd6f9cb0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A - D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.2 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55b9f3826318&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5621bd6f9cb0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">createWeights</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
 <span class="r-in"><span>                   exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
 <span class="r-in"><span>                   outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.01 (SD = 0.48; range = 0.28-3). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 0.94 (SD = 0.55; range = 0.42-3). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="createWeights-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>                   </span></span>
@@ -205,24 +205,24 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A - D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55b9edfed538&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5621c32f8200&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A - D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + A.1:B.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55b9edfed538&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5621c32f8200&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The short formula for A - D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.2 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55b9edfed538&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5621c32f8200&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">createWeights</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
 <span class="r-in"><span>                   exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
 <span class="r-in"><span>                   outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.13 (SD = 0.8; range = 0.36-5). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 0.93 (SD = 0.64; range = 0.35-4). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="createWeights-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>                   </span></span>
@@ -232,7 +232,7 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   method <span class="op">=</span> <span class="st">"cbps"</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.13 (SD = 0.8; range = 0.36-5). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 0.93 (SD = 0.64; range = 0.35-4). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="createWeights-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">createWeights</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -241,7 +241,7 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   method <span class="op">=</span> <span class="st">"cbps"</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.13 (SD = 0.8; range = 0.36-5). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 0.93 (SD = 0.64; range = 0.35-4). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="createWeights-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">createWeights</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -250,7 +250,7 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   method <span class="op">=</span> <span class="st">"gbm"</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>                    </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the gbm weighting method, the median weight value is 0.51 (SD = 0.52; range = 0.21-3). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the gbm weighting method, the median weight value is 0.35 (SD = 0.34; range = 0.07-2). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="createWeights-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">createWeights</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -259,7 +259,7 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   method <span class="op">=</span> <span class="st">"bart"</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the bart weighting method, the median weight value is 0.61 (SD = 0.36; range = 0.27-2). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the bart weighting method, the median weight value is 0.75 (SD = 0.24; range = 0.36-2). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="createWeights-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">createWeights</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -273,7 +273,7 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All metalearner coefficients are zero, predictions will all be equal to 0</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All algorithms have zero weight</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All metalearner coefficients are zero, predictions will all be equal to 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the super weighting method, the median weight value is 0.95 (SD = 0.49; range = 0.4-3). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the super weighting method, the median weight value is 1.02 (SD = 0.2; range = 0.6-2). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="createWeights-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>                                                     </span></span>
