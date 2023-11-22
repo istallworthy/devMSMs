@@ -1,7 +1,7 @@
 # devMSMs
 <br>
 Scientists who study humans are fundamentally interested in questions of causation, yet conceptual, methodological, and practical barriers have historically prevented their use of methods for causal inference developed in other fields. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in *causal processes*, involving questions about when (timing) and to what extent (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people's lives.  
-  
+<br> 
 <br>     
   
 Marginal structural models (MSMs; Robins et al., 2000), orginating in epidemiology and public health, represent one under-utilized tool for improving causal inference with longitudinal observational data. In brief, MSMs leverage inverse-probability-of-treatment-weights (IPTW) and the potential outcomes framework to attenuate associations between confounders and an exposure (e.g., experience, characteristic, evevent --from biology to the broader environment) over time, and uncover causal relations between the time-varying exposure and future outcome, given certain assumptions. 
