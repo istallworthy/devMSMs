@@ -1,6 +1,7 @@
 # devMSMs
 <br>
 Scientists who study humans are fundamentally interested in questions of causation, yet conceptual, methodological, and practical barriers have historically prevented their use of methods for causal inference developed in other fields. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in *causal processes*, involving questions about when (timing) and to what extent (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people's lives.  
+  
 <br> 
 <br>     
   
