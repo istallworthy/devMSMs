@@ -24,16 +24,16 @@ Core features of this package include:
 
 ## Overview
 The package contains 6 core functions for conducting longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures.  
-
+  
 <br>  
 
-<img width="742" alt="Screen Shot 2023-11-08 at 4 00 24 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/cbab3b78-ffa8-4ffc-9b97-d082a9f145b5">
+<img width="742" alt="Screen Shot 2023-11-08 at 4 00 24 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/cbab3b78-ffa8-4ffc-9b97-d082a9f145b5">  
     
 <br> 
 <br>   
   
 
-<img width="658" alt="Screen Shot 2023-11-09 at 4 54 22 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/4b62730e-3975-4002-a06b-205c93d04224">  
+<img width="658" alt="Screen Shot 2023-11-09 at 4 54 22 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/4b62730e-3975-4002-a06b-205c93d04224">    
 
 <br> 
  
