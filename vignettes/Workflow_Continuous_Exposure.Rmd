@@ -146,7 +146,8 @@ ti_confounders <- c(
 <br>
 
 ## Phase 1: Confounder Adjustment
-The goal of this first phase is to minimize the associations between confounders and exposure using IPTW balancing weights. We strongly advise the user to carefully inspect each balancing formula to ensure weights are created and evaluated appropriately at each step. 
+The goal of this first phase is to minimize the associations between confounders and exposure using IPTW balancing weights. We strongly advise the user to carefully inspect each balancing formula to ensure weights are created and evaluated appropriately at each step.   
+  
 <br>
 
 ### Step 1. Create Full Balancing Formulas & Conduct Pre-Balance Checking
@@ -193,7 +194,7 @@ full_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposur
 ```
 <br>
 
-#### 1b. Conduct Exploratory Pre-Balance Assessment
+#### Step 1b. Conduct Exploratory Pre-Balance Assessment
 The next step examines the initial imbalance, or how strongly exposure relates to each confounder at each time point, for all measured confounders prior to weighting using the `assessBalance()` function (`type = “prebalance”`). This function draws on the `calcBalStats()` function (see the Assessing Balance for Time-Varying Exposure section in the accompanyingm manuscript. The `assessBalance()` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).  
 
 The required inputs for using the `assessBalance()` function to conduct pre balance testing are: data (data frame, a mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), the full formulas (see Step 1a), and set `type = “prebalance”`. 
@@ -224,7 +225,7 @@ prebalance_stats <- assessBalance(data = data, exposure = exposure, exposure_tim
 ```
 <br>
 <br>
-### Step 2: Create Simplified Balancing Formulas & Determine Optimal Weighting Method 
+### Step 2. Create Simplified Balancing Formulas & Determine Optimal Weighting Method 
 The goal of this second step is to create shortened, more parsimonious balancing formulas for determining the optimal IPTW weighting method that most successfully reduces imbalance.  
 <br>
 
@@ -406,10 +407,11 @@ In this example, ...
 <br>
 
 ### Step 3: Create Updated Formulas & Re-Specify Weights Using Optimal Weighting Method
-The goal of this next step is to assess the the weights from the best-performing weights method, created by the shortened balancing formulas (containing time-varying confounders at only *t*-1), relative to the full balancing formulas, and add to the shortened formulas any time-varying confounders at lags > *t*-1 that were not successfully balanced to create a final round of weights.
+The goal of this next step is to assess the the weights from the best-performing weights method, created by the shortened balancing formulas (containing time-varying confounders at only *t*-1), relative to the full balancing formulas, and add to the shortened formulas any time-varying confounders at lags > *t*-1 that were not successfully balanced to create a final round of weights.  
+  
 <br>
 
-#### 3a. Assess balance with full balancing formulas 
+#### Step 3a. Assess balance with full balancing formulas 
 We next assess whether the weights created in the previous step with the best-performing weights method (e.g., x) using the simplified balancing formulas also achieve balance for all of the confounders in the full formulas. We use the `assessBalance()` function (`type = “weighted”`) with the full balancing formulas to examine how successfully the best-performing weights created in the previous step achieve balance for all time-varying confounders. We revisit our assumption that balancing on the most proximal time-varying confounders (*t*-1) confers balance for those same confounders at more distal prior time points (*t*-1+). We do this by assessing at each time point how well the weights just created using the short formulas successfully balance all confounders (including time-varying confounders at all time points prior) in the original, full formulas.  
   
 The required inputs for using the `assessBalance()` function to assess how the best weights achieve balance for the full formulas are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), providing the full formulas (see Step 1a), setting type = “weighted”, and providing the best weights (see Step 2c). 
@@ -435,8 +437,9 @@ balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_p
 
 Using the x weighting method and the full formulas, we find...
 
-<br>
-#### 3b. Update simplified formulas
+<br> 
+
+#### Step 3b. Update simplified formulas  
 Subsequently, we create a final round of balancing formulas using the `createFormulas()` function (setting `type = “update"` and providing the balance statistics of the `bal_stats` field). We update the shortened formulas to include any time-varying confounders (*t*-1 +) that were not successfully balanced by the weights created using the original simplified formulas. The `createFormulas()` function draws from user-provided balance statistics to automatically identify and add to the formulas at each exposure time point any time-varying confounders at lags greater than 1 that remain imbalanced after weighting. The function displays each balancing formula in the console with a message to the user about any time-varying confounders that were added. 
   
 The required input to update the shortened balancing formulas with any imbalanced time-varying confounders at greater lags using the `createFormulas()` function are: exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of time-varying confounders (e.g., “variable.time”), a list of time invariant confounders, setting `type = “update”`, and providing to `bal_stats` the balance statistics that were just created. 
@@ -460,7 +463,7 @@ updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = expo
 
 <br>
 
-#### 3c. Create final balancing weights
+#### Step 3c. Create final balancing weights
 Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the final, updated simplified formulas from the previous step using the `createWeights()` function (`method = “x’`), with ‘x’ being the optimal weighting method identified in Step 2c. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point and automatically multiplies them together to create one weight per person. Weights are stabilized, as is recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016) and distributions are saved out in the home directory for inspection. 
 
 The required inputs for using the `createWeights()` function to create the final round of IPTW balancing weights using the updated short balancing formulas are: data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (variable with no time points), outcome (e.g., “variable.time”), providing the best-performing weights method, and providing the updated formulas (see Step 3a). 
@@ -530,7 +533,8 @@ trim_weights.s2 <- trimWeights(exposure = exposure, outcome = outcome, weights =
 ```
   
 We find comparable descriptive statistics for all sets of weights, with the upper range value varying by quantile cutoff. All sets of weights have heavy right tails, as expected with real-world data. These tails represent individuals who experienced statistically unexpected levels of exposure given their levels of confounders. 
-<br>
+  
+<br>  
 
 ### Step 4: Conduct Final Balance Assessment
 Having created and trimmed the finalized set of IPTW balancing weights, the next step is to conduct a final evaluation of how well they reduce imbalance for all possible confounders. We assess the performance of the final weights from the previous step using `assessBalance()` function (`type = “weighted”`) and the full formulas. 
@@ -804,7 +808,9 @@ In general, from the sensitivity analyses, we find...
   
 <br>
 <br>
-## References
+  
+## References  
+
 Arel-Bundock, V. 2023. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means,and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.  
   
 Cole, S. R., & Hernán, M. A. (2008). Constructing Inverse Probability Weights for Marginal Structural Models. American Journal of Epidemiology, 168(6), 656–664. https://doi.org/10.1093/aje/kwn164. 
