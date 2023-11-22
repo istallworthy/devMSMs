@@ -49,7 +49,7 @@ The package contains 6 core functions for conducting longitudinal confounder adj
 `library(devMSMs)`  
 
 The helper functions can be installed from the accompanying *devMSMsHelpers* repo:   
-`install_github("istallworthy/devMSMsHelpers`  
+`install_github("istallworthy/devMSMsHelpers")`  
 `library(devMSMsHelpers)`
   
 <br> 
