@@ -16,7 +16,7 @@ Core features of this package include:
   
 - step-by-step user guidance to *deveMSMs* worflow in the form of vignettes and a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> for users new to the MSM technique and R programming
 
-- accompanying <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to use of *devMSMs*
+- an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to use of *devMSMs*
 
 - conceptual introduction and example empirical application in accompanying tutorial paper
 
