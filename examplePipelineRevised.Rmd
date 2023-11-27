@@ -207,7 +207,7 @@ maxit <- 5 #empirical example
 
 
 imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
-                           m = m, method = method, maxit = maxit, para_proc = FALSE, read_imps_from_file = FALSE, 
+                           m = m, method = method, maxit = maxit, para_proc = TRUE, read_imps_from_file = FALSE, 
                            home_dir = home_dir, save.out = TRUE)
 
 
