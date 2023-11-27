@@ -204,7 +204,7 @@ method <- "rf"
 maxit <- 5 
 
 imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
-                           m = m, method = method, maxit = maxit, para_proc = TRUE, 
+                           m = m, method = method, maxit = maxit, para_proc = FALSE, 
                            read_imps_from_file = FALSE, 
                            home_dir = home_dir, save.out = save.out)
 
