@@ -82,6 +82,30 @@
     <loc>https://istallworthy.github.io/devMSMs/reference/perform_multiple_comparison_correction.html</loc>
   </url>
   <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/sim_data_imp_list.rda.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/sim_data_long_miss.rda.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/sim_data_long_miss_bin.rda.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/sim_data_mice.rda.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/sim_data_wide.rda.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/sim_data_wide_bin.rda.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/sim_data_wide_miss.rda.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/sim_data_wide_miss_bin.rda.html</loc>
+  </url>
+  <url>
     <loc>https://istallworthy.github.io/devMSMs/reference/trimWeights.html</loc>
   </url>
 </urlset>
