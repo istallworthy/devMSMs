@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette guides users through the specification of the core inputs required by the *deMSMs* functions (and helper functions). Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and Data Requirements vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, exposure time points, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the *devMSMs* package (see *Workflows* vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (`verbose = FALSE`) and elect not to save out locally any intermediate and final output (`save.out = FALSE`).  
+This vignette guides users through the specification of the core inputs required by the *deMSMs* functions (and helper functions). Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, exposure time points, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the *devMSMs* package (see *Workflows* vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (`verbose = FALSE`) and elect not to save out locally any intermediate and final output (`save.out = FALSE`).  
   
 Following completion of this vignette, the user should complete the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a> followed by a *Workflow* vignette to implement *devMSMs* with their longitudinal data. 
   
@@ -35,6 +35,7 @@ Users are required to specify home directory, or in quotations, a path to a desi
 home_dir <- NA
 home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
 ```
+  
 <br>
 
 ### Exposure Variable
@@ -43,6 +44,7 @@ Users are required to specify an exposure variable as input to all functions in 
 ```{r}
 exposure <- "ESETA1"
 ```
+  
 <br>
 
 ### Exposure Time Points
@@ -108,6 +110,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "fscore.35", "fscore.58"
 ) 
 ```
+  
 <br>
   
 ### References

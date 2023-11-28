@@ -22,10 +22,13 @@ knitr::opts_chunk$set(
 
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
+  
 <br>
-
-These four recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package. Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> vignette and complete the Data Requirements and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes. The following recommended preliminary steps (using helper functions summarized in Table 1 are not included in the *devMSMs* package that can be found at the following <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a> are designed to assist the user in preparing and inspecting their data and guide specification of required function inputs to ensure appropriate use of the package. Of note, *devMSMs* must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).  
-
+  
+These four recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package. Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> vignette and complete the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.   
+  
+The following recommended preliminary steps (using helper functions summarized in Table 1 are not included in the *devMSMs* package that can be found at the following <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a> are designed to assist the user in preparing and inspecting their data and guide specification of required function inputs to ensure appropriate use of the package. Of note, *devMSMs* must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).  
+  
 The user who has already formatted their data in wide format according to the Data Requirements vignette and imputed to accommodate any missing data (P2), can focus only on subsections P3 Identifying Optional Exposure Epochs and P4 Verifying History Distributions prior to using the package. Following completion of this vignette, users should use one of the Workflows vignettes to implement *devMSMs* with their longitudinal data.   
 
 
