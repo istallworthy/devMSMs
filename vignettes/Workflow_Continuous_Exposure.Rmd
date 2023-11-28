@@ -23,8 +23,10 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 
 ```{r setup}
 
-install.packages("devtools")
-library(devtools)
+# install.packages("devtools")
+# library(devtools)
+
+require("devtools")
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 library(devMSMs)
@@ -32,6 +34,7 @@ library(devMSMs)
 devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 library(devMSMsHelpers)
 ```
+  
 <br>
 
 This vignette guides a user through the process of using *devMSMs* to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a> vignettes.  
@@ -173,7 +176,6 @@ balance_thresh <- c(0.05, 0.1)
 imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") 
 ```
 
-
 The `assessBalance()` function saves out the following .csv and .html files into the ‘balance/prebalance/’ folder: tables of balance statistics for all confounders, tables of balance statistics for covariates that are imbalanced (with respect to their respective balance thresholds), and an overall balance summary table (averaged across any imputed datasets). Within the ‘balance/prebalance/plots/’ folder, the function outputs .jpeg files of summary love plots depicting confounder balance for each exposure time point. 
 
 The function returns a data frame (or list) of balance statistics, balance thresholds, and binary balanced tag for each confounder relevant to each exposure time point. 
@@ -191,11 +193,12 @@ prebalance_stats <- assessBalance(data = data, exposure = exposure, exposure_tim
   
 The output above shows the initial imbalance between confounders and exposure in tables and plots. 55 confounders are imbalanced (labeled in red font in the love plots) with respect to the economic strain exposure and their respective balance threshold. The love plots depict the standardized associations between confounder and exposure at each exposure time point, with the vertical red dashed lines indicating balance thresholds. 
   
-
 <br>
-<br>
+<br>. 
+  
 ### Step 2. Create Simplified Balancing Formulas & Determine Optimal Weighting Method 
 The goal of this second step is to create shortened, more parsimonious balancing formulas for determining the optimal IPTW weighting method that most successfully reduces imbalance.  
+  
 <br>
 
 #### 2a. Create Simplified Balancing Formulas
@@ -229,7 +232,6 @@ short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposu
 ```
 Above, we inspect the shortened balancing formula at each exposure time point. These formulas are considerably shorter than the full formulas. For instance, at the 58-month exposure time point, the formula contains all time invariant confounders and only time-varying confounders at the 35-month time point.   
   
-  
 <br>
      
 #### 2b. Create IPTW Balancing Weights using Multiple Weighting Methods
@@ -249,7 +251,7 @@ For `method`, provide one of the following methods for calculating balancing wei
 method <- "cbps"
 ```
 
-The `createWeights()` function can also take any number of additional arguments that will be passed to the `weightitMSM ()` function (e.g., ‘ints’, ‘criterion’, distribution’, ‘SL.library’). For instance, if the user wishes to include first-order interactions of supplied covariates in the weights model, they can include the argument `ints = TRUE`.  If the user selects the SuperLearner (“super”) method, the default super learner library (‘SL.library’) is xx but an alternative library can be entered as an input to the `createWeights` function. For binary exposures, the “cbps” method allows you to specify `estimand` as either ATE, ATT, or ATC. With “glm”, “super”, and “bart” you can specify ATE, ATT, ATC, ATO, ATM, or ATOS. With “gbm”, you can specify ATE, ATT, ATC, ATO, or ATM. The default estimand for binary exposures is ATE. We advise the interested user to review the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a> for more information about the additional optional arguments available for each of the weighting methods.  
+The `createWeights()` function can also take any number of additional arguments that will be passed to the `weightitMSM ()` function (e.g., ‘criterion’, distribution’, ‘SL.library’). If the user selects the SuperLearner (“super”) method, the default super learner library (‘SL.library’) is xx but an alternative library can be entered as an input to the `createWeights` function. For binary exposures, the “cbps” method allows you to specify `estimand` as either ATE, ATT, or ATC. With “glm”, “super”, and “bart” you can specify ATE, ATT, ATC, ATO, ATM, or ATOS. With “gbm”, you can specify ATE, ATT, ATC, ATO, or ATM. The default estimand for binary exposures is ATE. We advise the interested user to review the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a> for more information about the additional optional arguments available for each of the weighting methods.  
   
 The user can also specify `read_in_from_file = TRUE `if the user has previously created weights for these specific data, formula, and weight type using this function and wishes to read them in from a local file instead of recreating them. The `createWeights()` function automatically conducts some basic checks that the saved weights match the data type, weights method, and number of formulas provided. The user is responsible for making sure these weights were created appropriately.  
   

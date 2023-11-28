@@ -127,6 +127,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
   #split factors
   factor_covariates <- names(d)[sapply(d, is.factor)]
   factor_covariates <- setdiff(factor_covariates, "ID")
+  
   if (length(factor_covariates) > 0) {
     d <- cobalt::splitfactor(d, factor_covariates, drop.first = "if2")
     
@@ -134,76 +135,78 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
                               %in% factor_covariates]
   }
   
-  if (!missing(covariates)) {
-    if (any(grepl("\\:", covariates))) {
-      ints <- covariates[grepl("\\:", covariates)]
-      
-      #making interactions w/ split factors 
-      
-      for (x in seq_len(length(ints))) {
-        vars <- as.character(unlist(strsplit(ints[x], "\\:")))
-        num_comp <- length(vars)
-        
-        f_vars <- NULL
-        if (any(vars %in% factor_covariates)) {
-          vars <- do.call(c, lapply(vars, function(y) {
-            if (y %in% factor_covariates) {
-              f_vars <- factors_split[sapply(strsplit(factors_split, "\\_"), "[", 1) %in% y]
-              y <- f_vars } 
-            y
-          }))
-        }
-        
-        if (any(as.logical(unlist(lapply(vars, function(x) {
-          any(!x %in% names(d))}))))) {
-          stop("Please only include covariate interactions between variables in your data",
-               call. = FALSE)
-        }
-        
-        ints2 <- combn(vars, num_comp)
-        ints2 <- as.data.frame(ints2[, sapply(strsplit(ints2[1, ], "\\_"), "[", 1) != 
-                                       sapply(strsplit(ints2[2, ], "\\_"), "[", 1)])
-        ints2 <- unlist(lapply(1:ncol(ints2), 
-                               function(y) {paste(ints2[, y], collapse = ":")} ))
-        ints2 <- ints2[!duplicated(ints2)]
-        
-        prods <- lapply(ints2, function(z) {
-          v <- as.character(unlist(strsplit(z, "\\:")))
-          temp <- as.data.frame(d[, v])
-          prod <- apply(as.matrix(temp), 1, prod)
-          prod
-        })
-        prods <- do.call(rbind.data.frame, prods)
-        prods <- as.data.frame(t(prods))
-        names(prods) <- ints2
-        
-        #make factor class if both components are factors
-        for (f in seq_len(length(ints2))) {
-          vars <- as.character(unlist(strsplit(ints2[f], "\\:")))
-          if (all(vars %in% factor_covariates)) {
-            prods[, names(prods)[any(as.logical(unlist(lapply(names(prods), function(k) { 
-              as.character(unlist(strsplit(k, "\\:"))) %in% f_vars}))))]] <- 
-              as.data.frame(lapply(prods[, names(prods)[any(as.logical(unlist(lapply(names(prods),function(l) {
-                as.character(unlist(strsplit(l, "\\:"))) %in% f_vars}))))]], 
-                as.factor))
-          }
-        }
-        #adding to dataset
-        
-        d <- cbind(d, prods)
-      }
-    }
-    
-    covariates <- c(covariates[!grepl("\\:", covariates)], 
-                    names(d)[grepl("\\:", names(d))])
-  }
+  # if (!missing(covariates)) {
+  #   if (any(grepl("\\:", covariates))) {
+  #     ints <- covariates[grepl("\\:", covariates)]
+  #     
+  #     #making interactions w/ split factors 
+  #     
+  #     for (x in seq_len(length(ints))) {
+  #       vars <- as.character(unlist(strsplit(ints[x], "\\:")))
+  #       num_comp <- length(vars)
+  #       
+  #       f_vars <- NULL
+  #       if (any(vars %in% factor_covariates)) {
+  #         vars <- do.call(c, lapply(vars, function(y) {
+  #           if (y %in% factor_covariates) {
+  #             f_vars <- factors_split[sapply(strsplit(factors_split, "\\_"), "[", 1) %in% y]
+  #             y <- f_vars } 
+  #           y
+  #         }))
+  #       }
+  #       
+  #       if (any(as.logical(unlist(lapply(vars, function(x) {
+  #         any(!x %in% names(d))}))))) {
+  #         stop("Please only include covariate interactions between variables in your data",
+  #              call. = FALSE)
+  #       }
+  #       
+  #       ints2 <- combn(vars, num_comp)
+  #       ints2 <- as.data.frame(ints2[, sapply(strsplit(ints2[1, ], "\\_"), "[", 1) != 
+  #                                      sapply(strsplit(ints2[2, ], "\\_"), "[", 1)])
+  #       ints2 <- unlist(lapply(1:ncol(ints2), 
+  #                              function(y) {paste(ints2[, y], collapse = ":")} ))
+  #       ints2 <- ints2[!duplicated(ints2)]
+  #       
+  #       prods <- lapply(ints2, function(z) {
+  #         v <- as.character(unlist(strsplit(z, "\\:")))
+  #         temp <- as.data.frame(d[, v])
+  #         prod <- apply(as.matrix(temp), 1, prod)
+  #         prod
+  #       })
+  #       prods <- do.call(rbind.data.frame, prods)
+  #       prods <- as.data.frame(t(prods))
+  #       names(prods) <- ints2
+  #       
+  #       #make factor class if both components are factors
+  #       for (f in seq_len(length(ints2))) {
+  #         vars <- as.character(unlist(strsplit(ints2[f], "\\:")))
+  #         if (all(vars %in% factor_covariates)) {
+  #           prods[, names(prods)[any(as.logical(unlist(lapply(names(prods), function(k) { 
+  #             as.character(unlist(strsplit(k, "\\:"))) %in% f_vars}))))]] <- 
+  #             as.data.frame(lapply(prods[, names(prods)[any(as.logical(unlist(lapply(names(prods),function(l) {
+  #               as.character(unlist(strsplit(l, "\\:"))) %in% f_vars}))))]], 
+  #               as.factor))
+  #         }
+  #       }
+  #       #adding to dataset
+  #       
+  #       d <- cbind(d, prods)
+  #     }
+  #   }
+  #   
+  #   covariates <- c(covariates[!grepl("\\:", covariates)], 
+  #                   names(d)[grepl("\\:", names(d))])
+  # }
+  
   
   # Covariate models checking
   
   if (model %in% c("m1", "m3", "covs")) {
     
     if (any(grepl("\\.", covariates))) {
-      tv_cov <- covariates[grepl("\\.", covariates)]
+      cov <- as.character(unlist(strsplit(covariates, "\\:")))
+      tv_cov <- cov[grepl("\\.", cov)]
       if (any(as.numeric(gsub("_.*", "", sub(".*\\.(.)", "\\1", 
                                              as.character(unlist(strsplit(tv_cov, "\\:")))))) > 
               exposure_time_pts[1])) {
@@ -213,10 +216,10 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
       }
     }
     
-    if (!all(covariates[!grepl("\\:", covariates)] %in% colnames(d))) {
-      stop("Please only include covariates that correspond to variables in the wide dataset.",
-           call. = FALSE)
-    }
+    # if (!all(covariates[!grepl("\\:", covariates)] %in% colnames(d))) {
+    #   stop("Please only include covariates that correspond to variables in the wide dataset.",
+    #        call. = FALSE)
+    # }
     
     covariate_list <- paste(c(as.character(covariates)), sep = "", 
                             collapse = " + ")
@@ -244,7 +247,7 @@ getModel <- function(d, exposure, exposure_time_pts, outcome, exp_epochs,
       collapse = " + "
     )
     
-    #create interactions in data
+    #create exposure main effect interactions in data
     
     for (x in seq_along(unlist(strsplit(interactions, "\\+")))) {
       name <- gsub(" ", "", unlist(strsplit(interactions, "\\+"))[x])

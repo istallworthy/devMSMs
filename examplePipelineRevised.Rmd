@@ -370,11 +370,11 @@ concur_conf <- "B18Raw.15"
 
 
 #optional custom formulas
-custom <- NULL #empirical example 
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
-) #add warning about future variables 
+) 
+custom <- NULL #empirical example 
 
 
 #required
@@ -424,19 +424,19 @@ If you specify concurrent confounders to retain and/or confounders to keep in th
 ```{r}
 
 #optional list of concurrent confounder
-concur_conf <-  NULL #empirical example 
 concur_conf <- "B18Raw.15"
+concur_conf <-  NULL #empirical example 
 
 #optional list of tv confounders to always retain (lag t-1)
-keep_conf  <-  NULL #empirical example 
 keep_conf <- "InRatioCor.6"
+keep_conf  <-  NULL #empirical example 
 
 #optional custom formulas
-custom <- NULL #empirical example 
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("short_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "short_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
+custom <- NULL #empirical example 
 
 
 #required
@@ -455,7 +455,6 @@ short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposu
 
 ```{r}
 
-#required; say what default estimand is in weightitMSM(); some dont work for all methods --add to supplement
 formulas <- short_formulas
 
 # optional weighting method "glm", "gbm", "bart", "super", "cbps"  (default is cbps)
@@ -586,19 +585,19 @@ If you specify concurrent confounders to retain and/or confounders to keep in ba
 ```{r}
 
 #optional custom formulas
-custom <- NULL #empirical example 
 #note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("update_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "update_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
+custom <- NULL #empirical example 
 
 #optional list of concurrent confounder
-concur_conf <-  NULL #empirical example 
 concur_conf <- "B18Raw.15"
+concur_conf <-  NULL #empirical example 
 
 #optional list of tv confounders to always retain (lag t-1)
-keep_conf <- NULL #empirical example 
 keep_conf <- "InRatioCor.6"
+keep_conf <- NULL #empirical example 
 
 
 #required
@@ -755,11 +754,7 @@ int_order <- 2
 
 #covariates (required for covariate models m1, m3)
 covariates <- NULL
-covariates <- imbalanced_covariates 
-covariates <- c("ESETA1.6", "gov_assist", "B18Raw.6") 
-covariates <- c("ESETA1.6", "state:SmokTotl", "PmAge2:PmBlac2", "ESETA1.6:B18Raw.6:RHasSO.6") #testing interactions
-covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist","PmEd2")  #empirical example
-covariates <- c("PmEd2")  #empirical example
+covariates <- c("ESETA1.6", "gov_assist", "B18Raw.6",  "gov_assist:B18Raw.6", "ESETA1.6:B18Raw.6") 
 
 
 #optional specification of epochs
