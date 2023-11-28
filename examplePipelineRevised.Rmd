@@ -192,7 +192,7 @@ data <- data_wide
 
 #optional; number of imputations (default is 5)
 m <- NA
-m <- 5 #empirical example
+m <- 1 #empirical example
 
 #optional; provide an imputation method pmm, midastouch, sample, cart , rf (default)
 method <- NA
@@ -214,7 +214,10 @@ imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outc
 #if you want to use the package with imputed data
 data <- imputed_data
 
-
+```
+  
+  
+```{r}
 
 #OR, read in a saved mids object
 imputed_data <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed_mids.rds") # final imputations for empirical example; place your .rds file in your home directory and change the name of file here

@@ -45,9 +45,9 @@ We advise the user to specify and include in the dataset any time invariant and 
   
 The following longitudinal data that accompany *devMSMs* are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008).  
   
-*devMSMs* requires data in wide format (i.e., one row per individual, with and “ID” column for identifiers), in one of three ways:   
+*devMSMs* (see *Workflows* vignettes) requires complete data in wide format (i.e., one row per individual, with and “ID” column for identifiers), in one of three ways:   
   
-(1) a data frame with no missing data;  
+(1) a single data frame with no missing data;  
 
 ```{r}
 data("sim_data_wide", package = "devMSMs")
