@@ -413,7 +413,7 @@ createFormulas <- function(exposure, exposure_time_pts, outcome, type, ti_confou
     
     if (verbose) {
       message("The user-supplied custom balancing formula for each exposure time point are below: ")
-      lapply(formulas, print)
+      lapply(forms, print)
       
     }
   }

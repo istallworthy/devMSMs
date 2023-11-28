@@ -9,7 +9,7 @@ output:
         
 vignette: >
   %\VignetteIndexEntry{Preliminary_Steps}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown_notangle}
   %\VignetteEncoding{UTF-8}
 
 ---
@@ -27,7 +27,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
   
 These four recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package. Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> vignette and complete the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.   
   
-The following recommended preliminary steps (using helper functions summarized in Table 1 are not included in the *devMSMs* package that can be found at the following <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a> are designed to assist the user in preparing and inspecting their data and guide specification of required function inputs to ensure appropriate use of the package. Of note, *devMSMs* must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).  
+The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a>. Of note, *devMSMs* must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).  
   
 The user who has already formatted their data in wide format according to the Data Requirements vignette and imputed to accommodate any missing data (P2), can focus only on subsections P3 Identifying Optional Exposure Epochs and P4 Verifying History Distributions prior to using the package. Following completion of this vignette, users should use one of the Workflows vignettes to implement *devMSMs* with their longitudinal data.   
 
@@ -37,11 +37,11 @@ The user who has already formatted their data in wide format according to the Da
 <br>
 
 ```{r setup}
-install.packages("devtools")
-install.packages("stats")
+# install.packages("devtools")
+# install.packages("stats")
 
-library(devtools)
-library(stats)
+require(devtools)
+# library(stats)
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 library(devMSMs)
@@ -56,7 +56,7 @@ Choose from the following preliminary steps with the goal of assigning to 'data'
 - a mids object (output from mice::mice()) of data imputed in wide format
 - a list of data imputed in wide format as data frames. 
 
-Data columns should be either numeric or factor form and the ID column should be numeric.  
+Data columns should be either numeric, integer, or factor form and the ID column should be numeric.  
 
 Some helper functions have optional arguments to suppress saving output locally (`save.out = FALSE`) and printing it to the console ( `verbose = FALSE`). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out = TRUE`. 
 
@@ -152,6 +152,7 @@ Users with correctly formatted variables in long format have the option of using
 We then transform our newly formatted long data into wide format.  
 
 ```{r}
+require("stats")
 v <- sapply(strsplit(tv_confounders[!grepl("\\:", tv_confounders)], "\\."), "[", 1)
 v <- v[!duplicated(v)]
 
@@ -200,11 +201,11 @@ The user can also indicate if they have already created imputed datasets from th
 For this example, we create 5 imputed datasets using the default random forest method and 5 iterations, and assign the output to `data` for use with *devMSMs*. This code takes some time to run. 
 
 ```{r}
-m <- 5 
+m <- 1 
 
 method <- "rf" 
 
-maxit <- 5 
+maxit <- 0 
 
 imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
                            m = m, method = method, maxit = maxit, para_proc = FALSE, 
@@ -290,9 +291,9 @@ hi_lo_cut <- c(0.6, 0.3)
 
 
 ### P4b. Specify hypotheses-relevant exposure histories 
-We strongly recommend users be selective about which histories, or developmental sequences of high and low exposure (at exposure time points or epochs), are vital for testing their hypotheses. The units of the exposure histories are the exposure time points if no epochs are specified. We recommend that the user estimates and compares only a subset of all possible exposure histories using the `reference` and `comparison` fields (rather than comparing all possible exposure histories). 
+We strongly recommend users be selective about which histories, or developmental sequences of high and low exposure (at exposure time points or epochs), are vital for testing their hypotheses. We recommend that the user estimates and compares only a subset of all possible exposure histories using the `reference` and `comparison` fields (rather than comparing all possible exposure histories). 
 
-The user can specify a custom subset of user-specified exposure histories using the `reference` and `comparison` fields as optional inputs to the `compareHistories()` *devMSMs* function (see *Workflows* vignettes). To conduct these customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels (“low” or “high”, respectively).   
+The user can specify a custom subset of exposure histories using the `reference` and `comparison` fields as optional inputs to the `compareHistories()` *devMSMs* function (see *Workflows* vignettes). To conduct these customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels (“low” or “high”, respectively).   
 
 If you supply a reference history, in comparisons provide at least one unique and valid history for comparison by, in quotations, providing a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference in Step 5b of the *Workflows* vignettes. If you supply one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be supplied for multiple comparison correction. If no reference or comparison is specified, all histories will be compared to each other in Step 5b of the *Workflows* vignettes.   
 
