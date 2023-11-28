@@ -51,7 +51,8 @@ The helper functions can be installed from the accompanying *devMSMsHelpers* rep
 <br> 
   
 ## Recommended Workflow
-
+Please see the *Workflows* vignettes for more details.  
+  
 <img width="651" alt="Screen Shot 2023-11-08 at 4 00 44 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/91216ef3-e4c3-4c8a-a522-f683105bfc66">
 
 <br> 
