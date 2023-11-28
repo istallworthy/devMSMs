@@ -173,17 +173,17 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55dfcd0a7328&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c8c524ac00&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55dfcd0a7328&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c8c524ac00&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.1 + A.2 + B.1 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55dfcd0a7328&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c8c524ac00&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span>,</span></span>
@@ -202,7 +202,7 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                   outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.18 (SD = 0.65; range = 0.27-4). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 0.97 (SD = 0.68; range = 0.29-4). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="fitModel-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -219,8 +219,8 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Working (Rao-Scott+F) LRT for A.1 A.2 A.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  in svyglm(formula = as.formula(f), design = s, family = fam)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  1.110852 p= 0.76051 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  1.3 1.2 0.54 );  denominator df= 46</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  4.189489 p= 0.24836 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  1.4 0.96 0.62 );  denominator df= 46</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m0, is summarized below:</span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">fitModel</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -240,8 +240,8 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Working (Rao-Scott+F) LRT for A.Infancy A.Toddlerhood</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  in svyglm(formula = as.formula(f), design = s, family = fam)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  1.026141 p= 0.59776 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  1.2 0.82 );  denominator df= 47</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  1.645857 p= 0.42559 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  1.4 0.64 );  denominator df= 47</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m0, is summarized below:</span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">fitModel</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -258,8 +258,8 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Working (Rao-Scott+F) LRT for A.1 A.2 A.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  in svyglm(formula = as.formula(f), design = s, family = fam)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  1.103553 p= 0.76249 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  1.3 1.2 0.54 );  denominator df= 45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  4.127911 p= 0.2545 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  1.4 0.96 0.62 );  denominator df= 45</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m1, is summarized below:</span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">fitModel</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -276,8 +276,8 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Working (Rao-Scott+F) LRT for A.1 A.2 A.3 A.1:A.2 A.1:A.3 A.2:A.3 A.1:A.2:A.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  in svyglm(formula = as.formula(f), design = s, family = fam)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  7.900603 p= 0.34178 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  2.3 1.6 1.1 0.78 0.59 0.39 0.27 );  denominator df= 42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  16.32971 p= 0.061651 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  2.4 1.7 1.1 0.68 0.51 0.37 0.19 );  denominator df= 42</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m2, is summarized below:</span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">fitModel</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -295,8 +295,8 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Working (Rao-Scott+F) LRT for A.1 A.2 A.3 A.1:A.2 A.1:A.3 A.2:A.3 A.1:A.2:A.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  in svyglm(formula = as.formula(f), design = s, family = fam)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  7.493371 p= 0.37211 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  2.3 1.5 1.1 0.82 0.59 0.4 0.27 );  denominator df= 41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  16.59612 p= 0.058138 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  2.4 1.7 1.2 0.69 0.52 0.39 0.19 );  denominator df= 41</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m3, is summarized below:</span>
 </code></pre></div>
