@@ -195,10 +195,9 @@ Most data collected from humans will have some degree of missing data.
 #### P2a. Multiply impute single wide, formatted data frame using mice
 Users have the option of imputing their wide, formatted data using the *mice* package, for use with *devMSMs*.     
 ```{r}
-
 #optional seed for reproducibility 
 s <- NA 
-s <- 1234
+s <- 1234 #empirical example
 
 #optional; number of imputations (default is 5)
 m <- NA
@@ -216,7 +215,7 @@ maxit <- 5 #empirical example
 #please see the mice::mice() documentation for more optimal input to customize mice(): https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice
 
 imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
-                           m = m, method = method, maxit = maxit, para_proc = FALSE, 
+                           m = m, method = method, maxit = maxit, para_proc = TRUE, 
                            seed = s, read_imps_from_file = FALSE, 
                            home_dir = home_dir, save.out = TRUE)
 
