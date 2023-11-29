@@ -8,8 +8,8 @@ output:
         toc: false
 vignette: >
   %\VignetteIndexEntry{Workflow_Continuous_Exposure}
+  %\VignetteEncoding{UTF-8}s
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -807,6 +807,7 @@ results.s1 <- compareHistories(exposure = exposure, exposure_time_pts = exposure
                                mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                                home_dir = home_dir, verbose = verbose, save.out = save.out) #optional
 ```
+  
 As shown above, results indicate a marginal but non-significant contrast between "l-l-l" and "h-h-h" histories of economic strain exposure in relation to behavior problems in early childhood.  
   
 <br>
@@ -821,12 +822,8 @@ results.s2 <- compareHistories(exposure = exposure, exposure_time_pts = exposure
                                mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                                home_dir = home_dir, verbose = verbose, save.out = save.out) #optional
 ```
-
+  
 Similarly, we find no evidence for differences in behavioral problems as function of history of exposure to economic strain.  
-  
-  
-In general, from the sensitivity analyses, we find...
-
   
   
 <br>
