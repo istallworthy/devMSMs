@@ -202,6 +202,8 @@ The functions of the *devMSMs* package accept data in the form of a single data 
 Users have the option of using the helper `imputeData()` function to impute their correctly formatted wide data. This step can take a while to run. The user can specify how many imputed datasets to create (default m = 5). `imputeData()` draws on the `mice()` function from the *mice* package (van Buuren & Oudshoorn, 2011) to conduct multiple imputation by chained equations (mice). All other variables present in the dataset are used to impute missing data in each column.  
 
 The user can specify the imputation method through the `method` field drawing from the following list: “pmm” (predictive mean matching), “midastouch” (weighted predictive mean matching), “sample” (random sample from observed values), “rf” (random forest) or “cart” (classification and regression trees). Random forest imputation is the default given evidence for its efficiency and superior performance (Shah et al., 2014). Please review the *mice* documentation for more details.  
+
+Additionally, users can specify an integer value to `seed` in order to offset the random number generator in *mice()* and make reproducible imputations.  
   
 The parameter `read_imps_from_file` will allow you to read already imputed data in from local storage (TRUE) so as not to have to re-run this imputation code multiple times (FALSE; default). Users may use this parameter to supply their own mids object of imputed data from the *mice* package  (with the title ‘all_imp.rds’). Be sure to inspect the console for any warnings as well as the resulting imputed datasets. Any variables that have missing data following imputation may need to be removed due to high collinearity and/or low variability.   
 
@@ -214,9 +216,11 @@ The user can specify an imputation method compatible with `mice()` (see above). 
 The user may also specify any additional inputs accepted by `mice::mice()` and we advise consulting the  <a href:="https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice">[*mice* documentation]</a> for more information.     
 The user can also indicate if they have already created imputed datasets from this function and wish to read them in (`read_imps_from_file = TRUE` rather than recreate them (default).  
 
-For this example, we create 5 imputed datasets using the default random forest method and 0 iterations (just for illustrative purposes), and assign the output to `data` for use with *devMSMs*. This code takes some time to run. 
+For this example, we create 5 imputed datasets using the default random forest method and 0 iterations (just for illustrative purposes), set a seed for reproducibility, and assign the output to `data` for use with *devMSMs*. This code takes some time to run. 
 
 ```{r}
+s <- 1234
+
 m <- 5
 
 method <- "rf" 
@@ -225,7 +229,7 @@ maxit <- 0
 
 imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
                            m = m, method = method, maxit = maxit, para_proc = FALSE, 
-                           read_imps_from_file = FALSE, 
+                           seed = s, read_imps_from_file = FALSE, 
                            home_dir = home_dir, save.out = save.out)
 
 data <- imputed_data
