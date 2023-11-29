@@ -4,14 +4,15 @@ author: "Isabella Stallworthy"
 date: "`r Sys.Date()`"
 output:
     html_vignette:
+        
         df_print: kable
         toc: false
-        
 vignette: >
   %\VignetteIndexEntry{Preliminary_Steps}
-  %\VignetteEngine{knitr::rmarkdown_notangle}
   %\VignetteEncoding{UTF-8}
-
+  %\VignetteEngine{knitr::rmarkdown_notangle}
+editor_options:
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -51,11 +52,14 @@ library(devMSMsHelpers)
 ```
 <br>
 
-Choose from the following preliminary steps with the goal of assigning to 'data' one of the following for use in the package:
-- a single data frame of data in wide format with no missing data 
-- a mids object (output from mice::mice()) of data imputed in wide format
-- a list of data imputed in wide format as data frames. 
-
+Choose from the following preliminary steps with the goal of assigning to 'data' one of the following wide data formats for use in the package:  
+  
+* a single data frame of data in wide format with no missing data  
+  
+* a mids object (output from mice::mice()) of data imputed in wide format  
+  
+* a list of data imputed in wide format as data frames.  
+  
 Data columns should be either numeric, integer, or factor form and the ID column should be numeric.  
 
 Some helper functions have optional arguments to suppress saving output locally (`save.out = FALSE`) and printing it to the console ( `verbose = FALSE`). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out = TRUE`. 
@@ -67,15 +71,6 @@ verbose = TRUE
 ```
 <br>
 
-### Load data 
-First we load the simulated longitudinal data in long format (with missingness) that accompanies *devMSMs*. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008).  
-
-```{r}
-data("sim_data_long_miss", package = "devMSMs")
-
-data_long <- sim_data_long_miss
-```
-<br>
 
 ### Core inputs
 Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a> for more detail on the following core inputs. Here, we use ESETA1, a measure of economic strain experienced by the family, as the exposure and StrDif_Tot, or behavior problems measured by the SDQ, as the outcome.  
@@ -117,6 +112,27 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 )
 ```
 <br>
+<br>
+
+### Load data 
+Users have several options for reading in data. They can begin this workflow with the following options:  
+  
+* long data (with or without missing data), which can be converted to wide data
+  
+* wide data (with or without missing data), which can be imputed using the *imputeData()* helper function, if needed 
+  
+* imputed wide data sets saved locally, which can be read in as a list
+
+Below, we demonstrate use of each of the above starting options.  
+<br>
+  
+First we load the simulated longitudinal data in long format (with missingness) that accompanies *devMSMs*. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008).  
+
+```{r}
+data("sim_data_long_miss", package = "devMSMs")
+
+data_long <- sim_data_long_miss
+```
 <br>
 
 ### P1. Format Data  
@@ -198,14 +214,14 @@ The user can specify an imputation method compatible with `mice()` (see above). 
 The user may also specify any additional inputs accepted by `mice::mice()` and we advise consulting the  <a href:="https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice">[*mice* documentation]</a> for more information.     
 The user can also indicate if they have already created imputed datasets from this function and wish to read them in (`read_imps_from_file = TRUE` rather than recreate them (default).  
 
-For this example, we create 5 imputed datasets using the default random forest method and 5 iterations, and assign the output to `data` for use with *devMSMs*. This code takes some time to run. 
+For this example, we create 5 imputed datasets using the default random forest method and 0 iterations (just for illustrative purposes), and assign the output to `data` for use with *devMSMs*. This code takes some time to run. 
 
 ```{r}
-m <- 1 
+m <- 5
 
 method <- "rf" 
 
-maxit <- 0 
+maxit <- 0
 
 imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
                            m = m, method = method, maxit = maxit, para_proc = FALSE, 
@@ -214,6 +230,7 @@ imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outc
 
 data <- imputed_data
 ```
+  
 We inspect the output to the console for any warnings from `mice()`.  
   
 The mice object can now be assigned to `data` for use in the *deveMSMs* package (see *Workflows* vignettes).  
@@ -223,7 +240,7 @@ The mice object can now be assigned to `data` for use in the *deveMSMs* package 
 #### P2b. Read in as a list wide imputed data saved locally 
 Alternatively, if a user has imputed datasets already created using a program other than *mice*, they can read in, as a list, files saved locally as .csv files (labeled “1”:m) in a single folder. This list can be assigned to `data` for use in the *deveMSMs* package (see *Workflows* vignettes).  
   
-Below, we load in imputed data simulated from FLP as an example.  
+Below, we load in imputed data simulated from FLP, as an example.  
 ```{r}
 # folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/imputations/"
 # 
