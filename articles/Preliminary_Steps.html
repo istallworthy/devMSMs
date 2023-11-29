@@ -347,6 +347,9 @@ forest) or “cart” (classification and regression trees). Random forest
 imputation is the default given evidence for its efficiency and superior
 performance (Shah et al., 2014). Please review the <em>mice</em>
 documentation for more details.</p>
+<p>Additionally, users can specify an integer value to <code>seed</code>
+in order to offset the random number generator in <em>mice()</em> and
+make reproducible imputations.</p>
 <p>The parameter <code>read_imps_from_file</code> will allow you to read
 already imputed data in from local storage (TRUE) so as not to have to
 re-run this imputation code multiple times (FALSE; default). Users may
@@ -382,10 +385,13 @@ from this function and wish to read them in
 (default).</p>
 <p>For this example, we create 5 imputed datasets using the default
 random forest method and 0 iterations (just for illustrative purposes),
-and assign the output to <code>data</code> for use with
-<em>devMSMs</em>. This code takes some time to run.</p>
+set a seed for reproducibility, and assign the output to
+<code>data</code> for use with <em>devMSMs</em>. This code takes some
+time to run.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<code class="sourceCode R"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fl">1234</span></span>
+<span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
 <span></span>
 <span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"rf"</span> </span>
 <span></span>
@@ -393,7 +399,7 @@ and assign the output to <code>data</code> for use with
 <span></span>
 <span><span class="va">imputed_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/imputeData.html" class="external-link">imputeData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_wide</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, </span>
 <span>                           m <span class="op">=</span> <span class="va">m</span>, method <span class="op">=</span> <span class="va">method</span>, maxit <span class="op">=</span> <span class="va">maxit</span>, para_proc <span class="op">=</span> <span class="cn">FALSE</span>, </span>
-<span>                           read_imps_from_file <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>                           seed <span class="op">=</span> <span class="va">s</span>, read_imps_from_file <span class="op">=</span> <span class="cn">FALSE</span>, </span>
 <span>                           home_dir <span class="op">=</span> <span class="va">home_dir</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Creating 5 imputed datasets using the rf imputation method in mice::mice(). This may take some time to run. </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -608,7 +614,7 @@ two summary tables of the confounders considered at each time point.</p>
 <span>            epochs <span class="op">=</span> <span class="va">epochs</span>, hi_lo_cut <span class="op">=</span> <span class="va">hi_lo_cut</span>, reference <span class="op">=</span> <span class="va">reference</span>, comparison <span class="op">=</span> <span class="va">comparison</span>, <span class="co">#optional input</span></span>
 <span>            home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional input</span></span>
 <span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT</span></span>
-<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (faca7311) has not changed since last install.</span></span>
+<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (9a8a731a) has not changed since last install.</span></span>
 <span><span class="co">#&gt;   Use `force = TRUE` to force installation</span></span>
 <span><span class="co">#&gt; USER ALERT: Below are the 67 variables spanning 33 unique domains that will be treated as confounding variables for the relation between ESETA1 and StrDif_Tot.58.</span></span>
 <span><span class="co">#&gt; Please inspect this list carefully. It should include all time-varying covariates, time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.</span></span>
