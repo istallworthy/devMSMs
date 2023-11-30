@@ -54,7 +54,7 @@ The following longitudinal data that accompany *devMSMs* are simulated based on 
 ```{r}
 data("sim_data_wide", package = "devMSMs")
 
-head(sim_data_wide, n = c(5, 5))
+head(sim_data_wide, n = c(5, 10))
 ```
   
 <br>
@@ -66,7 +66,7 @@ data("sim_data_mice", package = "devMSMs")
 
 class(sim_data_mice)
 
-head(mice::complete(sim_data_mice, 1),n = c(5, 5))
+head(mice::complete(sim_data_mice, 1), n = c(5, 10))
 ```
  
 <br>
@@ -76,7 +76,7 @@ head(mice::complete(sim_data_mice, 1),n = c(5, 5))
 ```{r}
 data("sim_data_imp_list", package = "devMSMs")
 
-head(sim_data_imp_list[[1]], n = c(5, 5))
+head(sim_data_imp_list[[1]], n = c(5, 10))
 ```
 
 <br>

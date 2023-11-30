@@ -9,7 +9,7 @@ Please see this manuscript for a full conceptual and practical introduction to M
 
 The code in each code chunk is set up identifying all possible inputs to each function (required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function, including a NULL/NA option if the user does not wish to specify an optional input. The user should select one of each optional input values. Alternatively, the user could modify the call to the function and remove the optional input argument(s) entirely. 
 
-Please see the website vignettes and/or type ?functionName into the console for more guidance on the arguments for each function. These two sources should match but let me know if you see discrepancies. 
+Please see the website vignettes and/or type `?functionName` into the console for more guidance on the arguments for each function. These two sources should match but let me know if you see discrepancies. 
 
 
 ## Getting started
@@ -85,45 +85,40 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 
 
 ## STEP P: Preliminary Steps for Reading in, Formatting, & Inspecting Data
-Choose from the following preliminary steps with the goal of assigning to 'data' one of the following forms of complete data for use in the package:
-- a single data frame of data in wide format with no missing data 
-- a mids object (output from mice::mice()) of data imputed in wide format
-- a list of data imputed in wide format as data frames
+We advise users implement the appropriate preliminary steps, with the goal of assigning to 'data' one of the following wide data formats (see Figure 1) for use in the package:  
+  
+* a single data frame of data in wide format with no missing data  
+  
+* a mids object (output from mice::mice()) of data imputed in wide format  
+  
+* a list of data imputed in wide format as data frames.  
 
-Data columns should be either numeric, integer, or factor form (no character variables).   
-
+<br>
 <br>
 
 Users have several options for reading in data. They can begin this workflow with the following options:  
+<br>
+* long data with missingness can can be formatted and converted to wide data (P1a) for imputation (P2)
+  
+* wide with missingness can be formatted (P1b) before imputing (P2)
+  
+* data already imputed in wide format can be read in as a list (P2). 
 
-* long data (with or without missing data), which can be converted to wide data
-
-* wide data (with or without missing data), which can be imputed using the *imputeData()* helper function, if needed 
-
-* imputed wide data sets saved locally, which can be read in as a list
-
-Below, we demonstrate use of each of the above starting options.  
+* data with no missingness (P3)
+  
 <br>
 
 
-### P1. Format Data
-#### P1a. Format single data frame of long data 
-Users have the option of loading in data in long format. These data can be complete or have missingness. 
+### P1. Data with Missingness
+Most data from humans will have some degree of missing data. 
+
+#### P1a. A single data frame of long data with missingness
+Users can begin with a single data frame in long format (with missingness). Users have the option of formatting their long data if their data columns are not yet labeled correctly using the `formatLongData()` helper function.    
+
 
 ```{r}
-
-#reading a long data file here for use in subsequent steps
 data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_long_missing_unformatted.csv", #add path to your long data file here if you want to begin with long data
                       header = TRUE)
-
-#check for character variables
-# any(sapply(data_long, class) == "character") #if this is TRUE, run next lines
-# names(data_long)[sapply(data_long, class) == "character"] #find names of any character variables
-# data_long[, "state"] <- factor(data_long[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
-```
-
-Users have the option of formatting their long data if their data columns are not yet labeled correctly using the `formatLongData()` helper function.    
-```{r}
 
 data_long_f <- formatLongData(data = data_long, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
                               time_var = "Tage", #list original time variable here if it's not "WAVE"
@@ -136,10 +131,9 @@ data_long_f <- formatLongData(data = data_long, exposure = exposure, exposure_ti
                                                       "gov_assist", "B18Raw", "EARS_TJo", "MDI"), #list any integer variables in long format here
                               home_dir = home_dir, save.out = TRUE) 
 ```
-
-
-#### P1b. Convert single long data frame to wide format
-After formatting their long data, users can convert their data from long to wide format (as required by the package). They may see some warnings about *NA* values.    
+  
+  
+Users with correctly formatted data in long format have the option of using the following code to transform their data into wide format, to proceed to using the package (if there is no missing data) or imputing (with < 20% missing data MAR).They may see some warnings about *NA* values.    
 ```{r}
 v <- sapply(strsplit(tv_confounders[!grepl("\\:", tv_confounders)], "\\."), "[", 1)
 v <- v[!duplicated(v)]
@@ -157,38 +151,34 @@ data_wide <- data_wide[, colSums(is.na(data_wide)) < nrow(data_wide)]
 # data_wide2=data_wide2[order(names(data_wide2))]
 ```
 
-Alternatively, a user could read in and format wide data (with or without missingness).   
+ 
+#### P1b. A single data frame of wide data with missingness
+
+Alternatively, we could start with a single data frame of wide data with missingness that is already formatted, and below we read in simulated wide FLP data with missingness.   
 ```{r}
 data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your wide, formatted data file here 
                       header = TRUE)
 
-#check for character variables
-# any(sapply(data_wide, class) == "character") #if this is TRUE, run next lines
-# names(data_wide)[sapply(data_wide, class) == "character"] #find names of any character variables
-# # data_wide[, "state"] <- factor(data_wide[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
+factor_confounders <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
+                        "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                        "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58") #list factor variables in wide format here
 
-#make factor variables factor 
-factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                   "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                   "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
-data_wide[, factor_covars] <- as.data.frame(lapply(data_wide[, factor_covars], as.factor))
+integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
+                        "gov_assist", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58", 
+                        "EARS_TJo.24", "EARS_TJo.35", "MDI.6", "MDI.15") #list any integer variables in wide format here
 
-data <- data_wide
+data_wide_f <- formatWideData(data = data_wide, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
+                              id_var = "ID", #list original id variable here if it's not "ID"
+                              missing = NA, #list missing value here
+                              factor_confounders = factor_confounders,
+                              integer_confounders = integer_confounders,
+                              home_dir = home_dir, save.out = TRUE) 
 
-# data_wide=data_wide[order(names(data_wide))]
-
-```
-
-Or, read in wide data that are already formatted.  
-```{r}
-#or, read in from rds to preserve variable classes
-# data_wide <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.rds" )
-# 
-# data <- data_wide
+data <- data_wide_f
 ```
 
 
-### P2. Impute Data to Account for Missingness. 
+### P2. Impute Missing Data in Wide Format
 Most data collected from humans will have some degree of missing data.  
 
 #### P2a. Multiply impute single wide, formatted data frame using mice
@@ -212,11 +202,6 @@ method <- "rf" #empirical example
 maxit <- NA
 maxit <- 5 #empirical example
 
-
-#optional
-#please see the mice::mice() documentation for more optimal input to customize mice(): 
-#https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice
-
 imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
                            m = m, method = method, maxit = maxit, para_proc = TRUE, 
                            seed = s, read_imps_from_file = FALSE, 
@@ -227,7 +212,6 @@ imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outc
 data <- imputed_data
 
 summary(mice::complete(data, 1))
-
 ```
 
 ```{r}
@@ -263,42 +247,25 @@ summary(mice::complete(data, 1))
 
 ```
 
-
-
 Alternatively, users could read in a saved mids object for use with *devMSMS*.    
 ```{r}
-#OR, read in a saved mids object
 imputed_data <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed_mids.rds") # final imputations for empirical example; place your .rds file in your home directory and change the name of file here
 
 #if you want to use the package with imputed data
 data <- imputed_data
 
-#optional: extract first imputed dataset for testing
+#optional: extract first imputed dataset for inspection
 library(mice)
 data <- mice::complete(imputed_data, 1) #just for testing purposes
 anyNA(data) #make sure this is false, meaning no NAs
 ```
 
-Alternatively, in the case of no missing data, a user could read in and format a single wide data frame of complete data for use with *devMSMs*.  
-```{r}
-data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')
-
-#check for character variables
-any(sapply(data, class) == "character") #if this is TRUE, run next lines
-names(data)[sapply(data, class) == "character"] #find names of any character variables
-data[, "state"] <- factor(data[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
 
 
-#make factors
-factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                   "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                   "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
-data[, factor_covars] <- as.data.frame(lapply(data[, factor_covars], as.factor))
-```
 
-
-#### P2b. Read in as a list wide imputed data saved locally 
-Alternatively, users could impute their wide missing data using other software and read in and check imputed data files as data frames in a list for use with *devMSMs*.  
+#### P2b. Read in as a list of wide imputed data saved locally 
+Alternatively, if a user has imputed datasets already created using a program other than *mice*, they can read in, as a list, files saved locally as .csv files (labeled “1”:m) in a single folder. 
+  
 ```{r}
 folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/imputations/" # these are final imputations for empirical example; change this to match your local folder
 
@@ -329,10 +296,31 @@ data <- lapply(data, function(x) {
 
 ```
 
+### P3. Data with no Missingness
+Users with no missing data can refer to Step P1a to format their long data and transform it to wide or Step P1b to format their wide data for use with *devMSMs*.  
+ 
+```{r}
+data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')
+
+data_wide_f <- formatWideData(data = data_wide, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
+                              id_var = "ID", #list original id variable here if it's not "ID"
+                              missing = NA, #list missing value here
+                              factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
+                                                     "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                                                     "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58"), #list factor variables in wide format here
+                              integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
+                                                      "gov_assist", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58", 
+                                                      "EARS_TJo.24", "EARS_TJo.35", "MDI.6", "MDI.15"), #list any integer variables in wide format here
+                              home_dir = home_dir, save.out = TRUE) 
+
+data <- data_wide_f
+```
+
+
+
 Having read in their data, users should now have have assigned to `data` wide, complete data as: a data frame, mice object, or list of imputed data frames for use with the *devMSMs* functions.  
 
-
-### P3. Optional: Identify Exposure Epochs
+### P4. Optional: Identify Exposure Epochs
 Users have the option of specifying exposure epochs, or menaingful units of developmental time that encompass the time points at which exposure was measured. We recommend users specify exposure epochs consistently throughout this workflow.  
 
 ```{r}
@@ -347,10 +335,10 @@ epochs <- data.frame(epochs = c("Infancy", #list user-specified names
 ```
 
 
-### P4. Recommended: Specify and Inspect Exposure Histories
+### P5. Recommended: Specify and Inspect Exposure Histories
 Regardless of data formatting and exposure epochs, we highly recommend users inspect their data and the distribution of their sample throughout the exposure histories that will be used in subsequent steps.  
 
-#### P4a. Create high and low cutoff values for continuous exposures
+#### P5a. Create high and low cutoff values for continuous exposures
 For continuously distributed exposures, users have the option to specify cutoffs for demarcating high and low levels of exposure, respectively. We recommend users specify high and low cutoffs consistently throughout this workflow.  
 
 ```{r}
@@ -359,7 +347,7 @@ hi_lo_cut <- c(0.6, 0.3) #empirical example
 ```
 
 
-#### P4b. Specify hypotheses-relevant exposure histories
+#### P5b. Specify hypotheses-relevant exposure histories
 We recommend users specify the exposure histories that are relevant for testing their hypotheses. We suggest users specify reference and comparison histories consistently throughout this workflow.  
 
 ```{r}
@@ -375,7 +363,7 @@ comparison <- c("h-h-h", "h-l-l", "l-l-h", "h-h-l", "l-h-h") #empirical example 
 ```
 
 
-#### P4c. Inspect exposure histories and data
+#### P5c. Inspect exposure histories and data
 We strongly recommend all users inspect their data and history distribution using the `inspectData()` helper function.   
 ```{r}
 inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, # required input
