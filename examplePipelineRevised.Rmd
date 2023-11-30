@@ -7,22 +7,14 @@ output: html_document
 
 Please see this manuscript for a full conceptual and practical introduction to MSMs in the context of developmental data. Please see the vignettes on the *devMSMs* website for step-by-step guidance on the use of this code: https://istallworthy.github.io/devMSMs/index.html. 
 
-***Goals of this round of testing:
-- make sure functions run with your data using both minimal and optional inputs
-- assess the user output in the console and the items saved out from each function
-- make sure the Supplement provides sufficient detail for running the entirety of this .rmd file
-***
-
 The code in each code chunk is set up identifying all possible inputs to each function (required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function, including a NULL/NA option if the user does not wish to specify an optional input. The user should select one of each optional input values. Alternatively, the user could modify the call to the function and remove the optional input argument(s) entirely. 
 
-Please use the Supplement and/or type ?functionName into the console for more guidance on the arguments for each function. These two sources should match but let me know if you see discrepancies. 
+Please see the website vignettes and/or type ?functionName into the console for more guidance on the arguments for each function. These two sources should match but let me know if you see discrepancies. 
 
-***PLEASE Slack me right away with any issues or confusion you encounter --there will likely be bumps in the road as we test this!
-Feel free to put feedback on the Slack channel, in the notes Google doc, or in the Supplement as comments. 
-***
 
 ## Getting started
 Until *devMSMs* is available on CRAN, you will need to install it directly from Github (https://github.com/istallworthy/devMSMs), as shown below.  
+
 You will always need to install the devMSMs helper functions from Github (*devMSMsHelpers*) if you wish to conduct the preliminary steps below. 
 
 ```{r}
@@ -129,7 +121,7 @@ data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/
 # names(data_long)[sapply(data_long, class) == "character"] #find names of any character variables
 # data_long[, "state"] <- factor(data_long[, "state"], labels = c(1, 0)) #run this for each variable that needs char -> factor
 ```
- 
+
 Users have the option of formatting their long data if their data columns are not yet labeled correctly using the `formatLongData()` helper function.    
 ```{r}
 
@@ -140,17 +132,14 @@ data_long_f <- formatLongData(data = data_long, exposure = exposure, exposure_ti
                               factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                                                      "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                                                      "RHasSO"), #list factor variables in long format here
+                              integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
+                                                      "gov_assist", "B18Raw", "EARS_TJo", "MDI"), #list any integer variables in long format here
                               home_dir = home_dir, save.out = TRUE) 
-
-integer_covars <- c("ID", "KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , "gov_assist", "B18Raw", "EARS_TJo", "MDI")
-data_long_f[, integer_covars] <- as.data.frame(lapply(data_long_f[, integer_covars], as.integer))
-
-
 ```
 
 
 #### P1b. Convert single long data frame to wide format
-After formatting their long data, users can convert their data from long to wide format (as required by the package). They may see some warnings about NA values.    
+After formatting their long data, users can convert their data from long to wide format (as required by the package). They may see some warnings about *NA* values.    
 ```{r}
 v <- sapply(strsplit(tv_confounders[!grepl("\\:", tv_confounders)], "\\."), "[", 1)
 v <- v[!duplicated(v)]

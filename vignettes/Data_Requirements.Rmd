@@ -64,7 +64,7 @@ data("sim_data_mice", package = "devMSMs")
 
 class(sim_data_mice)
 
-head(mice::complete(sim_data_mice, 1))
+head(mice::complete(sim_data_mice, 1), 5)
 ```
  
 <br>
@@ -81,7 +81,8 @@ head(sim_data_imp_list, 5)
 
 All variables should be classed as integers, numeric, or factors. The recommended <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary Steps Vignette</a> offers guidance for transforming data into each of those three types. All time-varying variables (including exposure and outcome) should have “.time” suffixes (e.g., “variable.t”). All time invariant variables should be labeled with only their variable names. Variable names should not contain special characters other than underscores. Person identifiers should not contain characters. An abridged example data structure is shown in Figure 1 below.
   
-[*insert Figure 1 here*]
+![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as NA and will need to be imputed (<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps Vignette</a> Step P2).](/Users/isabella/Documents/GitHub/devMSMs/man/figures/sample data.png){width=600px}
+
 
 <br>
 
