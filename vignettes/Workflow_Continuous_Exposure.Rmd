@@ -56,11 +56,16 @@ We first load a data frame of complete data. These data are simulated based on d
 (See <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps vignette</a> for beginning with other data types, including missing data).  
   
 ```{r}
-data("sim_data_wide", package = "devMSMs")
+# data("sim_data_wide", package = "devMSMs")
+# 
+# data <- sim_data_wide
 
-data <- sim_data_wide
+data("sim_data_mice", package = "devMSMs")
 
-head(data,n = c(5, 5))
+data <- sim_data_mice
+
+# head(data,n = c(5, 5))
+head(mice::complete(data, 1), n = c(5, 10))
 ```
   
 <br>
@@ -131,7 +136,7 @@ We choose not to specify any concurrent confounders, as we cannot reliably disti
 concur_conf <- NULL 
 ```
   
-The user may also specify a list of custom formulas by specifying to `custom` a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format, with each entry named with the formula type and exposure time point (e.g., "full_form-6"). An abridged example is shown below. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating.  
+The user may also specify a list of custom formulas by specifying to `custom` a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format, with each entry named with the formula type and exposure time point (e.g., "full_form-6"). An abridged example is shown below. We recommend first running the `createFormulas()` function without custom formulas (`custom = NULL`) and using the output as a model of the required format for custom formulas. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating.  
   
 We chose not to create custom formulas and use `createFormulas()` to make them.  
 ```{r}
@@ -208,7 +213,7 @@ First, we create shorter, more parsimonious balancing formulas relating exposure
 
 See Step 1a for instructions on how to include confounder interactions.   
 
-The required input to create shortened balancing formulas using the `createFormulas()` function are: exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of time-varying confounders (e.g., “variable.time”), a list of time invariant confounders, and setting `type = “short”`. 
+The required input to create shortened balancing formulas using the `createFormulas()` function are: exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.t”), a list of time-varying confounders (e.g., “variable.t”), a list of time invariant confounders, and setting `type = “short”`. 
 
 In addition to the optional input outlined in Step 1a, the user also has the option to specify in `keep_conf`, a list of any time-varying confounders (e.g., “variable.t”) to always retain as lagged confounders in these shortened formulas. The user may use this argument to retain specific time-varying confounders that would otherwise be excluded at this step if they occur at lags greater than *t*-1 for each formula. 
   
@@ -240,7 +245,7 @@ Above, we inspect the shortened balancing formula at each exposure time point. T
 #### 2b. Create IPTW Balancing Weights using Multiple Weighting Methods
 Having created shorter, simplified balancing formulas, we now create the first round of IPTW balancing weights (Thoemmes & Ong, 2016) using the `createWeights()` function, the shortened balancing formulas, and all available weighting methods. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016), and distributions are saved for inspection. 
   
-The required inputs for using the `createWeights()` function to create the initial around of IPTW balancing weights are: complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), outcome (e.g., “variable.time”), and the short formulas (see Step 2a). 
+The required inputs for using the `createWeights()` function to create the initial around of IPTW balancing weights are: complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), outcome (e.g., “variable.t”), and the short formulas (see Step 2a). 
 
 ```{r}
 formulas <- short_formulas
@@ -323,7 +328,7 @@ Next, we evaluate how well the weights created using each of the different weigh
   
 The `assessBalance()` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).  
   
-The required inputs for using the `assessBalance()` function to assess balance for the first round of IPTW weights are: complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), providing the short formulas (see Step 2a), setting `type = “weighted”`, and providing the weights that were just created. 
+The required inputs for using the `assessBalance()` function to assess balance for the first round of IPTW weights are: complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.t”), providing the short formulas (see Step 2a), setting `type = “weighted”`, and providing the weights that were just created. 
   
 The optional inputs are described in Step 1b. 
   
@@ -447,7 +452,7 @@ As shown above, using the SuperLearner weighting method and the full formulas, w
 #### Step 3b. Update simplified formulas  
 Subsequently, we update the shortened formulas to include any time-varying confounders (*t*-1 +) that were not successfully balanced by the full formulas, as shown above. To do this, we create a final round of balancing formulas using the `createFormulas()` function (setting `type = “update"` and providing the balance statistics of the `bal_stats` field). The `createFormulas()` function draws from user-provided balance statistics to automatically identify and add to the formulas at each exposure time point any time-varying confounders at lags greater than 1 that remain imbalanced after weighting. The function displays each balancing formula in the console with a message to the user about any time-varying confounders that were added. 
   
-The required input to update the shortened balancing formulas using the `createFormulas()` function are: exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.time”), a list of time-varying confounders (e.g., “variable.time”), a list of time invariant confounders (e.g., "variable"), setting `type = “update”`, and providing to `bal_stats` the balance statistics that were just created in Step 3a.
+The required input to update the shortened balancing formulas using the `createFormulas()` function are: exposure (e.g., “variable”), exposure time points, outcome (e.g., “variable.t”), a list of time-varying confounders (e.g., “variable.time”), a list of time invariant confounders (e.g., "variable"), setting `type = “update”`, and providing to `bal_stats` the balance statistics that were just created in Step 3a.
   
 The optional input are detailed in Step 1a. 
   
@@ -500,7 +505,7 @@ As shown above, these weights have a median value of 1 and a heavy right tail.
 #### 3d. Trim final balancing weights
 The next step is to trim or winsorize this final set of weights to eliminate the heavy right tail of its distribution using the `trimWeights()` function. This function draws on the *Weightit* package (Griefer, 2023) and plots and summarizes trimmed weights. This function outputs a list of trimmed weights with either a single nested list (labeled “0” if data are in data frame format) or with nested lists for each imputed dataset (if data are imputed). 
 
-The required inputs for the `trimWeights()` function are: the exposure (variable with no time points), outcome (e.g., “variable.time”), and the final weights we just created. 
+The required inputs for the `trimWeights()` function are: the exposure (variable with no time points), outcome (e.g., “variable.t”), and the final weights we just created. 
 
 The optional input allows the user to specify a quantile value (0-1; default is 0.95) above which the weights will be replaced with the weight value of that quantile to reduce the heavy right tail. 
   

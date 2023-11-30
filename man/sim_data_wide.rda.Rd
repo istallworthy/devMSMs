@@ -11,20 +11,31 @@ child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). These data 
 distributed variable.}
 \format{
 A wide data frame of 1,292 observations
-There are 69 measured variables.
+There are 36 measured variables.
 \itemize{
+\item "ID" person identifier
+\item "WAVE" age (in months) when data were collected
 \item "ESETA1" is the continuous exposure of economic strain
 \item "StrDif_Tot.58" is the continuous outcome of behavioral problems
 \item "InRatioCor" is the income-to-needs ratio
 \item "PmEd2" is the parent's education level
 \item "state" is the family's state of residence
-\item "TcBlac2" is the family's race (1 = x, 0 = y)
+\item "TcBlac2" is the family's race (1 = Black?, 0 = White?)
 \item "bioDadInHH2" is whether the biological father lives with the family (insert coding)
 \item "HomeOwnd" indicator of whether family owns home (insert coding)
 \item "KFASTScr"
 \item "PmBlac2" primary careigver race (insert coding)
+\item "PmAge2"
+\item "PmMrSt2"
+\item "RMomAgeU"
+\item "RHealth"
+\item "RHasSO"
 \item "SmokTotl"
 \item "caregiv_health"
+\item "peri_health"
+\item "SWghtLB"
+\item "SurpPreg"
+\item "DrnkFreq"
 \item "gov_assist"
 \item "ALI_LE"
 \item "B18Raw"
@@ -34,6 +45,7 @@ There are 69 measured variables.
 \item "HOMEETA1"
 \item "IBRAttn"
 \item "LESMnNeg"
+\item "LESMnPos"
 \item "MDI"
 \item "RHAsSO"
 \item "SAAmylase"
@@ -51,13 +63,17 @@ child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). These data 
 distributed variable.
 }
 \references{
-Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
-Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
-Developmental Study of Young Children Living in Poor Rural Communities.
-Monographs of the Society for Research in Child Development, 78(5), i–150.
+DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).
+Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence:
+A Moderated Nonlinear Factor Model. Child Development, n/a(n/a). https://doi.org/10.1111/cdev.13504
 
 Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008).
 Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and
 Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
+
+Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
+Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
+Developmental Study of Young Children Living in Poor Rural Communities.
+Monographs of the Society for Research in Child Development, 78(5), i–150.
 }
 \keyword{datasets}
