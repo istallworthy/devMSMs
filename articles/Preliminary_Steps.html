@@ -85,7 +85,7 @@ Stallworthy</h4>
     
     
 <p><br></p>
-<p>These four recommended preliminary steps are designed to assist the
+<p>These five recommended preliminary steps are designed to assist the
 user in preparing and inspecting their data to ensure appropriate use of
 the package. Users should first view the
 <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>
@@ -100,17 +100,15 @@ recommended preliminary steps can be found at this
 note, <em>devMSMs</em> must also be installed and loaded to use these
 helper functions (see
 <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).</p>
+<p><br></p>
+<p><img src="../../../../../../Users/isabella/Documents/GitHub/devMSMs/reference/figures/helper%20function%20summary%20table.png" width="600" alt="Table 1. Summary of devMSMs helper functions">.<br><br></p>
 <p>The user who has already formatted their data in wide format
 according to the Data Requirements vignette and imputed to accommodate
-any missing data (P2), can focus only on subsections P3 Identifying
-Optional Exposure Epochs and P4 Verifying History Distributions prior to
+any missing data (P2), can focus only on subsections P4 Identifying
+Optional Exposure Epochs and P5 Verifying History Distributions prior to
 using the package. Following completion of this vignette, users should
 use one of the <em>Workflows</em> vignettes to implement
-<em>devMSMs</em> with their longitudinal data.</p>
-<p><br></p>
-<div class="figure">
-<img src="../../../../../../Users/isabella/Documents/GitHub/devMSMsHelpers/reference/figures/helper%20function%20summary%20table.png" width="600" alt=""><p class="caption">Table 1. Summary of devMSMs helper functions</p>
-</div>
+<em>devMSMs</em> with their longitudinal data.<br><br></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="co"># install.packages("stats")</span></span>
@@ -124,27 +122,41 @@ use one of the <em>Workflows</em> vignettes to implement
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMsHelpers"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">devMSMsHelpers</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
-<p>Choose from the following preliminary steps with the goal of
-assigning to ‘data’ one of the following wide data formats for use in
-the package:</p>
+<p>We advise users implement the appropriate preliminary steps, with the
+goal of assigning to ‘data’ one of the following wide data formats (see
+Figure 1) for use in the package:</p>
 <ul>
 <li><p>a single data frame of data in wide format with no missing
 data</p></li>
 <li><p>a mids object (output from mice::mice()) of data imputed in wide
 format</p></li>
-<li><p>a list of data imputed in wide format as data frames.</p></li>
+<li><p>a list of data imputed in wide format as data frames.<br><br></p></li>
 </ul>
-<p>Data columns should be either numeric, integer, or factor form and
-the ID column should be numeric.</p>
-<p>Some helper functions have optional arguments to suppress saving
-output locally (<code>save.out = FALSE</code>) and printing it to the
-console ( <code>verbose = FALSE</code>). The defaults to both arguments
-are TRUE. Users must supply a path to a home directory if
-<code>save.out = TRUE</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">save.out</span> <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span></span>
-<span><span class="va">verbose</span> <span class="op">=</span> <span class="cn">TRUE</span></span></code></pre></div>
+<p>As shown in Figure 1, for use of the <em>devMSMs</em> package, data
+in any of the above 3 formats, must be wide and contain an “ID” column
+for subject identifier and exposure, outcome, and all confounders as
+separate columns (as shown in Figure 1). Column names can include only
+underscore special characters and time-varying variables should have a
+suffix that consists of a period followed by the time point (e.g.,
+“variable.6”). All variables should be classed as integer, numeric, or a
+factor (not character). Auxiliary or nuisance covariates that are not
+confounders (e.g, assessment version) can be included in the dataset for
+use and specification in the final modeling step (<em>Workflow</em>
+vignettes Step 5).</p>
+<p><br></p>
+<div class="figure">
+<img src="../../../../../../Users/isabella/Documents/GitHub/devMSMs/reference/figures/sample%20data.png" width="600" alt=""><p class="caption">Figure 1. Abridged example structure of a wide
+dataset formatted as required for the devMSMs. Column A denotes the ID
+variable, column B (green) denotes a time in-variant confounder (e.g.,
+race, birth information), columns C - F denote two time-varying
+confounders (lighter yellow) at two different time points (e.g., age.1,
+age.2 and income.1, income.2, where .1 represents wave 1 and .2
+represents wave 2). Columns G - I denote the exposure and outcome of
+interest (darker yellow), where G and H are time-varying values on each
+exposure, and column I is the outcome value at the final wave/timepoint.
+Missing data are denoted as NA and will need to be imputed (Step
+P2).</p>
+</div>
 <p><br></p>
 <div class="section level3">
 <h3 id="core-inputs">Core inputs<a class="anchor" aria-label="anchor" href="#core-inputs"></a>
@@ -155,7 +167,7 @@ Core Inputs vignette</a> for more detail on the following core inputs.
 Here, we use ESETA1, a measure of economic strain experienced by the
 family, as the exposure and StrDif_Tot, or behavior problems measured by
 the SDQ, as the outcome.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">home_dir</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
@@ -190,23 +202,40 @@ the SDQ, as the outcome.</p>
 <span>                    <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span>, <span class="st">"gov_assist"</span></span>
 <span>                    <span class="co">#, "state:SmokTotl", "PmAge2:PmBlac2", "PmAge2:PmEd2" #testing interaction terms</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><br><br></p>
+<p><br></p>
+<p>Some helper functions have optional arguments to suppress saving
+output locally (<code>save.out = FALSE</code>) and printing it to the
+console ( <code>verbose = FALSE</code>). The defaults to both arguments
+are TRUE. Users must supply a path to a home directory if
+<code>save.out = TRUE</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">save.out</span> <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span></span>
+<span><span class="va">verbose</span> <span class="op">=</span> <span class="cn">TRUE</span></span></code></pre></div>
+<p><br></p>
+<p>Users have several options for reading in data. They can begin this
+workflow with the following options:<br><br> * long data with missingness can can be formatted and converted to
+wide data (P1a) for imputation (P2)</p>
+<ul>
+<li><p>wide with missingness can be formatted (P1b) before imputing
+(P2)</p></li>
+<li><p>data already imputed in wide format can be read in as a list
+(P2).</p></li>
+<li><p>data with no missingness (P3)</p></li>
+</ul>
+<p><br></p>
 </div>
 <div class="section level3">
-<h3 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
+<h3 id="p1--data-with-missingness">P1. Data with Missingness<a class="anchor" aria-label="anchor" href="#p1--data-with-missingness"></a>
 </h3>
-<p>Users have several options for reading in data. They can begin this
-workflow with the following options:</p>
-<ul>
-<li><p>long data (with or without missing data), which can be formatted
-(P1a) and converted to wide data (P1b)</p></li>
-<li><p>wide data that is complete, or with missingness to be imputed
-using the <em>imputeData()</em> helper function (P2)</p></li>
-<li><p>imputed wide data sets saved locally, which can be read in as a
-list (P2b).</p></li>
-</ul>
-<p>Below, we demonstrate use of each of the above starting
-options.<br><br></p>
+<p>Most data from humans will have some degree of missing data.</p>
+<div class="section level4">
+<h4 id="p1a--a-single-data-frame-of-long-data-with-missingness">P1a. A single data frame of long data with missingness<a class="anchor" aria-label="anchor" href="#p1a--a-single-data-frame-of-long-data-with-missingness"></a>
+</h4>
+<p>Users beginning with a single data frame in long format (with
+missingness) can utilize a helper function <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatLongData.html" class="external-link">formatLongData()</a></code>
+to summarize exposure and outcome data and convert to required variable
+names.</p>
 <p>First, we load the simulated longitudinal data in long format (with
 missingness) that accompanies <em>devMSMs</em>. These data are simulated
 based on data from the Family Life Project (FLP), a longitudinal study
@@ -217,31 +246,18 @@ rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al.,
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_long_miss"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">data_long</span> <span class="op">&lt;-</span> <span class="va">sim_data_long_miss</span></span></code></pre></div>
+<span><span class="va">data_long</span> <span class="op">&lt;-</span> <span class="va">sim_data_long_miss</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_long</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state BioDadInHH2 PmAge2 PmBlac2 TcBlac2 PmMrSt2 PmEd2 KFASTScr RMomAgeU</span></span>
+<span><span class="co">#&gt; 1  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 2  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 3  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 4  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 5  1     0           1 27.245       0       0       1    15       24       29</span></span></code></pre></div>
 <p><br></p>
-</div>
-<div class="section level3">
-<h3 id="p1--format-data">P1. Format Data<a class="anchor" aria-label="anchor" href="#p1--format-data"></a>
-</h3>
-<p>All data must be wide format and contain an “ID” column for subject
-identifier and exposure, outcome, and all confounders as separate
-columns (as shown in Figure 1). Column names can include only underscore
-special characters and time-varying variables should have a suffix that
-consists of a period followed by the time point (e.g., “variable.6”).
-All variables should be classed as integer, numeric, or a factor (not
-character). Auxiliary or nuisance covariates that are not confounders
-(e.g, assessment version) can be included in the dataset for use and
-specification in the final modeling step (<em>Workflow</em> vignettes
-Step 5).<br><br></p>
-<p><img src="../../../../../../Users/isabella/Documents/GitHub/devMSMs/reference/figures/sample%20data.png" width="600" alt="Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as NA and will need to be imputed (Preliminary Steps Vignette Step P2)."><br></p>
-<div class="section level4">
-<h4 id="p1a--format-single-data-frame-of-long-data">P1a. Format single data frame of long data<a class="anchor" aria-label="anchor" href="#p1a--format-single-data-frame-of-long-data"></a>
-</h4>
-<p>Users beginning with a single data frame in long format (with or
-without missingness) can utilize a helper function
-<code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatLongData.html" class="external-link">formatLongData()</a></code> to summarize exposure and outcome data and
-convert to required variable names. This function takes a dataset in
-long format. It allows the users to supply existing variables for time
+<p><code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatLongData.html" class="external-link">formatLongData()</a></code> takes a dataset in long format. It
+allows the users to supply existing variables for time
 (<code>time_var</code>), ID (<code>id_var</code>), and missing data
 (<code>missing</code>) for re-naming according to what is required by
 the package. It also allows the user to submit variables that should be
@@ -249,17 +265,23 @@ factors and integers, and the function classes any factor confounders
 (<code>factor_confounders</code>) as factors, integer confounders
 (<code>integer_confounders</code>) as integers in the data, and all
 others as numeric.</p>
+<p>Below, we format the simulated long FLP data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_long_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatLongData.html" class="external-link">formatLongData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_long</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, </span>
+<code class="sourceCode R"><span></span>
+<span><span class="va">factor_confounders</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"TcBlac2"</span>,<span class="st">"BioDadInHH2"</span>,<span class="st">"HomeOwnd"</span>, <span class="st">"PmBlac2"</span>,       </span>
+<span>                       <span class="st">"PmMrSt2"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"RHealth"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
+<span>                       <span class="st">"RHasSO"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">integer_confounders</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KFASTScr"</span>, <span class="st">"PmEd2"</span>, <span class="st">"RMomAgeU"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span> , </span>
+<span>                        <span class="st">"gov_assist"</span>, <span class="st">"B18Raw"</span>, <span class="st">"EARS_TJo"</span>, <span class="st">"MDI"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data_long_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatLongData.html" class="external-link">formatLongData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_long</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, </span>
 <span>                              exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, </span>
 <span>                              time_var <span class="op">=</span> <span class="st">"WAVE"</span>, </span>
 <span>                              id_var <span class="op">=</span> <span class="st">"ID"</span>,                                </span>
 <span>                              missing <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>                              factor_confounders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"TcBlac2"</span>,<span class="st">"BioDadInHH2"</span>,<span class="st">"HomeOwnd"</span>, <span class="st">"PmBlac2"</span>,       </span>
-<span>                                                     <span class="st">"PmMrSt2"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"RHealth"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
-<span>                                                     <span class="st">"RHasSO"</span><span class="op">)</span>,   </span>
-<span>                              integer_confounders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KFASTScr"</span>, <span class="st">"PmEd2"</span>, <span class="st">"RMomAgeU"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span> , </span>
-<span>                                                      <span class="st">"gov_assist"</span>, <span class="st">"B18Raw"</span>, <span class="st">"EARS_TJo"</span>, <span class="st">"MDI"</span><span class="op">)</span>, </span>
+<span>                              factor_confounders <span class="op">=</span> <span class="va">factor_confounders</span>,    </span>
+<span>                              integer_confounders <span class="op">=</span> <span class="va">integer_confounders</span>, </span>
 <span>                              home_dir <span class="op">=</span> <span class="va">home_dir</span>, </span>
 <span>                              save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; Table: Summary of ESETA1 Exposure Information</span></span>
@@ -278,25 +300,24 @@ others as numeric.</p>
 <span><span class="co">#&gt; |:----|---------:|---------:|------:|-----:|</span></span>
 <span><span class="co">#&gt; |35   | 0.6009797| 0.2830620| -0.230| 1.536|</span></span>
 <span><span class="co">#&gt; |58   | 0.5029778| 0.2931918| -0.281| 1.448|</span></span>
+<span><span class="co">#&gt; Warning in formatLongData(data = data_long, exposure = exposure,</span></span>
+<span><span class="co">#&gt; exposure_time_pts = exposure_time_pts, : The following variables are</span></span>
+<span><span class="co">#&gt; characters. Please change them to integers and re-run: WAVE</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_long_f</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   ID state BioDadInHH2 PmAge2 PmBlac2</span></span>
-<span><span class="co">#&gt; 1  1     0           1 27.245       0</span></span>
-<span><span class="co">#&gt; 2  1     0           1 27.245       0</span></span>
-<span><span class="co">#&gt; 3  1     0           1 27.245       0</span></span>
-<span><span class="co">#&gt; 4  1     0           1 27.245       0</span></span>
-<span><span class="co">#&gt; 5  1     0           1 27.245       0</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_long_f</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state BioDadInHH2 PmAge2 PmBlac2 TcBlac2 PmMrSt2 PmEd2 KFASTScr RMomAgeU</span></span>
+<span><span class="co">#&gt; 1  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 2  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 3  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 4  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 5  1     0           1 27.245       0       0       1    15       24       29</span></span></code></pre></div>
 <p>We get a descriptive statistics summary of the exposure, ESETA1, and
 the outcome, StrDif_Tot.58, for our visual inspections.</p>
 <p><br></p>
-</div>
-<div class="section level4">
-<h4 id="p1b--convert-single-long-data-frame-to-wide-format">P1b. Convert single long data frame to wide format<a class="anchor" aria-label="anchor" href="#p1b--convert-single-long-data-frame-to-wide-format"></a>
-</h4>
-<p>Users with correctly formatted variables in long format have the
-option of using the following code to transform their data into wide
-format, to proceed to using the package (if there is no missing data) or
-imputing (with &lt; 20% missing data MAR).</p>
+<p>Users with correctly formatted data in long format have the option of
+using the following code to transform their data into wide format, to
+proceed to using the package (if there is no missing data) or imputing
+(with &lt; 20% missing data MAR).</p>
 <p>We then transform our newly formatted long data into wide format,
 specifying <code>idvar</code> as “ID”, <code>timevar</code> as “WAVE”,
 and supplying the time points (encompassing exposure, confounder, and
@@ -317,48 +338,98 @@ outcome time points) in the data as 6, 15, 24, 35, and 58 to
 <span></span>
 <span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">data_wide</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">data_wide</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_wide</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide</span>,  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      ID state BioDadInHH2 PmAge2 PmBlac2</span></span>
-<span><span class="co">#&gt; 1     1     0           1 27.245       0</span></span>
-<span><span class="co">#&gt; 6    10     1           0 16.014       0</span></span>
-<span><span class="co">#&gt; 11  100     1           0 31.042       1</span></span>
-<span><span class="co">#&gt; 16 1000     1           0 23.597       1</span></span>
-<span><span class="co">#&gt; 21 1001     1           0 25.592       1</span></span></code></pre></div>
-<p>Alternatively, we could start with wide data with missingness that is
-already formatted, and below we read in simulated wide FLP data with
-missingness.</p>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      ID state BioDadInHH2 PmAge2 PmBlac2 TcBlac2 PmMrSt2 PmEd2 KFASTScr</span></span>
+<span><span class="co">#&gt; 1     1     0           1 27.245       0       0       1    15       24</span></span>
+<span><span class="co">#&gt; 6    10     1           0 16.014       0       1       0    13       18</span></span>
+<span><span class="co">#&gt; 11  100     1           0 31.042       1       1       1    14       15</span></span>
+<span><span class="co">#&gt; 16 1000     1           0 23.597       1       1       1    10       14</span></span>
+<span><span class="co">#&gt; 21 1001     1           0 25.592       1       1       1    13       23</span></span>
+<span><span class="co">#&gt;    RMomAgeU</span></span>
+<span><span class="co">#&gt; 1        29</span></span>
+<span><span class="co">#&gt; 6        30</span></span>
+<span><span class="co">#&gt; 11       25</span></span>
+<span><span class="co">#&gt; 16       31</span></span>
+<span><span class="co">#&gt; 21       27</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div class="section level4">
+<h4 id="p1b--a-single-data-frame-of-wide-data-with-missingness">P1b. A single data frame of wide data with missingness<a class="anchor" aria-label="anchor" href="#p1b--a-single-data-frame-of-wide-data-with-missingness"></a>
+</h4>
+<p>Alternatively, we could start with a single data frame of wide data
+with missingness that is already formatted, and below we read in
+simulated wide FLP data with missingness.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide_miss"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide_miss</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide</span>,  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd</span></span>
-<span><span class="co">#&gt; 1  1     0       0           1        1</span></span>
-<span><span class="co">#&gt; 2  2     1       1           0        2</span></span>
-<span><span class="co">#&gt; 3  3     0       0           0        3</span></span>
-<span><span class="co">#&gt; 4  4     1       0           0        2</span></span>
-<span><span class="co">#&gt; 5  5     0       0           1        1</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide</span>,  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span></code></pre></div>
+<p>Users beginning with a single data frame in long format (with
+missingness) can utilize a helper function <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatWideData.html" class="external-link">formatWideData()</a></code>
+to summarize exposure and outcome data and convert to required variable
+names. <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatWideData.html" class="external-link">formatWideData()</a></code> allows the users to supply existing
+variables for ID (<code>id_var</code>) and missing data
+(<code>missing</code>) for re-naming according to what is required by
+the package. It also allows the user to submit variables that should be
+factors and integers, and the function classes any factor confounders
+(<code>factor_confounders</code>) as factors, integer confounders
+(<code>integer_confounders</code>) as integers in the data, and all
+others as numeric.</p>
+<p>Below, we format the simulated wide FLP data.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">factor_confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"TcBlac2"</span>,<span class="st">"BioDadInHH2"</span>,<span class="st">"HomeOwnd"</span>, <span class="st">"PmBlac2"</span>,       </span>
+<span>                        <span class="st">"PmMrSt2"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"RHealth"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
+<span>                        <span class="st">"RHasSO.6"</span>, <span class="st">"RHasSO.15"</span>, <span class="st">"RHasSO.24"</span>, <span class="st">"RHasSO.35"</span>, <span class="st">"RHasSO.58"</span><span class="op">)</span> <span class="co">#list factor variables in wide format here</span></span>
+<span></span>
+<span><span class="va">integer_confounders</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KFASTScr"</span>, <span class="st">"PmEd2"</span>, <span class="st">"RMomAgeU"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span> , </span>
+<span>                        <span class="st">"gov_assist"</span>, <span class="st">"B18Raw.6"</span>, <span class="st">"B18Raw.15"</span>, <span class="st">"B18Raw.24"</span>, <span class="st">"B18Raw.58"</span>, </span>
+<span>                        <span class="st">"EARS_TJo.24"</span>, <span class="st">"EARS_TJo.35"</span>, <span class="st">"MDI.6"</span>, <span class="st">"MDI.15"</span><span class="op">)</span> <span class="co">#list any integer variables in wide format here</span></span>
+<span></span>
+<span><span class="va">data_wide_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatWideData.html" class="external-link">formatWideData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_wide</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, </span>
+<span>                              id_var <span class="op">=</span> <span class="st">"ID"</span>, <span class="co">#list original id variable here if it's not "ID"</span></span>
+<span>                              missing <span class="op">=</span> <span class="cn">NA</span>, <span class="co">#list missing value here</span></span>
+<span>                              factor_confounders <span class="op">=</span> <span class="va">factor_confounders</span>,</span>
+<span>                              integer_confounders <span class="op">=</span> <span class="va">integer_confounders</span>,</span>
+<span>                              home_dir <span class="op">=</span> <span class="va">home_dir</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; Your outcome variable(s) have the following type(s): data.frame</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide_f</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span></code></pre></div>
 <p><br></p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="p2--impute-data-to-account-for-missingness">P2. Impute Data to Account for Missingness<a class="anchor" aria-label="anchor" href="#p2--impute-data-to-account-for-missingness"></a>
+<h3 id="p2--impute-missing-data-in-wide-format">P2. Impute Missing Data in Wide Format<a class="anchor" aria-label="anchor" href="#p2--impute-missing-data-in-wide-format"></a>
 </h3>
 <p>The functions of the <em>devMSMs</em> package accept data in the form
-of a single data frame with no missing values or m imputed datasets in
-the form of either a mids object (output from the mice package or via
-<code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/imputeData.html" class="external-link">imputeData()</a></code>) or a list of imputed datasets. Most
-developmental data from humans will have some amount of missing data.
-Given that the creation of IPTW balancing weights requires complete
-data, we recommend imputing data. Imputation assumes a missing data
-mechanism of missing at random (MAR) and no more than 20% missing data
-in total (Leyrat et al., 2021). Given existing work demonstrating its
-superiority, <em>devMSMS</em> implements the ‘within’ approach for
+of a single data frame with no missing values or <em>m</em> imputed
+datasets in the form of either a mids object (output from the mice
+package or via <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/imputeData.html" class="external-link">imputeData()</a></code>) or a list of imputed datasets.
+Most developmental data from humans will have some amount of missing
+data. Given that the creation of IPTW balancing weights requires
+complete data, we recommend imputing data. Imputation assumes a missing
+data mechanism of missing at random (MAR) and no more than 20% missing
+data in total (Leyrat et al., 2021). Given existing work demonstrating
+its superiority, <em>devMSMS</em> implements the ‘within’ approach for
 imputed data, conducting all steps on each imputed dataset before
 pooling estimates using Rubin’s rules to create final average
 predictions and contrast comparisons in <em>Worfklows</em> vignettes
 Step 5 (Leyrat et al, 2021; Granger et al., 2019).</p>
+<p>As shown below, users can use a helper function to impute their wide
+data or impute elsewhere and read in the imputed data as a list for use
+with <em>devMSMs</em>.</p>
 <p><br></p>
 <div class="section level4">
 <h4 id="p2a--multiply-impute-single-wide-formatted-data-frame-using-mice">P2a. Multiply impute single wide, formatted data frame using
@@ -420,8 +491,11 @@ from this function and wish to read them in
 random forest method and 0 iterations (just for illustrative purposes),
 set a seed for reproducibility, and assign the output to
 <code>data</code> for use with <em>devMSMs</em>. This code takes some
-time to run.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+time to run. (Note: given the challenges of imputing data from .rda
+files, we have set <code>maxit = 0</code> here just for illustrative
+purposes. We recommend setting <code>maxit = 5</code> (<em>mice</em>
+default) when running data.)</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fl">1234</span></span>
 <span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
@@ -440,13 +514,19 @@ time to run.</p>
 <span><span class="co">#&gt; USER ALERT: Please view any logged events from the imputation below: </span></span>
 <span><span class="co">#&gt; Table: Logged Events from mice::mice</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">mice</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete</a></span><span class="op">(</span><span class="va">imputed_data</span>, <span class="fl">1</span><span class="op">)</span>,  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6</span></span>
-<span><span class="co">#&gt; 1         3         1         1        13        7</span></span>
-<span><span class="co">#&gt; 2         2         5        -7         7        0</span></span>
-<span><span class="co">#&gt; 3         3         6         5        20       -1</span></span>
-<span><span class="co">#&gt; 4         4        24        25        17       11</span></span>
-<span><span class="co">#&gt; 5         3        -8        31         0        1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">mice</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete</a></span><span class="op">(</span><span class="va">imputed_data</span>, <span class="fl">1</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6 BioDadInHH2 caregiv_health</span></span>
+<span><span class="co">#&gt; 1         3         1         1        13        7           1              3</span></span>
+<span><span class="co">#&gt; 2         2         5        -7         7        0           0              0</span></span>
+<span><span class="co">#&gt; 3         3         6         5        20       -1           0              3</span></span>
+<span><span class="co">#&gt; 4         4        24        25        17       11           0              3</span></span>
+<span><span class="co">#&gt; 5         3        -8        31         0        1           1              2</span></span>
+<span><span class="co">#&gt;   CORTB.15 CORTB.24 CORTB.6</span></span>
+<span><span class="co">#&gt; 1   -0.227   -0.652   0.742</span></span>
+<span><span class="co">#&gt; 2   -0.039   -0.513   0.018</span></span>
+<span><span class="co">#&gt; 3    1.145    0.033  -0.379</span></span>
+<span><span class="co">#&gt; 4    0.301   -0.501   0.000</span></span>
+<span><span class="co">#&gt; 5   -0.247    0.084   0.153</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">imputed_data</span></span></code></pre></div>
 <p>We inspect the output to the console for any warnings from
@@ -456,15 +536,16 @@ the <em>deveMSMs</em> package (see <em>Workflows</em> vignettes).</p>
 <p><br></p>
 </div>
 <div class="section level4">
-<h4 id="p2b--read-in-as-a-list-wide-imputed-data-saved-locally">P2b. Read in as a list wide imputed data saved locally<a class="anchor" aria-label="anchor" href="#p2b--read-in-as-a-list-wide-imputed-data-saved-locally"></a>
+<h4 id="p2b--read-in-as-a-list-of-wide-imputed-data-saved-locally">P2b. Read in as a list of wide imputed data saved locally<a class="anchor" aria-label="anchor" href="#p2b--read-in-as-a-list-of-wide-imputed-data-saved-locally"></a>
 </h4>
 <p>Alternatively, if a user has imputed datasets already created using a
 program other than <em>mice</em>, they can read in, as a list, files
 saved locally as .csv files (labeled “1”:m) in a single folder. This
 list can be assigned to <code>data</code> for use in the
 <em>deveMSMs</em> package (see <em>Workflows</em> vignettes).</p>
-<p>Below, we load in imputed data simulated from FLP, as an example.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>Below, we load in a list of imputed data simulated from FLP, as an
+example.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># folder &lt;- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/imputations/"</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># files &lt;- list.files(folder, full.names = TRUE, pattern = "\\.csv") #make sure pattern matches suffix of your data</span></span>
@@ -478,37 +559,42 @@ list can be assigned to <code>data</code> for use in the
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">sim_data_imp_list</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   X.1 X ID state TcBlac2</span></span>
-<span><span class="co">#&gt; 1   1 1  1     0       0</span></span>
-<span><span class="co">#&gt; 2   2 2  2     1       1</span></span>
-<span><span class="co">#&gt; 3   3 3  3     0       0</span></span>
-<span><span class="co">#&gt; 4   4 4  4     1       0</span></span>
-<span><span class="co">#&gt; 5   5 5  5     0       0</span></span></code></pre></div>
-<p>Alternatively, in the case of no missing data, the user can read in a
-formatted, wide dataset assigned to <code>data</code> for use in the
-<em>deveMSMs</em> package (see <em>Workflows</em> vignettes).</p>
-<p>Below, we load in a single wide data frame simulated from FLP as an
-example.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide</span>,  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd</span></span>
-<span><span class="co">#&gt; 1  1     0       0           1        1</span></span>
-<span><span class="co">#&gt; 2  2     1       1           0        2</span></span>
-<span><span class="co">#&gt; 3  3     0       0           0        3</span></span>
-<span><span class="co">#&gt; 4  4     1       0           0        2</span></span>
-<span><span class="co">#&gt; 5  5     0       0           1        1</span></span>
-<span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data_wide</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   X.1 X ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2</span></span>
+<span><span class="co">#&gt; 1   1 1  1     0       0           1        1       24       0    15</span></span>
+<span><span class="co">#&gt; 2   2 2  2     1       1           0        2       27       1    17</span></span>
+<span><span class="co">#&gt; 3   3 3  3     0       0           0        3       15       1    13</span></span>
+<span><span class="co">#&gt; 4   4 4  4     1       0           0        2       17       0    14</span></span>
+<span><span class="co">#&gt; 5   5 5  5     0       0           1        1       25       0    20</span></span></code></pre></div>
 <p><br></p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="p3--optional-identify-exposure-epochs">P3. Optional: Identify Exposure Epochs<a class="anchor" aria-label="anchor" href="#p3--optional-identify-exposure-epochs"></a>
+<h3 id="p3--data-with-no-missingness">P3. Data with no Missingness<a class="anchor" aria-label="anchor" href="#p3--data-with-no-missingness"></a>
+</h3>
+<p>Users with no missing data can refer to Step P1a to format their long
+data and transform it to wide or Step P1b to format their wide data for
+use with <em>devMSMs</em>.</p>
+<p>Below, we we load in a single wide data frame simulated from FLP as
+an example.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide</span>,  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span>
+<span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data_wide</span></span></code></pre></div>
+<p><br><br></p>
+</div>
+<div class="section level3">
+<h3 id="p4--optional-idenitfy-exposure-epochs">P4. Optional: Idenitfy Exposure Epochs<a class="anchor" aria-label="anchor" href="#p4--optional-idenitfy-exposure-epochs"></a>
 </h3>
 <p>Users have the option to specify exposure epochs, or meaningful
 periods of developmental time that many encompass the time points at
@@ -536,7 +622,7 @@ basis for estimating and comparing exposure histories
 exposure time points will be used at the aforementioned steps.</p>
 <p>Below, we specify Infancy, Toddlerhood, and Childhood epochs that
 correspond to 6 and 15; 24 and 35; and 58 months, respectively.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epochs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>epochs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Infancy"</span>, </span>
 <span>                                <span class="st">"Toddlerhood"</span>, </span>
 <span>                                <span class="st">"Childhood"</span><span class="op">)</span>, </span>
@@ -552,7 +638,7 @@ correspond to 6 and 15; 24 and 35; and 58 months, respectively.</p>
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="p4--recommended-specify-inspect-exposure-histories">P4. Recommended: Specify &amp; Inspect Exposure Histories<a class="anchor" aria-label="anchor" href="#p4--recommended-specify-inspect-exposure-histories"></a>
+<h3 id="p5--recommended-specify-inspect-exposure-histories">P5. Recommended: Specify &amp; Inspect Exposure Histories<a class="anchor" aria-label="anchor" href="#p5--recommended-specify-inspect-exposure-histories"></a>
 </h3>
 <p>Exposure histories are the units with which users will test their
 substantive hypotheses, and their construction should be determined by
@@ -561,7 +647,8 @@ verify and inspect exposure histories a priori in relation to their data
 and hypotheses.<br><br></p>
 </div>
 <div class="section level3">
-<h3 id="p4a--create-high-and-low-cutoff-values-for-continuous-exposures">P4a. Create high and low cutoff values for continuous exposures<a class="anchor" aria-label="anchor" href="#p4a--create-high-and-low-cutoff-values-for-continuous-exposures"></a>
+<h3 id="p5a--create-high-and-low-cutoff-values-for-continuous-exposures">P5a. Create high and low cutoff values (for continuous
+exposures)<a class="anchor" aria-label="anchor" href="#p5a--create-high-and-low-cutoff-values-for-continuous-exposures"></a>
 </h3>
 <p>First, for continuously distributed exposures (regardless of whether
 or not exposure epochs are specified), we recommend users indicate high
@@ -578,12 +665,12 @@ steps. These final values will be used in creating exposure histories in
 Step 5 of the <em>Workflows</em> vignettes.</p>
 <p>Below, we specify the 60th and 30th percentiles to demarcate high and
 low levels of economic strain exposure, respectively.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hi_lo_cut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span> </span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="p4b--specify-hypotheses-relevant-exposure-histories">P4b. Specify hypotheses-relevant exposure histories<a class="anchor" aria-label="anchor" href="#p4b--specify-hypotheses-relevant-exposure-histories"></a>
+<h3 id="p5b--specify-hypotheses-relevant-exposure-histories">P5b. Specify hypotheses-relevant exposure histories<a class="anchor" aria-label="anchor" href="#p5b--specify-hypotheses-relevant-exposure-histories"></a>
 </h3>
 <p>We strongly recommend users be selective about which histories, or
 developmental sequences of high and low exposure (at exposure time
@@ -627,14 +714,14 @@ than 5 time points).</p>
 reference event in comparison to high levels at all epochs (“h-h-h”) as
 well as all histories that contain 1 dose of exposure to high economic
 strain at different epochs.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reference</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l-l-l"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"h-h-h"</span>, <span class="st">"l-l-h"</span>, <span class="st">"h-l-l"</span>, <span class="st">"l-h-l"</span><span class="op">)</span> </span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="p4c--inspect-exposure-histories-and-data">P4c. Inspect exposure histories and data<a class="anchor" aria-label="anchor" href="#p4c--inspect-exposure-histories-and-data"></a>
+<h3 id="p5c--inspect-exposure-histories-and-data">P5c. Inspect exposure histories and data<a class="anchor" aria-label="anchor" href="#p5c--inspect-exposure-histories-and-data"></a>
 </h3>
 <p>For all users, we highly recommend use of the helper
 <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/inspectData.html" class="external-link">inspectData()</a></code> function (with the a complete dataset in long
@@ -668,13 +755,13 @@ histories.</p>
 files into the home directory: a correlation plot of all variables in
 the dataset, tables of exposure and outcome descriptive statistics, and
 two summary tables of the confounders considered at each time point.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/inspectData.html" class="external-link">inspectData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, <span class="co"># required input</span></span>
 <span>            ti_confounders <span class="op">=</span> <span class="va">ti_confounders</span>, tv_confounders <span class="op">=</span> <span class="va">tv_confounders</span>, <span class="co"># required input</span></span>
 <span>            epochs <span class="op">=</span> <span class="va">epochs</span>, hi_lo_cut <span class="op">=</span> <span class="va">hi_lo_cut</span>, reference <span class="op">=</span> <span class="va">reference</span>, comparison <span class="op">=</span> <span class="va">comparison</span>, <span class="co">#optional input</span></span>
 <span>            home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional input</span></span>
 <span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT</span></span>
-<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (b31fb0de) has not changed since last install.</span></span>
+<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (3c6a4d53) has not changed since last install.</span></span>
 <span><span class="co">#&gt;   Use `force = TRUE` to force installation</span></span>
 <span><span class="co">#&gt; USER ALERT: Below are the 67 variables spanning 33 unique domains that will be treated as confounding variables for the relation between ESETA1 and StrDif_Tot.58.</span></span>
 <span><span class="co">#&gt; Please inspect this list carefully. It should include all time-varying covariates, time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.</span></span>

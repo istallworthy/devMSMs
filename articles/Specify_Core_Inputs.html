@@ -170,19 +170,17 @@ be included as time-varying confounders for balancing purposes only.</p>
 throughout the use of the <em>devMSMs</em> package. If the user intends
 to specify exposure epochs
 (<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary
-Steps vignette</a> Step P3), the user should include all time points
+Steps vignette</a> Step P4), the user should include all time points
 encompassed in the epochs in <code>exposure_time_pts</code>. If the user
-does not intend to specify exposure epochs
-(<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary
-Steps vignette</a> Step P3), the <code>exposure_time_pts</code> will
-constitute the exposure main effects in the final outcome model and form
-the basis of the histories used for history comparison. In this case, if
-the user specifies more than 4 exposure time points, they will be
-required to conduct only a subset of history comparisons (Step 5b in the
-<em>Workflows</em> vignettes), given that the base code (see the
-<code>hypotheses()</code> function from the <em>marginaleffects</em>
-package) cannot accommodate all pairwise history comparisons for more
-than 5 time points.</p>
+does not intend to specify exposure epochs, the
+<code>exposure_time_pts</code> will constitute the exposure main effects
+in the final outcome model and form the basis of the histories used for
+history comparison. In this case, if the user specifies more than 4
+exposure time points, they will be required to conduct only a subset of
+history comparisons (Step 5b in the <em>Workflows</em> vignettes), given
+that the base code (see the <code>hypotheses()</code> function from the
+<em>marginaleffects</em> package) cannot accommodate all pairwise
+history comparisons for more than 5 time points.</p>
 <p>We elected to create epochs of infancy (6 and 15 months), toddlerhood
 (24 and 35 months), and early childhood (58 months). Thus, we input 6,
 15, 24, 35, and 58 to <code>exposure_time_pts</code>.</p>

@@ -165,13 +165,13 @@ for identifiers), in one of three ways:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sim_data_wide</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd</span></span>
-<span><span class="co">#&gt; 1  1     0       0           1        1</span></span>
-<span><span class="co">#&gt; 2  2     1       1           0        2</span></span>
-<span><span class="co">#&gt; 3  3     0       0           0        3</span></span>
-<span><span class="co">#&gt; 4  4     1       0           0        2</span></span>
-<span><span class="co">#&gt; 5  5     0       0           1        1</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sim_data_wide</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span></code></pre></div>
 <p><br></p>
 <ol start="2" style="list-style-type: decimal">
 <li>imputed data in the form of a mids object (output from
@@ -183,13 +183,13 @@ for identifiers), in one of three ways:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">sim_data_mice</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "mids"</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">mice</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete</a></span><span class="op">(</span><span class="va">sim_data_mice</span>, <span class="fl">1</span><span class="op">)</span>,n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   X ID state TcBlac2 BioDadInHH2</span></span>
-<span><span class="co">#&gt; 1 1  1     0       0           1</span></span>
-<span><span class="co">#&gt; 2 2  2     1       1           0</span></span>
-<span><span class="co">#&gt; 3 3  3     0       0           0</span></span>
-<span><span class="co">#&gt; 4 4  4     1       0           0</span></span>
-<span><span class="co">#&gt; 5 5  5     0       0           1</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">mice</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete</a></span><span class="op">(</span><span class="va">sim_data_mice</span>, <span class="fl">1</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   X ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2</span></span>
+<span><span class="co">#&gt; 1 1  1     0       0           1        1       24       0    15       1</span></span>
+<span><span class="co">#&gt; 2 2  2     1       1           0        2       27       1    17       0</span></span>
+<span><span class="co">#&gt; 3 3  3     0       0           0        3       15       1    13       1</span></span>
+<span><span class="co">#&gt; 4 4  4     1       0           0        2       17       0    14       0</span></span>
+<span><span class="co">#&gt; 5 5  5     0       0           1        1       25       0    20       1</span></span></code></pre></div>
 <p><br></p>
 <ol start="3" style="list-style-type: decimal">
 <li>imputed data as a list of imputed data frames.</li>
@@ -197,13 +197,13 @@ for identifiers), in one of three ways:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_imp_list"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sim_data_imp_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   X.1 X ID state TcBlac2</span></span>
-<span><span class="co">#&gt; 1   1 1  1     0       0</span></span>
-<span><span class="co">#&gt; 2   2 2  2     1       1</span></span>
-<span><span class="co">#&gt; 3   3 3  3     0       0</span></span>
-<span><span class="co">#&gt; 4   4 4  4     1       0</span></span>
-<span><span class="co">#&gt; 5   5 5  5     0       0</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sim_data_imp_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   X.1 X ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2</span></span>
+<span><span class="co">#&gt; 1   1 1  1     0       0           1        1       24       0    15</span></span>
+<span><span class="co">#&gt; 2   2 2  2     1       1           0        2       27       1    17</span></span>
+<span><span class="co">#&gt; 3   3 3  3     0       0           0        3       15       1    13</span></span>
+<span><span class="co">#&gt; 4   4 4  4     1       0           0        2       17       0    14</span></span>
+<span><span class="co">#&gt; 5   5 5  5     0       0           1        1       25       0    20</span></span></code></pre></div>
 <p><br></p>
 <p>All variables should be classed as integers, numeric, or factors. The
 recommended
