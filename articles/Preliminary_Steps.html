@@ -76,7 +76,7 @@
                         <h4 data-toc-skip class="author">Isabella
 Stallworthy</h4>
             
-            <h4 data-toc-skip class="date">2023-11-29</h4>
+            <h4 data-toc-skip class="date">2023-11-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Preliminary_Steps.Rmd" class="external-link"><code>vignettes/Preliminary_Steps.Rmd</code></a></small>
       <div class="d-none name"><code>Preliminary_Steps.Rmd</code></div>
@@ -105,17 +105,17 @@ according to the Data Requirements vignette and imputed to accommodate
 any missing data (P2), can focus only on subsections P3 Identifying
 Optional Exposure Epochs and P4 Verifying History Distributions prior to
 using the package. Following completion of this vignette, users should
-use one of the Workflows vignettes to implement <em>devMSMs</em> with
-their longitudinal data.</p>
+use one of the <em>Workflows</em> vignettes to implement
+<em>devMSMs</em> with their longitudinal data.</p>
 <p><em>insert Table 1 here</em>.</p>
-<p><br></p>
+<div class="figure">
+<img src="../../../../../../Users/isabella/Documents/GitHub/devMSMsHelpers/reference/figures/helper%20function%20summary%20table.png" width="600" alt=""><p class="caption">Table 1. Summary of devMSMs helper functions*</p>
+</div>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="co"># install.packages("stats")</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: devtools</span></span>
-<span><span class="co">#&gt; Loading required package: usethis</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># library(stats)</span></span>
 <span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -198,16 +198,16 @@ the SDQ, as the outcome.</p>
 <p>Users have several options for reading in data. They can begin this
 workflow with the following options:</p>
 <ul>
-<li><p>long data (with or without missing data), which can be converted
-to wide data</p></li>
-<li><p>wide data (with or without missing data), which can be imputed
-using the <em>imputeData()</em> helper function, if needed</p></li>
+<li><p>long data (with or without missing data), which can be formatted
+(P1a) and converted to wide data (P1b)</p></li>
+<li><p>wide data that is complete, or with missingness to be imputed
+using the <em>imputeData()</em> helper function (P2)</p></li>
 <li><p>imputed wide data sets saved locally, which can be read in as a
-list</p></li>
+list (P2b).</p></li>
 </ul>
 <p>Below, we demonstrate use of each of the above starting
 options.<br><br></p>
-<p>First we load the simulated longitudinal data in long format (with
+<p>First, we load the simulated longitudinal data in long format (with
 missingness) that accompanies <em>devMSMs</em>. These data are simulated
 based on data from the Family Life Project (FLP), a longitudinal study
 following 1,292 families representative of two geographic areas (three
@@ -233,8 +233,7 @@ character). Auxiliary or nuisance covariates that are not confounders
 (e.g, assessment version) can be included in the dataset for use and
 specification in the final modeling step (<em>Workflow</em> vignettes
 Step 5).<br><br></p>
-<p><em>insert Figure 1 here</em>.</p>
-<p><br></p>
+<p><img src="../../../../../../Users/isabella/Documents/GitHub/devMSMs/reference/figures/sample%20data.png" width="600" alt="Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as NA and will need to be imputed (Preliminary Steps Vignette Step P2)."><br></p>
 <div class="section level4">
 <h4 id="p1a--format-single-data-frame-of-long-data">P1a. Format single data frame of long data<a class="anchor" aria-label="anchor" href="#p1a--format-single-data-frame-of-long-data"></a>
 </h4>
@@ -242,12 +241,14 @@ Step 5).<br><br></p>
 without missingness) can utilize a helper function
 <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatLongData.html" class="external-link">formatLongData()</a></code> to summarize exposure and outcome data and
 convert to required variable names. This function takes a dataset in
-long format and any variables for time (<code>time_var</code>), ID
-(<code>id_var</code>), and missing data (missing) with alternative
-variables and re-labels them according to what is required by the
-package. It also classes any factor confounders
-(<code>factor_confounders</code>) as factors in the data and all others
-as numeric.</p>
+long format. It allows the users to supply existing variables for time
+(<code>time_var</code>), ID (<code>id_var</code>), and missing data
+(<code>missing</code>) for re-naming according to what is required by
+the package. It also allows the user to submit variables that should be
+factors and integers, and the function classes any factor confounders
+(<code>factor_confounders</code>) as factors, integer confounders
+(<code>integer_confounders</code>) as integers in the data, and all
+others as numeric.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_long_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatLongData.html" class="external-link">formatLongData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_long</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, </span>
 <span>                              exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, </span>
@@ -256,7 +257,9 @@ as numeric.</p>
 <span>                              missing <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>                              factor_confounders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"TcBlac2"</span>,<span class="st">"BioDadInHH2"</span>,<span class="st">"HomeOwnd"</span>, <span class="st">"PmBlac2"</span>,       </span>
 <span>                                                     <span class="st">"PmMrSt2"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"RHealth"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
-<span>                                                     <span class="st">"RHasSO"</span><span class="op">)</span>,                              </span>
+<span>                                                     <span class="st">"RHasSO"</span><span class="op">)</span>,   </span>
+<span>                              integer_confounders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KFASTScr"</span>, <span class="st">"PmEd2"</span>, <span class="st">"RMomAgeU"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span> , </span>
+<span>                                                      <span class="st">"gov_assist"</span>, <span class="st">"B18Raw"</span>, <span class="st">"EARS_TJo"</span>, <span class="st">"MDI"</span><span class="op">)</span>, </span>
 <span>                              home_dir <span class="op">=</span> <span class="va">home_dir</span>, </span>
 <span>                              save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; Table: Summary of ESETA1 Exposure Information</span></span>
@@ -274,7 +277,39 @@ as numeric.</p>
 <span><span class="co">#&gt; |WAVE |      mean|        sd|    min|   max|</span></span>
 <span><span class="co">#&gt; |:----|---------:|---------:|------:|-----:|</span></span>
 <span><span class="co">#&gt; |35   | 0.6009797| 0.2830620| -0.230| 1.536|</span></span>
-<span><span class="co">#&gt; |58   | 0.5029778| 0.2931918| -0.281| 1.448|</span></span></code></pre></div>
+<span><span class="co">#&gt; |58   | 0.5029778| 0.2931918| -0.281| 1.448|</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_long_f</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state BioDadInHH2 PmAge2 PmBlac2 TcBlac2 PmMrSt2 PmEd2 KFASTScr RMomAgeU</span></span>
+<span><span class="co">#&gt; 1  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 2  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 3  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 4  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt; 5  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span><span class="co">#&gt;   RHealth HomeOwnd SWghtLB SurpPreg SmokTotl DrnkFreq peri_health</span></span>
+<span><span class="co">#&gt; 1       2        1       7        0        3        2          15</span></span>
+<span><span class="co">#&gt; 2       2        1       7        0        3        2          15</span></span>
+<span><span class="co">#&gt; 3       2        1       7        0        3        2          15</span></span>
+<span><span class="co">#&gt; 4       2        1       7        0        3        2          15</span></span>
+<span><span class="co">#&gt; 5       2        1       7        0        3        2          15</span></span>
+<span><span class="co">#&gt;   caregiv_health gov_assist WAVE SAAmylase MDI RHasSO WndNbrhood IBRAttn B18Raw</span></span>
+<span><span class="co">#&gt; 1              3          2    6   -18.917 102   &lt;NA&gt;      2.698      12     NA</span></span>
+<span><span class="co">#&gt; 2              3          2   15    65.603  NA      1         NA      14      1</span></span>
+<span><span class="co">#&gt; 3              3          2   24        NA  NA      1      3.865      15      1</span></span>
+<span><span class="co">#&gt; 4              3          2   35        NA  NA      0      2.628      NA     NA</span></span>
+<span><span class="co">#&gt; 5              3          2   58        NA  NA   &lt;NA&gt;         NA      NA     NA</span></span>
+<span><span class="co">#&gt;   HOMEETA1 InRatioCor ESETA1  CORTB EARS_TJo LESMnPos LESMnNeg StrDif_Tot</span></span>
+<span><span class="co">#&gt; 1   -0.093      3.221  0.236  0.742       NA       NA       NA         NA</span></span>
+<span><span class="co">#&gt; 2    0.368         NA -0.250 -0.227       NA       NA       NA         NA</span></span>
+<span><span class="co">#&gt; 3    0.224      2.631  0.969 -0.652        3        1        2         NA</span></span>
+<span><span class="co">#&gt; 4       NA         NA -0.160     NA       31        2        2      0.478</span></span>
+<span><span class="co">#&gt; 5       NA         NA  0.585     NA       NA       NA       NA         NA</span></span>
+<span><span class="co">#&gt;   fscore</span></span>
+<span><span class="co">#&gt; 1     NA</span></span>
+<span><span class="co">#&gt; 2     NA</span></span>
+<span><span class="co">#&gt; 3     NA</span></span>
+<span><span class="co">#&gt; 4     NA</span></span>
+<span><span class="co">#&gt; 5     NA</span></span></code></pre></div>
 <p>We get a descriptive statistics summary of the exposure, ESETA1, and
 the outcome, StrDif_Tot.58, for our visual inspections.</p>
 <p><br></p>
@@ -286,26 +321,162 @@ the outcome, StrDif_Tot.58, for our visual inspections.</p>
 option of using the following code to transform their data into wide
 format, to proceed to using the package (if there is no missing data) or
 imputing (with &lt; 20% missing data MAR).</p>
-<p>We then transform our newly formatted long data into wide format.</p>
+<p>We then transform our newly formatted long data into wide format,
+specifying <code>idvar</code> as “ID”, <code>timevar</code> as “WAVE”,
+and supplying the time points (encompassing exposure, confounder, and
+outcome time points) in the data as 6, 15, 24, 35, and 58 to
+<code>times</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"stats"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"stats"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">tv_confounders</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"\\:"</span>, <span class="va">tv_confounders</span><span class="op">)</span><span class="op">]</span>, <span class="st">"\\."</span><span class="op">)</span>, <span class="st">"["</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">v</span> <span class="op">&lt;-</span> <span class="va">v</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="va">v</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/reshape.html" class="external-link">reshape</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_long_f</span>, </span>
-<span>                            idvar <span class="op">=</span> <span class="st">"ID"</span>, <span class="co">#list ID variable in your dataset</span></span>
+<span>                            idvar <span class="op">=</span> <span class="st">"ID"</span>,</span>
 <span>                            v.names <span class="op">=</span> <span class="va">v</span>, </span>
-<span>                            timevar <span class="op">=</span> <span class="st">"WAVE"</span>, <span class="co"># list time variable in your long dataset</span></span>
-<span>                            times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">15</span>, <span class="fl">24</span>, <span class="fl">35</span>, <span class="fl">58</span><span class="op">)</span>, <span class="co"># list all time points in your dataset</span></span>
+<span>                            timevar <span class="op">=</span> <span class="st">"WAVE"</span>,</span>
+<span>                            times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">15</span>, <span class="fl">24</span>, <span class="fl">35</span>, <span class="fl">58</span><span class="op">)</span>, </span>
 <span>                            direction <span class="op">=</span> <span class="st">"wide"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">data_wide</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">data_wide</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_wide</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">data_wide</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">data_wide</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_wide</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      ID state BioDadInHH2 PmAge2 PmBlac2 TcBlac2 PmMrSt2 PmEd2 KFASTScr</span></span>
+<span><span class="co">#&gt; 1     1     0           1 27.245       0       0       1    15       24</span></span>
+<span><span class="co">#&gt; 6    10     1           0 16.014       0       1       0    13       18</span></span>
+<span><span class="co">#&gt; 11  100     1           0 31.042       1       1       1    14       15</span></span>
+<span><span class="co">#&gt; 16 1000     1           0 23.597       1       1       1    10       14</span></span>
+<span><span class="co">#&gt; 21 1001     1           0 25.592       1       1       1    13       23</span></span>
+<span><span class="co">#&gt;    RMomAgeU RHealth HomeOwnd SWghtLB SurpPreg SmokTotl DrnkFreq peri_health</span></span>
+<span><span class="co">#&gt; 1        29       2        1       7        0        3        2          15</span></span>
+<span><span class="co">#&gt; 6        30       2        3       7        1        1        1           7</span></span>
+<span><span class="co">#&gt; 11       25       3        3       5        0        2        1           9</span></span>
+<span><span class="co">#&gt; 16       31       3        3       7        1        1        1          10</span></span>
+<span><span class="co">#&gt; 21       27       1        3       6        1        0        1           9</span></span>
+<span><span class="co">#&gt;    caregiv_health gov_assist SAAmylase.6 MDI.6 RHasSO.6 WndNbrhood.6 IBRAttn.6</span></span>
+<span><span class="co">#&gt; 1               3          2     -18.917   102     &lt;NA&gt;        2.698        12</span></span>
+<span><span class="co">#&gt; 6               1          1      39.282   108        0        2.709        20</span></span>
+<span><span class="co">#&gt; 11              2          4      69.979   111     &lt;NA&gt;           NA        17</span></span>
+<span><span class="co">#&gt; 16              1          4      78.121    98        1        3.229        16</span></span>
+<span><span class="co">#&gt; 21              3          3      42.356    NA        1           NA        NA</span></span>
+<span><span class="co">#&gt;    B18Raw.6 HOMEETA1.6 InRatioCor.6 ESETA1.6 CORTB.6 SAAmylase.15 MDI.15</span></span>
+<span><span class="co">#&gt; 1        NA     -0.093        3.221    0.236   0.742       65.603     NA</span></span>
+<span><span class="co">#&gt; 6         8     -1.095        1.582   -0.696   0.473       50.698    118</span></span>
+<span><span class="co">#&gt; 11       -7     -1.171        2.107       NA      NA       76.067    108</span></span>
+<span><span class="co">#&gt; 16       10     -0.510        0.958    1.817   0.431       85.535     75</span></span>
+<span><span class="co">#&gt; 21       11         NA        3.548    0.479      NA           NA     94</span></span>
+<span><span class="co">#&gt;    RHasSO.15 IBRAttn.15 B18Raw.15 HOMEETA1.15 InRatioCor.15 ESETA1.15 CORTB.15</span></span>
+<span><span class="co">#&gt; 1          1         14         1       0.368            NA    -0.250   -0.227</span></span>
+<span><span class="co">#&gt; 6          0         20        -4      -0.125         1.914    -1.177    0.541</span></span>
+<span><span class="co">#&gt; 11      &lt;NA&gt;         19        NA          NA         0.246        NA       NA</span></span>
+<span><span class="co">#&gt; 16         0         20        22      -1.569         1.996     1.938    0.654</span></span>
+<span><span class="co">#&gt; 21         0         18        12      -0.733            NA    -0.388       NA</span></span>
+<span><span class="co">#&gt;    SAAmylase.24 RHasSO.24 WndNbrhood.24 IBRAttn.24 B18Raw.24 HOMEETA1.24</span></span>
+<span><span class="co">#&gt; 1            NA         1         3.865         15         1       0.224</span></span>
+<span><span class="co">#&gt; 6        93.554         0         3.077         19         3       0.981</span></span>
+<span><span class="co">#&gt; 11      156.667         1            NA         NA        -3      -1.918</span></span>
+<span><span class="co">#&gt; 16      149.272         1         3.140         18        27       0.078</span></span>
+<span><span class="co">#&gt; 21      -17.345         1            NA         18        NA      -0.200</span></span>
+<span><span class="co">#&gt;    InRatioCor.24 ESETA1.24 CORTB.24 EARS_TJo.24 LESMnPos.24 LESMnNeg.24</span></span>
+<span><span class="co">#&gt; 1          2.631     0.969   -0.652           3           1           2</span></span>
+<span><span class="co">#&gt; 6          2.480    -1.216   -0.047          23           2           3</span></span>
+<span><span class="co">#&gt; 11         1.708     0.765    0.415           1          NA          NA</span></span>
+<span><span class="co">#&gt; 16         1.600     1.708    0.341          -4           2           2</span></span>
+<span><span class="co">#&gt; 21         2.116        NA    0.395          NA           2           3</span></span>
+<span><span class="co">#&gt;    RHasSO.35 WndNbrhood.35 HOMEETA1.35 InRatioCor.35 ESETA1.35 EARS_TJo.35</span></span>
+<span><span class="co">#&gt; 1          0         2.628          NA            NA    -0.160          31</span></span>
+<span><span class="co">#&gt; 6          0         2.703      -0.082         2.372    -0.384           7</span></span>
+<span><span class="co">#&gt; 11      &lt;NA&gt;         2.255          NA         1.649        NA          28</span></span>
+<span><span class="co">#&gt; 16         0         3.253       0.828         1.864     1.165           7</span></span>
+<span><span class="co">#&gt; 21         0         2.769       1.265         2.311    -1.051          NA</span></span>
+<span><span class="co">#&gt;    LESMnPos.35 LESMnNeg.35 StrDif_Tot.35 fscore.35 RHasSO.58 WndNbrhood.58</span></span>
+<span><span class="co">#&gt; 1            2           2         0.478        NA      &lt;NA&gt;            NA</span></span>
+<span><span class="co">#&gt; 6            3           1         0.177    -1.299         1         2.558</span></span>
+<span><span class="co">#&gt; 11          NA          NA            NA        NA         1         2.135</span></span>
+<span><span class="co">#&gt; 16           1           3         1.022    -1.583         0         3.286</span></span>
+<span><span class="co">#&gt; 21          NA           3         0.504    -1.804      &lt;NA&gt;            NA</span></span>
+<span><span class="co">#&gt;    B18Raw.58 HOMEETA1.58 InRatioCor.58 ESETA1.58 StrDif_Tot.58 fscore.58</span></span>
+<span><span class="co">#&gt; 1         NA          NA            NA     0.585            NA        NA</span></span>
+<span><span class="co">#&gt; 6         11      -0.645         0.737     0.792         0.066     1.743</span></span>
+<span><span class="co">#&gt; 11         0      -0.601            NA    -1.816         0.462        NA</span></span>
+<span><span class="co">#&gt; 16         7       1.615        -0.090     0.923         0.834     1.512</span></span>
+<span><span class="co">#&gt; 21        NA          NA            NA     0.616         0.621    -0.431</span></span></code></pre></div>
 <p>Alternatively, we could start with wide data with missingness that is
-already formatted.</p>
+already formatted, and below we read in simulated wide FLP data with
+missingness.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide_miss"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide_miss</span></span></code></pre></div>
+<span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide_miss</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span>
+<span><span class="co">#&gt;   RMomAgeU SurpPreg SWghtLB DrnkFreq peri_health RHealth SmokTotl</span></span>
+<span><span class="co">#&gt; 1       29        0       7        2          15       2        3</span></span>
+<span><span class="co">#&gt; 2       21        1       6        1           7       0        0</span></span>
+<span><span class="co">#&gt; 3       17        0       4        2           9       3        0</span></span>
+<span><span class="co">#&gt; 4       38        1       8        1           9       1        0</span></span>
+<span><span class="co">#&gt; 5       22        0       6        1           8       2        0</span></span>
+<span><span class="co">#&gt;   caregiv_health gov_assist ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6</span></span>
+<span><span class="co">#&gt; 1              3          2         3         1         1        NA       NA</span></span>
+<span><span class="co">#&gt; 2              0          0         2        NA        -7         7        0</span></span>
+<span><span class="co">#&gt; 3              3          5         3         6         5        20       -1</span></span>
+<span><span class="co">#&gt; 4              3          1         4        24        25        17       11</span></span>
+<span><span class="co">#&gt; 5              2          0         3        -8        NA        NA        1</span></span>
+<span><span class="co">#&gt;   CORTB.15 CORTB.24 CORTB.6 EARS_TJo.24 EARS_TJo.35 ESETA1.15 ESETA1.24</span></span>
+<span><span class="co">#&gt; 1   -0.227   -0.652   0.742           3          31        NA        NA</span></span>
+<span><span class="co">#&gt; 2       NA       NA   0.018          NA          11    -0.043    -0.655</span></span>
+<span><span class="co">#&gt; 3    1.145    0.033  -0.379          20          64     0.225     0.013</span></span>
+<span><span class="co">#&gt; 4    0.301   -0.501   0.000         -14          26     0.344     0.736</span></span>
+<span><span class="co">#&gt; 5   -0.247    0.084   0.153          NA          65    -0.585    -0.542</span></span>
+<span><span class="co">#&gt;   ESETA1.35 ESETA1.58 ESETA1.6 fscore.35 fscore.58 HOMEETA1.15 HOMEETA1.24</span></span>
+<span><span class="co">#&gt; 1    -0.160     0.585       NA    -0.959     2.247          NA       0.224</span></span>
+<span><span class="co">#&gt; 2        NA     0.955   -0.703    -1.052     1.407      -0.810       0.679</span></span>
+<span><span class="co">#&gt; 3     0.884     0.711    0.891    -1.650     0.660       1.493          NA</span></span>
+<span><span class="co">#&gt; 4     0.335     0.542    0.640    -1.335     0.619       0.485      -0.620</span></span>
+<span><span class="co">#&gt; 5     0.294    -0.816    0.109    -0.839     2.621       1.507       1.592</span></span>
+<span><span class="co">#&gt;   HOMEETA1.35 HOMEETA1.58 HOMEETA1.6 IBRAttn.15 IBRAttn.24 IBRAttn.6</span></span>
+<span><span class="co">#&gt; 1       1.744      -0.137     -0.093         14         15        12</span></span>
+<span><span class="co">#&gt; 2          NA          NA         NA         NA         NA        NA</span></span>
+<span><span class="co">#&gt; 3       2.470       0.617     -0.701         16         22        13</span></span>
+<span><span class="co">#&gt; 4       1.632       1.013      1.319         16         18        14</span></span>
+<span><span class="co">#&gt; 5          NA          NA     -0.069         18         16        15</span></span>
+<span><span class="co">#&gt;   InRatioCor.15 InRatioCor.24 InRatioCor.35 InRatioCor.58 InRatioCor.6</span></span>
+<span><span class="co">#&gt; 1         2.686            NA         3.436         1.454        3.221</span></span>
+<span><span class="co">#&gt; 2        -0.483         0.672         1.844         2.393        2.489</span></span>
+<span><span class="co">#&gt; 3        -1.698        -0.175        -1.419         0.408       -2.061</span></span>
+<span><span class="co">#&gt; 4         1.426         0.806         2.209         3.109        1.580</span></span>
+<span><span class="co">#&gt; 5         3.327            NA            NA            NA        3.386</span></span>
+<span><span class="co">#&gt;   LESMnNeg.24 LESMnNeg.35 LESMnPos.24 LESMnPos.35 MDI.15 MDI.6 RHasSO.15</span></span>
+<span><span class="co">#&gt; 1           2           2           1          NA     97   102      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2          NA          NA           2           1     96    97         1</span></span>
+<span><span class="co">#&gt; 3           1           2           0           1     99    98         1</span></span>
+<span><span class="co">#&gt; 4           2           1           2           1     87   105         1</span></span>
+<span><span class="co">#&gt; 5           3          NA           1          NA    110    NA      &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   RHasSO.24 RHasSO.35 RHasSO.58 RHasSO.6 SAAmylase.15 SAAmylase.24 SAAmylase.6</span></span>
+<span><span class="co">#&gt; 1         1      &lt;NA&gt;         1        0           NA        5.089     -18.917</span></span>
+<span><span class="co">#&gt; 2         0      &lt;NA&gt;         1     &lt;NA&gt;           NA      120.591     105.992</span></span>
+<span><span class="co">#&gt; 3         1         1         1        0       78.460       26.018       8.171</span></span>
+<span><span class="co">#&gt; 4         1         1         1        1        2.375      -41.663       7.284</span></span>
+<span><span class="co">#&gt; 5         1         1      &lt;NA&gt;        0       -2.406           NA      65.032</span></span>
+<span><span class="co">#&gt;   StrDif_Tot.35 StrDif_Tot.58 WndNbrhood.24 WndNbrhood.35 WndNbrhood.58</span></span>
+<span><span class="co">#&gt; 1            NA         0.474            NA            NA         2.806</span></span>
+<span><span class="co">#&gt; 2            NA            NA         2.903         3.274         3.125</span></span>
+<span><span class="co">#&gt; 3         0.531         0.348         3.367         3.512         4.106</span></span>
+<span><span class="co">#&gt; 4         0.886         0.904         2.845         2.386         3.461</span></span>
+<span><span class="co">#&gt; 5            NA            NA            NA         3.697         3.525</span></span>
+<span><span class="co">#&gt;   WndNbrhood.6</span></span>
+<span><span class="co">#&gt; 1        2.698</span></span>
+<span><span class="co">#&gt; 2           NA</span></span>
+<span><span class="co">#&gt; 3        2.118</span></span>
+<span><span class="co">#&gt; 4        2.727</span></span>
+<span><span class="co">#&gt; 5        4.579</span></span></code></pre></div>
 <p><br></p>
 </div>
 </div>
@@ -407,6 +578,68 @@ time to run.</p>
 <span><span class="co">#&gt; USER ALERT: Please view any logged events from the imputation below: </span></span>
 <span><span class="co">#&gt; Table: Logged Events from mice::mice</span></span>
 <span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">mice</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete</a></span><span class="op">(</span><span class="va">imputed_data</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6 BioDadInHH2 caregiv_health</span></span>
+<span><span class="co">#&gt; 1         3         1         1        13        7           1              3</span></span>
+<span><span class="co">#&gt; 2         2         5        -7         7        0           0              0</span></span>
+<span><span class="co">#&gt; 3         3         6         5        20       -1           0              3</span></span>
+<span><span class="co">#&gt; 4         4        24        25        17       11           0              3</span></span>
+<span><span class="co">#&gt; 5         3        -8        31         0        1           1              2</span></span>
+<span><span class="co">#&gt;   CORTB.15 CORTB.24 CORTB.6 DrnkFreq EARS_TJo.24 EARS_TJo.35 ESETA1.15</span></span>
+<span><span class="co">#&gt; 1   -0.227   -0.652   0.742        2           3          31     0.183</span></span>
+<span><span class="co">#&gt; 2   -0.039   -0.513   0.018        1          -4          11    -0.043</span></span>
+<span><span class="co">#&gt; 3    1.145    0.033  -0.379        2          20          64     0.225</span></span>
+<span><span class="co">#&gt; 4    0.301   -0.501   0.000        1         -14          26     0.344</span></span>
+<span><span class="co">#&gt; 5   -0.247    0.084   0.153        1          37          65    -0.585</span></span>
+<span><span class="co">#&gt;   ESETA1.24 ESETA1.35 ESETA1.58 ESETA1.6 fscore.35 fscore.58 gov_assist</span></span>
+<span><span class="co">#&gt; 1    -0.982    -0.160     0.585    0.066    -0.959     2.247          2</span></span>
+<span><span class="co">#&gt; 2    -0.655     1.158     0.955   -0.703    -1.052     1.407          0</span></span>
+<span><span class="co">#&gt; 3     0.013     0.884     0.711    0.891    -1.650     0.660          5</span></span>
+<span><span class="co">#&gt; 4     0.736     0.335     0.542    0.640    -1.335     0.619          1</span></span>
+<span><span class="co">#&gt; 5    -0.542     0.294    -0.816    0.109    -0.839     2.621          0</span></span>
+<span><span class="co">#&gt;   HOMEETA1.15 HOMEETA1.24 HOMEETA1.35 HOMEETA1.58 HOMEETA1.6 HomeOwnd</span></span>
+<span><span class="co">#&gt; 1       1.674       0.224       1.744      -0.137     -0.093        1</span></span>
+<span><span class="co">#&gt; 2      -0.810       0.679      -0.208       0.732     -0.642        2</span></span>
+<span><span class="co">#&gt; 3       1.493       1.043       2.470       0.617     -0.701        3</span></span>
+<span><span class="co">#&gt; 4       0.485      -0.620       1.632       1.013      1.319        2</span></span>
+<span><span class="co">#&gt; 5       1.507       1.592       1.414       1.361     -0.069        1</span></span>
+<span><span class="co">#&gt;   IBRAttn.15 IBRAttn.24 IBRAttn.6 ID InRatioCor.15 InRatioCor.24 InRatioCor.35</span></span>
+<span><span class="co">#&gt; 1         14         15        12  1         2.686         1.546         3.436</span></span>
+<span><span class="co">#&gt; 2         18         22        21  2        -0.483         0.672         1.844</span></span>
+<span><span class="co">#&gt; 3         16         22        13  3        -1.698        -0.175        -1.419</span></span>
+<span><span class="co">#&gt; 4         16         18        14  4         1.426         0.806         2.209</span></span>
+<span><span class="co">#&gt; 5         18         16        15  5         3.327         2.267        -0.228</span></span>
+<span><span class="co">#&gt;   InRatioCor.58 InRatioCor.6 KFASTScr LESMnNeg.24 LESMnNeg.35 LESMnPos.24</span></span>
+<span><span class="co">#&gt; 1         1.454        3.221       24           2           2           1</span></span>
+<span><span class="co">#&gt; 2         2.393        2.489       27           2           3           2</span></span>
+<span><span class="co">#&gt; 3         0.408       -2.061       15           1           2           0</span></span>
+<span><span class="co">#&gt; 4         3.109        1.580       17           2           1           2</span></span>
+<span><span class="co">#&gt; 5         0.775        3.386       25           3           1           1</span></span>
+<span><span class="co">#&gt;   LESMnPos.35 MDI.15 MDI.6 peri_health PmAge2 PmBlac2 PmEd2 PmMrSt2 RHasSO.15</span></span>
+<span><span class="co">#&gt; 1           2     97   102          15 27.245       0    15       1         1</span></span>
+<span><span class="co">#&gt; 2           1     96    97           7 32.292       1    17       0         1</span></span>
+<span><span class="co">#&gt; 3           1     99    98           9 25.588       1    13       1         1</span></span>
+<span><span class="co">#&gt; 4           1     87   105           9 22.664       0    14       0         1</span></span>
+<span><span class="co">#&gt; 5           1    110    91           8 41.153       0    20       1         1</span></span>
+<span><span class="co">#&gt;   RHasSO.24 RHasSO.35 RHasSO.58 RHasSO.6 RHealth RMomAgeU SAAmylase.15</span></span>
+<span><span class="co">#&gt; 1         1         1         1        0       2       29       43.114</span></span>
+<span><span class="co">#&gt; 2         0         0         1        0       0       21       87.193</span></span>
+<span><span class="co">#&gt; 3         1         1         1        0       3       17       78.460</span></span>
+<span><span class="co">#&gt; 4         1         1         1        1       1       38        2.375</span></span>
+<span><span class="co">#&gt; 5         1         1         1        0       2       22       -2.406</span></span>
+<span><span class="co">#&gt;   SAAmylase.24 SAAmylase.6 SmokTotl state StrDif_Tot.35 StrDif_Tot.58 SurpPreg</span></span>
+<span><span class="co">#&gt; 1        5.089     -18.917        3     0         0.560         0.474        0</span></span>
+<span><span class="co">#&gt; 2      120.591     105.992        0     1         0.594         0.991        1</span></span>
+<span><span class="co">#&gt; 3       26.018       8.171        0     0         0.531         0.348        0</span></span>
+<span><span class="co">#&gt; 4      -41.663       7.284        0     1         0.886         0.904        1</span></span>
+<span><span class="co">#&gt; 5      203.846      65.032        0     0         0.541         0.500        0</span></span>
+<span><span class="co">#&gt;   SWghtLB TcBlac2 WndNbrhood.24 WndNbrhood.35 WndNbrhood.58 WndNbrhood.6</span></span>
+<span><span class="co">#&gt; 1       7       0         2.361         2.487         2.806        2.698</span></span>
+<span><span class="co">#&gt; 2       6       1         2.903         3.274         3.125        3.152</span></span>
+<span><span class="co">#&gt; 3       4       0         3.367         3.512         4.106        2.118</span></span>
+<span><span class="co">#&gt; 4       8       0         2.845         2.386         3.461        2.727</span></span>
+<span><span class="co">#&gt; 5       6       0         2.420         3.697         3.525        4.579</span></span>
+<span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">imputed_data</span></span></code></pre></div>
 <p>We inspect the output to the console for any warnings from
 <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code>.</p>
@@ -435,7 +668,75 @@ list can be assigned to <code>data</code> for use in the
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_imp_list"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">sim_data_imp_list</span></span></code></pre></div>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">sim_data_imp_list</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   X.1 X ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2</span></span>
+<span><span class="co">#&gt; 1   1 1  1     0       0           1        1       24       0    15       1</span></span>
+<span><span class="co">#&gt; 2   2 2  2     1       1           0        2       27       1    17       0</span></span>
+<span><span class="co">#&gt; 3   3 3  3     0       0           0        3       15       1    13       1</span></span>
+<span><span class="co">#&gt; 4   4 4  4     1       0           0        2       17       0    14       0</span></span>
+<span><span class="co">#&gt; 5   5 5  5     0       0           1        1       25       0    20       1</span></span>
+<span><span class="co">#&gt;   PmAge2 RMomAgeU SurpPreg SWghtLB DrnkFreq peri_health RHealth SmokTotl</span></span>
+<span><span class="co">#&gt; 1 27.245       29        0       7        2          15       2        3</span></span>
+<span><span class="co">#&gt; 2 32.292       21        1       6        1           7       0        0</span></span>
+<span><span class="co">#&gt; 3 25.588       17        0       4        2           9       3        0</span></span>
+<span><span class="co">#&gt; 4 22.664       38        1       8        1           9       1        0</span></span>
+<span><span class="co">#&gt; 5 41.153       22        0       6        1           8       2        0</span></span>
+<span><span class="co">#&gt;   caregiv_health gov_assist ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6</span></span>
+<span><span class="co">#&gt; 1              3          2         3         1         1         5        5</span></span>
+<span><span class="co">#&gt; 2              0          0         2         3        -7         7        0</span></span>
+<span><span class="co">#&gt; 3              3          5         3         6         5        20       -1</span></span>
+<span><span class="co">#&gt; 4              3          1         4        24        25        17       11</span></span>
+<span><span class="co">#&gt; 5              2          0         3        -8         7        11        1</span></span>
+<span><span class="co">#&gt;   CORTB.15 CORTB.24 CORTB.6 EARS_TJo.24 EARS_TJo.35 ESETA1.15 ESETA1.24</span></span>
+<span><span class="co">#&gt; 1   -0.227   -0.652   0.742           3          31    -1.500    -0.109</span></span>
+<span><span class="co">#&gt; 2    0.161   -0.652   0.018          -9          11    -0.043    -0.655</span></span>
+<span><span class="co">#&gt; 3    1.145    0.033  -0.379          20          64     0.225     0.013</span></span>
+<span><span class="co">#&gt; 4    0.301   -0.501   0.000         -14          26     0.344     0.736</span></span>
+<span><span class="co">#&gt; 5   -0.247    0.084   0.153          28          65    -0.585    -0.542</span></span>
+<span><span class="co">#&gt;   ESETA1.35 ESETA1.58 ESETA1.6 fscore.35 fscore.58 HOMEETA1.15 HOMEETA1.24</span></span>
+<span><span class="co">#&gt; 1    -0.160     0.585   -0.163    -0.959     2.247      -1.066       0.224</span></span>
+<span><span class="co">#&gt; 2    -0.894     0.955   -0.703    -1.052     1.407      -0.810       0.679</span></span>
+<span><span class="co">#&gt; 3     0.884     0.711    0.891    -1.650     0.660       1.493       0.964</span></span>
+<span><span class="co">#&gt; 4     0.335     0.542    0.640    -1.335     0.619       0.485      -0.620</span></span>
+<span><span class="co">#&gt; 5     0.294    -0.816    0.109    -0.839     2.621       1.507       1.592</span></span>
+<span><span class="co">#&gt;   HOMEETA1.35 HOMEETA1.58 HOMEETA1.6 IBRAttn.15 IBRAttn.24 IBRAttn.6</span></span>
+<span><span class="co">#&gt; 1       1.744      -0.137     -0.093         14         15        12</span></span>
+<span><span class="co">#&gt; 2       1.783      -0.160     -1.644         20         18        17</span></span>
+<span><span class="co">#&gt; 3       2.470       0.617     -0.701         16         22        13</span></span>
+<span><span class="co">#&gt; 4       1.632       1.013      1.319         16         18        14</span></span>
+<span><span class="co">#&gt; 5       2.588       2.192     -0.069         18         16        15</span></span>
+<span><span class="co">#&gt;   InRatioCor.15 InRatioCor.24 InRatioCor.35 InRatioCor.58 InRatioCor.6</span></span>
+<span><span class="co">#&gt; 1         2.686         3.070         3.436         1.454        3.221</span></span>
+<span><span class="co">#&gt; 2        -0.483         0.672         1.844         2.393        2.489</span></span>
+<span><span class="co">#&gt; 3        -1.698        -0.175        -1.419         0.408       -2.061</span></span>
+<span><span class="co">#&gt; 4         1.426         0.806         2.209         3.109        1.580</span></span>
+<span><span class="co">#&gt; 5         3.327         2.050         5.822         2.320        3.386</span></span>
+<span><span class="co">#&gt;   LESMnNeg.24 LESMnNeg.35 LESMnPos.24 LESMnPos.35 MDI.15 MDI.6 RHasSO.15</span></span>
+<span><span class="co">#&gt; 1           2           2           1           1     97   102         1</span></span>
+<span><span class="co">#&gt; 2           2           1           2           1     96    97         1</span></span>
+<span><span class="co">#&gt; 3           1           2           0           1     99    98         1</span></span>
+<span><span class="co">#&gt; 4           2           1           2           1     87   105         1</span></span>
+<span><span class="co">#&gt; 5           3           2           1           3    110    92         1</span></span>
+<span><span class="co">#&gt;   RHasSO.24 RHasSO.35 RHasSO.58 RHasSO.6 SAAmylase.15 SAAmylase.24 SAAmylase.6</span></span>
+<span><span class="co">#&gt; 1         1         1         1        0       25.407        5.089     -18.917</span></span>
+<span><span class="co">#&gt; 2         0         0         1        1       58.239      120.591     105.992</span></span>
+<span><span class="co">#&gt; 3         1         1         1        0       78.460       26.018       8.171</span></span>
+<span><span class="co">#&gt; 4         1         1         1        1        2.375      -41.663       7.284</span></span>
+<span><span class="co">#&gt; 5         1         1         0        0       -2.406      -21.278      65.032</span></span>
+<span><span class="co">#&gt;   StrDif_Tot.35 StrDif_Tot.58 WndNbrhood.24 WndNbrhood.35 WndNbrhood.58</span></span>
+<span><span class="co">#&gt; 1         0.348         0.474         3.475         2.330         2.806</span></span>
+<span><span class="co">#&gt; 2         0.295         0.693         2.903         3.274         3.125</span></span>
+<span><span class="co">#&gt; 3         0.531         0.348         3.367         3.512         4.106</span></span>
+<span><span class="co">#&gt; 4         0.886         0.904         2.845         2.386         3.461</span></span>
+<span><span class="co">#&gt; 5         0.079         1.022         4.266         3.697         3.525</span></span>
+<span><span class="co">#&gt;   WndNbrhood.6</span></span>
+<span><span class="co">#&gt; 1        2.698</span></span>
+<span><span class="co">#&gt; 2        2.744</span></span>
+<span><span class="co">#&gt; 3        2.118</span></span>
+<span><span class="co">#&gt; 4        2.727</span></span>
+<span><span class="co">#&gt; 5        4.579</span></span></code></pre></div>
 <p>Alternatively, in the case of no missing data, the user can read in a
 formatted, wide dataset assigned to <code>data</code> for use in the
 <em>deveMSMs</em> package (see <em>Workflows</em> vignettes).</p>
@@ -445,6 +746,74 @@ example.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_wide</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span>
+<span><span class="co">#&gt;   RMomAgeU SurpPreg SWghtLB DrnkFreq peri_health RHealth SmokTotl</span></span>
+<span><span class="co">#&gt; 1       29        0       7        2          15       2        3</span></span>
+<span><span class="co">#&gt; 2       21        1       6        1           7       0        0</span></span>
+<span><span class="co">#&gt; 3       17        0       4        2           9       3        0</span></span>
+<span><span class="co">#&gt; 4       38        1       8        1           9       1        0</span></span>
+<span><span class="co">#&gt; 5       22        0       6        1           8       2        0</span></span>
+<span><span class="co">#&gt;   caregiv_health gov_assist ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6</span></span>
+<span><span class="co">#&gt; 1              3          2         3         1         1         0       -3</span></span>
+<span><span class="co">#&gt; 2              0          0         2         5        -7         7        0</span></span>
+<span><span class="co">#&gt; 3              3          5         3         6         5        20       -1</span></span>
+<span><span class="co">#&gt; 4              3          1         4        24        25        17       11</span></span>
+<span><span class="co">#&gt; 5              2          0         3        -8        -1        -1        1</span></span>
+<span><span class="co">#&gt;   CORTB.15 CORTB.24 CORTB.6 EARS_TJo.24 EARS_TJo.35 ESETA1.15 ESETA1.24</span></span>
+<span><span class="co">#&gt; 1   -0.227   -0.652   0.742           3          31    -0.250     0.969</span></span>
+<span><span class="co">#&gt; 2   -0.276    0.618   0.018          51          11    -0.043    -0.655</span></span>
+<span><span class="co">#&gt; 3    1.145    0.033  -0.379          20          64     0.225     0.013</span></span>
+<span><span class="co">#&gt; 4    0.301   -0.501   0.000         -14          26     0.344     0.736</span></span>
+<span><span class="co">#&gt; 5   -0.247    0.084   0.153          41          65    -0.585    -0.542</span></span>
+<span><span class="co">#&gt;   ESETA1.35 ESETA1.58 ESETA1.6 fscore.35 fscore.58 HOMEETA1.15 HOMEETA1.24</span></span>
+<span><span class="co">#&gt; 1    -0.160     0.585    0.236    -0.959     2.247       0.368       0.224</span></span>
+<span><span class="co">#&gt; 2     2.137     0.955   -0.703    -1.052     1.407      -0.810       0.679</span></span>
+<span><span class="co">#&gt; 3     0.884     0.711    0.891    -1.650     0.660       1.493      -0.270</span></span>
+<span><span class="co">#&gt; 4     0.335     0.542    0.640    -1.335     0.619       0.485      -0.620</span></span>
+<span><span class="co">#&gt; 5     0.294    -0.816    0.109    -0.839     2.621       1.507       1.592</span></span>
+<span><span class="co">#&gt;   HOMEETA1.35 HOMEETA1.58 HOMEETA1.6 IBRAttn.15 IBRAttn.24 IBRAttn.6</span></span>
+<span><span class="co">#&gt; 1       1.744      -0.137     -0.093         14         15        12</span></span>
+<span><span class="co">#&gt; 2       1.790       1.496     -0.749         14         17        22</span></span>
+<span><span class="co">#&gt; 3       2.470       0.617     -0.701         16         22        13</span></span>
+<span><span class="co">#&gt; 4       1.632       1.013      1.319         16         18        14</span></span>
+<span><span class="co">#&gt; 5       2.737       1.562     -0.069         18         16        15</span></span>
+<span><span class="co">#&gt;   InRatioCor.15 InRatioCor.24 InRatioCor.35 InRatioCor.58 InRatioCor.6</span></span>
+<span><span class="co">#&gt; 1         2.686         2.631         3.436         1.454        3.221</span></span>
+<span><span class="co">#&gt; 2        -0.483         0.672         1.844         2.393        2.489</span></span>
+<span><span class="co">#&gt; 3        -1.698        -0.175        -1.419         0.408       -2.061</span></span>
+<span><span class="co">#&gt; 4         1.426         0.806         2.209         3.109        1.580</span></span>
+<span><span class="co">#&gt; 5         3.327         3.551         2.913         3.214        3.386</span></span>
+<span><span class="co">#&gt;   LESMnNeg.24 LESMnNeg.35 LESMnPos.24 LESMnPos.35 MDI.15 MDI.6 RHasSO.15</span></span>
+<span><span class="co">#&gt; 1           2           2           1           2     97   102         1</span></span>
+<span><span class="co">#&gt; 2           2           3           2           1     96    97         1</span></span>
+<span><span class="co">#&gt; 3           1           2           0           1     99    98         1</span></span>
+<span><span class="co">#&gt; 4           2           1           2           1     87   105         1</span></span>
+<span><span class="co">#&gt; 5           3           2           1           2    110    90         0</span></span>
+<span><span class="co">#&gt;   RHasSO.24 RHasSO.35 RHasSO.58 RHasSO.6 SAAmylase.15 SAAmylase.24 SAAmylase.6</span></span>
+<span><span class="co">#&gt; 1         1         0         1        0       65.603        5.089     -18.917</span></span>
+<span><span class="co">#&gt; 2         0         0         1        1       44.460      120.591     105.992</span></span>
+<span><span class="co">#&gt; 3         1         1         1        0       78.460       26.018       8.171</span></span>
+<span><span class="co">#&gt; 4         1         1         1        1        2.375      -41.663       7.284</span></span>
+<span><span class="co">#&gt; 5         1         1         0        0       -2.406       -5.922      65.032</span></span>
+<span><span class="co">#&gt;   StrDif_Tot.35 StrDif_Tot.58 WndNbrhood.24 WndNbrhood.35 WndNbrhood.58</span></span>
+<span><span class="co">#&gt; 1         0.478         0.474         3.865         2.628         2.806</span></span>
+<span><span class="co">#&gt; 2         0.602         0.504         2.903         3.274         3.125</span></span>
+<span><span class="co">#&gt; 3         0.531         0.348         3.367         3.512         4.106</span></span>
+<span><span class="co">#&gt; 4         0.886         0.904         2.845         2.386         3.461</span></span>
+<span><span class="co">#&gt; 5         0.178         0.244         3.941         3.697         3.525</span></span>
+<span><span class="co">#&gt;   WndNbrhood.6</span></span>
+<span><span class="co">#&gt; 1        2.698</span></span>
+<span><span class="co">#&gt; 2        3.911</span></span>
+<span><span class="co">#&gt; 3        2.118</span></span>
+<span><span class="co">#&gt; 4        2.727</span></span>
+<span><span class="co">#&gt; 5        4.579</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data_wide</span></span></code></pre></div>
 <p><br></p>
@@ -486,7 +855,12 @@ correspond to 6 and 15; 24 and 35; and 58 months, respectively.</p>
 <span>                     values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">15</span><span class="op">)</span>, </span>
 <span>                                     <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">35</span><span class="op">)</span>, </span>
 <span>                                     <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">58</span><span class="op">)</span></span>
-<span>                     <span class="op">)</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
+<span>                     <span class="op">)</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="va">epochs</span></span>
+<span><span class="co">#&gt;        epochs values</span></span>
+<span><span class="co">#&gt; 1     Infancy  6, 15</span></span>
+<span><span class="co">#&gt; 2 Toddlerhood 24, 35</span></span>
+<span><span class="co">#&gt; 3   Childhood     58</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -594,8 +968,6 @@ epoch designation and high and low cutoff values, where applicable. The
 function conducts summaries and history distribution inspection for each
 imputed dataset if imputed data are supplied.</p>
 <p><br></p>
-<p><em>insert Table 2</em></p>
-<p><br></p>
 <p>The required inputs for <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/inspectData.html" class="external-link">inspectData()</a></code> are: complete data
 (as a data frame in wide or long format, a list of imputed data frames
 in wide format, or a mids object), exposure (e.g., “variable”), and
@@ -614,7 +986,7 @@ two summary tables of the confounders considered at each time point.</p>
 <span>            epochs <span class="op">=</span> <span class="va">epochs</span>, hi_lo_cut <span class="op">=</span> <span class="va">hi_lo_cut</span>, reference <span class="op">=</span> <span class="va">reference</span>, comparison <span class="op">=</span> <span class="va">comparison</span>, <span class="co">#optional input</span></span>
 <span>            home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional input</span></span>
 <span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT</span></span>
-<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (7c0c3a3a) has not changed since last install.</span></span>
+<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (b9912b27) has not changed since last install.</span></span>
 <span><span class="co">#&gt;   Use `force = TRUE` to force installation</span></span>
 <span><span class="co">#&gt; USER ALERT: Below are the 67 variables spanning 33 unique domains that will be treated as confounding variables for the relation between ESETA1 and StrDif_Tot.58.</span></span>
 <span><span class="co">#&gt; Please inspect this list carefully. It should include all time-varying covariates, time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.</span></span>

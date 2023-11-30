@@ -76,7 +76,7 @@
                         <h4 data-toc-skip class="author">Isabella
 Stallworthy</h4>
             
-            <h4 data-toc-skip class="date">2023-11-29</h4>
+            <h4 data-toc-skip class="date">2023-11-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Workflow_Continuous_Exposure.Rmd" class="external-link"><code>vignettes/Workflow_Continuous_Exposure.Rmd</code></a></small>
       <div class="d-none name"><code>Workflow_Continuous_Exposure.Rmd</code></div>
@@ -89,9 +89,7 @@ Stallworthy</h4>
 <span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="co"># library(devtools)</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: devtools</span></span>
-<span><span class="co">#&gt; Loading required package: usethis</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
@@ -148,7 +146,75 @@ missing data).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide</span></span></code></pre></div>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span>
+<span><span class="co">#&gt;   RMomAgeU SurpPreg SWghtLB DrnkFreq peri_health RHealth SmokTotl</span></span>
+<span><span class="co">#&gt; 1       29        0       7        2          15       2        3</span></span>
+<span><span class="co">#&gt; 2       21        1       6        1           7       0        0</span></span>
+<span><span class="co">#&gt; 3       17        0       4        2           9       3        0</span></span>
+<span><span class="co">#&gt; 4       38        1       8        1           9       1        0</span></span>
+<span><span class="co">#&gt; 5       22        0       6        1           8       2        0</span></span>
+<span><span class="co">#&gt;   caregiv_health gov_assist ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6</span></span>
+<span><span class="co">#&gt; 1              3          2         3         1         1         0       -3</span></span>
+<span><span class="co">#&gt; 2              0          0         2         5        -7         7        0</span></span>
+<span><span class="co">#&gt; 3              3          5         3         6         5        20       -1</span></span>
+<span><span class="co">#&gt; 4              3          1         4        24        25        17       11</span></span>
+<span><span class="co">#&gt; 5              2          0         3        -8        -1        -1        1</span></span>
+<span><span class="co">#&gt;   CORTB.15 CORTB.24 CORTB.6 EARS_TJo.24 EARS_TJo.35 ESETA1.15 ESETA1.24</span></span>
+<span><span class="co">#&gt; 1   -0.227   -0.652   0.742           3          31    -0.250     0.969</span></span>
+<span><span class="co">#&gt; 2   -0.276    0.618   0.018          51          11    -0.043    -0.655</span></span>
+<span><span class="co">#&gt; 3    1.145    0.033  -0.379          20          64     0.225     0.013</span></span>
+<span><span class="co">#&gt; 4    0.301   -0.501   0.000         -14          26     0.344     0.736</span></span>
+<span><span class="co">#&gt; 5   -0.247    0.084   0.153          41          65    -0.585    -0.542</span></span>
+<span><span class="co">#&gt;   ESETA1.35 ESETA1.58 ESETA1.6 fscore.35 fscore.58 HOMEETA1.15 HOMEETA1.24</span></span>
+<span><span class="co">#&gt; 1    -0.160     0.585    0.236    -0.959     2.247       0.368       0.224</span></span>
+<span><span class="co">#&gt; 2     2.137     0.955   -0.703    -1.052     1.407      -0.810       0.679</span></span>
+<span><span class="co">#&gt; 3     0.884     0.711    0.891    -1.650     0.660       1.493      -0.270</span></span>
+<span><span class="co">#&gt; 4     0.335     0.542    0.640    -1.335     0.619       0.485      -0.620</span></span>
+<span><span class="co">#&gt; 5     0.294    -0.816    0.109    -0.839     2.621       1.507       1.592</span></span>
+<span><span class="co">#&gt;   HOMEETA1.35 HOMEETA1.58 HOMEETA1.6 IBRAttn.15 IBRAttn.24 IBRAttn.6</span></span>
+<span><span class="co">#&gt; 1       1.744      -0.137     -0.093         14         15        12</span></span>
+<span><span class="co">#&gt; 2       1.790       1.496     -0.749         14         17        22</span></span>
+<span><span class="co">#&gt; 3       2.470       0.617     -0.701         16         22        13</span></span>
+<span><span class="co">#&gt; 4       1.632       1.013      1.319         16         18        14</span></span>
+<span><span class="co">#&gt; 5       2.737       1.562     -0.069         18         16        15</span></span>
+<span><span class="co">#&gt;   InRatioCor.15 InRatioCor.24 InRatioCor.35 InRatioCor.58 InRatioCor.6</span></span>
+<span><span class="co">#&gt; 1         2.686         2.631         3.436         1.454        3.221</span></span>
+<span><span class="co">#&gt; 2        -0.483         0.672         1.844         2.393        2.489</span></span>
+<span><span class="co">#&gt; 3        -1.698        -0.175        -1.419         0.408       -2.061</span></span>
+<span><span class="co">#&gt; 4         1.426         0.806         2.209         3.109        1.580</span></span>
+<span><span class="co">#&gt; 5         3.327         3.551         2.913         3.214        3.386</span></span>
+<span><span class="co">#&gt;   LESMnNeg.24 LESMnNeg.35 LESMnPos.24 LESMnPos.35 MDI.15 MDI.6 RHasSO.15</span></span>
+<span><span class="co">#&gt; 1           2           2           1           2     97   102         1</span></span>
+<span><span class="co">#&gt; 2           2           3           2           1     96    97         1</span></span>
+<span><span class="co">#&gt; 3           1           2           0           1     99    98         1</span></span>
+<span><span class="co">#&gt; 4           2           1           2           1     87   105         1</span></span>
+<span><span class="co">#&gt; 5           3           2           1           2    110    90         0</span></span>
+<span><span class="co">#&gt;   RHasSO.24 RHasSO.35 RHasSO.58 RHasSO.6 SAAmylase.15 SAAmylase.24 SAAmylase.6</span></span>
+<span><span class="co">#&gt; 1         1         0         1        0       65.603        5.089     -18.917</span></span>
+<span><span class="co">#&gt; 2         0         0         1        1       44.460      120.591     105.992</span></span>
+<span><span class="co">#&gt; 3         1         1         1        0       78.460       26.018       8.171</span></span>
+<span><span class="co">#&gt; 4         1         1         1        1        2.375      -41.663       7.284</span></span>
+<span><span class="co">#&gt; 5         1         1         0        0       -2.406       -5.922      65.032</span></span>
+<span><span class="co">#&gt;   StrDif_Tot.35 StrDif_Tot.58 WndNbrhood.24 WndNbrhood.35 WndNbrhood.58</span></span>
+<span><span class="co">#&gt; 1         0.478         0.474         3.865         2.628         2.806</span></span>
+<span><span class="co">#&gt; 2         0.602         0.504         2.903         3.274         3.125</span></span>
+<span><span class="co">#&gt; 3         0.531         0.348         3.367         3.512         4.106</span></span>
+<span><span class="co">#&gt; 4         0.886         0.904         2.845         2.386         3.461</span></span>
+<span><span class="co">#&gt; 5         0.178         0.244         3.941         3.697         3.525</span></span>
+<span><span class="co">#&gt;   WndNbrhood.6</span></span>
+<span><span class="co">#&gt; 1        2.698</span></span>
+<span><span class="co">#&gt; 2        3.911</span></span>
+<span><span class="co">#&gt; 3        2.118</span></span>
+<span><span class="co">#&gt; 4        2.727</span></span>
+<span><span class="co">#&gt; 5        4.579</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -225,14 +291,14 @@ strong reason to believe a concurrent variable is not a mediator (see
 below).</p>
 <p>To include interactions between covariates in the balancing formulas,
 please list those composed of only time invariant covariates (e.g.,
-“variable:variable” or “variable.t:variable.t”) as time invariant
-confounders, and those composed of both or only time-varying covariates
-(e.g., “variable.t:variable” or “variable.t:variable.t”) in the
-time-varying confounders list. Interactions containing time-varying
-covariates will be treated as time-varying confounders measured at the
-highest measurement time point of the constituent time points. Of note,
-interactions between factor variables with multiple levels can produce a
-large number of additional variables in the balancing formulas.</p>
+“variable:variable”) as time invariant confounders, and those composed
+of both or only time-varying covariates (e.g., “variable.t:variable” or
+“variable.t:variable.t”) in the time-varying confounders list.
+Interactions containing time-varying covariates will be treated as
+time-varying confounders measured at the highest measurement time point
+of the constituent time points. Of note, interactions between factor
+variables with multiple levels can produce a large number of additional
+variables in the balancing formulas.</p>
 <p>The required input to create full balancing formulas using the
 <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function are: exposure (e.g., “variable”),
 exposure time points, outcome (e.g., “variable.time”), a list of
@@ -246,7 +312,7 @@ time-varying confounders (e.g., “variable.time”) that you wish to be
 included concurrently in the balancing formulas (overriding the default
 which is to only include lagged confounders).</p>
 <p>We choose not to specify any concurrent confounders, as we cannot
-reliably distinguish them from mediators.</p>
+reliably distinguish them from mediators in our data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># concur_conf &lt;- "B18Raw.15"</span></span>
 <span></span>
@@ -269,7 +335,7 @@ appropriate confounders for the formula type they are generating.</p>
 <span><span class="co"># ) </span></span>
 <span></span>
 <span><span class="va">custom</span> <span class="op">&lt;-</span> <span class="cn">NULL</span> </span></code></pre></div>
-<p>The <code>createFormulas</code> function saves out .csv and .rds
+<p>The <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function saves out .csv and .rds
 files containing balancing formulas at each exposure time point for the
 specified <code>type</code> (“full”) in the ‘formulas/full/’ folder.</p>
 <p>The function returns a list of formulas labeled by type, exposure,
@@ -287,7 +353,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     HomeOwnd + KFASTScr + peri_health + PmAge2 + PmBlac2 + PmEd2 + </span></span>
 <span><span class="co">#&gt;     PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c0a120&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x56488a1cc910&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 15 is: </span></span>
 <span><span class="co">#&gt; ESETA1.15 ~ B18Raw.6 + BioDadInHH2 + caregiv_health + CORTB.6 + </span></span>
@@ -296,7 +362,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.6 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.6 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c0a120&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x56488a1cc910&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 24 is: </span></span>
 <span><span class="co">#&gt; ESETA1.24 ~ B18Raw.15 + B18Raw.6 + BioDadInHH2 + caregiv_health + </span></span>
@@ -306,7 +372,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.15 + </span></span>
 <span><span class="co">#&gt;     RHasSO.6 + RHealth + RMomAgeU + SAAmylase.15 + SAAmylase.6 + </span></span>
 <span><span class="co">#&gt;     SmokTotl + state + SurpPreg + SWghtLB + TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c0a120&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x56488a1cc910&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 35 is: </span></span>
 <span><span class="co">#&gt; ESETA1.35 ~ B18Raw.15 + B18Raw.24 + B18Raw.6 + BioDadInHH2 + </span></span>
@@ -319,7 +385,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     RHasSO.15 + RHasSO.24 + RHasSO.6 + RHealth + RMomAgeU + SAAmylase.15 + </span></span>
 <span><span class="co">#&gt;     SAAmylase.24 + SAAmylase.6 + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2 + WndNbrhood.24 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c0a120&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x56488a1cc910&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 58 is: </span></span>
 <span><span class="co">#&gt; ESETA1.58 ~ B18Raw.15 + B18Raw.24 + B18Raw.6 + BioDadInHH2 + </span></span>
@@ -334,7 +400,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     RHealth + RMomAgeU + SAAmylase.15 + SAAmylase.24 + SAAmylase.6 + </span></span>
 <span><span class="co">#&gt;     SmokTotl + state + StrDif_Tot.35 + SurpPreg + SWghtLB + TcBlac2 + </span></span>
 <span><span class="co">#&gt;     WndNbrhood.24 + WndNbrhood.35 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c0a120&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;environment: 0x56488a1cc910&gt;</span></span></code></pre></div>
 <p>As shown above, <code><a href="../reference/createFormulas.html">createFormulas()</a></code> creates a balancing
 formula for each exposure time point. Each full formula contains all
 time invariant confounders as well as all lagged time-varying
@@ -375,11 +441,11 @@ Stuart, 2010). Second, users may make an a priori assertion that some
 confounders are more important than others based on theory and existing
 research. In this case, they can provide two numbers that represent the
 balance thresholds for important and less important confounders,
-respectively. If the user supplies two balance thresholds are provided,
-they must also supply a list of important confounders (time-varying:
-“variable.t”, time invariant: “variable”) to the <code>imp_conf</code>
-field. The balance threshold specification should be kept consistent
-throughout the use of this workflow.</p>
+respectively. If the user supplies two balance thresholds, they must
+also supply a list of important confounders (time-varying: “variable.t”,
+time invariant: “variable”) to the <code>imp_conf</code> field. The
+balance threshold specification should be kept consistent throughout the
+use of this workflow.</p>
 <p>As recommended, below we provide two balancing thresholds and
 identify income and parent education as important confounders in the
 relation between economic strain and behavior problems.</p>
@@ -534,7 +600,7 @@ for each formula.</p>
 <p>Below, we choose not to specify any confounders to always retain at
 this step.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">keep_conf</span> <span class="op">&lt;-</span> <span class="st">"InRatioCor.6"</span></span>
+<code class="sourceCode R"><span><span class="co"># keep_conf &lt;- "InRatioCor.6"</span></span>
 <span></span>
 <span><span class="va">keep_conf</span>  <span class="op">&lt;-</span>  <span class="cn">NULL</span> </span></code></pre></div>
 <p>The <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function saves out .csv and .rds
@@ -557,7 +623,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     HomeOwnd + KFASTScr + peri_health + PmAge2 + PmBlac2 + PmEd2 + </span></span>
 <span><span class="co">#&gt;     PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5619755eaab0&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x564887b4d430&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 15 is: </span></span>
 <span><span class="co">#&gt; ESETA1.15 ~ B18Raw.6 + BioDadInHH2 + caregiv_health + CORTB.6 + </span></span>
@@ -566,7 +632,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.6 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.6 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5619755eaab0&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x564887b4d430&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 24 is: </span></span>
 <span><span class="co">#&gt; ESETA1.24 ~ B18Raw.15 + BioDadInHH2 + caregiv_health + CORTB.15 + </span></span>
@@ -575,7 +641,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.15 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.15 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5619755eaab0&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x564887b4d430&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 35 is: </span></span>
 <span><span class="co">#&gt; ESETA1.35 ~ B18Raw.24 + BioDadInHH2 + caregiv_health + CORTB.24 + </span></span>
@@ -584,7 +650,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     LESMnPos.24 + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + </span></span>
 <span><span class="co">#&gt;     RHasSO.24 + RHealth + RMomAgeU + SAAmylase.24 + SmokTotl + </span></span>
 <span><span class="co">#&gt;     state + SurpPreg + SWghtLB + TcBlac2 + WndNbrhood.24</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5619755eaab0&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x564887b4d430&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 58 is: </span></span>
 <span><span class="co">#&gt; ESETA1.58 ~ BioDadInHH2 + caregiv_health + DrnkFreq + EARS_TJo.35 + </span></span>
@@ -593,7 +659,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.35 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SmokTotl + state + StrDif_Tot.35 + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2 + WndNbrhood.35</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5619755eaab0&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;environment: 0x564887b4d430&gt;</span></span></code></pre></div>
 <p>Above, we inspect the shortened balancing formula at each exposure
 time point. These formulas are considerably shorter than the full
 formulas. For instance, at the 58-month exposure time point, the formula
@@ -665,7 +731,7 @@ data with the weights appended in the ‘weights/values/’ folder.</p>
 WeightItMSM output in a single nested list (labeled “0” if data are in
 data frame format) or with nested lists for each imputed dataset (if
 data are imputed).</p>
-<p>Below, we create IPTW weights using the default “CBPS” method.</p>
+<p>Below, we create IPTW weights using the default CBPS method.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights.cbps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                              method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co">#optional</span></span>
@@ -678,19 +744,22 @@ distribution represents individuals who experienced statistically
 unexpected levels of exposure given their levels of confounders.</p>
 <p><br></p>
 <p>We then create IPTW balancing weights using all other available
-methods.</p>
+methods in order to evaluate and compare their performance in subsequent
+steps.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"glm"</span></span>
+<span></span>
 <span><span class="va">weights.glm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                             method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#optional</span></span>
 <span>                             home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span>  <span class="co">#optional</span></span>
 <span><span class="co">#&gt; For the glm weighting method, the median weight value is 0.9 (SD = 1.73; range = 0.03-26).</span></span></code></pre></div>
 <p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
-<p>As shown above, the “glm” method produces a similar distribution of
+<p>As shown above, the GLM method produces a similar distribution of
 weights.</p>
 <p><br></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"gbm"</span></span>
+<span></span>
 <span><span class="va">weights.gbm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                             method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co">#optional</span></span>
 <span>                             home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span>  <span class="co">#optional</span></span>
@@ -699,14 +768,16 @@ weights.</p>
 <p><br></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"bart"</span></span>
+<span></span>
 <span><span class="va">weights.bart</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                              method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#optional</span></span>
 <span>                              home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional</span></span>
-<span><span class="co">#&gt; For the bart weighting method, the median weight value is 0.71 (SD = 1.38; range = 0.04-25).</span></span></code></pre></div>
+<span><span class="co">#&gt; For the bart weighting method, the median weight value is 0.71 (SD = 1.41; range = 0.03-31).</span></span></code></pre></div>
 <p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
 <p><br></p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"super"</span></span>
+<span></span>
 <span><span class="va">weights.super</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                               method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#optional</span></span>
 <span>                               home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional</span></span>
@@ -746,12 +817,12 @@ covariates that are imbalanced, and an overall balance summary table
 (averaged across any imputed datasets). Within the
 ‘balance/weighted/plots/’ folder, the function outputs .jpeg files of
 summary love plots depicting confounder balance for each exposure time
-point.<br>
-The function returns a data frame (or list) of balance statistics,
+point.</p>
+<p>The function returns a data frame (or list) of balance statistics,
 balance thresholds, and binary balanced tag (1 = balanced, 0 =
 imbalanced) for each confounder relevant to each exposure time
 point.</p>
-<p>We first assess balance for the “CBPS” weighting method.</p>
+<p>We first assess balance for the CBPS weighting method.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"weighted"</span></span>
 <span></span>
@@ -792,8 +863,8 @@ point.</p>
 <span><span class="co">#&gt; |82  |ESETA1   |       35|         24|InRatioCor.24 | -0.0729568|       0.05|        0|</span></span>
 <span><span class="co">#&gt; |88  |ESETA1   |       35|          0|PmEd2         | -0.0686910|       0.05|        0|</span></span>
 <span><span class="co">#&gt; |120 |ESETA1   |       58|         35|WndNbrhood.35 |  0.1433257|       0.10|        0|</span></span></code></pre>
-<p>As shown above, for the “CBPS” weighting method and short formulas,
-the median absolute value correlation between confounder and exposure is
+<p>As shown above, for the”CBPS weighting method and short formulas, the
+median absolute value correlation between confounder and exposure is
 0.03 and only 8 confounders remain imbalanced.</p>
 <p><br></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -886,37 +957,37 @@ imbalanced.</p>
 <span>                                    home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional</span></span>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using short formulas.</span></span></code></pre></div>
 <p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-5.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; As shown below, 9 out of 131 (7%) covariates across time points, corresponding to 4 out of 32 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.12 (range= -0.12-0.22):</span></span>
+<pre><code><span><span class="co">#&gt; As shown below, 9 out of 131 (7%) covariates across time points, corresponding to 3 out of 32 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.11 (range= -0.11-0.23):</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced covariates using bart and short formulas</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; | exp_time| balanced_n| imbalanced_n|  n|</span></span>
 <span><span class="co">#&gt; |--------:|----------:|------------:|--:|</span></span>
-<span><span class="co">#&gt; |        6|         17|            1| 18|</span></span>
+<span><span class="co">#&gt; |        6|         18|            0| 18|</span></span>
 <span><span class="co">#&gt; |       15|         25|            3| 28|</span></span>
 <span><span class="co">#&gt; |       24|         25|            2| 27|</span></span>
 <span><span class="co">#&gt; |       35|         28|            2| 30|</span></span>
-<span><span class="co">#&gt; |       58|         27|            1| 28|</span></span>
+<span><span class="co">#&gt; |       58|         26|            2| 28|</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; USER ALERT: For exposure ESETA1 using the short formulas and bart :</span></span>
-<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.12 -0.22). </span></span>
-<span><span class="co">#&gt; As shown below, the following 9 covariates across time points out of 131 total (6.87%) spanning 4 domains out of 33 (12.12%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ESETA1 of 0.12 (range=-0.12-0.22) :</span></span>
+<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.11 -0.23). </span></span>
+<span><span class="co">#&gt; As shown below, the following 9 covariates across time points out of 131 total (6.87%) spanning 3 domains out of 33 (9.09%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ESETA1 of 0.11 (range=-0.11-0.23) :</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; |    |exposure | exp_time| covar_time|covariate     |    avg_bal| bal_thresh| balanced|</span></span>
 <span><span class="co">#&gt; |:---|:--------|--------:|----------:|:-------------|----------:|----------:|--------:|</span></span>
-<span><span class="co">#&gt; |6   |ESETA1   |        6|          0|PmEd2         | -0.0508532|       0.05|        0|</span></span>
-<span><span class="co">#&gt; |19  |ESETA1   |       15|          6|B18Raw.6      |  0.1214079|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |22  |ESETA1   |       15|          6|ESETA1.6      |  0.2184799|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |26  |ESETA1   |       15|          6|InRatioCor.6  | -0.0959472|       0.05|        0|</span></span>
-<span><span class="co">#&gt; |50  |ESETA1   |       24|         15|ESETA1.15     |  0.1809077|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |54  |ESETA1   |       24|         15|InRatioCor.15 | -0.1184108|       0.05|        0|</span></span>
-<span><span class="co">#&gt; |78  |ESETA1   |       35|         24|ESETA1.24     |  0.1258906|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |82  |ESETA1   |       35|         24|InRatioCor.24 | -0.0685874|       0.05|        0|</span></span>
-<span><span class="co">#&gt; |106 |ESETA1   |       58|         35|ESETA1.35     |  0.1028703|       0.10|        0|</span></span></code></pre>
+<span><span class="co">#&gt; |19  |ESETA1   |       15|          6|B18Raw.6      |  0.1257449|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |22  |ESETA1   |       15|          6|ESETA1.6      |  0.2270564|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |26  |ESETA1   |       15|          6|InRatioCor.6  | -0.1095578|       0.05|        0|</span></span>
+<span><span class="co">#&gt; |50  |ESETA1   |       24|         15|ESETA1.15     |  0.1854738|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |54  |ESETA1   |       24|         15|InRatioCor.15 | -0.1105896|       0.05|        0|</span></span>
+<span><span class="co">#&gt; |78  |ESETA1   |       35|         24|ESETA1.24     |  0.1270567|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |82  |ESETA1   |       35|         24|InRatioCor.24 | -0.0703248|       0.05|        0|</span></span>
+<span><span class="co">#&gt; |106 |ESETA1   |       58|         35|ESETA1.35     |  0.1089029|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |110 |ESETA1   |       58|         35|InRatioCor.35 | -0.0527573|       0.05|        0|</span></span></code></pre>
 <p>For the BART weighting method, the median absolute value correlation
 between exposure and confounder is 0.02, with 11 confounders remaining
 imbalanced.</p>
@@ -991,9 +1062,9 @@ the best-performing weights method (i.e., using the SuperLearner method)
 using the simplified balancing formulas also achieve balance with the
 full formulas. Here, we revisit our assumption that balancing on the
 most proximal time-varying confounders (<em>t</em>-1) confers balance
-for those same confounders at more distal prior time points
-(<em>t</em>-1+). We do this by assessing at each time point how well the
-weights just created using the short formulas successfully balance all
+for those same confounders at more distal prior time points (<em>t</em>-
+1+). We do this by assessing at each time point how well the weights
+just created using the short formulas successfully balance all
 confounders (including time-varying confounders at all time points
 prior) in the original, full formulas. We use the
 <code><a href="../reference/assessBalance.html">assessBalance()</a></code> function (<code>type = “weighted”</code>)
@@ -1002,16 +1073,16 @@ with the full balancing formulas.</p>
 function to assess how the best weights achieve balance for the full
 formulas are: complete data (data frame, mids object, or a list of
 imputed datasets as dataframes in wide format), exposure (e.g.,
-“variable”), exposure time points, outcome (e.g., “variable.time”),
+“variable”), exposure time points, outcome (e.g., “variable.t”),
 providing the full formulas (see Step 1a), setting
 <code>type = “weighted”</code>, and providing the best weights (see Step
 2c).</p>
 <p>The optional inputs are detailed in Step 1b.</p>
 <p>The <code><a href="../reference/assessBalance.html">assessBalance()</a></code> function saves out the following
-.csv and .html files into the ‘balance/weighted’ folder: tables of
+.csv and .html files into the ‘balance/weighted/’ folder: tables of
 balance statistics for all confounders, tables of balance statistics for
 covariates that are imbalanced, and an overall balance summary table
-(averaged across any imputed datasets). Within the ‘balance/type/plots’
+(averaged across any imputed datasets). Within the ‘balance/type/plots/’
 folder, the function outputs .jpeg files of summary love plots depicting
 confounder balance for each exposure time point.</p>
 <p>The function returns a data frame (or list) of balance statistics,
@@ -1078,7 +1149,7 @@ imbalanced.</p>
 </h4>
 <p>Subsequently, we update the shortened formulas to include any
 time-varying confounders (<em>t</em>-1 +) that were not successfully
-balanced by the full formulas, as hown above. To do this, we create a
+balanced by the full formulas, as shown above. To do this, we create a
 final round of balancing formulas using the
 <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function (setting
 <code>type = “update"</code> and providing the balance statistics of the
@@ -1117,7 +1188,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     HomeOwnd + KFASTScr + peri_health + PmAge2 + PmBlac2 + PmEd2 + </span></span>
 <span><span class="co">#&gt;     PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c72690&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x56488d87f438&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 15 no time-varying confounders at additional lags were added. </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1128,7 +1199,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.6 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.6 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c72690&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x56488d87f438&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 24 the following covariate(s) will be added to the short balancing formula:</span></span>
 <span><span class="co">#&gt;                           ESETA1.6, InRatioCor.6 </span></span>
@@ -1140,7 +1211,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     MDI.15 + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + </span></span>
 <span><span class="co">#&gt;     RHasSO.15 + RHealth + RMomAgeU + SAAmylase.15 + SmokTotl + </span></span>
 <span><span class="co">#&gt;     state + SurpPreg + SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c72690&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x56488d87f438&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 35 the following covariate(s) will be added to the short balancing formula:</span></span>
 <span><span class="co">#&gt;                           ESETA1.15, ESETA1.6, IBRAttn.6, InRatioCor.6 </span></span>
@@ -1153,7 +1224,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.24 + </span></span>
 <span><span class="co">#&gt;     RHealth + RMomAgeU + SAAmylase.24 + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2 + WndNbrhood.24</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c72690&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x56488d87f438&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 58 the following covariate(s) will be added to the short balancing formula:</span></span>
 <span><span class="co">#&gt;                           ESETA1.15, InRatioCor.15 </span></span>
@@ -1165,7 +1236,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     LESMnPos.35 + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + </span></span>
 <span><span class="co">#&gt;     RHasSO.35 + RHealth + RMomAgeU + SmokTotl + state + StrDif_Tot.35 + </span></span>
 <span><span class="co">#&gt;     SurpPreg + SWghtLB + TcBlac2 + WndNbrhood.35</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x561977c72690&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;environment: 0x56488d87f438&gt;</span></span></code></pre></div>
 <p>As shown above, several imbalanced confounders at lags greater than
 <em>t</em>-1 were added to the short formulas at exposure time points
 35-58. For instance, at the 35-month time point, economic strain at 6
@@ -1216,9 +1287,9 @@ method to create a new round of IPTW balancing weights.</p>
 <span>                               method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#optional</span></span>
 <span>                               home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional</span></span>
 <span><span class="co">#&gt; For the super weighting method, the median weight value is 1 (SD = 1.02; range = 0.03-11).</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-1.png" width="700">
-As shown above, these weights have a median value of 1 and a heavy right
-tail.</p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-1.png" width="700"></p>
+<p>As shown above, these weights have a median value of 1 and a heavy
+right tail.</p>
 <p><br></p>
 </div>
 <div class="section level4">
@@ -1227,7 +1298,7 @@ tail.</p>
 <p>The next step is to trim or winsorize this final set of weights to
 eliminate the heavy right tail of its distribution using the
 <code><a href="../reference/trimWeights.html">trimWeights()</a></code> function. This function draws on the
-<em>Weightit</em> package (Griefer, 2023) and then plots and summarizes
+<em>Weightit</em> package (Griefer, 2023) and plots and summarizes
 trimmed weights. This function outputs a list of trimmed weights with
 either a single nested list (labeled “0” if data are in data frame
 format) or with nested lists for each imputed dataset (if data are
@@ -1255,8 +1326,8 @@ weights, each in the form of weightitMSM output.</p>
 <span><span class="co">#&gt; Trimming weights to 95%.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For the ESETA1-StrDif_Tot.58 relation, following trimming at the 0.95 quantile, the median weight value is 1 (SD= 0.65; range= 0.03-3).</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-28-1.png" width="700">
-As shown above, the weights still have a median value of 1 but a much
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-28-1.png" width="700"></p>
+<p>As shown above, the weights still have a median value of 1 but a much
 shorter right tail.</p>
 <p><br></p>
 <p>We then create trimmed weights using two other quantile values at +
@@ -1376,7 +1447,7 @@ to each exposure time point.</p>
 <p><br></p>
 <p>From this assessment, we find that confounders across 3 domains
 (economic strain, income-to-needs-ratio, and parental education –ones
-that we held to a more stringet balancing threshold due to their
+that we held to a more stringent balancing threshold due to their
 theoretical importance as confounders) remain imbalanced at several
 exposure time points with a median absolute value correlation of 0.07
 (range = -0.09-0.16). The largest remaining correlations between
@@ -1397,7 +1468,7 @@ two additional quantile values to assess whether the final balance
 assessment is sensitive to the trim value.</p>
 <p>Importantly, if <code>save.out = TRUE</code>, running these analyses
 will overwrite the output from the main history comparison above if the
-main output is not rename or re-located to a new folder first.
+main output is not renamed or relocated to a new folder first.
 Additionally, after running the first sensitivity check, the output from
 that check will be overwritten by the second sensitivity check if it is
 not renamed or re-located to a new folder first.</p>
@@ -1545,7 +1616,7 @@ the individual terms.</p>
 <p>The required inputs for using the <code><a href="../reference/fitModel.html">fitModel()</a></code> function
 are: complete data (data frame, mids object, or a list of imputed
 datasets as dataframes in wide format), exposure (e.g., “variable”),
-exposure time points, outcome (e.g., “variable.time”), a list of trimmed
+exposure time points, outcome (e.g., “variable.t”), a list of trimmed
 weights, and a model from the list below (“m0”, “m1”, “m2”, or
 “m3”):</p>
 <ul>
@@ -1571,16 +1642,6 @@ problems.</p>
 <p>If the user selects a covariate model (“m1” or “m3”), they are
 required to supply a list to <code>covariates</code> that corresponds to
 covariates in the wide data (see Step 4).</p>
-<p>If the user selects an interaction model (“m2” or “m3”), they are
-required to provide a interaction order integer in the
-<code>int_order</code> field that reflects the maximum interaction
-(e.g., 3) (that will automatically include all lower order interactions
-(e.g., 2-way)). The interaction order cannot exceed the number of
-exposure main effects.</p>
-<p>We specify fitting all 3-way (and constituent) interactions between
-exposure main effects.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">int_order</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></code></pre></div>
 <p>The optional inputs to the <code><a href="../reference/fitModel.html">fitModel()</a></code> function are as
 follows.</p>
 <p>The user has the option to specify epochs that differ from the
@@ -1605,9 +1666,20 @@ epochs should be kept consistent throughout the use of the
 epochs. Please see the
 <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary
 Steps vignette</a> and accomanying manuscript for more details.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epochs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>epochs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Infancy"</span>, <span class="st">"Toddlerhood"</span>, <span class="st">"Childhood"</span><span class="op">)</span>, </span>
 <span>                     values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
+<p>If the user selects an interaction model (“m2” or “m3”), they are
+required to provide a interaction order integer in the
+<code>int_order</code> field that reflects the maximum interaction
+(e.g., 3) (that will automatically include all lower order interactions
+(e.g., 2-way)). The interaction order cannot exceed the total number of
+exposure main effects (3 in our case, as we specified 3 exposure
+epochs).</p>
+<p>We specify fitting all 3-way (and constituent) interactions between
+exposure main effects.</p>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">int_order</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></code></pre></div>
 <p>The user can also specify a <code>family</code> (as a function, not
 in quotations; e.g., gaussian) and <code>link</code> (in quotations,
 e.g., “identity”) functions for the generalized linear model (defaults
@@ -1634,8 +1706,8 @@ package documentations for more information.</p>
 <span></span>
 <span><span class="va">link</span> <span class="op">&lt;-</span> <span class="st">"identity"</span> </span></code></pre></div>
 <p>The <code><a href="../reference/fitModel.html">fitModel()</a></code> function outputs a .rds file of the
-fitted model(s) and a .html table of model evidence (can display models
-for up to 12 imputed datasets) in the ‘models/’ folder.</p>
+fitted model(s) and a .html table of model evidence in the ‘models/’
+folder.</p>
 <p>Importantly, this function also outputs into the console the result
 of a likelihood ratio test comparing the user-specified model to a
 nested version of that model that omits all exposure variables to test
@@ -1669,7 +1741,7 @@ different exposure histories.</p>
 weights that were trimmed at two different values.</p>
 <p>Of note, as described in Step 4, if <code>save.out = TRUE</code>,
 running these analyses will overwrite the output from the main model
-fitting above if the main output is not rename or re-located to a new
+fitting above if the main output is not renamed or relocated to a new
 folder first.</p>
 <p>We first fit the same model to the weights trimmed at the 92nd
 quantile.</p>
@@ -1893,15 +1965,15 @@ labeled by history and dose.</p>
 distribution of our sample with each of the specified exposure
 histories.</p>
 <p>We then inspect the history comparison and conclude that there is no
-evidence evidence that children who experienced different histories of
-exposure to economic strain over infancy, toddlerhood, and early
-childhood differ in their behavioral problems in early childhood.</p>
+evidence that children who experienced different histories of exposure
+to economic strain over infancy, toddlerhood, and early childhood differ
+in their behavioral problems in early childhood.</p>
 <p><br></p>
 <p>We then conduct sensitivity analyses by assessing and comparing
 histories drawing from models that used weights trimmed at two different
 values. Of note, running these analyses will overwrite the output from
-the main history comparison above if the main output is not rename or
-re-located to a new folder first.</p>
+the main history comparison above if the main output is not renamed or
+relocated to a new folder first.</p>
 <p>We first compare the same histories using the model fit with weights
 trimmed at the 92nd quantile value.</p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
