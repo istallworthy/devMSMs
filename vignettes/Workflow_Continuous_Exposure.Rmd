@@ -60,7 +60,7 @@ data("sim_data_wide", package = "devMSMs")
 
 data <- sim_data_wide
 
-head(data, 5)
+head(data,n = c(5, 5))
 ```
   
 <br>
