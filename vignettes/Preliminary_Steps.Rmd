@@ -30,18 +30,18 @@ These four recommended preliminary steps are designed to assist the user in prep
   
 The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a>. Of note, *devMSMs* must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).  
   
-The user who has already formatted their data in wide format according to the Data Requirements vignette and imputed to accommodate any missing data (P2), can focus only on subsections P3 Identifying Optional Exposure Epochs and P4 Verifying History Distributions prior to using the package. Following completion of this vignette, users should use one of the Workflows vignettes to implement *devMSMs* with their longitudinal data.   
+The user who has already formatted their data in wide format according to the Data Requirements vignette and imputed to accommodate any missing data (P2), can focus only on subsections P3 Identifying Optional Exposure Epochs and P4 Verifying History Distributions prior to using the package. Following completion of this vignette, users should use one of the *Workflows* vignettes to implement *devMSMs* with their longitudinal data.   
 
 
 *insert Table 1 here*.   
 
-<br>
+![Table 1. Summary of devMSMs helper functions*](/Users/isabella/Documents/GitHub/devMSMsHelpers/man/figures/helper function summary table.png){width=600px}
 
 ```{r setup}
 # install.packages("devtools")
 # install.packages("stats")
 
-require(devtools)
+require(devtools, quietly = TRUE)
 # library(stats)
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
@@ -117,16 +117,16 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 ### Load data 
 Users have several options for reading in data. They can begin this workflow with the following options:  
   
-* long data (with or without missing data), which can be converted to wide data
+* long data (with or without missing data), which can be formatted (P1a) and converted to wide data (P1b)
   
-* wide data (with or without missing data), which can be imputed using the *imputeData()* helper function, if needed 
+* wide data that is complete, or with missingness to be imputed using the *imputeData()* helper function (P2)
   
-* imputed wide data sets saved locally, which can be read in as a list
-
+* imputed wide data sets saved locally, which can be read in as a list (P2b). 
+  
 Below, we demonstrate use of each of the above starting options.  
 <br>
   
-First we load the simulated longitudinal data in long format (with missingness) that accompanies *devMSMs*. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008).  
+First, we load the simulated longitudinal data in long format (with missingness) that accompanies *devMSMs*. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008).  
 
 ```{r}
 data("sim_data_long_miss", package = "devMSMs")
@@ -139,12 +139,11 @@ data_long <- sim_data_long_miss
 All data must be wide format and contain an “ID” column for subject identifier and exposure, outcome, and all confounders as separate columns (as shown in Figure 1). Column names can include only underscore special characters and time-varying variables should have a suffix that consists of a period followed by the time point (e.g., “variable.6”). All variables should be classed as integer, numeric, or a factor (not character). Auxiliary or nuisance covariates that are not confounders (e.g, assessment version) can be included in the dataset for use and specification in the final modeling step (*Workflow* vignettes Step 5).   
 <br>
 
-*insert Figure 1 here*. 
-
+![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as NA and will need to be imputed (<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps Vignette</a> Step P2).](/Users/isabella/Documents/GitHub/devMSMs/man/figures/sample data.png){width=600px}
 <br>
 
 #### P1a. Format single data frame of long data
-Users beginning with a single data frame in long format (with or without missingness) can utilize a helper function `formatLongData()` to summarize exposure and outcome data and convert to required variable names. This function takes a dataset in long format and any variables for time (`time_var`), ID (`id_var`), and missing data (missing) with alternative variables and re-labels them according to what is required by the package. It also classes any factor confounders (`factor_confounders`) as factors in the data and all others as numeric.   
+Users beginning with a single data frame in long format (with or without missingness) can utilize a helper function `formatLongData()` to summarize exposure and outcome data and convert to required variable names. This function takes a dataset in long format. It allows the users to supply existing variables for time (`time_var`), ID (`id_var`), and missing data (`missing`) for re-naming according to what is required by the package. It also allows the user to submit variables that should be factors and integers, and the function classes any factor confounders (`factor_confounders`) as factors, integer confounders (`integer_confounders`) as integers in the data, and all others as numeric.   
 
 ```{r}
 data_long_f <- formatLongData(data = data_long, exposure = exposure, 
@@ -154,10 +153,15 @@ data_long_f <- formatLongData(data = data_long, exposure = exposure,
                               missing = NA,
                               factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                                                      "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                                                     "RHasSO"),                              
+                                                     "RHasSO"),   
+                              integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
+                                                      "gov_assist", "B18Raw", "EARS_TJo", "MDI"), 
                               home_dir = home_dir, 
                               save.out = save.out) 
+
+head(data_long_f, 5)
 ```
+  
 We get a descriptive statistics summary of the exposure, ESETA1, and the outcome, StrDif_Tot.58, for our visual inspections.  
 
 <br>
@@ -165,29 +169,35 @@ We get a descriptive statistics summary of the exposure, ESETA1, and the outcome
 #### P1b. Convert single long data frame to wide format
 Users with correctly formatted variables in long format have the option of using the following code to transform their data into wide format, to proceed to using the package (if there is no missing data) or imputing (with < 20% missing data MAR).  
   
-We then transform our newly formatted long data into wide format.  
+We then transform our newly formatted long data into wide format, specifying `idvar` as "ID", `timevar` as "WAVE", and supplying the time points (encompassing exposure, confounder, and outcome time points) in the data as 6, 15, 24, 35, and 58 to `times`.    
 
 ```{r}
-require("stats")
+require("stats", quietly = TRUE)
+
 v <- sapply(strsplit(tv_confounders[!grepl("\\:", tv_confounders)], "\\."), "[", 1)
 v <- v[!duplicated(v)]
 
 data_wide <- stats::reshape(data = data_long_f, 
-                            idvar = "ID", #list ID variable in your dataset
+                            idvar = "ID",
                             v.names = v, 
-                            timevar = "WAVE", # list time variable in your long dataset
-                            times = c(6, 15, 24, 35, 58), # list all time points in your dataset
+                            timevar = "WAVE",
+                            times = c(6, 15, 24, 35, 58), 
                             direction = "wide")
 
 data_wide <- data_wide[, colSums(is.na(data_wide)) < nrow(data_wide)]
+
+head(data_wide, 5)
+
 ```
   
-Alternatively, we could start with wide data with missingness that is already formatted. 
+Alternatively, we could start with wide data with missingness that is already formatted, and below we read in simulated wide FLP data with missingness.   
 
 ```{r}
 data("sim_data_wide_miss", package = "devMSMs")
 
 data_wide <- sim_data_wide_miss
+
+head(data_wide, 5)
 ```
 
 <br>
@@ -232,6 +242,8 @@ imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outc
                            seed = s, read_imps_from_file = FALSE, 
                            home_dir = home_dir, save.out = save.out)
 
+head(mice::complete(imputed_data, 1), 5)
+
 data <- imputed_data
 ```
   
@@ -259,6 +271,7 @@ data("sim_data_imp_list", package = "devMSMs")
 
 data <- sim_data_imp_list
 
+head(data[[1]], 5)
 ```
 
 Alternatively, in the case of no missing data, the user can read in a formatted, wide dataset assigned to `data` for use in the *deveMSMs* package (see *Workflows* vignettes).  
@@ -269,6 +282,8 @@ Below, we load in a single wide data frame simulated from FLP as an example.
 data("sim_data_wide", package = "devMSMs")
 
 data_wide <- sim_data_wide
+
+head(data_wide, 5)
 
 data <- data_wide
 ```
@@ -291,6 +306,7 @@ epochs <- data.frame(epochs = c("Infancy",
                                      c(24, 35), 
                                      c(58)
                      ))) 
+epochs
 ```
 
 <br>
@@ -336,12 +352,8 @@ We strongly suggest visually inspecting this table and revising the designation 
   
 <br>
 
-*insert Table 2*
-
-<br>
-
 The required inputs for `inspectData()` are: complete data (as a data frame in wide or long format, a list of imputed data frames in wide format, or a mids object), exposure (e.g., “variable”), and outcome (e.g., “variable.t”).   
-
+  
 Optional inputs are a home directory (if `save.out = TRUE`), epochs, high/low cutoff values for continuous exposures, and specification of reference and comparison histories. 
   
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
