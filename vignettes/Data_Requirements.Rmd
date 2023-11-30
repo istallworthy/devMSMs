@@ -23,14 +23,16 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ```{r setup}
-install.packages("devtools", quiet = TRUE)
-library(devtools)
+# install.packages("devtools", quiet = TRUE)
+# library(devtools)
+require("devtools", quietly = TRUE)
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 library(devMSMs)
 
-install.packages("mice", quiet = TRUE)
-library(mice)
+# install.packages("mice", quiet = TRUE)
+# library(mice)
+require("mice", quietly = TRUE)
 
 ```
   
@@ -52,7 +54,7 @@ The following longitudinal data that accompany *devMSMs* are simulated based on 
 ```{r}
 data("sim_data_wide", package = "devMSMs")
 
-head(sim_data_wide, 5)
+head(sim_data_wide, n = c(5, 5))
 ```
   
 <br>
@@ -64,7 +66,7 @@ data("sim_data_mice", package = "devMSMs")
 
 class(sim_data_mice)
 
-head(mice::complete(sim_data_mice, 1), 5)
+head(mice::complete(sim_data_mice, 1),n = c(5, 5))
 ```
  
 <br>
@@ -74,7 +76,7 @@ head(mice::complete(sim_data_mice, 1), 5)
 ```{r}
 data("sim_data_imp_list", package = "devMSMs")
 
-head(sim_data_imp_list, 5)
+head(sim_data_imp_list[[1]], n = c(5, 5))
 ```
 
 <br>

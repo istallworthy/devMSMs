@@ -32,10 +32,9 @@ The helper functions (summarized in Table 1) for the following recommended preli
   
 The user who has already formatted their data in wide format according to the Data Requirements vignette and imputed to accommodate any missing data (P2), can focus only on subsections P3 Identifying Optional Exposure Epochs and P4 Verifying History Distributions prior to using the package. Following completion of this vignette, users should use one of the *Workflows* vignettes to implement *devMSMs* with their longitudinal data.   
 
+<br>
 
-*insert Table 1 here*.   
-
-![Table 1. Summary of devMSMs helper functions*](/Users/isabella/Documents/GitHub/devMSMsHelpers/man/figures/helper function summary table.png){width=600px}
+![Table 1. Summary of devMSMs helper functions](/Users/isabella/Documents/GitHub/devMSMsHelpers/man/figures/helper function summary table.png){width=600px}
 
 ```{r setup}
 # install.packages("devtools")
@@ -159,7 +158,7 @@ data_long_f <- formatLongData(data = data_long, exposure = exposure,
                               home_dir = home_dir, 
                               save.out = save.out) 
 
-head(data_long_f, 5)
+head(data_long_f, n = c(5, 5))
 ```
   
 We get a descriptive statistics summary of the exposure, ESETA1, and the outcome, StrDif_Tot.58, for our visual inspections.  
@@ -186,7 +185,7 @@ data_wide <- stats::reshape(data = data_long_f,
 
 data_wide <- data_wide[, colSums(is.na(data_wide)) < nrow(data_wide)]
 
-head(data_wide, 5)
+head(data_wide,  n = c(5, 5))
 
 ```
   
@@ -197,7 +196,7 @@ data("sim_data_wide_miss", package = "devMSMs")
 
 data_wide <- sim_data_wide_miss
 
-head(data_wide, 5)
+head(data_wide,  n = c(5, 5))
 ```
 
 <br>
@@ -242,7 +241,7 @@ imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outc
                            seed = s, read_imps_from_file = FALSE, 
                            home_dir = home_dir, save.out = save.out)
 
-head(mice::complete(imputed_data, 1), 5)
+head(mice::complete(imputed_data, 1),  n = c(5, 5))
 
 data <- imputed_data
 ```
@@ -271,7 +270,7 @@ data("sim_data_imp_list", package = "devMSMs")
 
 data <- sim_data_imp_list
 
-head(data[[1]], 5)
+head(data[[1]],  n = c(5, 5))
 ```
 
 Alternatively, in the case of no missing data, the user can read in a formatted, wide dataset assigned to `data` for use in the *deveMSMs* package (see *Workflows* vignettes).  
@@ -283,7 +282,7 @@ data("sim_data_wide", package = "devMSMs")
 
 data_wide <- sim_data_wide
 
-head(data_wide, 5)
+head(data_wide,  n = c(5, 5))
 
 data <- data_wide
 ```
