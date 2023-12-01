@@ -76,7 +76,7 @@
                         <h4 data-toc-skip class="author">Isabella
 Stallworthy</h4>
             
-            <h4 data-toc-skip class="date">2023-11-30</h4>
+            <h4 data-toc-skip class="date">2023-12-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Data_Requirements.Rmd" class="external-link"><code>vignettes/Data_Requirements.Rmd</code></a></small>
       <div class="d-none name"><code>Data_Requirements.Rmd</code></div>
@@ -184,12 +184,18 @@ for identifiers), in one of three ways:</p>
 <span><span class="co">#&gt; [1] "mids"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">mice</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete</a></span><span class="op">(</span><span class="va">sim_data_mice</span>, <span class="fl">1</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   X ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2</span></span>
-<span><span class="co">#&gt; 1 1  1     0       0           1        1       24       0    15       1</span></span>
-<span><span class="co">#&gt; 2 2  2     1       1           0        2       27       1    17       0</span></span>
-<span><span class="co">#&gt; 3 3  3     0       0           0        3       15       1    13       1</span></span>
-<span><span class="co">#&gt; 4 4  4     1       0           0        2       17       0    14       0</span></span>
-<span><span class="co">#&gt; 5 5  5     0       0           1        1       25       0    20       1</span></span></code></pre></div>
+<span><span class="co">#&gt;   ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6 BioDadInHH2 caregiv_health</span></span>
+<span><span class="co">#&gt; 1         3         1         1         7       16           1              3</span></span>
+<span><span class="co">#&gt; 2         2         4        -7         7        0           0              0</span></span>
+<span><span class="co">#&gt; 3         3         6         5        20       -1           0              3</span></span>
+<span><span class="co">#&gt; 4         4        24        25        17       11           0              3</span></span>
+<span><span class="co">#&gt; 5         3        -8        -9        17        1           1              2</span></span>
+<span><span class="co">#&gt;   CORTB.15 CORTB.24 CORTB.6</span></span>
+<span><span class="co">#&gt; 1   -0.227   -0.652   0.742</span></span>
+<span><span class="co">#&gt; 2    0.149    0.831   0.018</span></span>
+<span><span class="co">#&gt; 3    1.145    0.033  -0.379</span></span>
+<span><span class="co">#&gt; 4    0.301   -0.501   0.000</span></span>
+<span><span class="co">#&gt; 5   -0.247    0.084   0.153</span></span></code></pre></div>
 <p><br></p>
 <ol start="3" style="list-style-type: decimal">
 <li>imputed data as a list of imputed data frames.</li>
@@ -198,12 +204,18 @@ for identifiers), in one of three ways:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_imp_list"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sim_data_imp_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   X.1 X ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2</span></span>
-<span><span class="co">#&gt; 1   1 1  1     0       0           1        1       24       0    15</span></span>
-<span><span class="co">#&gt; 2   2 2  2     1       1           0        2       27       1    17</span></span>
-<span><span class="co">#&gt; 3   3 3  3     0       0           0        3       15       1    13</span></span>
-<span><span class="co">#&gt; 4   4 4  4     1       0           0        2       17       0    14</span></span>
-<span><span class="co">#&gt; 5   5 5  5     0       0           1        1       25       0    20</span></span></code></pre></div>
+<span><span class="co">#&gt;   X ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6 BioDadInHH2 caregiv_health</span></span>
+<span><span class="co">#&gt; 1 1         3         1         1         7       16           1              3</span></span>
+<span><span class="co">#&gt; 2 2         2         4        -7         7        0           0              0</span></span>
+<span><span class="co">#&gt; 3 3         3         6         5        20       -1           0              3</span></span>
+<span><span class="co">#&gt; 4 4         4        24        25        17       11           0              3</span></span>
+<span><span class="co">#&gt; 5 5         3        -8        -9        17        1           1              2</span></span>
+<span><span class="co">#&gt;   CORTB.15 CORTB.24</span></span>
+<span><span class="co">#&gt; 1   -0.227   -0.652</span></span>
+<span><span class="co">#&gt; 2    0.149    0.831</span></span>
+<span><span class="co">#&gt; 3    1.145    0.033</span></span>
+<span><span class="co">#&gt; 4    0.301   -0.501</span></span>
+<span><span class="co">#&gt; 5   -0.247    0.084</span></span></code></pre></div>
 <p><br></p>
 <p>All variables should be classed as integers, numeric, or factors. The
 recommended
