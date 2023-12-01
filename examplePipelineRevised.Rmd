@@ -46,7 +46,7 @@ set.seed(1234)
 #required if you wish to use save.out = TRUE in the functions
 home_dir <- NA
 home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
-
+data
 #required
 exposure <- "ESETA1"
 
@@ -86,11 +86,11 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 
 ## STEP P: Preliminary Steps for Reading in, Formatting, & Inspecting Data
 We advise users implement the appropriate preliminary steps, with the goal of assigning to 'data' one of the following wide data formats (see Figure 1) for use in the package:  
-  
+
 * a single data frame of data in wide format with no missing data  
-  
+
 * a mids object (output from mice::mice()) of data imputed in wide format  
-  
+
 * a list of data imputed in wide format as data frames.  
 
 <br>
@@ -99,62 +99,68 @@ We advise users implement the appropriate preliminary steps, with the goal of as
 Users have several options for reading in data. They can begin this workflow with the following options:  
 <br>
 * long data with missingness can can be formatted and converted to wide data (P1a) for imputation (P2)
-  
+
 * wide with missingness can be formatted (P1b) before imputing (P2)
-  
+
 * data already imputed in wide format can be read in as a list (P2). 
 
 * data with no missingness (P3)
-  
+
 <br>
 
 
-### P1. Data with Missingness
-Most data from humans will have some degree of missing data. 
+### P1. Single Long Data Frame
+Users beginning with a single data frame in long format (with or without missingness).
 
-#### P1a. A single data frame of long data with missingness
-Users can begin with a single data frame in long format (with missingness). Users have the option of formatting their long data if their data columns are not yet labeled correctly using the `formatLongData()` helper function.    
-
+#### P1a. Format long data
+Users have the option of formatting their long data if their data columns are not yet labeled correctly using the `formatLongData()` helper function.    
 
 ```{r}
 data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_long_missing_unformatted.csv", #add path to your long data file here if you want to begin with long data
                       header = TRUE)
 
+factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
+                       "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+                       "RHasSO") #list factor variables in long format here
+integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
+                        "gov_assist", "B18Raw", "EARS_TJo", "MDI")
+
 data_long_f <- formatLongData(data = data_long, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
                               time_var = "Tage", #list original time variable here if it's not "WAVE"
                               id_var = "S_ID", #list original id variable here if it's not "ID"
                               missing = -9999, #list missing value here
-                              factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                                                     "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                                                     "RHasSO"), #list factor variables in long format here
-                              integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
-                                                      "gov_assist", "B18Raw", "EARS_TJo", "MDI"), #list any integer variables in long format here
+                              factor_confounders = factor_confounders, #list factor variables in long format here
+                              integer_confounders = integer_confounders, #list any integer variables in long format here
                               home_dir = home_dir, save.out = TRUE) 
 ```
-  
-  
+
+
+#### P1b. Tranform formatted long data to wide
 Users with correctly formatted data in long format have the option of using the following code to transform their data into wide format, to proceed to using the package (if there is no missing data) or imputing (with < 20% missing data MAR).They may see some warnings about *NA* values.    
 ```{r}
 v <- sapply(strsplit(tv_confounders[!grepl("\\:", tv_confounders)], "\\."), "[", 1)
 v <- v[!duplicated(v)]
 
 library(stats)
-data_wide <- stats::reshape(data = data_long_f, 
+data_wide_f <- stats::reshape(data = data_long_f, 
                             idvar = "ID", #list ID variable in your dataset
                             v.names = v, 
                             timevar = "WAVE", # list time variable in your long dataset
                             times = c(6, 15, 24, 35, 58), # list all time points in your dataset
                             direction = "wide")
-data_wide <- data_wide[, colSums(is.na(data_wide)) < nrow(data_wide)]
+data_wide_f <- data_wide_f[, colSums(is.na(data_wide_f)) < nrow(data_wide_f)]
 
 # data_wide2=data_wide
 # data_wide2=data_wide2[order(names(data_wide2))]
 ```
 
- 
-#### P1b. A single data frame of wide data with missingness
 
-Alternatively, we could start with a single data frame of wide data with missingness that is already formatted, and below we read in simulated wide FLP data with missingness.   
+
+### P2. Single Wide Data Frame
+Alternatively, we could start with a single data frame of wide data (with or without missingness).  
+
+#### P2a. Format wide data
+Users can draw on the `formatWideData()` helper function to format their wide data.   
 ```{r}
 data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your wide, formatted data file here 
                       header = TRUE)
@@ -174,14 +180,13 @@ data_wide_f <- formatWideData(data = data_wide, exposure = exposure, exposure_ti
                               integer_confounders = integer_confounders,
                               home_dir = home_dir, save.out = TRUE) 
 
-data <- data_wide_f
 ```
 
 
-### P2. Impute Missing Data in Wide Format
+### P3. Formatted Wide Data with Missingness
 Most data collected from humans will have some degree of missing data.  
 
-#### P2a. Multiply impute single wide, formatted data frame using mice
+#### P3a. Multiply impute formatted, wide data frame using mice
 Users have the option of imputing their wide, formatted data using the *mice* package, for use with *devMSMs*.     
 ```{r}
 set.seed(1234)
@@ -192,7 +197,7 @@ s <- 1234 #empirical example
 
 #optional; number of imputations (default is 5)
 m <- NA
-m <- 5 #empirical example
+m <- 2 #empirical example
 
 #optional; provide an imputation method pmm, midastouch, sample, cart , rf (default)
 method <- NA
@@ -202,7 +207,7 @@ method <- "rf" #empirical example
 maxit <- NA
 maxit <- 5 #empirical example
 
-imputed_data <- imputeData(data = data_wide, exposure = exposure, outcome = outcome, 
+imputed_data <- imputeData(data = data_wide_f, exposure = exposure, outcome = outcome, 
                            m = m, method = method, maxit = maxit, para_proc = TRUE, 
                            seed = s, read_imps_from_file = FALSE, 
                            home_dir = home_dir, save.out = TRUE)
@@ -261,11 +266,9 @@ anyNA(data) #make sure this is false, meaning no NAs
 ```
 
 
-
-
-#### P2b. Read in as a list of wide imputed data saved locally 
+#### P3b. Read in as a list of wide imputed data saved locally 
 Alternatively, if a user has imputed datasets already created using a program other than *mice*, they can read in, as a list, files saved locally as .csv files (labeled “1”:m) in a single folder. 
-  
+
 ```{r}
 folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/imputations/" # these are final imputations for empirical example; change this to match your local folder
 
@@ -294,26 +297,6 @@ data <- lapply(data, function(x) {
   x[, factor_covars] <- as.data.frame(lapply(x[, factor_covars], as.factor))
   x })
 
-```
-
-### P3. Data with no Missingness
-Users with no missing data can refer to Step P1a to format their long data and transform it to wide or Step P1b to format their wide data for use with *devMSMs*.  
- 
-```{r}
-data <- read.csv('/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed.csv')
-
-data_wide_f <- formatWideData(data = data_wide, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
-                              id_var = "ID", #list original id variable here if it's not "ID"
-                              missing = NA, #list missing value here
-                              factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                                                     "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                                                     "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58"), #list factor variables in wide format here
-                              integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
-                                                      "gov_assist", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58", 
-                                                      "EARS_TJo.24", "EARS_TJo.35", "MDI.6", "MDI.15"), #list any integer variables in wide format here
-                              home_dir = home_dir, save.out = TRUE) 
-
-data <- data_wide_f
 ```
 
 
