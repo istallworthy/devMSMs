@@ -33,7 +33,7 @@ The package contains 6 core functions for conducting longitudinal confounder adj
 <br>   
   
 
-<img width="658" alt="Screen Shot 2023-11-09 at 4 54 22 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/4b62730e-3975-4002-a06b-205c93d04224">    
+<img width="658" alt="Screen Shot 2023-11-09 at 4 54 22 PM" src="https://github.com/istallworthy/devMSMs/blob/main/man/figures/term%20summary%20table.png">    
 
 <br> 
  
