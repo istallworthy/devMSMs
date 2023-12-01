@@ -133,7 +133,7 @@ directory.</p>
 <div class="section level3">
 <h3 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
 </h3>
-<p>We first load in imputed datasets as a mice object. These data are
+<p>We first load in imputed datasets as a mice omp. These data are
 simulated based on data from the Family Life Project (FLP), a
 longitudinal study following 1,292 families representative of two
 geographic areas (three counties in North Carolina and three counties in
@@ -307,7 +307,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     HomeOwnd + KFASTScr + peri_health + PmAge2 + PmBlac2 + PmEd2 + </span></span>
 <span><span class="co">#&gt;     PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b50faa55c0&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ec94928&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 15 is: </span></span>
 <span><span class="co">#&gt; ESETA1.15 ~ B18Raw.6 + BioDadInHH2 + caregiv_health + CORTB.6 + </span></span>
@@ -316,7 +316,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.6 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.6 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b50faa55c0&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ec94928&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 24 is: </span></span>
 <span><span class="co">#&gt; ESETA1.24 ~ B18Raw.15 + B18Raw.6 + BioDadInHH2 + caregiv_health + </span></span>
@@ -326,7 +326,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.15 + </span></span>
 <span><span class="co">#&gt;     RHasSO.6 + RHealth + RMomAgeU + SAAmylase.15 + SAAmylase.6 + </span></span>
 <span><span class="co">#&gt;     SmokTotl + state + SurpPreg + SWghtLB + TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b50faa55c0&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ec94928&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 35 is: </span></span>
 <span><span class="co">#&gt; ESETA1.35 ~ B18Raw.15 + B18Raw.24 + B18Raw.6 + BioDadInHH2 + </span></span>
@@ -339,7 +339,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     RHasSO.15 + RHasSO.24 + RHasSO.6 + RHealth + RMomAgeU + SAAmylase.15 + </span></span>
 <span><span class="co">#&gt;     SAAmylase.24 + SAAmylase.6 + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2 + WndNbrhood.24 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b50faa55c0&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ec94928&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 58 is: </span></span>
 <span><span class="co">#&gt; ESETA1.58 ~ B18Raw.15 + B18Raw.24 + B18Raw.6 + BioDadInHH2 + </span></span>
@@ -354,7 +354,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     RHealth + RMomAgeU + SAAmylase.15 + SAAmylase.24 + SAAmylase.6 + </span></span>
 <span><span class="co">#&gt;     SmokTotl + state + StrDif_Tot.35 + SurpPreg + SWghtLB + TcBlac2 + </span></span>
 <span><span class="co">#&gt;     WndNbrhood.24 + WndNbrhood.35 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b50faa55c0&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ec94928&gt;</span></span></code></pre></div>
 <p>As shown above, <code><a href="../reference/createFormulas.html">createFormulas()</a></code> creates a balancing
 formula for each exposure time point. Each full formula contains all
 time invariant confounders as well as all lagged time-varying
@@ -599,7 +599,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     HomeOwnd + KFASTScr + peri_health + PmAge2 + PmBlac2 + PmEd2 + </span></span>
 <span><span class="co">#&gt;     PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b510dcee68&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ff7a118&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 15 is: </span></span>
 <span><span class="co">#&gt; ESETA1.15 ~ B18Raw.6 + BioDadInHH2 + caregiv_health + CORTB.6 + </span></span>
@@ -608,7 +608,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.6 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.6 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b510dcee68&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ff7a118&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 24 is: </span></span>
 <span><span class="co">#&gt; ESETA1.24 ~ B18Raw.15 + BioDadInHH2 + caregiv_health + CORTB.15 + </span></span>
@@ -617,7 +617,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.15 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.15 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b510dcee68&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ff7a118&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 35 is: </span></span>
 <span><span class="co">#&gt; ESETA1.35 ~ B18Raw.24 + BioDadInHH2 + caregiv_health + CORTB.24 + </span></span>
@@ -626,7 +626,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     LESMnPos.24 + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + </span></span>
 <span><span class="co">#&gt;     RHasSO.24 + RHealth + RMomAgeU + SAAmylase.24 + SmokTotl + </span></span>
 <span><span class="co">#&gt;     state + SurpPreg + SWghtLB + TcBlac2 + WndNbrhood.24</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b510dcee68&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ff7a118&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 58 is: </span></span>
 <span><span class="co">#&gt; ESETA1.58 ~ BioDadInHH2 + caregiv_health + DrnkFreq + EARS_TJo.35 + </span></span>
@@ -635,7 +635,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.35 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SmokTotl + state + StrDif_Tot.35 + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2 + WndNbrhood.35</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b510dcee68&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;environment: 0x556a5ff7a118&gt;</span></span></code></pre></div>
 <p>Above, we inspect the shortened balancing formula at each exposure
 time point. These formulas are considerably shorter than the full
 formulas. For instance, at the 58-month exposure time point, the formula
@@ -754,9 +754,9 @@ weights.</p>
 <span><span class="va">weights.bart</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                              method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#optional</span></span>
 <span>                              home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional</span></span>
-<span><span class="co">#&gt; For imputation 1 and the bart weighting method, the median weight value is 0.7 (SD= 1.54; range= 0.05-29.88 ).</span></span></code></pre></div>
+<span><span class="co">#&gt; For imputation 1 and the bart weighting method, the median weight value is 0.69 (SD= 1.46; range= 0.05-24.96 ).</span></span></code></pre></div>
 <p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; For imputation 2 and the bart weighting method, the median weight value is 0.67 (SD= 1.43; range= 0.03-22.88 ).</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; For imputation 2 and the bart weighting method, the median weight value is 0.68 (SD= 1.48; range= 0.03-23.5 ).</span></span></code></pre>
 <p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-17-2.png" width="700"></p>
 <p><br></p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
@@ -1029,19 +1029,19 @@ imbalanced.</p>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
 <p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using bart and short formulas: </span></span>
-<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.11 - 0.21).</span></span>
+<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.1 - 0.21).</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; As shown below, 15 out of 131 (11%) covariates across time points, corresponding to 6 out of 32 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.11 (range= -0.11-0.21):</span></span>
+<span><span class="co">#&gt; As shown below, 11 out of 131 (8%) covariates across time points, corresponding to 5 out of 32 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.11 (range= -0.1-0.21):</span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates for imputation 1 using bart and short formulas</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; | exp_time| balanced_n| imbalanced_n|  n|</span></span>
 <span><span class="co">#&gt; |--------:|----------:|------------:|--:|</span></span>
 <span><span class="co">#&gt; |        6|         16|            2| 18|</span></span>
-<span><span class="co">#&gt; |       15|         25|            3| 28|</span></span>
-<span><span class="co">#&gt; |       24|         24|            3| 27|</span></span>
-<span><span class="co">#&gt; |       35|         27|            3| 30|</span></span>
-<span><span class="co">#&gt; |       58|         24|            4| 28|</span></span>
+<span><span class="co">#&gt; |       15|         26|            2| 28|</span></span>
+<span><span class="co">#&gt; |       24|         25|            2| 27|</span></span>
+<span><span class="co">#&gt; |       35|         28|            2| 30|</span></span>
+<span><span class="co">#&gt; |       58|         25|            3| 28|</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
@@ -1068,21 +1068,22 @@ imbalanced.</p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the short formulas and bart :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.09-0.22).</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; As shown below, the following 9 covariates across time points out of 131 total (6.87%) spanning 4 domains out of 33 (12.12%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ESETA1 of 0.11 (range=-0.09-0.22) :</span></span>
+<span><span class="co">#&gt; As shown below, the following 10 covariates across time points out of 131 total (7.63%) spanning 5 domains out of 33 (15.15%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ESETA1 of 0.11 (range=-0.08-0.22) :</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; |    |exposure | exp_time| covar_time|covariate      |    avg_bal| bal_thresh| balanced|</span></span>
 <span><span class="co">#&gt; |:---|:--------|--------:|----------:|:--------------|----------:|----------:|--------:|</span></span>
-<span><span class="co">#&gt; |1   |ESETA1   |        6|          0|caregiv_health |  0.1113892|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |22  |ESETA1   |       15|          6|ESETA1.6       |  0.2171361|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |47  |ESETA1   |       24|         15|B18Raw.15      |  0.1182732|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |50  |ESETA1   |       24|         15|ESETA1.15      |  0.1424995|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |54  |ESETA1   |       24|         15|InRatioCor.15  | -0.0717435|       0.05|        0|</span></span>
-<span><span class="co">#&gt; |78  |ESETA1   |       35|         24|ESETA1.24      |  0.1264640|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |82  |ESETA1   |       35|         24|InRatioCor.24  | -0.0873122|       0.05|        0|</span></span>
-<span><span class="co">#&gt; |106 |ESETA1   |       58|         35|ESETA1.35      |  0.1144003|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |110 |ESETA1   |       58|         35|InRatioCor.35  | -0.0635590|       0.05|        0|</span></span></code></pre>
+<span><span class="co">#&gt; |1   |ESETA1   |        6|          0|caregiv_health |  0.1133270|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |22  |ESETA1   |       15|          6|ESETA1.6       |  0.2184856|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |47  |ESETA1   |       24|         15|B18Raw.15      |  0.1089817|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |50  |ESETA1   |       24|         15|ESETA1.15      |  0.1393168|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |54  |ESETA1   |       24|         15|InRatioCor.15  | -0.0758125|       0.05|        0|</span></span>
+<span><span class="co">#&gt; |78  |ESETA1   |       35|         24|ESETA1.24      |  0.1234156|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |82  |ESETA1   |       35|         24|InRatioCor.24  | -0.0836590|       0.05|        0|</span></span>
+<span><span class="co">#&gt; |106 |ESETA1   |       58|         35|ESETA1.35      |  0.1135758|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |110 |ESETA1   |       58|         35|InRatioCor.35  | -0.0620776|       0.05|        0|</span></span>
+<span><span class="co">#&gt; |116 |ESETA1   |       58|          0|PmEd2          | -0.0503314|       0.05|        0|</span></span></code></pre>
 <p>For the BART weighting method, the median absolute value correlation
 between exposure and confounder is 0.02, with 11 confounders remaining
 imbalanced.</p>
@@ -1327,7 +1328,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     HomeOwnd + KFASTScr + peri_health + PmAge2 + PmBlac2 + PmEd2 + </span></span>
 <span><span class="co">#&gt;     PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b5134e59c8&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a6278dc38&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 15 no time-varying confounders at additional lags were added. </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1338,7 +1339,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.6 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.6 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b5134e59c8&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a6278dc38&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 24 the following covariate(s) will be added to the short balancing formula:</span></span>
 <span><span class="co">#&gt;                           ESETA1.6, InRatioCor.6 </span></span>
@@ -1350,7 +1351,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     MDI.15 + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + </span></span>
 <span><span class="co">#&gt;     RHasSO.15 + RHealth + RMomAgeU + SAAmylase.15 + SmokTotl + </span></span>
 <span><span class="co">#&gt;     state + SurpPreg + SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b5134e59c8&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a6278dc38&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 35 the following covariate(s) will be added to the short balancing formula:</span></span>
 <span><span class="co">#&gt;                           ESETA1.15, ESETA1.6 </span></span>
@@ -1363,7 +1364,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.24 + RHealth + RMomAgeU + </span></span>
 <span><span class="co">#&gt;     SAAmylase.24 + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2 + </span></span>
 <span><span class="co">#&gt;     WndNbrhood.24</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b5134e59c8&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x556a6278dc38&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 58 the following covariate(s) will be added to the short balancing formula:</span></span>
 <span><span class="co">#&gt;                           ESETA1.15, InRatioCor.15 </span></span>
@@ -1375,7 +1376,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     LESMnPos.35 + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + </span></span>
 <span><span class="co">#&gt;     RHasSO.35 + RHealth + RMomAgeU + SmokTotl + state + StrDif_Tot.35 + </span></span>
 <span><span class="co">#&gt;     SurpPreg + SWghtLB + TcBlac2 + WndNbrhood.35</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b5134e59c8&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;environment: 0x556a6278dc38&gt;</span></span></code></pre></div>
 <p>As shown above, several imbalanced confounders at lags greater than
 <em>t</em>-1 were added to the short formulas at exposure time points
 35-58. For instance, at the 35-month time point, economic strain at 6
