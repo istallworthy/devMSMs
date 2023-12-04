@@ -69,8 +69,9 @@ As shown in Figure 1, for use of the *devMSMs* package, data in any of the above
 
 <br>
 <br>
-
-![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](figures/sample data.png){width=600px}
+  
+![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](figures/sample data.png){width=600px} 
+  
 
 <br>
 
@@ -132,7 +133,8 @@ As shown in Figure 2, users have several options for reading in data. They can b
 
 <br>
 
-![Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated) to the three kinds of data accepted by *devMSMs*.](figures/prelim steps overview.png){width=900px}
+![Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated) to the three kinds of data accepted by *devMSMs*.](figures/prelim steps overview.png){width=900px}  
+  
 <br>
 <br>
 
