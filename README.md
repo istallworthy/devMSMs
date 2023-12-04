@@ -36,12 +36,13 @@ Below is a summary of the terms used in the *devMSMs* vignettes and functions. M
  
 ## Installation
 *devMSMs* can be installed in R Studio from Github using the *devtools* package:   
-<br> 
+<br>  
 `library(devtools)`  
 `install_github("istallworthy/devMSMs")`  
 `library(devMSMs)`  
 
 The helper functions can be installed from the accompanying *devMSMsHelpers* repo:   
+<br> 
 `install_github("istallworthy/devMSMsHelpers")`  
 `library(devMSMsHelpers)`
   
