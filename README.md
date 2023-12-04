@@ -42,7 +42,7 @@ Below is a summary of the terms used in the *devMSMs* vignettes and functions. M
 `library(devMSMs)`  
 
 The helper functions can be installed from the accompanying *devMSMsHelpers* repo:   
-<br> 
+<br>   
 `install_github("istallworthy/devMSMsHelpers")`  
 `library(devMSMsHelpers)`
   
