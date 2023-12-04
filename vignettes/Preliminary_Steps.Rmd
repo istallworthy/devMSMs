@@ -32,12 +32,12 @@ The helper functions (summarized in Table 1) for the following recommended preli
 
 <br>
 
-![Table 1. Summary of *devMSMs* helper functions.](/Users/isabella/Documents/GitHub/devMSMs/man/figures/helper function summary table.png){width=600px}  
+![Table 1. Summary of *devMSMs* helper functions.](figures/helper function summary table.png){width=600px}  
   
 
 <br>
 
-The user who has already formatted their data in wide format according to the Data Requirements vignette and imputed to accommodate any missing data (P3), can focus only on subsections P4 Identifying Optional Exposure Epochs and P5 Verifying History Distributions prior to using the package. Following completion of this vignette, users should use one of the *Workflows* vignettes to implement *devMSMs* with their longitudinal data.  
+The user who has already formatted their data in wide format according to the Data Requirements vignette and imputed to accommodate any missing data (P3) can focus only on subsections P4 Identifying Optional Exposure Epochs and P5 Verifying History Distributions, prior to using the package. Following completion of this vignette, users should use one of the *Workflows* vignettes to implement *devMSMs* with their longitudinal data.  
 <br>
   
 We first install the *devMSMs* and *devMSMsHelpers* packages.  
@@ -70,7 +70,7 @@ As shown in Figure 1, for use of the *devMSMs* package, data in any of the above
 <br>
 <br>
 
-![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](/Users/isabella/Documents/GitHub/devMSMs/man/figures/sample data.png){width=600px}
+![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](figures/sample data.png){width=600px}
 
 <br>
 
@@ -132,7 +132,7 @@ As shown in Figure 2, users have several options for reading in data. They can b
 
 <br>
 
-![Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated) to the three kinds of data accepted by *devMSMs*.](/Users/isabella/Documents/GitHub/devMSMs/man/figures/prelim steps overview.png){width=900px}
+![Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated) to the three kinds of data accepted by *devMSMs*.](figures/prelim steps overview.png){width=900px}
 <br>
 <br>
 
@@ -401,7 +401,6 @@ inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_
             ti_confounders = ti_confounders, tv_confounders = tv_confounders, # required input
             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
             home_dir = home_dir, verbose = verbose, save.out = save.out) #optional input
-
 ```
 Here, we see summaries of the data types as well as reasonable cell counts in each of our specified histories, for each imputed dataset. 
 
