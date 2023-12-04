@@ -48,5 +48,11 @@ Suggests:
 Config/testthat/edition: 3
 URL: https://istallworthy.github.io/devMSMs/, https://github.com/istallworthy/devMSMs
 VignetteBuilder: knitr
+VignetteIndexEntry: 
+  - Terminology
+  - Data_Requirements
+  - Specify_Core_Inputs
+  - Preliminary_Steps
+  - Workflow_Continuous_Exposure 
 Depends: 
     R (>= 2.10)

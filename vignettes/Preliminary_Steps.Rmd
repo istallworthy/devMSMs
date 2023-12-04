@@ -133,7 +133,7 @@ As shown in Figure 2, users have several options for reading in data. They can b
 
 <br>
 
-![Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated) to the three kinds of data accepted by *devMSMs*.](figures/prelim steps overview.png){width=900px}  
+![Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated in bold) to the three kinds of data accepted by *devMSMs*.](figures/prelim steps overview.png){width=900px}  
   
 <br>
 <br>
