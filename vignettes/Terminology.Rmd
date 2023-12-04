@@ -22,7 +22,8 @@ knitr::opts_chunk$set(
 
 
 This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a>, and *Workflows* vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: *[insert link]*.  
-  
+<br>  
+
 ![Table 1. Summary of terminology used in *devMSMs*](figures/term summary table.png){width=600px}
 
 
