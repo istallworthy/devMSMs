@@ -8,3 +8,5 @@
 ^\.git$
 ^\.DS_Store$
 ^devMSMs\.Rproj$
+^doc$
+^Meta$
