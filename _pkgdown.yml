@@ -15,7 +15,14 @@ home:
   description: add description here
   sidebar:
     structure: [links, license, community, citation, authors, dev]
-    
-    
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - Terminology
+  - Data_Requirements
+  - Specify_Core_Inputs
+  - Preliminary_Steps
+  - Workflow_Continuous_Exposure
  
  
