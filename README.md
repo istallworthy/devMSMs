@@ -4,19 +4,19 @@ Scientists who study humans are fundamentally interested in questions of causati
 <br>
 Marginal structural models (MSMs; Robins et al., 2000), orginating in epidemiology and public health, represent one under-utilized tool for improving causal inference with longitudinal observational data, given certain assumptions. In brief, MSMs leverage inverse-probability-of-treatment-weights (IPTW) and the potential outcomes framework. MSMs first focus on the problem of confounding, using IPTW to attenuate associations between measured confounders and an exposure (e.g., experience, characteristic, event --from biology to the broader environment) over time. A weighted model can then be fitted relating a time-varying exposure and a future outcome. Finally, the model-predicted effects of different exposure histories that vary in dose and timing can be evaluated and compared as counterfactuals, to reveal putative causal effects.    
  <br>
-*devMSMs* is an R package accompanying our tutorial paper, *Investigating Causal Questions in Human Development using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R* (*insert preprint link here*). Together, they offer conceptual and practice guidance for implementing MSMs with longitudinal data, to answer causal questions about the dose and timing effects of a given exposure on a future outcome. 
+*devMSMs* is an R package accompanying our tutorial paper, *Investigating Causal Questions in Human Development using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R* (*insert preprint link here*). Together, they offer conceptual and practice guidance for implementing MSMs with longitudinal data to answer causal questions about the dose and timing effects of a given exposure on a future outcome. 
 
 Core features of *devMSMs* include:  
   
 - flexible functions with built-in user guidance, drawing on established expertise and best practices for implementing longitudinal IPTW weighting and outcome modeling, to answer substantive causal questions about dose and timing
   
-- functions that accept complete or imputed data to accommodate missingness often found in human data
+- functions that accept complete or imputed data to accommodate missingness often found in human studies  
    
-- a novel recommended workflow, based on expertise from several disciplines, for using the *devMSMs* functions with longitudinal data 
+- a novel recommended workflow, based on expertise from several disciplines, for using the *devMSMs* functions with longitudinal data (see *Workflows* vignettes)
   
-- step-by-step user guidance for implemeneting the *deveMSMs* worflow in the form of vignettes applied to simulated data, geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> 
+- step-by-step user guidance for implementing the *deveMSMs* worflow in the form of vignettes applied to simulated data, geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> 
   
-- an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementaiton of *devMSMs*
+- an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementaiton of *devMSMs* (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary steps vignette</a>)
 
 - a conceptual introduction, an example empirical application, and additional resources in the accompanying tutorial paper
 
