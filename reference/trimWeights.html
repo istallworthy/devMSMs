@@ -130,17 +130,17 @@ this function wraps</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x555a88360ee0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x556c97981fc0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x555a88360ee0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x556c97981fc0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.1 + A.2 + B.1 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x555a88360ee0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x556c97981fc0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span>,</span></span>
@@ -158,7 +158,7 @@ this function wraps</p></div>
 <span class="r-in"><span>                   outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 0.97 (SD = 0.41; range = 0.27-2). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.01 (SD = 0.92; range = 0.04-4). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="trimWeights-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -168,7 +168,7 @@ this function wraps</p></div>
 <span class="r-in"><span>                 save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Trimming weights to 95%.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the A-D.3 relation, following trimming at the 0.95 quantile, the median weight value is 0.97 (SD= 0.39; range= 0.27-2). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the A-D.3 relation, following trimming at the 0.95 quantile, the median weight value is 1.01 (SD= 0.87; range= 0.04-3). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="trimWeights-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu">trimWeights</span><span class="op">(</span>exposure <span class="op">=</span> <span class="st">"A"</span>,</span></span>
@@ -178,7 +178,7 @@ this function wraps</p></div>
 <span class="r-in"><span>                 save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Trimming weights to 75%.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the A-D.3 relation, following trimming at the 0.75 quantile, the median weight value is 0.97 (SD= 0.24; range= 0.27-1). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the A-D.3 relation, following trimming at the 0.75 quantile, the median weight value is 1.01 (SD= 0.37; range= 0.04-1). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="trimWeights-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
