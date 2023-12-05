@@ -50,9 +50,9 @@ URL: https://istallworthy.github.io/devMSMs/, https://github.com/istallworthy/de
 VignetteBuilder: knitr
 VignetteIndexEntry: 
   - Terminology
-  - Data_Requirements
-  - Specify_Core_Inputs
-  - Preliminary_Steps
-  - Workflow_Continuous_Exposure 
+  - Data Requirements
+  - Specify Core Inputs
+  - Preliminary Steps
+  - Workflow Continuous Exposure 
 Depends: 
     R (>= 2.10)
