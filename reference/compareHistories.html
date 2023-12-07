@@ -196,17 +196,17 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a5ad0ec600&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557131bdc6b8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a5ad0ec600&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557131bdc6b8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.1 + A.2 + B.1 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a5ad0ec600&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557131bdc6b8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span>,</span></span>
@@ -225,7 +225,7 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                   outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 0.86 (SD = 0.9; range = 0.17-4). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.06 (SD = 0.78; range = 0.09-4). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="compareHistories-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -242,8 +242,8 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Working (Rao-Scott+F) LRT for A.1 A.2 A.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  in svyglm(formula = as.formula(f), design = s, family = fam)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  1.618779 p= 0.61669 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  1.8 0.72 0.52 );  denominator df= 46</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Working 2logLR =  3.142531 p= 0.35776 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (scale factors:  1.6 1 0.38 );  denominator df= 46</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m0, is summarized below:</span>
 <span class="r-in"><span></span></span>
@@ -261,63 +261,63 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |history |  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-------|--:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  6|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-l   |  4|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |h-l-h   |  6|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |h-l-l   |  9|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-h   |  9|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-l   |  6|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-h   |  4|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  6|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-l   |  9|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |h-l-h   |  7|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |h-l-l   |  4|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-h   |  4|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-l   |  7|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-h   |  9|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  5|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Below are the average predictions by user-specified history: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |     A.1|     A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |-------:|-------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | -0.0179| -0.1492| 0.0933|  -0.0386|    0.1491|   -0.2591|  0.7955|  0.3300|  -0.3308|    0.2535|l-l-l   |          0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | -0.0179| -0.1492| 0.0953|  -0.0388|    0.1491|   -0.2599|  0.7949|  0.3311|  -0.3309|    0.2534|l-l-h   |          1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | -0.0179| -0.1472| 0.0933|  -0.0382|    0.1489|   -0.2565|  0.7976|  0.3263|  -0.3299|    0.2536|l-h-l   |          1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | -0.0179| -0.1472| 0.0953|  -0.0383|    0.1489|   -0.2573|  0.7970|  0.3274|  -0.3301|    0.2535|l-h-h   |          2|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | -0.0159| -0.1492| 0.0933|  -0.0387|    0.1490|   -0.2595|  0.7952|  0.3306|  -0.3308|    0.2534|h-l-l   |          1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | -0.0159| -0.1492| 0.0953|  -0.0388|    0.1491|   -0.2603|  0.7946|  0.3317|  -0.3310|    0.2534|h-l-h   |          2|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | -0.0159| -0.1472| 0.0933|  -0.0382|    0.1488|   -0.2569|  0.7973|  0.3269|  -0.3300|    0.2535|h-h-l   |          2|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | -0.0159| -0.1472| 0.0953|  -0.0384|    0.1489|   -0.2577|  0.7966|  0.3280|  -0.3301|    0.2534|h-h-h   |          3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |    A.1|    A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |------:|------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | 0.0482| 0.1854| 0.3793|   0.3981|    0.1344|    2.9609|  0.0031|  8.3487|   0.1346|    0.6616|l-l-l   |          0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | 0.0482| 0.1854| 0.3813|   0.3979|    0.1343|    2.9628|  0.0030|  8.3578|   0.1347|    0.6611|l-l-h   |          1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | 0.0482| 0.1874| 0.3793|   0.3983|    0.1343|    2.9651|  0.0030|  8.3686|   0.1350|    0.6615|l-h-l   |          1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | 0.0482| 0.1874| 0.3813|   0.3981|    0.1342|    2.9671|  0.0030|  8.3777|   0.1351|    0.6610|l-h-h   |          2|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | 0.0502| 0.1854| 0.3793|   0.3986|    0.1345|    2.9641|  0.0030|  8.3639|   0.1350|    0.6621|h-l-l   |          1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | 0.0502| 0.1854| 0.3813|   0.3984|    0.1343|    2.9660|  0.0030|  8.3729|   0.1351|    0.6616|h-l-h   |          2|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | 0.0502| 0.1874| 0.3793|   0.3987|    0.1343|    2.9684|  0.0030|  8.3837|   0.1355|    0.6620|h-h-l   |          2|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | 0.0502| 0.1874| 0.3813|   0.3985|    0.1342|    2.9703|  0.0030|  8.3928|   0.1356|    0.6615|h-h-h   |          3|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Conducting multiple comparison correction for all pairings between comparison histories and each refernece history using the BH method. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: please inspect the following comparisons: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                    | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history        |dose   | p.value_corr|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:-------------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:--------------|:------|------------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0179, -0.1492, 0.0953) |        0|         0|      0.28|    0.78|    0.36|        0|         0|l-l-l vs l-l-h |0 vs 1 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0179, -0.1472, 0.0933) |        0|         0|     -1.34|    0.18|    2.47|        0|         0|l-l-l vs l-h-l |0 vs 1 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0179, -0.1472, 0.0953) |        0|         0|     -0.69|    0.49|    1.03|        0|         0|l-l-l vs l-h-h |0 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0159, -0.1492, 0.0933) |        0|         0|      0.22|    0.83|    0.27|        0|         0|l-l-l vs h-l-l |0 vs 1 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0159, -0.1492, 0.0953) |        0|         0|      0.36|    0.72|    0.48|        0|         0|l-l-l vs h-l-h |0 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0159, -0.1472, 0.0933) |        0|         0|     -0.87|    0.38|    1.39|        0|         0|l-l-l vs h-h-l |0 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0159, -0.1472, 0.0953) |        0|         0|     -0.49|    0.63|    0.68|        0|         0|l-l-l vs h-h-h |0 vs 3 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0953) - (-0.0179, -0.1472, 0.0933) |        0|         0|     -0.90|    0.37|    1.45|        0|         0|l-l-h vs l-h-l |1 vs 1 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0953) - (-0.0179, -0.1472, 0.0953) |        0|         0|     -1.34|    0.18|    2.47|        0|         0|l-l-h vs l-h-h |1 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0953) - (-0.0159, -0.1492, 0.0933) |        0|         0|     -0.14|    0.89|    0.17|        0|         0|l-l-h vs h-l-l |1 vs 1 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0953) - (-0.0159, -0.1492, 0.0953) |        0|         0|      0.22|    0.83|    0.27|        0|         0|l-l-h vs h-l-h |1 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0953) - (-0.0159, -0.1472, 0.0933) |        0|         0|     -0.73|    0.46|    1.11|        0|         0|l-l-h vs h-h-l |1 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0953) - (-0.0159, -0.1472, 0.0953) |        0|         0|     -0.87|    0.38|    1.39|        0|         0|l-l-h vs h-h-h |1 vs 3 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1472, 0.0933) - (-0.0179, -0.1472, 0.0953) |        0|         0|      0.28|    0.78|    0.36|        0|         0|l-h-l vs l-h-h |1 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1472, 0.0933) - (-0.0159, -0.1492, 0.0933) |        0|         0|      1.30|    0.19|    2.36|        0|         0|l-h-l vs h-l-l |1 vs 1 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1472, 0.0933) - (-0.0159, -0.1492, 0.0953) |        0|         0|      0.96|    0.34|    1.56|        0|         0|l-h-l vs h-l-h |1 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1472, 0.0933) - (-0.0159, -0.1472, 0.0933) |        0|         0|      0.22|    0.83|    0.27|        0|         0|l-h-l vs h-h-l |1 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1472, 0.0933) - (-0.0159, -0.1472, 0.0953) |        0|         0|      0.36|    0.72|    0.48|        0|         0|l-h-l vs h-h-h |1 vs 3 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1472, 0.0953) - (-0.0159, -0.1492, 0.0933) |        0|         0|      0.73|    0.46|    1.11|        0|         0|l-h-h vs h-l-l |2 vs 1 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1472, 0.0953) - (-0.0159, -0.1492, 0.0953) |        0|         0|      1.30|    0.19|    2.36|        0|         0|l-h-h vs h-l-h |2 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1472, 0.0953) - (-0.0159, -0.1472, 0.0933) |        0|         0|     -0.14|    0.89|    0.17|        0|         0|l-h-h vs h-h-l |2 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1472, 0.0953) - (-0.0159, -0.1472, 0.0953) |        0|         0|      0.22|    0.83|    0.27|        0|         0|l-h-h vs h-h-h |2 vs 3 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0159, -0.1492, 0.0933) - (-0.0159, -0.1492, 0.0953) |        0|         0|      0.28|    0.78|    0.36|        0|         0|h-l-l vs h-l-h |1 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0159, -0.1492, 0.0933) - (-0.0159, -0.1472, 0.0933) |        0|         0|     -1.34|    0.18|    2.47|        0|         0|h-l-l vs h-h-l |1 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0159, -0.1492, 0.0933) - (-0.0159, -0.1472, 0.0953) |        0|         0|     -0.69|    0.49|    1.03|        0|         0|h-l-l vs h-h-h |1 vs 3 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0159, -0.1492, 0.0953) - (-0.0159, -0.1472, 0.0933) |        0|         0|     -0.90|    0.37|    1.45|        0|         0|h-l-h vs h-h-l |2 vs 2 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0159, -0.1492, 0.0953) - (-0.0159, -0.1472, 0.0953) |        0|         0|     -1.34|    0.18|    2.47|        0|         0|h-l-h vs h-h-h |2 vs 3 |         0.89|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0159, -0.1472, 0.0933) - (-0.0159, -0.1472, 0.0953) |        0|         0|      0.28|    0.78|    0.36|        0|         0|h-h-l vs h-h-h |2 vs 3 |         0.89|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history        |dose   | p.value_corr|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:---------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:--------------|:------|------------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0482, 0.1854, 0.3813) |        0|         0|      0.54|    0.59|    0.77|        0|         0|l-l-l vs l-l-h |0 vs 1 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0482, 0.1874, 0.3793) |        0|         0|     -0.42|    0.67|    0.57|        0|         0|l-l-l vs l-h-l |0 vs 1 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0482, 0.1874, 0.3813) |        0|         0|      0.03|    0.98|    0.04|        0|         0|l-l-l vs l-h-h |0 vs 2 |         0.98|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0502, 0.1854, 0.3793) |        0|         0|     -1.47|    0.14|    2.81|        0|         0|l-l-l vs h-l-l |0 vs 1 |         0.57|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0502, 0.1854, 0.3813) |        0|         0|     -0.49|    0.62|    0.68|        0|         0|l-l-l vs h-l-h |0 vs 2 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0502, 0.1874, 0.3793) |        0|         0|     -1.20|    0.23|    2.12|        0|         0|l-l-l vs h-h-l |0 vs 2 |         0.72|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0502, 0.1874, 0.3813) |        0|         0|     -0.57|    0.57|    0.81|        0|         0|l-l-l vs h-h-h |0 vs 3 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3813) - (0.0482, 0.1874, 0.3793) |        0|         0|     -0.88|    0.38|    1.39|        0|         0|l-l-h vs l-h-l |1 vs 1 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3813) - (0.0482, 0.1874, 0.3813) |        0|         0|     -0.42|    0.67|    0.57|        0|         0|l-l-h vs l-h-h |1 vs 2 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3813) - (0.0502, 0.1854, 0.3793) |        0|         0|     -2.03|    0.04|    4.56|        0|         0|l-l-h vs h-l-l |1 vs 1 |         0.43|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3813) - (0.0502, 0.1854, 0.3813) |        0|         0|     -1.47|    0.14|    2.81|        0|         0|l-l-h vs h-l-h |1 vs 2 |         0.57|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3813) - (0.0502, 0.1874, 0.3793) |        0|         0|     -2.00|    0.05|    4.45|        0|         0|l-l-h vs h-h-l |1 vs 2 |         0.43|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3813) - (0.0502, 0.1874, 0.3813) |        0|         0|     -1.20|    0.23|    2.12|        0|         0|l-l-h vs h-h-h |1 vs 3 |         0.72|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1874, 0.3793) - (0.0482, 0.1874, 0.3813) |        0|         0|      0.54|    0.59|    0.77|        0|         0|l-h-l vs l-h-h |1 vs 2 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1874, 0.3793) - (0.0502, 0.1854, 0.3793) |        0|         0|     -0.62|    0.54|    0.90|        0|         0|l-h-l vs h-l-l |1 vs 1 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1874, 0.3793) - (0.0502, 0.1854, 0.3813) |        0|         0|     -0.19|    0.85|    0.24|        0|         0|l-h-l vs h-l-h |1 vs 2 |         0.91|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1874, 0.3793) - (0.0502, 0.1874, 0.3793) |        0|         0|     -1.47|    0.14|    2.81|        0|         0|l-h-l vs h-h-l |1 vs 2 |         0.57|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1874, 0.3793) - (0.0502, 0.1874, 0.3813) |        0|         0|     -0.49|    0.62|    0.68|        0|         0|l-h-l vs h-h-h |1 vs 3 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1874, 0.3813) - (0.0502, 0.1854, 0.3793) |        0|         0|     -0.82|    0.41|    1.28|        0|         0|l-h-h vs h-l-l |2 vs 1 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1874, 0.3813) - (0.0502, 0.1854, 0.3813) |        0|         0|     -0.62|    0.54|    0.90|        0|         0|l-h-h vs h-l-h |2 vs 2 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1874, 0.3813) - (0.0502, 0.1874, 0.3793) |        0|         0|     -2.03|    0.04|    4.56|        0|         0|l-h-h vs h-h-l |2 vs 2 |         0.43|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1874, 0.3813) - (0.0502, 0.1874, 0.3813) |        0|         0|     -1.47|    0.14|    2.81|        0|         0|l-h-h vs h-h-h |2 vs 3 |         0.57|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0502, 0.1854, 0.3793) - (0.0502, 0.1854, 0.3813) |        0|         0|      0.54|    0.59|    0.77|        0|         0|h-l-l vs h-l-h |1 vs 2 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0502, 0.1854, 0.3793) - (0.0502, 0.1874, 0.3793) |        0|         0|     -0.42|    0.67|    0.57|        0|         0|h-l-l vs h-h-l |1 vs 2 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0502, 0.1854, 0.3793) - (0.0502, 0.1874, 0.3813) |        0|         0|      0.03|    0.98|    0.04|        0|         0|h-l-l vs h-h-h |1 vs 3 |         0.98|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0502, 0.1854, 0.3813) - (0.0502, 0.1874, 0.3793) |        0|         0|     -0.88|    0.38|    1.39|        0|         0|h-l-h vs h-h-l |2 vs 2 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0502, 0.1854, 0.3813) - (0.0502, 0.1874, 0.3813) |        0|         0|     -0.42|    0.67|    0.57|        0|         0|h-l-h vs h-h-h |2 vs 3 |         0.76|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0502, 0.1874, 0.3793) - (0.0502, 0.1874, 0.3813) |        0|         0|      0.54|    0.59|    0.77|        0|         0|h-h-l vs h-h-h |2 vs 3 |         0.76|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="compareHistories-2.png" alt="" width="700" height="433"></span>
@@ -330,31 +330,31 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                      save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 12 (24%) individuals that fall into 2 out of the 2 total user-defined exposure histories created from median split values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 10 (20%) individuals that fall into 2 out of the 2 total user-defined exposure histories created from median split values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Summary of user-specified exposure A histories based on exposure main effects 1, 2, 3 containing time points 1, 2, 3:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |history |  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-------|--:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  6|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  6|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  5|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Below are the average predictions by user-specified history: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |   |     A.1|     A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|-------:|-------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | -0.0179| -0.1492| 0.0933|  -0.0386|    0.1491|   -0.2591|  0.7955|   0.330|  -0.3308|    0.2535|l-l-l   |          0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |8  | -0.0159| -0.1472| 0.0953|  -0.0384|    0.1489|   -0.2577|  0.7966|   0.328|  -0.3301|    0.2534|h-h-h   |          3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |   |    A.1|    A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|------:|------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | 0.0482| 0.1854| 0.3793|   0.3981|    0.1344|    2.9609|  0.0031|  8.3487|   0.1346|    0.6616|l-l-l   |          0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |8  | 0.0502| 0.1874| 0.3813|   0.3985|    0.1342|    2.9703|  0.0030|  8.3928|   0.1356|    0.6615|h-h-h   |          3|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Conducting multiple comparison correction for all pairings between comparison histories and each refernece history using the BH method. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: please inspect the following comparisons: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                    | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history        |dose   | p.value_corr|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:-------------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:--------------|:------|------------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0159, -0.1472, 0.0953) |        0|         0|      0.49|    0.63|    0.68|        0|         0|l-l-l vs h-h-h |0 vs 3 |         0.63|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history        |dose   | p.value_corr|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:---------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:--------------|:------|------------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0502, 0.1874, 0.3813) |        0|         0|      0.57|    0.57|    0.81|        0|         0|l-l-l vs h-h-h |0 vs 3 |         0.57|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="compareHistories-3.png" alt="" width="700" height="433"></span>
@@ -367,34 +367,34 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                      save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 21 (42%) individuals that fall into 3 out of the 3 total user-defined exposure histories created from median split values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 14 (28%) individuals that fall into 3 out of the 3 total user-defined exposure histories created from median split values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Summary of user-specified exposure A histories based on exposure main effects 1, 2, 3 containing time points 1, 2, 3:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |history |  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-------|--:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  6|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |h-l-l   |  9|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  6|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |h-l-l   |  4|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  5|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Below are the average predictions by user-specified history: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |   |     A.1|     A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|-------:|-------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | -0.0179| -0.1492| 0.0933|  -0.0386|    0.1491|   -0.2591|  0.7955|  0.3300|  -0.3308|    0.2535|l-l-l   |          0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |5  | -0.0159| -0.1492| 0.0933|  -0.0387|    0.1490|   -0.2595|  0.7952|  0.3306|  -0.3308|    0.2534|h-l-l   |          1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |8  | -0.0159| -0.1472| 0.0953|  -0.0384|    0.1489|   -0.2577|  0.7966|  0.3280|  -0.3301|    0.2534|h-h-h   |          3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |   |    A.1|    A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|------:|------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | 0.0482| 0.1854| 0.3793|   0.3981|    0.1344|    2.9609|  0.0031|  8.3487|   0.1346|    0.6616|l-l-l   |          0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |5  | 0.0502| 0.1854| 0.3793|   0.3986|    0.1345|    2.9641|  0.0030|  8.3639|   0.1350|    0.6621|h-l-l   |          1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |8  | 0.0502| 0.1874| 0.3813|   0.3985|    0.1342|    2.9703|  0.0030|  8.3928|   0.1356|    0.6615|h-h-h   |          3|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Conducting multiple comparison correction for all pairings between comparison histories and each refernece history using the BH method. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: please inspect the following comparisons: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                    | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history        |dose   | p.value_corr|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:-------------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:--------------|:------|------------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0159, -0.1472, 0.0953) |        0|         0|      0.49|    0.63|    0.68|        0|         0|l-l-l vs h-h-h |0 vs 3 |         0.83|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0159, -0.1492, 0.0933) |        0|         0|     -0.22|    0.83|    0.27|        0|         0|l-l-l vs h-l-l |0 vs 1 |         0.83|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history        |dose   | p.value_corr|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:---------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:--------------|:------|------------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0502, 0.1874, 0.3813) |        0|         0|      0.57|    0.57|    0.81|        0|         0|l-l-l vs h-h-h |0 vs 3 |         0.57|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0502, 0.1854, 0.3793) |        0|         0|      1.47|    0.14|    2.81|        0|         0|l-l-l vs h-l-l |0 vs 1 |         0.28|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="compareHistories-4.png" alt="" width="700" height="433"></span>
@@ -407,33 +407,33 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                      save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 21 (42%) individuals that fall into 3 out of the 3 total user-defined exposure histories created from median split values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 14 (28%) individuals that fall into 3 out of the 3 total user-defined exposure histories created from median split values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Summary of user-specified exposure A histories based on exposure main effects 1, 2, 3 containing time points 1, 2, 3:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |history |  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-------|--:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  6|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-h   |  9|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  6|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-h   |  4|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  5|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Below are the average predictions by user-specified history: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |   |     A.1|     A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|-------:|-------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | -0.0179| -0.1492| 0.0933|  -0.0386|    0.1491|   -0.2591|  0.7955|  0.3300|  -0.3308|    0.2535|l-l-l   |          0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |4  | -0.0179| -0.1472| 0.0953|  -0.0383|    0.1489|   -0.2573|  0.7970|  0.3274|  -0.3301|    0.2535|l-h-h   |          2|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |8  | -0.0159| -0.1472| 0.0953|  -0.0384|    0.1489|   -0.2577|  0.7966|  0.3280|  -0.3301|    0.2534|h-h-h   |          3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |   |    A.1|    A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|------:|------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | 0.0482| 0.1854| 0.3793|   0.3981|    0.1344|    2.9609|  0.0031|  8.3487|   0.1346|    0.6616|l-l-l   |          0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |4  | 0.0482| 0.1874| 0.3813|   0.3981|    0.1342|    2.9671|  0.0030|  8.3777|   0.1351|    0.6610|l-h-h   |          2|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |8  | 0.0502| 0.1874| 0.3813|   0.3985|    0.1342|    2.9703|  0.0030|  8.3928|   0.1356|    0.6615|h-h-h   |          3|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Conducting multiple comparison correction for all pairings between comparison histories and each refernece history using the BH method. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: please inspect the following comparisons: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                    | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|term.1                                                                                                                    | estimate.1| std.error.1| statistic.1| p.value.1| s.value.1| conf.low.1| conf.high.1|history        |dose   | p.value_corr|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:-------------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------------------------------------------------------------------------------------------------------------------------|----------:|-----------:|-----------:|---------:|---------:|----------:|-----------:|:--------------|:------|------------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0159, -0.1472, 0.0953) |        0|         0|      0.49|    0.63|    0.68|        0|         0|(-0.0179410966121733,-0.147224824112819,0.0953230251724627) - (-0.0159410966121733,-0.147224824112819,0.0953230251724627) |          0|           0|       -0.22|      0.83|      0.27|          0|           0|l-l-l vs h-h-h |0 vs 3 |         0.63|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|term.1                                                                                                              | estimate.1| std.error.1| statistic.1| p.value.1| s.value.1| conf.low.1| conf.high.1|history        |dose   | p.value_corr|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:---------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------------------------------------------------------------------------------------------------------------------|----------:|-----------:|-----------:|---------:|---------:|----------:|-----------:|:--------------|:------|------------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0502, 0.1874, 0.3813) |        0|         0|      0.57|    0.57|    0.81|        0|         0|(0.0481940953041408,0.187382532587441,0.381339541643242) - (0.0501940953041408,0.187382532587441,0.381339541643242) |          0|           0|        1.47|      0.14|      2.81|          0|           0|l-l-l vs h-h-h |0 vs 3 |         0.57|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="compareHistories-5.png" alt="" width="700" height="433"></span>
@@ -446,36 +446,36 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                      save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 25 (50%) individuals that fall into 4 out of the 4 total user-defined exposure histories created from median split values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 23 (46%) individuals that fall into 4 out of the 4 total user-defined exposure histories created from median split values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Summary of user-specified exposure A histories based on exposure main effects 1, 2, 3 containing time points 1, 2, 3:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |history |  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-------|--:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  6|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-h   |  9|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-h   |  4|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  6|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-h   |  4|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-h   |  9|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  5|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Below are the average predictions by user-specified history: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |   |     A.1|     A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|-------:|-------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | -0.0179| -0.1492| 0.0933|  -0.0386|    0.1491|   -0.2591|  0.7955|  0.3300|  -0.3308|    0.2535|l-l-l   |          0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |2  | -0.0179| -0.1492| 0.0953|  -0.0388|    0.1491|   -0.2599|  0.7949|  0.3311|  -0.3309|    0.2534|l-l-h   |          1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |4  | -0.0179| -0.1472| 0.0953|  -0.0383|    0.1489|   -0.2573|  0.7970|  0.3274|  -0.3301|    0.2535|l-h-h   |          2|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |8  | -0.0159| -0.1472| 0.0953|  -0.0384|    0.1489|   -0.2577|  0.7966|  0.3280|  -0.3301|    0.2534|h-h-h   |          3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |   |    A.1|    A.2|    A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|------:|------:|------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | 0.0482| 0.1854| 0.3793|   0.3981|    0.1344|    2.9609|  0.0031|  8.3487|   0.1346|    0.6616|l-l-l   |          0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |2  | 0.0482| 0.1854| 0.3813|   0.3979|    0.1343|    2.9628|  0.0030|  8.3578|   0.1347|    0.6611|l-l-h   |          1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |4  | 0.0482| 0.1874| 0.3813|   0.3981|    0.1342|    2.9671|  0.0030|  8.3777|   0.1351|    0.6610|l-h-h   |          2|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |8  | 0.0502| 0.1874| 0.3813|   0.3985|    0.1342|    2.9703|  0.0030|  8.3928|   0.1356|    0.6615|h-h-h   |          3|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Conducting multiple comparison correction for all pairings between comparison histories and each refernece history using the BH method. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: please inspect the following comparisons: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                    | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|term.1                                                                                                                    | estimate.1| std.error.1| statistic.1| p.value.1| s.value.1| conf.low.1| conf.high.1|history        |dose   | p.value_corr|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:-------------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------------------------------------------------------------------------------------------------------------------------|----------:|-----------:|-----------:|---------:|---------:|----------:|-----------:|:--------------|:------|------------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0159, -0.1472, 0.0953) |        0|         0|      0.49|    0.63|    0.68|        0|         0|(-0.0179410966121733,-0.147224824112819,0.0953230251724627) - (-0.0159410966121733,-0.147224824112819,0.0953230251724627) |          0|           0|       -0.22|      0.83|      0.27|          0|           0|l-l-l vs h-h-h |0 vs 3 |         0.78|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.0179, -0.1492, 0.0933) - (-0.0179, -0.1492, 0.0953) |        0|         0|     -0.28|    0.78|    0.36|        0|         0|(-0.0179410966121733,-0.147224824112819,0.0953230251724627) - (-0.0179410966121733,-0.149224824112819,0.0953230251724627) |          0|           0|       -1.34|      0.18|      2.47|          0|           0|l-l-l vs l-l-h |0 vs 1 |         0.78|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|term.1                                                                                                              | estimate.1| std.error.1| statistic.1| p.value.1| s.value.1| conf.low.1| conf.high.1|history        |dose   | p.value_corr|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:---------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------------------------------------------------------------------------------------------------------------------|----------:|-----------:|-----------:|---------:|---------:|----------:|-----------:|:--------------|:------|------------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0502, 0.1874, 0.3813) |        0|         0|      0.57|    0.57|    0.81|        0|         0|(0.0481940953041408,0.187382532587441,0.381339541643242) - (0.0501940953041408,0.187382532587441,0.381339541643242) |          0|           0|        1.47|      0.14|      2.81|          0|           0|l-l-l vs h-h-h |0 vs 3 |         0.59|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(0.0482, 0.1854, 0.3793) - (0.0482, 0.1854, 0.3813) |        0|         0|     -0.54|    0.59|    0.77|        0|         0|(0.0481940953041408,0.187382532587441,0.381339541643242) - (0.0481940953041408,0.185382532587441,0.381339541643242) |          0|           0|       -0.42|      0.67|      0.57|          0|           0|l-l-l vs l-l-h |0 vs 1 |         0.59|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="compareHistories-6.png" alt="" width="700" height="433"></span>
@@ -494,7 +494,7 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-in"><span>                      save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 10 (20%) individuals that fall into 4 out of the 4 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 8 (16%) individuals that fall into 4 out of the 4 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure A, respectively, across 1, 2, 3. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Summary of user-specified exposure A histories based on exposure main effects 1, 2, 3 containing time points 1, 2, 3:</span>
@@ -502,28 +502,28 @@ intermediary output locally (default is TRUE)</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |history |  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-------|--:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |h-h-h   |  3|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-h   |  4|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-h   |  1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  2|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-h-h   |  2|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-h   |  2|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |l-l-l   |  1|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Below are the average predictions by user-specified history: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |   |     A.1|     A.2|     A.3| estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|history | dose_count|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:--|-------:|-------:|-------:|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:-------|----------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | -0.5365| -0.5199| -0.3848|  -0.0772|    0.2227|   -0.3464|  0.7290|  0.4560|  -0.5136|    0.3593|l-l-l   |          3|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |2  | -0.5365| -0.5199|  0.1952|  -0.1138|    0.2145|   -0.5302|  0.5959|  0.7468|  -0.5342|    0.3067|l-l-h   |          2|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |4  | -0.5365|  0.2427|  0.1952|   0.0570|    0.1374|    0.4146|  0.6784|  0.5598|  -0.2123|    0.3262|l-h-h   |          1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |8  |  0.2898|  0.2427|  0.1952|   0.0342|    0.1259|    0.2718|  0.7858|  0.3478|  -0.2125|    0.2809|h-h-h   |          0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1  | -0.4930| -0.4963| -0.2938|   0.2757|    0.3303|    0.8349|  0.4038|  1.3085|  -0.3715|    0.9230|l-l-l   |          3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |2  | -0.4930| -0.4963|  0.6070|   0.1912|    0.2159|    0.8858|  0.3757|  1.4122|  -0.2319|    0.6143|l-l-h   |          2|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |4  | -0.4930|  0.3538|  0.6070|   0.2628|    0.1293|    2.0316|  0.0422|  4.5669|   0.0093|    0.5163|l-h-h   |          1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |8  |  0.4298|  0.3538|  0.6070|   0.4813|    0.1467|    3.2799|  0.0010|  9.9111|   0.1937|    0.7689|h-h-h   |          0|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Conducting multiple comparison correction for all pairings between comparison histories and each refernece history using the BH method. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: please inspect the following comparisons: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                     | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|term.1                                                                                                               | estimate.1| std.error.1| statistic.1| p.value.1| s.value.1| conf.low.1| conf.high.1|history        |dose   | p.value_corr|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:--------------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:--------------------------------------------------------------------------------------------------------------------|----------:|-----------:|-----------:|---------:|---------:|----------:|-----------:|:--------------|:------|------------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.5365, -0.5199, -0.3848) - (0.2898, 0.2427, 0.1952)   |     0.11|      0.19|      0.58|    0.56|    0.84|    -0.26|      0.49|(-0.536530998433396,0.242709498033041,0.195184491910421) - (0.289815144486379,0.242709498033041,0.195184491910421)   |      -0.02|        0.10|       -0.22|      0.83|      0.27|      -0.23|        0.18|l-l-l vs h-h-h |3 vs 0 |         0.78|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.5365, -0.5199, -0.3848) - (-0.5365, -0.5199, 0.1952) |    -0.04|      0.13|     -0.28|    0.78|    0.36|    -0.29|      0.22|(-0.536530998433396,0.242709498033041,0.195184491910421) - (-0.536530998433396,-0.519903694784367,0.195184491910421) |      -0.17|        0.13|       -1.34|      0.18|      2.47|      -0.42|        0.08|l-l-l vs l-l-h |3 vs 2 |         0.78|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |term                                                  | estimate| std.error| statistic| p.value| s.value| conf.low| conf.high|term.1                                                                                                               | estimate.1| std.error.1| statistic.1| p.value.1| s.value.1| conf.low.1| conf.high.1|history        |dose   | p.value_corr|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------------------------------------------------|--------:|---------:|---------:|-------:|-------:|--------:|---------:|:--------------------------------------------------------------------------------------------------------------------|----------:|-----------:|-----------:|---------:|---------:|----------:|-----------:|:--------------|:------|------------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.493, -0.4963, -0.2938) - (0.4298, 0.3538, 0.607)  |     0.21|      0.36|      0.58|    0.56|    0.83|    -0.49|      0.90|(-0.492969579162185,0.353833498691566,0.606953176699072) - (0.429791593213711,0.353833498691566,0.606953176699072)   |       0.22|        0.15|        1.47|      0.14|      2.81|      -0.07|        0.51|l-l-l vs h-h-h |3 vs 0 |         0.59|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |(-0.493, -0.4963, -0.2938) - (-0.493, -0.4963, 0.607) |    -0.08|      0.16|     -0.54|    0.59|    0.77|    -0.39|      0.22|(-0.492969579162185,0.353833498691566,0.606953176699072) - (-0.492969579162185,-0.496324679995342,0.606953176699072) |      -0.07|        0.17|       -0.42|      0.67|      0.57|      -0.41|        0.26|l-l-l vs l-l-h |3 vs 2 |         0.59|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="compareHistories-7.png" alt="" width="700" height="433"></span>
