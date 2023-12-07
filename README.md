@@ -32,7 +32,7 @@ The package contains 6 core functions for conducting longitudinal confounder adj
 Below is a summary of the terms used in the *devMSMs* vignettes and functions. More details and examples can be found in the accompanying manuscript. 
 <br>
   
-<img width="500" alt="terms" src="https://github.com/istallworthy/devMSMs/blob/main/man/figures/term%20summary%20table.png">  
+<img width="513" alt="term summary table" src="https://github.com/istallworthy/devMSMs/assets/31548151/e8839e88-20dc-4e55-9f88-b936876be75b">
 
 <br> 
  
