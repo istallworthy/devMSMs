@@ -56,7 +56,7 @@ The helper functions can be installed from the accompanying *devMSMsHelpers* rep
 <br> 
   
 ## Recommended Workflow
-We propose a recommended workflow for using *devMSMs* to answer causal questions with longituinal data. Please see the *Workflows* vignettes and accompanying manuscript for more details.  
+We propose a recommended workflow for using *devMSMs* to answer causal questions with longituinal data. We suggest using the vignettes in the order they appear in the Articles tab. After reading the accompanying manuscript, We recommend first reviewing the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes as you begin preparing your data. We then recommend downloading the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> which contains all the code desribed in the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a>, and *Workflows* vignettes (for binary (TBA) or <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a> exposures) for implementing the steps below.
   
 <img width="651" alt="Screen Shot 2023-11-08 at 4 00 44 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/91216ef3-e4c3-4c8a-a522-f683105bfc66">
 
