@@ -335,13 +335,15 @@ The first step is to create full balancing formulas that reflect all measured co
 #### 1a. Create full balancing formulas at each exposure time point
 Users have the option to specify concurrent confounders to retain and we recommend doing so consistently throughout this workflow. 
 
+Please see the Customize Balancing Formulas Vignette at the link below for more detail on custom formulas. 
+"https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html  
+  
 ```{r}
 #optional concurrent confounders
 concur_conf <- NULL #empirical example 
 concur_conf <- "B18Raw.15"
 
 #optional custom formulas
-#note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 ) 
@@ -399,7 +401,6 @@ keep_conf <- "InRatioCor.6"
 keep_conf  <-  NULL #empirical example 
 
 #optional custom formulas
-#note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("short_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "short_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
@@ -532,7 +533,6 @@ balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_p
 Next, update the short formulas with any imbalanced confounders.  
 ```{r}
 #optional custom formulas
-#note: below is an example of just two of the entries in the list of a custom formula --you would need to make a list that contains entries for each exposure time point that mimics the output of createFormulas. <--Run createFormulas to see what it should look like.
 custom <- list("update_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "update_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
@@ -617,7 +617,6 @@ Next, conduct a final balance assessment using all measured confounders (i.e., t
 #### Main
 First, conduct the main balance assessment.  
 ```{r}
-
 #optional balance threshold specification
 balance_thresh <- NULL
 balance_thresh <- 0.1 
@@ -659,7 +658,6 @@ In the balance -> weighted -> plots folder, .jpeg images of:
 - summary balance plots
 
 ```{r}
-
 #sensitivity tests
 weights <- trim_weights.s1
 final_balance_stats.s1 <- assessBalance(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, #required
@@ -686,7 +684,6 @@ First, select and fit a marginal outcome model.
 ##### Main
 First, fit the main model.  
 ```{r}
-
 #optional family/link information for glm
 family <- NULL #empirical example
 family <- gaussian
@@ -718,7 +715,6 @@ models <- fitModel(data = data, weights = weights, exposure = exposure, #require
                    exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                    family = family, link = link, int_order = int_order, covariates = covariates, epochs = epochs, #optional
                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
 ```
 
 
@@ -732,7 +728,6 @@ in the model folder:
 - .docx table of model evidence
 
 ```{r}
-
 weights <- trim_weights.s1
 models.s1 <- fitModel(data = data, weights = weights, exposure = exposure, #required
                       exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
@@ -752,7 +747,6 @@ Lastly, estimate and compare user-specified exposure histories.
 
 ##### Main
 ```{r}
-
 #optional specification of epochs; only specify this if you did in model fitting (5a) --must be identical
 epochs <- NULL
 epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"), 
@@ -803,7 +797,6 @@ results <- compareHistories(exposure = exposure, exposure_time_pts = exposure_ti
                             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
                             mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                             home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
 ```
 
 
@@ -820,7 +813,6 @@ in the plots folder, .jpeg images of:
 - predicted outcomes values for each history
 
 ```{r}
-
 model <- models.s1 
 results.s1 <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                                epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
@@ -832,7 +824,6 @@ results.s2 <- compareHistories(exposure = exposure, exposure_time_pts = exposure
                                epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
                                mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                                home_dir = home_dir, verbose = FALSE, save.out = TRUE) #optional
-
 ```
 
 
@@ -840,9 +831,7 @@ results.s2 <- compareHistories(exposure = exposure, exposure_time_pts = exposure
 We are grateful to the authors of many existing packages that devMSMs draws from!
 
 ```{r}
-
 grateful::cite_packages(out.dir = home_dir, omit = c("devMSMs", "devMSMsHelpers"), 
                         out.format = "docx")
-
 ```
 

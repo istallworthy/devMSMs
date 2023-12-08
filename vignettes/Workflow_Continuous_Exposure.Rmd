@@ -124,9 +124,9 @@ We choose not to specify any concurrent confounders, as we cannot reliably disti
 concur_conf <- NULL 
 ```
   
-The user may also specify a list of custom formulas by specifying to `custom` a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format, with each entry named with the formula type and exposure time point (e.g., "full_form-6"). An abridged example is shown below. We recommend first running the `createFormulas()` function without custom formulas (`custom = NULL`) and using the output as a model of the required format for custom formulas. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating. Please see the.
+The user may also specify a list of custom formulas by specifying to `custom` a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format, with each entry named with the formula type and exposure time point (e.g., "full_form-6"). An abridged example is shown below. We recommend first running the `createFormulas()` function without custom formulas (`custom = NULL`) and using the output as a model of the required format for custom formulas. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating. Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html">Customize Balancing Formulas vignette</a> for more detail on how to customize formulas.  
   
-We chose not to create custom formulas and use `createFormulas()` to make them.  
+We chose not to create custom formulas and instead use `createFormulas()` to make them.  
 ```{r}
 custom <- NULL 
 ```
