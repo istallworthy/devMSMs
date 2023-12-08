@@ -34,10 +34,6 @@ library(devMSMs)
 ## Core Inputs
 We specify core inputs to the *devMSMs* functions.  
 ```{r}
-set.seed(1234)
-
-home_dir <- NA
-
 exposure <- "ESETA1"
 
 exposure_time_pts <- c(6, 15, 24, 35, 58)

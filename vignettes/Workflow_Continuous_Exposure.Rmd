@@ -121,19 +121,13 @@ For `concur_conf`: as a list, provide the names of any time-varying confounders 
   
 We choose not to specify any concurrent confounders, as we cannot reliably distinguish them from mediators in our data.  
 ```{r}
-# concur_conf <- "B18Raw.15"
-
 concur_conf <- NULL 
 ```
   
-The user may also specify a list of custom formulas by specifying to `custom` a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format, with each entry named with the formula type and exposure time point (e.g., "full_form-6"). An abridged example is shown below. We recommend first running the `createFormulas()` function without custom formulas (`custom = NULL`) and using the output as a model of the required format for custom formulas. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating.  
+The user may also specify a list of custom formulas by specifying to `custom` a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format, with each entry named with the formula type and exposure time point (e.g., "full_form-6"). An abridged example is shown below. We recommend first running the `createFormulas()` function without custom formulas (`custom = NULL`) and using the output as a model of the required format for custom formulas. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating. Please see the.
   
 We chose not to create custom formulas and use `createFormulas()` to make them.  
 ```{r}
-# custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
-#                "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
-# ) 
-
 custom <- NULL 
 ```
 
