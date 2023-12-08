@@ -19,7 +19,7 @@ Core features of *devMSMs* include:
    
 - a novel recommended workflow, based on expertise from several disciplines, for using the *devMSMs* functions with longitudinal data (see *Workflows* vignettes)
   
-- step-by-step user guidance for implementing the *deveMSMs* worflow in the form of vignettes applied to simulated data, geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> 
+- step-by-step user guidance for implementing the *deveMSMs* worflow in the form of vignettes applied to simulated data (based on the real-world, Family Life Project longitudinal datset of human development), geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> 
   
 - an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementaiton of *devMSMs* (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary steps vignette</a>)
 
