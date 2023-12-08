@@ -18,12 +18,14 @@ Core features of *devMSMs* include:
 - functions that accept complete or imputed data to accommodate missingness often found in human studies  
    
 - a novel recommended workflow, based on expertise from several disciplines, for using the *devMSMs* functions with longitudinal data (see *Workflows* vignettes)
-  
-- step-by-step user guidance for implementing the *deveMSMs* worflow in the form of vignettes applied to simulated data (based on the real-world, Family Life Project longitudinal datset of human development), geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> 
-  
-- an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementaiton of *devMSMs* (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary steps vignette</a>)
 
-- a conceptual introduction, an example empirical application, and additional resources in the accompanying tutorial paper
+- an accompanying simulated longitudinal dataset, based on the real-world, Family Life Project (FLP) study of human development, for getting to know the package functions
+
+- an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of *devMSMs* (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary steps vignette</a>)  
+   
+- executable, step-by-step user guidance for implementing the *deveMSMs* worflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> 
+
+- a brief conceptual introduction, an example empirical application, and additional resources in the accompanying tutorial paper
 
 <br>
 
