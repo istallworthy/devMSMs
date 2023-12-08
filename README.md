@@ -10,7 +10,23 @@ Marginal structural models (MSMs; Robins et al., 2000), orginating in epidemiolo
  <br>
  
 *devMSMs* is an R package accompanying our tutorial paper, *Investigating Causal Questions in Human Development using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R* (*insert preprint link here*). Together, they offer conceptual and practice guidance for implementing MSMs with longitudinal data to answer causal questions about the dose and timing effects of a given exposure on a future outcome. 
+<br>
 
+<div style="display: flex;">
+  <div style="flex: 30%; padding: 20px; position: sticky; top: 0; overflow-y: auto; max-height: calc(100vh - 40px);">
+    <h2>On This Page</h2>
+    <ul>
+      <li><a href="#section-1">Core Features</a></li>
+      <li><a href="#section-2">Overview</a></li>
+      <li><a href="#section-3">Installation</a></li>
+      <li><a href="#section-4">Recommended Workflow</a></li>
+      <li><a href="#section-5">Additional Resources</a></li>
+    </ul>
+  </div>
+  <div style="flex: 70%; padding: 20px;">
+
+
+## Core Features 
 Core features of *devMSMs* include:  
   
 - flexible functions with built-in user guidance, drawing on established expertise and best practices for implementing longitudinal IPTW weighting and outcome modeling, to answer substantive causal questions about dose and timing
@@ -83,7 +99,8 @@ Robins, J. M., Hernán, M. Á., & Brumback, B. (2000). Marginal Structural Model
 
 Thoemmes, F., & Ong, A. D. (2016). A Primer on Inverse Probability of Treatment Weighting and Marginal Structural Models. https://doi.org/10.1177/2167696815621645  
 
-
+  </div>
+</div>
 
 
 
