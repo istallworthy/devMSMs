@@ -27,6 +27,8 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 <br>
 
 These five recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package. Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> vignette and complete the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.   
+  
+The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">examplePipeline.rmd file</a>.  
 
 The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a>. Of note, *devMSMs* must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).   
 
@@ -141,7 +143,7 @@ As shown in Figure 2, users have several options for reading in data. They can b
 ### P1. Single Long Data Frame
 Users beginning with a single data frame in long format (with or without missingness) can utilize a helper function `formatLongData()` to summarize exposure and outcome data and convert to required variable names.  
 
-First, we load the simulated longitudinal data in long format (with missingness) that accompanies *devMSMs*. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008).  
+First, we load the simulated longitudinal data in long format (with missingness) that accompanies *devMSMs*. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain (ESETA1) measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems (StrDif_Tot) measured at 58 months.  
 ```{r}
 data("sim_data_long_miss", package = "devMSMs")
 
