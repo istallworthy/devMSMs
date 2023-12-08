@@ -16,11 +16,11 @@ Marginal structural models (MSMs; Robins et al., 2000), orginating in epidemiolo
   <div style="flex: 30%; padding: 20px; position: sticky; top: 0; overflow-y: auto; max-height: calc(100vh - 40px);">
     <h2>On This Page</h2>
     <ul>
-      <li><a href="#section-1">Core Features</a></li>
-      <li><a href="#section-2">Overview</a></li>
-      <li><a href="#section-3">Installation</a></li>
-      <li><a href="#section-4">Recommended Workflow</a></li>
-      <li><a href="#section-5">Additional Resources</a></li>
+      <li><a href="#Core Features">Core Features</a></li>
+      <li><a href="#Overview">Overview</a></li>
+      <li><a href="#Installation">Installation</a></li>
+      <li><a href="#Recommended Workflow">Recommended Workflow</a></li>
+      <li><a href="#Additional Resources">Additional Resources</a></li>
     </ul>
   </div>
   <div style="flex: 70%; padding: 20px;">
