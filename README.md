@@ -30,7 +30,7 @@ Core features of *devMSMs* include:
 <br>
 
 ## Overview
-The package contains 6 core functions for conducting longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures.
+The package contains 6 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures.
 <br>  
 
 <img width="742" alt="Screen Shot 2023-11-08 at 4 00 24 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/cbab3b78-ffa8-4ffc-9b97-d082a9f145b5">  
