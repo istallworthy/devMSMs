@@ -74,7 +74,22 @@
 <p><br> Scientists who study humans are fundamentally interested in questions of causation, yet conceptual, methodological, and practical barriers have historically prevented their use of methods for causal inference developed in other fields. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in <em>causal processes</em> involving questions about when (timing) and to what extent (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people’s lives. <br></p>
 <p>We employ the term <em>exposure</em> to encompass a variety of environmental exposures, individual characteristics, or experiences that constitute the putative causal events within a causal model. Exposures may be distal or proximal, reflecting a developing child’s experience within different environments at many levels (Bronfenbrenner &amp; Ceci, 1994), ranging from the family (e.g., parenting), home (e.g., economic strain), school (e.g., teacher quality), neighborhood (e.g., diversity), to the greater politico-cultural-economic context (e.g., inequality). Exposures could also reflect factors internal to the child, including neurodevelopmental (e.g., risk markers), physiological (e.g., stress), and behavioral (e.g., anxiety) patterns to which the child’s development is exposed. <br></p>
 <p>Marginal structural models (MSMs; Robins et al., 2000), orginating in epidemiology and public health, represent one under-utilized tool for improving causal inference with longitudinal observational data, given certain assumptions. In brief, MSMs leverage inverse-probability-of-treatment-weights (IPTW) and the potential outcomes framework. MSMs first focus on the problem of confounding, using IPTW to attenuate associations between measured confounders and an exposure (e.g., experience, characteristic, event –from biology to the broader environment) over time. A weighted model can then be fitted relating a time-varying exposure and a future outcome. Finally, the model-predicted effects of different exposure histories that vary in dose and timing can be evaluated and compared as counterfactuals, to reveal putative causal effects. <br></p>
-<p><em>devMSMs</em> is an R package accompanying our tutorial paper, <em>Investigating Causal Questions in Human Development using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R</em> (<em>insert preprint link here</em>). Together, they offer conceptual and practice guidance for implementing MSMs with longitudinal data to answer causal questions about the dose and timing effects of a given exposure on a future outcome.</p>
+<p><em>devMSMs</em> is an R package accompanying our tutorial paper, <em>Investigating Causal Questions in Human Development using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R</em> (<em>insert preprint link here</em>). Together, they offer conceptual and practice guidance for implementing MSMs with longitudinal data to answer causal questions about the dose and timing effects of a given exposure on a future outcome. <br></p>
+<div style="display: flex;">
+<div style="flex: 30%; padding: 20px; position: sticky; top: 0; overflow-y: auto; max-height: calc(100vh - 40px);">
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&lt;</span>h2<span class="sc">&gt;</span>On This Page<span class="sc">&lt;</span><span class="er">/</span>h2<span class="sc">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="er">&lt;</span>ul<span class="sc">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;</span>li<span class="sc">&gt;</span><span class="er">&lt;</span>a href<span class="ot">=</span><span class="st">"#Core Features"</span><span class="sc">&gt;</span>Core Features<span class="sc">&lt;</span><span class="er">/</span>a<span class="sc">&gt;</span><span class="er">&lt;/</span>li<span class="sc">&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;</span>li<span class="sc">&gt;</span><span class="er">&lt;</span>a href<span class="ot">=</span><span class="st">"#Overview"</span><span class="sc">&gt;</span>Overview<span class="sc">&lt;</span><span class="er">/</span>a<span class="sc">&gt;</span><span class="er">&lt;/</span>li<span class="sc">&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;</span>li<span class="sc">&gt;</span><span class="er">&lt;</span>a href<span class="ot">=</span><span class="st">"#Installation"</span><span class="sc">&gt;</span>Installation<span class="sc">&lt;</span><span class="er">/</span>a<span class="sc">&gt;</span><span class="er">&lt;/</span>li<span class="sc">&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;</span>li<span class="sc">&gt;</span><span class="er">&lt;</span>a href<span class="ot">=</span><span class="st">"#Recommended Workflow"</span><span class="sc">&gt;</span>Recommended Workflow<span class="sc">&lt;</span><span class="er">/</span>a<span class="sc">&gt;</span><span class="er">&lt;/</span>li<span class="sc">&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;</span>li<span class="sc">&gt;</span><span class="er">&lt;</span>a href<span class="ot">=</span><span class="st">"#Additional Resources"</span><span class="sc">&gt;</span>Additional Resources<span class="sc">&lt;</span><span class="er">/</span>a<span class="sc">&gt;</span><span class="er">&lt;/</span>li<span class="sc">&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="er">&lt;/</span>ul<span class="sc">&gt;</span></span></code></pre></div>
+</div>
+<div style="flex: 70%; padding: 20px;">
+<div class="section level2">
+<h2 id="core-features">Core Features<a class="anchor" aria-label="anchor" href="#core-features"></a>
+</h2>
 <p>Core features of <em>devMSMs</em> include:</p>
 <ul>
 <li><p>flexible functions with built-in user guidance, drawing on established expertise and best practices for implementing longitudinal IPTW weighting and outcome modeling, to answer substantive causal questions about dose and timing</p></li>
@@ -85,6 +100,7 @@
 <li><p>a conceptual introduction, an example empirical application, and additional resources in the accompanying tutorial paper</p></li>
 </ul>
 <p><br></p>
+</div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -121,6 +137,8 @@
 <p>Kainz, K., Greifer, N., Givens, A., Swietek, K., Lombardi, B. M., Zietz, S., &amp; Kohn, J. L. (2017). Improving Causal Inference: Recommendations for Covariate Selection and Balance in Propensity Score Methods. Journal of the Society for Social Work and Research, 8(2), 279–303. <a href="https://doi.org/10.1086/691464" class="external-link uri">https://doi.org/10.1086/691464</a></p>
 <p>Robins, J. M., Hernán, M. Á., &amp; Brumback, B. (2000). Marginal Structural Models and Causal Inference in Epidemiology. Epidemiology, 11(5), 550–560.</p>
 <p>Thoemmes, F., &amp; Ong, A. D. (2016). A Primer on Inverse Probability of Treatment Weighting and Marginal Structural Models. <a href="https://doi.org/10.1177/2167696815621645" class="external-link uri">https://doi.org/10.1177/2167696815621645</a></p>
+</div>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
