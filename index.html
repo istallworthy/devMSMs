@@ -82,16 +82,17 @@
 <li><p>flexible functions with built-in user guidance, drawing on established expertise and best practices for implementing longitudinal IPTW weighting and outcome modeling, to answer substantive causal questions about dose and timing</p></li>
 <li><p>functions that accept complete or imputed data to accommodate missingness often found in human studies</p></li>
 <li><p>a novel recommended workflow, based on expertise from several disciplines, for using the <em>devMSMs</em> functions with longitudinal data (see <em>Workflows</em> vignettes)</p></li>
-<li><p>step-by-step user guidance for implementing the <em>deveMSMs</em> worflow in the form of vignettes applied to simulated data (based on the real-world, Family Life Project longitudinal datset of human development), geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd" class="external-link">R markdown template file</a></p></li>
-<li><p>an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">helper functions</a> to assist users in preparing and inspecting their data prior to the implementaiton of <em>devMSMs</em> (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary steps vignette</a>)</p></li>
-<li><p>a conceptual introduction, an example empirical application, and additional resources in the accompanying tutorial paper</p></li>
+<li><p>an accompanying simulated longitudinal dataset, based on the real-world, Family Life Project (FLP) study of human development, for getting to know the package functions</p></li>
+<li><p>an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of <em>devMSMs</em> (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary steps vignette</a>)</p></li>
+<li><p>executable, step-by-step user guidance for implementing the <em>deveMSMs</em> worflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd" class="external-link">R markdown template file</a></p></li>
+<li><p>a brief conceptual introduction, an example empirical application, and additional resources in the accompanying tutorial paper</p></li>
 </ul>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The package contains 6 core functions for conducting longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures. <br></p>
+<p>The package contains 6 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures. <br></p>
 <p><img width="742" alt="Screen Shot 2023-11-08 at 4 00 24 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/cbab3b78-ffa8-4ffc-9b97-d082a9f145b5"><br><br></p>
 <p>Below is a summary of the terms used in the <em>devMSMs</em> vignettes and functions. More details and examples can be found in the accompanying manuscript. <br></p>
 <p><img width="513" alt="term summary table" src="https://github.com/istallworthy/devMSMs/assets/31548151/e8839e88-20dc-4e55-9f88-b936876be75b"></p>
@@ -100,8 +101,8 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><em>devMSMs</em> can be installed in R Studio from Github using the <em>devtools</em> package: <br><code><a href="https://devtools.r-lib.org/" class="external-link">library(devtools)</a></code><br><code>install_github("istallworthy/devMSMs")</code><br><code><a href="https://istallworthy.github.io/devMSMs/">library(devMSMs)</a></code></p>
-<p>The helper functions can be installed from the accompanying <em>devMSMsHelpers</em> repo: <br><code>install_github("istallworthy/devMSMsHelpers")</code><br><code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(devMSMsHelpers)</a></code></p>
+<p><em>devMSMs</em> can be installed in R Studio from Github using the <em>devtools</em> package: <br><br><code><a href="https://devtools.r-lib.org/" class="external-link">library(devtools)</a></code><br><code>install_github("istallworthy/devMSMs")</code><br><code><a href="https://istallworthy.github.io/devMSMs/">library(devMSMs)</a></code></p>
+<p>The helper functions can be installed from the accompanying <em>devMSMsHelpers</em> repo: <br><br><code>install_github("istallworthy/devMSMsHelpers")</code><br><code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(devMSMsHelpers)</a></code></p>
 <p><br></p>
 </div>
 <div class="section level2">
