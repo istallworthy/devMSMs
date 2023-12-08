@@ -7,10 +7,15 @@ output: html_document
 
 Please see this manuscript for a full conceptual and practical introduction to MSMs in the context of developmental data. Please see the vignettes on the *devMSMs* website for step-by-step guidance on the use of this code: https://istallworthy.github.io/devMSMs/index.html. 
 
+Headings denote accompanying website sections and steps.  
+
 The code in each code chunk is set up identifying all possible inputs to each function (required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function, including a NULL/NA option if the user does not wish to specify an optional input. The user should select one of each optional input values. Alternatively, the user could modify the call to the function and remove the optional input argument(s) entirely. 
 
 Please see the website vignettes and/or type `?functionName` into the console for more guidance on the arguments for each function. These two sources should match but let me know if you see discrepancies. 
 
+
+# *Installation*
+https://istallworthy.github.io/devMSMs/index.html 
 
 ## Getting started
 Until *devMSMs* is available on CRAN, you will need to install it directly from Github (https://github.com/istallworthy/devMSMs), as shown below.  
@@ -27,13 +32,11 @@ library(devMSMs)
 install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 library(devMSMsHelpers)
 
-#note: if I update Github to fix something, you may need to first uninstall the package(s) by running the following code:
-# remove.packages("devMSMs") or 
-# remove.packages("devMSMsHelpers")
-#prior to re-installing using the code above. Sorry, this is annoying! There may also be a short lag between when I update something on Github and when it becomes available for install. 
-
 ```
 
+
+# *Specify Core Inputs Vignette*
+https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html
 
 ## Specifying Required Package Core Inputs
 The user should change all fields in this code chunk to match their home directory and wide data.
@@ -84,6 +87,11 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 ```
 
 
+
+# *Preliminary Steps Vignette*
+https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html
+
+
 ## STEP P: Preliminary Steps for Reading in, Formatting, & Inspecting Data
 We advise users implement the appropriate preliminary steps, with the goal of assigning to 'data' one of the following wide data formats (see Figure 1) for use in the package:  
 
@@ -93,11 +101,9 @@ We advise users implement the appropriate preliminary steps, with the goal of as
 
 * a list of data imputed in wide format as data frames.  
 
-<br>
-<br>
 
 Users have several options for reading in data. They can begin this workflow with the following options:  
-<br>
+
 * long data with missingness can can be formatted and converted to wide data (P1a) for imputation (P2)
 
 * wide with missingness can be formatted (P1b) before imputing (P2)
@@ -105,8 +111,6 @@ Users have several options for reading in data. They can begin this workflow wit
 * data already imputed in wide format can be read in as a list (P2). 
 
 * data with no missingness (P3)
-
-<br>
 
 
 ### P1. Single Long Data Frame
@@ -149,9 +153,6 @@ data_wide_f <- stats::reshape(data = data_long_f,
                             times = c(6, 15, 24, 35, 58), # list all time points in your dataset
                             direction = "wide")
 data_wide_f <- data_wide_f[, colSums(is.na(data_wide_f)) < nrow(data_wide_f)]
-
-# data_wide2=data_wide
-# data_wide2=data_wide2[order(names(data_wide2))]
 ```
 
 
@@ -179,7 +180,6 @@ data_wide_f <- formatWideData(data = data_wide, exposure = exposure, exposure_ti
                               factor_confounders = factor_confounders,
                               integer_confounders = integer_confounders,
                               home_dir = home_dir, save.out = TRUE) 
-
 ```
 
 
@@ -217,39 +217,6 @@ imputed_data <- imputeData(data = data_wide_f, exposure = exposure, outcome = ou
 data <- imputed_data
 
 summary(mice::complete(data, 1))
-```
-
-```{r}
-# row.names(data_wide) <-NULL
-# row.names(data_wide2) <-NULL
-# 
-# data_wide <- data_wide[order(names(data_wide))]
-# data_wide2 <- data_wide2[order(names(data_wide2))]
-# 
-# identical(data_wide, data_wide2)
-# 
-# sapply(data_wide2, class) 
-# 
-# integer_covars <- c("ID", "KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , "gov_assist", "B18Raw.15", "B18Raw.24", "B18Raw.58",      "B18Raw.6", "EARS_TJo.24", "EARS_TJo.35", "MDI.15", "MDI.6")
-# data_wide2[, integer_covars] <- as.data.frame(lapply(data_wide2[, integer_covars], as.integer))
-# 
-# library(dplyr)
-# all_equal(data_wide, data_wide2)
-# 
-# all.equal(data_wide, data_wide2)
-# 
-# #testing
-# seed = 1234
-# data_to_impute <- tibble::tibble(data_wide)
-# # data_to_impute <- tibble::tibble(data_wide2) #from long
-# imputed_datasets <- mice::mice(data_to_impute, 
-#                                m = m, 
-#                                method = method, 
-#                                maxit = maxit,
-#                                print = F,
-#                                seed = seed)
-# summary(mice::complete(imputed_datasets, 1))
-
 ```
 
 Alternatively, users could read in a saved mids object for use with *devMSMS*.    
@@ -296,10 +263,7 @@ factor_covars <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",
 data <- lapply(data, function(x) {
   x[, factor_covars] <- as.data.frame(lapply(x[, factor_covars], as.factor))
   x })
-
 ```
-
-
 
 Having read in their data, users should now have have assigned to `data` wide, complete data as: a data frame, mice object, or list of imputed data frames for use with the *devMSMs* functions.  
 
@@ -355,6 +319,11 @@ inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_
             home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional input
 
 ```
+
+
+
+# *Workflow: Continuous Exposure Vignette*
+https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html
 
 
 ## PHASE 1: Confounder Adjustment
@@ -421,7 +390,6 @@ The next step is to specify shorter, simplified balancing formula for the purpos
 #### 2a. Create simplified balancing formulas
 First, create shorter, simplified balancing formulas at each exposure time point.  
 ```{r}
-
 #optional list of concurrent confounder
 concur_conf <- "B18Raw.15"
 concur_conf <-  NULL #empirical example 
