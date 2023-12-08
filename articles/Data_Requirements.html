@@ -46,6 +46,7 @@
     <a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a>
     <a class="dropdown-item" href="../articles/Preliminary_Steps.html">Preliminary Steps</a>
     <a class="dropdown-item" href="../articles/Workflow_Continuous_Exposure.html">Workflow: Continuous Exposure</a>
+    <a class="dropdown-item" href="../articles/Customize_Balancing_Formulas.html">Customize Balancing Formulas</a>
   </div>
 </li>
       </ul>
@@ -85,15 +86,12 @@ Stallworthy</h4>
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools", quiet = TRUE)</span></span>
-<span><span class="co"># library(devtools)</span></span>
+<code class="sourceCode R"><span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># install.packages("mice", quiet = TRUE)</span></span>
-<span><span class="co"># library(mice)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/amices/mice" class="external-link">"mice"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'mice'</span></span>
@@ -118,7 +116,7 @@ information loss inherent to binarizing a continuous variable. Although
 there is no gold standard recommendation, we suggest users select
 exposures that have some within-person variation from which it would be
 reasonable to delineate different histories of “high” and “low” levels
-(see step P3 in the recommended
+(see Step P5a in the recommended
 <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary
 Steps Vignette</a>) and avoid extrapolation.</p>
 <p>The outcome time point must be the last time point when exposure was
@@ -155,7 +153,9 @@ simulated based on data from the Family Life Project (FLP), a
 longitudinal study following 1,292 families representative of two
 geographic areas (three counties in North Carolina and three counties in
 Pennsylvania) with high rural child poverty (Vernon-Feagans et al.,
-2013; Burchinal et al., 2008).</p>
+2013; Burchinal et al., 2008). We take the example exposure of economic
+strain (ESETA1) measured at 6, 15, 24, 35, and 58 months in relation to
+the outcome of behavior problems (StrDif_Tot) measured at 58 months.</p>
 <p><em>devMSMs</em> (see <em>Workflows</em> vignettes) requires complete
 data in wide format (i.e., one row per individual, with and “ID” column
 for identifiers), in one of three ways:</p>

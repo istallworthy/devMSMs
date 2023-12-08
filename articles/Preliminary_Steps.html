@@ -46,6 +46,7 @@
     <a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a>
     <a class="dropdown-item" href="../articles/Preliminary_Steps.html">Preliminary Steps</a>
     <a class="dropdown-item" href="../articles/Workflow_Continuous_Exposure.html">Workflow: Continuous Exposure</a>
+    <a class="dropdown-item" href="../articles/Customize_Balancing_Formulas.html">Customize Balancing Formulas</a>
   </div>
 </li>
       </ul>
@@ -94,6 +95,10 @@ vignette and complete the
 Requirements</a> and
 <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying
 Core Inputs</a> vignettes.</p>
+<p>The code contained in this vignette is also available, integrated
+code from the other vignettes, in the
+<a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd" class="external-link">examplePipeline.rmd
+file</a>.</p>
 <p>The helper functions (summarized in Table 1) for the following
 recommended preliminary steps can be found at this
 <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">Github</a>. Of
@@ -247,7 +252,9 @@ based on data from the Family Life Project (FLP), a longitudinal study
 following 1,292 families representative of two geographic areas (three
 counties in North Carolina and three counties in Pennsylvania) with high
 rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al.,
-2008).</p>
+2008). We take the example exposure of economic strain (ESETA1) measured
+at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior
+problems (StrDif_Tot) measured at 58 months.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_long_miss"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
@@ -774,7 +781,7 @@ two summary tables of the confounders considered at each time point.</p>
 <span>            epochs <span class="op">=</span> <span class="va">epochs</span>, hi_lo_cut <span class="op">=</span> <span class="va">hi_lo_cut</span>, reference <span class="op">=</span> <span class="va">reference</span>, comparison <span class="op">=</span> <span class="va">comparison</span>, <span class="co">#optional input</span></span>
 <span>            home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional input</span></span>
 <span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT</span></span>
-<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (87f79804) has not changed since last install.</span></span>
+<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (4bb3426e) has not changed since last install.</span></span>
 <span><span class="co">#&gt;   Use `force = TRUE` to force installation</span></span>
 <span><span class="co">#&gt; Imputation 1</span></span>
 <span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
