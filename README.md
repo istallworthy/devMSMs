@@ -1,5 +1,5 @@
 # devMSMs: Implementing Marginal <img src="https://github.com/istallworthy/devMSMs/assets/31548151/959803d4-527e-4f0f-8254-41b5a7d9e927" align="right" width="100"/> Structural Models with Longitudinal Data
-
+<br>
 Those who study and work with humans are fundamentally interested in questions of causation. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in *causal processes* involving questions about when (timing) and to what extent (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people's lives. However, for many, conceptual, methodological, and practical barriers have prevented the use of methods for causal inference developed in other fields.
 <br>
 
