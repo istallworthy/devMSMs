@@ -37,6 +37,7 @@ The package contains 6 core functions for implementing the two phases of the MSM
 
 <img width="742" alt="Screen Shot 2023-11-08 at 4 00 24 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/cbab3b78-ffa8-4ffc-9b97-d082a9f145b5">  
 <br>  
+<br>
     
 Below is a summary of the terms used in the *devMSMs* vignettes and functions. More details and examples can be found in the accompanying manuscript. 
 <br>
