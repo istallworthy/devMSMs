@@ -21,7 +21,8 @@ knitr::opts_chunk$set(
 
 This vignette provides guidance on how to customize balancing formulas for use in *devMSMs*. Please first review the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a> and any of the *Workflows* vignettes. 
   
-The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">examplePipeline.rmd file</a>.
+The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">examplePipeline.rmd file</a>.  
+  
 <br>  
 
 ```{r setup}
@@ -30,6 +31,8 @@ require("devtools", quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 library(devMSMs)
 ```
+
+<br>  
 
 ## Core Inputs
 We specify core inputs to the *devMSMs* functions.  
