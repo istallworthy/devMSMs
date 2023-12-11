@@ -77,7 +77,7 @@
                         <h4 data-toc-skip class="author">Isabella
 Stallworthy</h4>
             
-            <h4 data-toc-skip class="date">2023-12-09</h4>
+            <h4 data-toc-skip class="date">2023-12-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Specify_Core_Inputs.Rmd" class="external-link"><code>vignettes/Specify_Core_Inputs.Rmd</code></a></small>
       <div class="d-none name"><code>Specify_Core_Inputs.Rmd</code></div>
@@ -115,15 +115,15 @@ file</a>.</p>
 <h3 id="home-directory">Home Directory<a class="anchor" aria-label="anchor" href="#home-directory"></a>
 </h3>
 <p>Users are required to specify home directory, or in quotations, a
-path to a designated folder for all output from the package, if they
-plan to save out intermediary and final outputs in the package (default)
-by setting <code>save.out = TRUE</code> for any of the functions. All
-sub directories will be created within this home directory by the
-<em>devMSMs</em> functions automatically when
+path to a designated folder for all output from the package (without the
+final forward slash), if they plan to save out intermediary and final
+outputs in the package (default) by setting <code>save.out = TRUE</code>
+for any of the functions. All sub directories will be created within
+this home directory by the <em>devMSMs</em> functions automatically when
 <code>save.out’ = TRUE</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">home_dir</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
-<span><span class="va">home_dir</span> <span class="op">&lt;-</span> <span class="st">'/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa'</span> <span class="co">#note: no / after</span></span></code></pre></div>
+<span><span class="va">home_dir</span> <span class="op">&lt;-</span> <span class="st">'/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa'</span> </span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -266,7 +266,7 @@ each factor level.</p>
 <span>                    <span class="st">"B18Raw.6"</span>, <span class="st">"B18Raw.15"</span>, <span class="st">"B18Raw.24"</span>, <span class="st">"B18Raw.58"</span>,                                           </span>
 <span>                    <span class="st">"HOMEETA1.6"</span>, <span class="st">"HOMEETA1.15"</span>, <span class="st">"HOMEETA1.24"</span>, <span class="st">"HOMEETA1.35"</span>, <span class="st">"HOMEETA1.58"</span>,                               </span>
 <span>                    <span class="st">"InRatioCor.6"</span>, <span class="st">"InRatioCor.15"</span>, <span class="st">"InRatioCor.24"</span>, <span class="st">"InRatioCor.35"</span>, <span class="st">"InRatioCor.58"</span>,                         </span>
-<span>                    <span class="st">"ESETA1.6"</span>, <span class="st">"ESETA1.15"</span>, <span class="st">"ESETA1.24"</span>, <span class="st">"ESETA1.35"</span>, <span class="st">"ESETA1.58"</span>,  <span class="co">#exposure variables required               </span></span>
+<span>                    <span class="st">"ESETA1.6"</span>, <span class="st">"ESETA1.15"</span>, <span class="st">"ESETA1.24"</span>, <span class="st">"ESETA1.35"</span>, <span class="st">"ESETA1.58"</span>,               </span>
 <span>                    <span class="st">"CORTB.6"</span>, <span class="st">"CORTB.15"</span>, <span class="st">"CORTB.24"</span>,                                                                  </span>
 <span>                    <span class="st">"EARS_TJo.24"</span>, <span class="st">"EARS_TJo.35"</span>,                                        </span>
 <span>                    <span class="st">"LESMnPos.24"</span>, <span class="st">"LESMnPos.35"</span>,                                  </span>

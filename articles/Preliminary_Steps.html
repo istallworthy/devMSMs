@@ -77,7 +77,7 @@
                         <h4 data-toc-skip class="author">Isabella
 Stallworthy</h4>
             
-            <h4 data-toc-skip class="date">2023-12-09</h4>
+            <h4 data-toc-skip class="date">2023-12-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Preliminary_Steps.Rmd" class="external-link"><code>vignettes/Preliminary_Steps.Rmd</code></a></small>
       <div class="d-none name"><code>Preliminary_Steps.Rmd</code></div>
@@ -327,7 +327,8 @@ and all others as numeric.</p>
 <span><span class="co">#&gt; 4  1     0           1 27.245       0       0       1    15       24       29</span></span>
 <span><span class="co">#&gt; 5  1     0           1 27.245       0       0       1    15       24       29</span></span></code></pre></div>
 <p>We get a descriptive statistics summary of the exposure, ESETA1, and
-the outcome, StrDif_Tot.58, for our visual inspections.<br><br></p>
+the outcome, StrDif_Tot.58, for our visual inspections.</p>
+<p><br></p>
 </div>
 <div class="section level4">
 <h4 id="p1b--tranform-formatted-long-data-to-wide">P1b. Tranform formatted long data to wide<a class="anchor" aria-label="anchor" href="#p1b--tranform-formatted-long-data-to-wide"></a>
@@ -421,19 +422,21 @@ factors and integers, and the function classes any factor confounders
 (<code>factor_confounders</code>) as factors, integer confounders
 (<code>integer_confounders</code>) as integers in the data, and all
 others as numeric.</p>
-<p>Below, we format the simulated wide FLP data.</p>
+<p>Below, we format the simulated wide FLP data by listing out variables
+to make into factors and integers in wide format (e.g., “variable.t”),
+as well as the ID and missingness indicators.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">factor_confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"TcBlac2"</span>,<span class="st">"BioDadInHH2"</span>,<span class="st">"HomeOwnd"</span>, <span class="st">"PmBlac2"</span>,       </span>
 <span>                        <span class="st">"PmMrSt2"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"RHealth"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
-<span>                        <span class="st">"RHasSO.6"</span>, <span class="st">"RHasSO.15"</span>, <span class="st">"RHasSO.24"</span>, <span class="st">"RHasSO.35"</span>, <span class="st">"RHasSO.58"</span><span class="op">)</span> <span class="co">#list factor variables in wide format here</span></span>
+<span>                        <span class="st">"RHasSO.6"</span>, <span class="st">"RHasSO.15"</span>, <span class="st">"RHasSO.24"</span>, <span class="st">"RHasSO.35"</span>, <span class="st">"RHasSO.58"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">integer_confounders</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KFASTScr"</span>, <span class="st">"PmEd2"</span>, <span class="st">"RMomAgeU"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span> , </span>
 <span>                        <span class="st">"gov_assist"</span>, <span class="st">"B18Raw.6"</span>, <span class="st">"B18Raw.15"</span>, <span class="st">"B18Raw.24"</span>, <span class="st">"B18Raw.58"</span>, </span>
-<span>                        <span class="st">"EARS_TJo.24"</span>, <span class="st">"EARS_TJo.35"</span>, <span class="st">"MDI.6"</span>, <span class="st">"MDI.15"</span><span class="op">)</span> <span class="co">#list any integer variables in wide format here</span></span>
+<span>                        <span class="st">"EARS_TJo.24"</span>, <span class="st">"EARS_TJo.35"</span>, <span class="st">"MDI.6"</span>, <span class="st">"MDI.15"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data_wide_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/formatWideData.html" class="external-link">formatWideData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_wide</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, </span>
-<span>                              id_var <span class="op">=</span> <span class="st">"ID"</span>, <span class="co">#list original id variable here if it's not "ID"</span></span>
-<span>                              missing <span class="op">=</span> <span class="cn">NA</span>, <span class="co">#list missing value here</span></span>
+<span>                              id_var <span class="op">=</span> <span class="st">"ID"</span>,</span>
+<span>                              missing <span class="op">=</span> <span class="cn">NA</span>, </span>
 <span>                              factor_confounders <span class="op">=</span> <span class="va">factor_confounders</span>,</span>
 <span>                              integer_confounders <span class="op">=</span> <span class="va">integer_confounders</span>,</span>
 <span>                              home_dir <span class="op">=</span> <span class="va">home_dir</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> </span>
@@ -583,18 +586,10 @@ read in, as a list, files saved locally as .csv files (labeled “1”:m) in
 a single folder. This list can be assigned to <code>data</code> for use
 in the <em>deveMSMs</em> package (see <em>Workflows</em> vignettes).</p>
 <p>Below, we load in a list of imputed data simulated from FLP, as an
-example.</p>
+example. (See the example Rmarkdown file for code to do this with files
+saved locally.)</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># folder &lt;- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/imputations/"</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># files &lt;- list.files(folder, full.names = TRUE, pattern = "\\.csv") #make sure pattern matches suffix of your data</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># data &lt;- lapply(files, function(file) {</span></span>
-<span><span class="co">#   imp_data &lt;- read.csv(file)</span></span>
-<span><span class="co">#   imp_data</span></span>
-<span><span class="co"># })</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_imp_list"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_imp_list"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">sim_data_imp_list</span></span>
 <span></span>
@@ -781,7 +776,7 @@ two summary tables of the confounders considered at each time point.</p>
 <span>            epochs <span class="op">=</span> <span class="va">epochs</span>, hi_lo_cut <span class="op">=</span> <span class="va">hi_lo_cut</span>, reference <span class="op">=</span> <span class="va">reference</span>, comparison <span class="op">=</span> <span class="va">comparison</span>, <span class="co">#optional input</span></span>
 <span>            home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional input</span></span>
 <span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT</span></span>
-<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (cc343c29) has not changed since last install.</span></span>
+<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (cf7025b9) has not changed since last install.</span></span>
 <span><span class="co">#&gt;   Use `force = TRUE` to force installation</span></span>
 <span><span class="co">#&gt; Imputation 1</span></span>
 <span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
