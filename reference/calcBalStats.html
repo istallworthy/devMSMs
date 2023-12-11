@@ -173,17 +173,17 @@ intermediary output locally</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55edfab3a4d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557f6cc25d10&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55edfab3a4d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557f6cc25d10&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.1 + A.2 + B.1 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55edfab3a4d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557f6cc25d10&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -191,7 +191,7 @@ intermediary output locally</p></dd>
 <span class="r-in"><span>                   outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.01 (SD = 0.28; range = 0.44-2). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 0.97 (SD = 0.73; range = 0.31-4). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="calcBalStats-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -205,15 +205,15 @@ intermediary output locally</p></dd>
 <span class="r-plt img"><img src="calcBalStats-2.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="calcBalStats-3.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="calcBalStats-4.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, 4 out of 9 (44%) covariates across time points, corresponding to 3 out of 3 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.13 (range= -0.16--0.1):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, 4 out of 9 (44%) covariates across time points, corresponding to 2 out of 3 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.17 (range= -0.26-0.15):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced covariates using no weights and full formulas</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | exp_time| balanced_n| imbalanced_n|  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |--------:|----------:|------------:|--:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          1|            0|  1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          0|            1|  1|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          2|            1|  3|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          2|            3|  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          3|            2|  5|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">c</span> <span class="op">&lt;-</span> <span class="fu">calcBalStats</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -227,15 +227,15 @@ intermediary output locally</p></dd>
 <span class="r-plt img"><img src="calcBalStats-5.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="calcBalStats-6.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="calcBalStats-7.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, 4 out of 9 (44%) covariates across time points, corresponding to 3 out of 3 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.13 (range= -0.16--0.1):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, 4 out of 9 (44%) covariates across time points, corresponding to 2 out of 3 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.17 (range= -0.26-0.15):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced covariates using no weights and full formulas</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | exp_time| balanced_n| imbalanced_n|  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |--------:|----------:|------------:|--:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          1|            0|  1|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          0|            1|  1|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          2|            1|  3|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          2|            3|  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          3|            2|  5|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">c</span> <span class="op">&lt;-</span> <span class="fu">calcBalStats</span><span class="op">(</span>data <span class="op">=</span> <span class="va">test</span>,</span></span>
@@ -249,15 +249,7 @@ intermediary output locally</p></dd>
 <span class="r-plt img"><img src="calcBalStats-8.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="calcBalStats-9.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="calcBalStats-10.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, 2 out of 9 (22%) covariates across time points, corresponding to 1 out of 3 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.12 (range= -0.13-0.12):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced covariates using cbps and full formulas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | exp_time| balanced_n| imbalanced_n|  n|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |--------:|----------:|------------:|--:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          1|            0|  1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          2|            1|  3|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          4|            1|  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> No covariates remain imbalanced using cbps and full formulas. </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
