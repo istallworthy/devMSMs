@@ -62,7 +62,7 @@ The helper functions can be installed from the accompanying *devMSMsHelpers* rep
 ## Recommended Workflow
 We propose a recommended workflow for using *devMSMs* to answer causal questions with longituinal data. We suggest using the vignettes in the order they appear in the Articles tab. After reading the accompanying manuscript, We recommend first reviewing the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes as you begin preparing your data. We then recommend downloading the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> which contains all the code desribed in the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a>, and *Workflows* vignettes (for binary (TBA) or <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a> exposures) for implementing the steps below.
   
-<img width="651" alt="Screen Shot 2023-11-08 at 4 00 44 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/91216ef3-e4c3-4c8a-a522-f683105bfc66">
+<img width="800" alt="Screen Shot 2023-11-08 at 4 00 44 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/91216ef3-e4c3-4c8a-a522-f683105bfc66">
 
 <br> 
 
@@ -77,6 +77,8 @@ Eronen, M. I. (2020). Causal discovery and the problem of psychological interven
    
 Fong, C., Hazlett, C., & Imai, K. (2018). Covariate balancing propensity score for a continuous treatment: Application to the efficacy of political advertisements. The Annals of Applied Statistics, 12(1), 156–177. https://doi.org/10.1214/17-AOAS1101  
   
+Greifer N (2023). cobalt: Covariate Balance Tables and Plots. R package version 4.5.2, https://github.com/ngreifer/cobalt, https://ngreifer.github.io/cobalt/.  
+    
 Haber, N. A., Wood, M. E., Wieten, S., & Breskin, A. (2022). DAG With Omitted Objects Displayed (DAGWOOD): A framework for revealing causal assumptions in DAGs. Annals of Epidemiology, 68, 64–71. https://doi.org/10.1016/j.annepidem.2022.01.001  
   
 Hirano, K., & Imbens, G. W. (2004). The Propensity Score with Continuous Treatments. In Applied Bayesian Modeling and Causal Inference from Incomplete-Data Perspectives (pp. 73–84). John Wiley & Sons, Ltd. https://doi.org/10.1002/0470090456.ch7  
