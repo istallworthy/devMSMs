@@ -29,11 +29,11 @@ The code contained in this vignette is also available, integrated code from the 
 <br>
 
 ### Home Directory
-Users are required to specify home directory, or in quotations, a path to a designated folder for all output from the package, if they plan to save out intermediary and final outputs in the package (default) by setting `save.out = TRUE` for any of the functions. All sub directories will be created within this home directory by the *devMSMs* functions automatically when `save.out’ = TRUE`.  
+Users are required to specify home directory, or in quotations, a path to a designated folder for all output from the package (without the final forward slash), if they plan to save out intermediary and final outputs in the package (default) by setting `save.out = TRUE` for any of the functions. All sub directories will be created within this home directory by the *devMSMs* functions automatically when `save.out’ = TRUE`.  
 
 ```{r}
 home_dir <- NA
-home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
+home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' 
 ```
   
 <br>
@@ -101,7 +101,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
                     "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
                     "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
-                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",  #exposure variables required               
+                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",               
                     "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
                     "EARS_TJo.24", "EARS_TJo.35",                                        
                     "LESMnPos.24", "LESMnPos.35",                                  

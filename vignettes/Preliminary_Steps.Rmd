@@ -180,6 +180,7 @@ head(data_long_f, n = c(5, 10))
 ```
 
 We get a descriptive statistics summary of the exposure, ESETA1, and the outcome, StrDif_Tot.58, for our visual inspections.  
+
 <br>
 
 #### P1b. Tranform formatted long data to wide
@@ -219,6 +220,7 @@ data_wide <- sim_data_wide
 
 head(data_wide,  n = c(5, 10))
 ```
+
 <br>
 
 Data with missingness is more common with human data. Below we read in simulated wide FLP data with missingness.   
@@ -234,19 +236,19 @@ head(data_wide,  n = c(5, 10))
 #### P2a. Format wide data
 Users beginning with a single unformatted data frame in long format can utilize a helper function `formatWideData()` to summarize exposure and outcome data and convert to required variable names. `formatWideData()` allows the users to supply existing variables for ID (`id_var`) and missing data (`missing`) for re-naming according to what is required by the package. It also allows the user to submit variables that should be factors and integers, and the function classes any factor confounders (`factor_confounders`) as factors, integer confounders (`integer_confounders`) as integers in the data, and all others as numeric.  
 
-Below, we format the simulated wide FLP data.  
+Below, we format the simulated wide FLP data by listing out variables to make into factors and integers in wide format (e.g., "variable.t"), as well as the ID and missingness indicators.  
 ```{r}
 factor_confounders <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                         "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                        "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58") #list factor variables in wide format here
+                        "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
 
 integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
                         "gov_assist", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58", 
-                        "EARS_TJo.24", "EARS_TJo.35", "MDI.6", "MDI.15") #list any integer variables in wide format here
+                        "EARS_TJo.24", "EARS_TJo.35", "MDI.6", "MDI.15")
 
 data_wide_f <- formatWideData(data = data_wide, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
-                              id_var = "ID", #list original id variable here if it's not "ID"
-                              missing = NA, #list missing value here
+                              id_var = "ID",
+                              missing = NA, 
                               factor_confounders = factor_confounders,
                               integer_confounders = integer_confounders,
                               home_dir = home_dir, save.out = save.out) 
@@ -313,17 +315,8 @@ The mice object can now be assigned to `data` for use in the *deveMSMs* package 
 #### P3b. Read in as a list of wide imputed data saved locally 
 Alternatively, if a user has imputed datasets already created from wide, formatted data using a program other than *mice*, they can read in, as a list, files saved locally as .csv files (labeled “1”:m) in a single folder. This list can be assigned to `data` for use in the *deveMSMs* package (see *Workflows* vignettes).  
 
-Below, we load in a list of imputed data simulated from FLP, as an example.  
+Below, we load in a list of imputed data simulated from FLP, as an example. (See the example Rmarkdown file for code to do this with files saved locally.)  
 ```{r}
-# folder <- "/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/imputations/"
-# 
-# files <- list.files(folder, full.names = TRUE, pattern = "\\.csv") #make sure pattern matches suffix of your data
-# 
-# data <- lapply(files, function(file) {
-#   imp_data <- read.csv(file)
-#   imp_data
-# })
-
 data("sim_data_imp_list", package = "devMSMs")
 
 data <- sim_data_imp_list

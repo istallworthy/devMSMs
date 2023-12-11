@@ -30,7 +30,7 @@ This vignette contains some key definitions for using the <a href="https://istal
 <br>
 <br> 
 
-![Table 2. Summary of the formula terminiology used in the *devMSMs* package for creating balancing weights and assessing their performance in devMSMs (*Workflows* vignettes Steps 4-6). The different kinds of formulas vary with respect to their inclusion of time-varying confounders and the `type` specification to create them using the `createFormulas()` function.](figures/formula term summary table.png){width=600px}  
+![Table 2. Summary of the formula terminology used in the *devMSMs* package for creating balancing weights and assessing their performance in devMSMs (*Workflows* vignettes Steps 4-6). The different kinds of formulas vary with respect to their inclusion of time-varying confounders and the `type` specification to create them using the `createFormulas()` function.](figures/formula term summary table.png){width=600px}  
   
 <br> 
 <br> 
