@@ -52,6 +52,8 @@ Below is a summary of the terms used in the *devMSMs* vignettes and functions. M
 `install_github("istallworthy/devMSMs")`  
 `library(devMSMs)`  
 
+<br> 
+
 The helper functions can be installed from the accompanying *devMSMsHelpers* repo: 
 <br>   
 `install_github("istallworthy/devMSMsHelpers")`  
