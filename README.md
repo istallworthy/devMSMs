@@ -23,11 +23,11 @@ Core features of *devMSMs* include:
 
 - an accompanying simulated longitudinal dataset, based on the real-world, Family Life Project (FLP) study of human development, for getting to know the package functions
 
-- an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of *devMSMs* (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary steps vignette</a>)  
+- an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of *devMSMs* (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary Steps vignette</a>)  
    
 - executable, step-by-step user guidance for implementing the *deveMSMs* worflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> 
 
-- a brief conceptual introduction, an example empirical application, and additional resources in the accompanying tutorial paper
+- a brief conceptual introduction, example empirical application, and additional resources in the accompanying tutorial paper
 
 <br>
 
@@ -79,8 +79,10 @@ Eronen, M. I. (2020). Causal discovery and the problem of psychological interven
    
 Fong, C., Hazlett, C., & Imai, K. (2018). Covariate balancing propensity score for a continuous treatment: Application to the efficacy of political advertisements. The Annals of Applied Statistics, 12(1), 156–177. https://doi.org/10.1214/17-AOAS1101  
   
-Greifer N (2023). cobalt: Covariate Balance Tables and Plots. R package version 4.5.2, https://github.com/ngreifer/cobalt, https://ngreifer.github.io/cobalt/.  
-    
+Greifer N (2023). cobalt: Covariate Balance Tables and Plots. R package version 4.5.2, https://github.com/ngreifer/cobalt, https://ngreifer.github.io/cobalt/  
+
+Greifer N (2023). WeightIt: Weighting for Covariate Balance in Observational Studies. https://ngreifer.github.io/WeightIt/, https://github.com/ngreifer/WeightIt  
+   
 Haber, N. A., Wood, M. E., Wieten, S., & Breskin, A. (2022). DAG With Omitted Objects Displayed (DAGWOOD): A framework for revealing causal assumptions in DAGs. Annals of Epidemiology, 68, 64–71. https://doi.org/10.1016/j.annepidem.2022.01.001  
   
 Hirano, K., & Imbens, G. W. (2004). The Propensity Score with Continuous Treatments. In Applied Bayesian Modeling and Causal Inference from Incomplete-Data Perspectives (pp. 73–84). John Wiley & Sons, Ltd. https://doi.org/10.1002/0470090456.ch7  
