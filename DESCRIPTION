@@ -1,6 +1,6 @@
 Package: devMSMs
 Type: Package
-Title: Tools for Conducting Marginal Structural Models with Developmental Data
+Title: Implementing Marginal Structural Models with Longitudinal Data
 Version: 0.0.0.9000
 Authors@R: c(person("Isabella", "Stallworthy",
             email = "istall@seas.upenn.edu",
@@ -17,7 +17,7 @@ Authors@R: c(person("Isabella", "Stallworthy",
             person("Daniel", "Berry",
             email = "dberry@umn.edu",
             role = c("aut")))
-Description: Functions for preparing, assessing, and implementing MSMS.
+Description: Functions for preparing, assessing, and implementing MSMS with longitudinal data.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
