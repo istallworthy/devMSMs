@@ -159,17 +159,17 @@ TRUE)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 1 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.1 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x564c1ece39f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c33568bd68&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 2 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.2 ~ A.1 + B.1 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x564c1ece39f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c33568bd68&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please manually inspect the full balancing formula below:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The full formula for A - D.3 at A time point 3 is: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A.3 ~ A.1 + A.2 + B.1 + B.2 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x564c1ece39f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c33568bd68&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span>,</span></span>
@@ -188,7 +188,7 @@ TRUE)</p></dd>
 <span class="r-in"><span>                   outcome <span class="op">=</span> <span class="st">"D.3"</span>,</span></span>
 <span class="r-in"><span>                   formulas <span class="op">=</span> <span class="va">f</span>,</span></span>
 <span class="r-in"><span>                   save.out <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.02 (SD = 0.29; range = 0.54-2). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the cbps weighting method, the median weight value is 1.03 (SD = 0.57; range = 0.21-3). </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="make_love_plot-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -205,29 +205,27 @@ TRUE)</p></dd>
 <span class="r-plt img"><img src="make_love_plot-2.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="make_love_plot-3.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="make_love_plot-4.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, 3 out of 9 (33%) covariates across time points, corresponding to 2 out of 3 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.11 (range= -0.12-0.1):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, 1 out of 9 (11%) covariates across time points, corresponding to 1 out of 3 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.13 (range= 0.13-0.13):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced covariates using cbps and full formulas</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | exp_time| balanced_n| imbalanced_n|  n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |--------:|----------:|------------:|--:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |        1|          1|            0|  1|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          3|            0|  3|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          2|            3|  5|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        2|          2|            1|  3|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |        3|          5|            0|  5|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> USER ALERT: For exposure A using the full formulas and cbps :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The median absolute value relation between exposure and confounder is 0.06 (range = -0.12 -0.1). </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, the following 3 covariates across time points out of 9 total (33.33%) spanning 2 domains out of 3 (66.67%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to A of 0.11 (range=-0.12-0.1) :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The median absolute value relation between exposure and confounder is 0.03 (range = -0.09 -0.13). </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> As shown below, the following 1 covariates across time points out of 9 total (11.11%) spanning 1 domains out of 3 (33.33%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to A of 0.13 (range=0.13-0.13) :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Table: Imbalanced Covariates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |   |exposure | exp_time| covar_time|covariate |    avg_bal| bal_thresh| balanced|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|:--------|--------:|----------:|:---------|----------:|----------:|--------:|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |6  |A        |        3|          2|A.2       |  0.1000207|        0.1|        0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |7  |A        |        3|          1|B.1       | -0.1112982|        0.1|        0|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |8  |A        |        3|          2|B.2       | -0.1189992|        0.1|        0|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |   |exposure | exp_time| covar_time|covariate |   avg_bal| bal_thresh| balanced|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:--|:--------|--------:|----------:|:---------|---------:|----------:|--------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |4  |A        |        2|          0|C         | 0.1267362|        0.1|        0|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">make_love_plot</span><span class="op">(</span>balance_stats <span class="op">=</span> <span class="va">b</span>,</span></span>
