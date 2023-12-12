@@ -72,13 +72,7 @@ We propose a recommended workflow for using *devMSMs* to answer causal questions
 
 ## Citation & Bug Reports
 Please cite your use *devMSMs* using the following citation:  
-@Manual{,
-  title = {devMSMs: Implementing Marginal Structural Models with Longitudinal Data},
-  author = {Isabella Stallworthy and Noah Greifer and Meriah DeJoseph and Emily Padrutt and Daniel Berry},
-  year = {2023},
-  note = {R package version 0.0.0.9000, https://github.com/istallworthy/devMSMs},
-  url = {https://istallworthy.github.io/devMSMs/},
-}
+Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Berry D (2023). devMSMs: Implementing Marginal Structural Models with Longitudinal Data. R package version 0.0.0.9000, https://github.com/istallworthy/devMSMs, https://istallworthy.github.io/devMSMs/.  
 
 <br>   
 
