@@ -70,6 +70,22 @@ We propose a recommended workflow for using *devMSMs* to answer causal questions
 
 <br> 
 
+## Citation & Bug Reports
+Please cite your use *devMSMs* using the following citation:  
+@Manual{,
+  title = {devMSMs: Implementing Marginal Structural Models with Longitudinal Data},
+  author = {Isabella Stallworthy and Noah Greifer and Meriah DeJoseph and Emily Padrutt and Daniel Berry},
+  year = {2023},
+  note = {R package version 0.0.0.9000, https://github.com/istallworthy/devMSMs},
+  url = {https://istallworthy.github.io/devMSMs/},
+}
+
+<br>   
+
+Please report any bugs at the following link: https://github.com/istallworthy/devMSMs/issues 
+
+<br> 
+
 ## Additional Resources
 Austin, P. C. (2011). An Introduction to Propensity Score Methods for Reducing the Effects of Confounding in Observational Studies. Multivariate Behavioral Research, 46(3), 399–424. https://doi.org/10.1080/00273171.2011.568786  
 
