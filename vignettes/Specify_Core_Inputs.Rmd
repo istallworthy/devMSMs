@@ -18,10 +18,11 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+<br>
 
 This vignette guides users through the specification of the core inputs required by the *deMSMs* functions (and helper functions). Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, exposure time points, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the *devMSMs* package (see *Workflows* vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (`verbose = FALSE`) and elect not to save out locally any intermediate and final output (`save.out = FALSE`).  
   
-Following completion of this vignette, the user should complete the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a> followed by a *Workflow* vignette to implement *devMSMs* with their longitudinal data. 
+Following completion of this vignette, the user should complete the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a> followed by a *Workflow* vignette to implement *devMSMs* with their longitudinal data. 
   
 The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">examplePipeline.rmd file</a>.  
 
@@ -33,7 +34,7 @@ Users are required to specify home directory, or in quotations, a path to a desi
 
 ```{r}
 home_dir <- NA
-home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' 
+#home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' 
 ```
   
 <br>
@@ -54,7 +55,7 @@ First, they may specify all time points at which the exposure was measured in th
   
 Second, they may specify a subset of theoretically important time points at which the exposure was measured in their data. This means that balancing formulas will be created and IPTW weights will be created and assessed for only those time points. Further, if no epochs are specified, only those subsetted time points will be included as exposure main effects in the final substantive models. Importantly, exposure variables at all time points at which the exposure was assessed should be included as time-varying confounders for balancing purposes only.  
   
-The specification of exposure epochs should be kept consistent throughout the use of the *devMSMs* package. If the user intends to specify exposure epochs (<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps vignette</a> Step P4), the user should include all time points encompassed in the epochs in `exposure_time_pts`. If the user does not intend to specify exposure epochs, the `exposure_time_pts` will constitute the exposure main effects in the final outcome model and form the basis of the histories used for history comparison. In this case, if the user specifies more than 4 exposure time points, they will be required to conduct only a subset of history comparisons (Step 5b in the *Workflows* vignettes), given that the base code (see the `hypotheses()` function from the *marginaleffects* package) cannot accommodate all pairwise history comparisons for more than 5 time points.   
+The specification of exposure epochs should be kept consistent throughout the use of the *devMSMs* package. If the user intends to specify exposure epochs (<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps vignette</a> Step P4), the user should include all time points encompassed in the epochs in `exposure_time_pts`. If the user does not intend to specify exposure epochs, the `exposure_time_pts` will constitute the exposure main effects in the final outcome model and form the basis of the histories used for history comparison. In this case, if the user specifies more than 4 exposure time points, they will be required to conduct only a subset of history comparisons (Step 5b in the *Workflows* vignettes), given that the base code (see the `hypotheses()` function from the *marginaleffects* package) cannot accommodate all pairwise history comparisons for more than 5 time points.   
 
 We elected to create epochs of infancy (6 and 15 months), toddlerhood (24 and 35 months), and early childhood (58 months). Thus, we input 6, 15, 24, 35, and 58 to `exposure_time_pts`.   
 
@@ -73,7 +74,7 @@ outcome <- "StrDif_Tot.58"
 <br>
 
 ### Confounders 
-#### Time invariant confounders
+#### Time Invariant Confounders
 Specifying at least one time invariant confounder is required for the use of this package as required input for the `createFormulas()` function. Time invariant confounders could include core demographic or birth characteristics (e.g., sex, racial group membership, birth complications) that might cause either the exposure or outcome, either directly or as a proxy, as suggested by theory and/or evidenced by strong associations in the existing literature.   
   
 Here, the user can also include any interaction terms between time invariant variables (e.g., “variable:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level. For `ti_confounders`, as a list, in quotations, provide the names of all confounders (e.g., “variable”, “variable:variable”) in your dataset that are time invariant.  
@@ -81,13 +82,12 @@ Here, the user can also include any interaction terms between time invariant var
 ```{r}
 ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
                     "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
-                    "peri_health", "caregiv_health", "gov_assist"
-)
+                    "peri_health", "caregiv_health", "gov_assist")
 ```
 
   
   
-#### Time-varying confounders
+#### Time-varying Confounders
 Specifying at least time-varying exposures as time-varying confounders is required for the use of this package as required input for the `createFormulas()` *devMSMs* function (see *Workflows* vignettes). In `tv_confounders` as a list, in quotations, provide the names of all variables in wide format (e.g., “variable.t”) in your dataset that are time-varying (including time-varying confounders, exposures, and outcomes). These should include all time-varying exposure variables and all outcome variables present in the dataset (e.g., “variable.t”). Note that time-varying confounders should also include any confounders measured repeatedly at all time points (e.g., InRatioCor) or any collected only at one or several specific time points, and missing at other time points, but are not time invariant.   
   
 Here, the user can also include any interaction terms between time-varying variables (e.g., “variable.t:variable.t”) or between time invariant and time-varying variables (e.g., “variable.t:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level.  
@@ -107,8 +107,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "LESMnPos.24", "LESMnPos.35",                                  
                     "LESMnNeg.24", "LESMnNeg.35",       
                     "StrDif_Tot.35", "StrDif_Tot.58",    
-                    "fscore.35", "fscore.58"
-) 
+                    "fscore.35", "fscore.58") 
 ```
   
 <br>

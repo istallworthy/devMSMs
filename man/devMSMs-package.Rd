@@ -4,9 +4,9 @@
 \name{devMSMs-package}
 \alias{devMSMs}
 \alias{devMSMs-package}
-\title{devMSMs: Tools for Conducting Marginal Structural Models with Developmental Data}
+\title{devMSMs: Implementing Marginal Structural Models with Longitudinal Data}
 \description{
-Functions for preparing, assessing, and implementing MSMS.
+Functions for preparing, assessing, and implementing MSMS with longitudinal data.
 }
 \seealso{
 Useful links:

@@ -200,7 +200,6 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
          call. = FALSE)
   }
   
-  
   if (!is.logical(verbose)) {
     stop("Please set verbose to either TRUE or FALSE.",
          call. = FALSE)
@@ -294,7 +293,7 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
       
       
     }, error = function(x) {
-      stop("These weights have not previously been saved locally. Please re-run with read_in_from_file=FALSE",
+      stop("These weights have not previously been saved locally. Please re-run with read_in_from_file = FALSE",
            call. = FALSE)
     })
   }
@@ -402,7 +401,7 @@ createWeights <- function(data, exposure, outcome, formulas, method = "cbps",
         
         if (verbose) {
           
-          cat(sprintf("For imputation %s and the %s weighting method, the median weight value is %s (SD= %s; range= %s-%s ). \n",
+          cat(sprintf("For imputation %s and the %s weighting method, the median weight value is %s (SD= %s; range= %s-%s). \n",
                       i,
                       weights_method,
                       round(median(fit$weights), 2),

@@ -7,17 +7,18 @@ output: html_document
 
 Please see this manuscript for a full conceptual and practical introduction to MSMs in the context of developmental data. Please see the vignettes on the *devMSMs* website for step-by-step guidance on the use of this code: https://istallworthy.github.io/devMSMs/index.html. 
 
-Headings denote accompanying website sections and steps.  
+Headings denote accompanying website sections and steps. We suggest using the interactive outline tool (located above the Console) for ease of navigation.
 
 The code in each code chunk is set up identifying all possible inputs to each function (required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function, including a NULL/NA option if the user does not wish to specify an optional input. The user should select one of each optional input values. Alternatively, the user could modify the call to the function and remove the optional input argument(s) entirely. 
 
 Please see the website vignettes and/or type `?functionName` into the console for more guidance on the arguments for each function. These two sources should match but let me know if you see discrepancies. 
 
 
+
 # *Installation*
 https://istallworthy.github.io/devMSMs/index.html 
 
-## Getting started
+## Getting Started
 Until *devMSMs* is available on CRAN, you will need to install it directly from Github (https://github.com/istallworthy/devMSMs), as shown below.  
 
 You will always need to install the devMSMs helper functions from Github (*devMSMsHelpers*) if you wish to conduct the preliminary steps below. 
@@ -31,8 +32,8 @@ library(devMSMs)
 
 install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 library(devMSMsHelpers)
-
 ```
+
 
 
 # *Specify Core Inputs Vignette*
@@ -42,14 +43,13 @@ https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html
 The user should change all fields in this code chunk to match their home directory and wide data.
 
 ```{r}
-
 #set seed for reproducibility 
 set.seed(1234)
 
 #required if you wish to use save.out = TRUE in the functions
 home_dir <- NA
 home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
-data
+
 #required
 exposure <- "ESETA1"
 
@@ -91,9 +91,11 @@ ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmM
 # *Preliminary Steps Vignette*
 https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html
 
+Functions from devMSMsHelpers: https://github.com/istallworthy/devMSMsHelpers  
 
-## STEP P: Preliminary Steps for Reading in, Formatting, & Inspecting Data
-We advise users implement the appropriate preliminary steps, with the goal of assigning to 'data' one of the following wide data formats (see Figure 1) for use in the package:  
+
+## STEP P: Recommended Preliminary Steps to Prepare & Inspect Data
+We advise users implement the appropriate preliminary steps, with the goal of assigning to `data` one of the following wide data formats (see Figure 1) for use in the package:  
 
 * a single data frame of data in wide format with no missing data  
 
@@ -116,8 +118,8 @@ Users have several options for reading in data. They can begin this workflow wit
 ### P1. Single Long Data Frame
 Users beginning with a single data frame in long format (with or without missingness).
 
-#### P1a. Format long data
-Users have the option of formatting their long data if their data columns are not yet labeled correctly using the `formatLongData()` helper function.    
+#### P1a. Format Long Data
+Users have the option of formatting their long data if their data columns are not yet labeled correctly using the `formatLongData()` helper function. 
 
 ```{r}
 data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_long_missing_unformatted.csv", #add path to your long data file here if you want to begin with long data
@@ -126,6 +128,7 @@ data_long <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/
 factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                        "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                        "RHasSO") #list factor variables in long format here
+
 integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
                         "gov_assist", "B18Raw", "EARS_TJo", "MDI")
 
@@ -139,8 +142,9 @@ data_long_f <- formatLongData(data = data_long, exposure = exposure, exposure_ti
 ```
 
 
-#### P1b. Tranform formatted long data to wide
-Users with correctly formatted data in long format have the option of using the following code to transform their data into wide format, to proceed to using the package (if there is no missing data) or imputing (with < 20% missing data MAR).They may see some warnings about *NA* values.    
+#### P1b. Tranform Formatted Long Data to Wide
+Users with correctly formatted data in long format have the option of using the following code to transform their data into wide format, to proceed to using the package (if there is no missing data) or imputing (with < 20% missing data MAR). They may see some warnings about *NA* values.    
+
 ```{r}
 v <- sapply(strsplit(tv_confounders[!grepl("\\:", tv_confounders)], "\\."), "[", 1)
 v <- v[!duplicated(v)]
@@ -152,6 +156,7 @@ data_wide_f <- stats::reshape(data = data_long_f,
                             timevar = "WAVE", # list time variable in your long dataset
                             times = c(6, 15, 24, 35, 58), # list all time points in your dataset
                             direction = "wide")
+
 data_wide_f <- data_wide_f[, colSums(is.na(data_wide_f)) < nrow(data_wide_f)]
 ```
 
@@ -160,8 +165,9 @@ data_wide_f <- data_wide_f[, colSums(is.na(data_wide_f)) < nrow(data_wide_f)]
 ### P2. Single Wide Data Frame
 Alternatively, we could start with a single data frame of wide data (with or without missingness).  
 
-#### P2a. Format wide data
+#### P2a. Format Wide Data
 Users can draw on the `formatWideData()` helper function to format their wide data.   
+
 ```{r}
 data_wide <- read.csv("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/Tutorial paper/merged_tutorial_filtered.csv", #add path to your wide, formatted data file here 
                       header = TRUE)
@@ -186,8 +192,9 @@ data_wide_f <- formatWideData(data = data_wide, exposure = exposure, exposure_ti
 ### P3. Formatted Wide Data with Missingness
 Most data collected from humans will have some degree of missing data.  
 
-#### P3a. Multiply impute formatted, wide data frame using mice
-Users have the option of imputing their wide, formatted data using the *mice* package, for use with *devMSMs*.     
+#### P3a. Multiply Impute Formatted, Wide Data Frame Using Mice
+Users have the option of imputing their wide, formatted data using the *mice* package, for use with *devMSMs*.    
+
 ```{r}
 set.seed(1234)
 
@@ -197,7 +204,7 @@ s <- 1234 #empirical example
 
 #optional; number of imputations (default is 5)
 m <- NA
-m <- 2 #empirical example
+m <- 5 #empirical example
 
 #optional; provide an imputation method pmm, midastouch, sample, cart , rf (default)
 method <- NA
@@ -220,6 +227,7 @@ summary(mice::complete(data, 1))
 ```
 
 Alternatively, users could read in a saved mids object for use with *devMSMS*.    
+
 ```{r}
 imputed_data <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/testing data/continuous outcome/continuous exposure/FLP_wide_imputed_mids.rds") # final imputations for empirical example; place your .rds file in your home directory and change the name of file here
 
@@ -233,7 +241,7 @@ anyNA(data) #make sure this is false, meaning no NAs
 ```
 
 
-#### P3b. Read in as a list of wide imputed data saved locally 
+#### P3b. Read in a List of Wide Imputed Data Saved Locally 
 Alternatively, if a user has imputed datasets already created using a program other than *mice*, they can read in, as a list, files saved locally as .csv files (labeled “1”:m) in a single folder. 
 
 ```{r}
@@ -267,7 +275,9 @@ data <- lapply(data, function(x) {
 
 Having read in their data, users should now have have assigned to `data` wide, complete data as: a data frame, mice object, or list of imputed data frames for use with the *devMSMs* functions.  
 
-### P4. Optional: Identify Exposure Epochs
+
+
+### P4. Optional: Specify Exposure Epochs
 Users have the option of specifying exposure epochs, or menaingful units of developmental time that encompass the time points at which exposure was measured. We recommend users specify exposure epochs consistently throughout this workflow.  
 
 ```{r}
@@ -282,10 +292,11 @@ epochs <- data.frame(epochs = c("Infancy", #list user-specified names
 ```
 
 
+
 ### P5. Recommended: Specify and Inspect Exposure Histories
 Regardless of data formatting and exposure epochs, we highly recommend users inspect their data and the distribution of their sample throughout the exposure histories that will be used in subsequent steps.  
 
-#### P5a. Create high and low cutoff values for continuous exposures
+#### P5a. Identify High and Low Cutoff Values for Continuous Exposures
 For continuously distributed exposures, users have the option to specify cutoffs for demarcating high and low levels of exposure, respectively. We recommend users specify high and low cutoffs consistently throughout this workflow.  
 
 ```{r}
@@ -294,7 +305,7 @@ hi_lo_cut <- c(0.6, 0.3) #empirical example
 ```
 
 
-#### P5b. Specify hypotheses-relevant exposure histories
+#### P5b. Specify Hypotheses-Relevant Exposure Histories
 We recommend users specify the exposure histories that are relevant for testing their hypotheses. We suggest users specify reference and comparison histories consistently throughout this workflow.  
 
 ```{r}
@@ -310,21 +321,23 @@ comparison <- c("h-h-h", "h-l-l", "l-l-h", "h-h-l", "l-h-h") #empirical example 
 ```
 
 
-#### P5c. Inspect exposure histories and data
+#### P5c. Inspect Exposure Histories and Data
 We strongly recommend all users inspect their data and history distribution using the `inspectData()` helper function.   
+
 ```{r}
 inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, # required input
             ti_confounders = ti_confounders, tv_confounders = tv_confounders, # required input
             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
             home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional input
-
 ```
+
 
 
 
 # *Workflow: Continuous Exposure Vignette*
 https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html
 
+Functions from devMSMs: https://github.com/istallworthy/devMSMs
 
 ## PHASE 1: Confounder Adjustment
 The first phase of the MSM process is focused on eliminating confounding of the relation between exposure and outcome.  
@@ -332,18 +345,18 @@ The first phase of the MSM process is focused on eliminating confounding of the 
 ### STEP 1: Create Full Balancing Formulas & Conduct Pre-Balance Checking
 The first step is to create full balancing formulas that reflect all measured confounders at each exposure time point.  
 
-#### 1a. Create full balancing formulas at each exposure time point
+#### 1a. Create Full Balancing Formulas at each Exposure Time Point
 Users have the option to specify concurrent confounders to retain and we recommend doing so consistently throughout this workflow. 
 
 Please see the Customize Balancing Formulas Vignette at the link below for more detail on custom formulas. 
-"https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html  
-  
+https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html  
+
 ```{r}
 #optional concurrent confounders
 concur_conf <- NULL #empirical example 
 concur_conf <- "B18Raw.15"
 
-#optional custom formulas
+#optional custom formulas (abridged example shown)
 custom <- list("full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 ) 
@@ -361,7 +374,7 @@ full_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposur
 ```
 
 
-#### 1b. Conduct exploratory pre-balance assessment
+#### 1b. Conduct Exploratory Pre-Balance Assessment
 The next step is to examine initial imbalance between confounders and exposure prior to IPTW weighting. Users have the option to specify balance threshold(s), which we recommend doing consistently throughout this workflow.  
 
 ```{r}
@@ -386,11 +399,13 @@ prebalance_stats <- assessBalance(data = data, exposure = exposure, exposure_tim
 ```
 
 
+
 ### STEP 2: Create Simplified Balancing Formulas & Determine Optimal Weighting Method
 The next step is to specify shorter, simplified balancing formula for the purposes of determining the weighting method optimal for the data.   
 
-#### 2a. Create simplified balancing formulas
+#### 2a. Create Simplified Balancing Formulas
 First, create shorter, simplified balancing formulas at each exposure time point.  
+
 ```{r}
 #optional list of concurrent confounder
 concur_conf <- "B18Raw.15"
@@ -400,7 +415,7 @@ concur_conf <-  NULL #empirical example
 keep_conf <- "InRatioCor.6"
 keep_conf  <-  NULL #empirical example 
 
-#optional custom formulas
+#optional custom formulas (abridged example shown)
 custom <- list("short_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
                "short_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist")
 )
@@ -415,25 +430,24 @@ short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposu
                                  type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, #required
                                  concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, #optional
                                  home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
 ```
 
 
-#### 2b. Create IPTW balancing weights using multiple weighting methods
-We recommend users use the short formulas to create IPTW weights using all the available weighting methods: "glm", "gbm", "bart", "super", and "cbps".   
+#### 2b. Create IPTW Balancing Weights Using Multiple Weighting Methods
+We recommend users use the short formulas to create IPTW weights using all the available weighting methods: "glm", "gbm", "bart", "super", and "cbps". 
+
 ```{r}
 formulas <- short_formulas
 
 method <- "cbps"
 weights.cbps <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                               method = method, read_in_from_file = FALSE,  #optional
-                              # ints = TRUE,  #trying out optional weightitMSM inputs
                               home_dir = home_dir, verbose = TRUE, save.out = TRUE)  #optional
 
 method <- "glm"
 weights.glm <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
                              method = method, read_in_from_file = FALSE, #optional
-                             home_dir = home_dir, verbose = TRUE, save.out = TRUE)  #optional
+                             home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 
 method <- "gbm"
 weights.gbm <- createWeights(data = data, exposure = exposure, outcome = outcome, formulas = formulas, #required
@@ -452,8 +466,9 @@ weights.super <- createWeights(data = data, exposure = exposure, outcome = outco
 ```
 
 
-#### 2c. Assess all weighting methods to determien optimal method
+#### 2c. Assess All Weighting Methods to Determine Optimal Method
 The next step is to assess balance for each weighting method using the short formulas to determine the optimal weighting method.  
+
 ```{r}
 #optional balance threshold specification
 balance_thresh <- NULL
@@ -496,15 +511,16 @@ balance_stats.super <- assessBalance(data = data, exposure = exposure, exposure_
                                      outcome = outcome, type = type, formulas = formulas, weights = weights, #required
                                      balance_thresh = balance_thresh, imp_conf = imp_conf, #optional
                                      home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
 ```
+
 
 
 ### STEP 3: Create Updated Formulas & Re-Specify Weights Using Optimal Weighting Method
 The next step is to update the short balancing formulas with any imbalanced confounders and re-specify the IPTW weights.  
 
-#### 3a. Assess balance with full balancing formulas
+#### 3a. Assess Balance with Full Balancing Formulas
 First, assess how well each of the IPTW achieve balance for all measured confounders using the full balancing formula.  
+
 ```{r}
 #optional balance threshold specification
 balance_thresh <- NULL
@@ -529,8 +545,9 @@ balance_stats <- assessBalance(data = data, exposure = exposure, exposure_time_p
 ```
 
 
-#### 3b. Update simplified formulas 
+#### 3b. Update Simplified Formulas 
 Next, update the short formulas with any imbalanced confounders.  
+
 ```{r}
 #optional custom formulas
 custom <- list("update_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
@@ -556,12 +573,12 @@ updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = expo
                                    type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, bal_stats = bal_stats, #required
                                    concur_conf = concur_conf, keep_conf = keep_conf, #optional
                                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
 ```
 
 
-#### 3c. Create final balancing weights
+#### 3c. Create Final Balancing Weights
 Next, create final balancing weights using the optimal weighting method and updated balancing formulas.  
+
 ```{r}
 #required
 formulas <- updated_formulas
@@ -575,11 +592,12 @@ final_weights <- createWeights(data = data, exposure = exposure, outcome = outco
 ```
 
 
-#### 3d. Trim final balancing weights
+#### 3d. Trim Final Balancing Weights
 Next, trim the final balancing weights to reduce the heavy right tail.  
 
 ##### Main
 First, trim the main weights.  
+
 ```{r}
 # optional quantile of weights above which weights are trimmed (default is 0.95)
 quantile <- NA 
@@ -595,8 +613,9 @@ trim_weights <- trimWeights(exposure = exposure, outcome = outcome, weights = we
 
 ```
 
-##### Sensitvity analyses
+##### Sensitvity Analyses
 Next, conduct sensitivity analyses using two other quantile values.  
+
 ```{r}
 quantile <- 0.92 #optional quantile of weights above which weights are trimmed (default is 0.95)
 trim_weights.s1 <- trimWeights(exposure = exposure, outcome = outcome, weights = weights, #required
@@ -607,8 +626,8 @@ quantile <- 0.98 #optional quantile of weights above which weights are trimmed (
 trim_weights.s2 <- trimWeights(exposure = exposure, outcome = outcome, weights = weights, #required
                                quantile = quantile, #optional
                                home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
-
 ```
+
 
 
 ### STEP 4: Conduct Final Balance Assessment
@@ -616,6 +635,7 @@ Next, conduct a final balance assessment using all measured confounders (i.e., t
 
 #### Main
 First, conduct the main balance assessment.  
+
 ```{r}
 #optional balance threshold specification
 balance_thresh <- NULL
@@ -640,11 +660,9 @@ final_balance_stats <- assessBalance(data = data, exposure = exposure, exposure_
 
 #manually list remaining imbalanced covariates that are time-invariant or time-varying at t=1 for use in Step 5
 covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist", "PMEd2") 
-
 ```
 
-
-#### Sensitvity analyses
+#### Sensitvity Analyses
 Next, conduct the recommended specifying sensitivity analyses to match the main analyses above.  
 
 Note: If `save.out = TRUE`, please run the above main analysis and then rename or relocate the following output, before running each sensitivity test and renaming/relocating each one in the same manner:  
@@ -673,16 +691,18 @@ final_balance_stats.s2 <- assessBalance(data = data, exposure = exposure, exposu
 ```
 
 
+
 ## PHASE 2: Assess Substantive Associations between Exposure and Outcome
 Lastly, having attenuated confounder associations, we model substantive associations.  
 
-### STEP 5: Fit Marginal Structural Model & Summarize  & Visualize Results
+### STEP 5: Fit Marginal Structural Model & Summarize & Visualize Results
 
-#### 5a. Select and fit a marginal outcome model
+#### 5a. Select and Fit a Marginal Outcome Model
 First, select and fit a marginal outcome model.  
 
 ##### Main
 First, fit the main model.  
+
 ```{r}
 #optional family/link information for glm
 family <- NULL #empirical example
@@ -708,7 +728,7 @@ epochs <- data.frame(epochs = c("Infancy", "Toddlerhood", "Childhood"),  #empiri
 #required
 weights <- trim_weights
 
-# all inputs
+
 #required
 model <- "m1"
 models <- fitModel(data = data, weights = weights, exposure = exposure, #required
@@ -717,8 +737,7 @@ models <- fitModel(data = data, weights = weights, exposure = exposure, #require
                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 ```
 
-
-##### Sensitvity analyses
+##### Sensitvity Analyses
 Next, fit the recommended  specifying sensitivity analyses to match the main analyses above.   
 
 Note: If `save.out = TRUE`, please run the above main analysis and then rename or relocate the following output, before running each sensitivity test and renaming/relocating each one in the same manner:
@@ -742,10 +761,12 @@ models.s2 <- fitModel(data = data, weights = weights, exposure = exposure, #requ
 ```
 
 
-#### 5b. Estimate, compare, & visualize model-predicted outcome as a function of history
+#### 5b. Estimate, Compare, & Visualize Model-Predicted Outcome as a Function of History
 Lastly, estimate and compare user-specified exposure histories.   
 
 ##### Main
+First, conduct main comparisons. 
+
 ```{r}
 #optional specification of epochs; only specify this if you did in model fitting (5a) --must be identical
 epochs <- NULL
@@ -766,7 +787,6 @@ comparison <- NULL
 comparison <- "h-h-h" #single
 comparison <- c("h-h-h", "h-h-l") #multiple
 comparison <- c("h-h-h", "h-l-l", "l-l-h", "h-h-l", "l-h-h") #empirical example final choice
-
 
 #optional multiple comparion method; default is Benjamini-Hochburg, ("holm", "hochberg","hommel", "bonferroni", "BH", "BY", "fdr", "none" (see stats::p.adjust() documentation)
 mc_comp_method <- NA
@@ -792,15 +812,13 @@ colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2") #list number-of-expos
 #required
 model <- models #output from fitModel
 
-#all inputs
 results <- compareHistories(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, model = model, #required
                             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional
                             mc_comp_method = mc_comp_method, dose_level = dose_level, exp_lab = exp_lab, out_lab = out_lab, colors = colors, #optional
                             home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 ```
 
-
-##### Sensitvity analyses
+##### Sensitvity Analyses
 We recommend specifying sensitivity analyses to match the main analyses above. 
 
 Note: Please run the above main analysis and then rename or relocate the following output, before running each sensitivity test and renaming/relocating each one in the same manner:
@@ -827,7 +845,8 @@ results.s2 <- compareHistories(exposure = exposure, exposure_time_pts = exposure
 ```
 
 
-## Package citations :) 
+
+## Package Citations
 We are grateful to the authors of many existing packages that devMSMs draws from!
 
 ```{r}
