@@ -8,13 +8,12 @@
 These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
 representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
 child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). These data contain economic strain (ESEATA1) as a continuously
-distributed variable.}
+distributed variable and have no missing data.}
 \format{
 A wide data frame of 1,292 observations
-There are 36 measured variables.
+There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months.
 \itemize{
 \item "ID" subject id
-\item "WAVE" age (in months) when data were collected
 \item "ESETA1" continuous exposure of economic strain
 \item "StrDif_Tot.58" continuous outcome of behavioral problems
 \item "InRatioCor" continuous income-to-needs ratio
@@ -77,7 +76,7 @@ Wide complete data (continuous exposure)
 These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
 representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
 child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). These data contain economic strain (ESEATA1) as a continuously
-distributed variable.
+distributed variable and have no missing data.
 }
 \references{
 DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).

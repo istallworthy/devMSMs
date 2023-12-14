@@ -1,13 +1,23 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# devMSMs: Implementing Marginal <img src="https://github.com/istallworthy/devMSMs/assets/31548151/0a1c69d7-1984-4ebe-8d16-0948d670a8fb" align="right" width="100"/> Structural Models with Longitudinal Data
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
 
+# devMSMs: Implementing Marginal <img src="https://github.com/istallworthy/devMSMs/assets/31548151/0a1c69d7-1984-4ebe-8d16-0948d670a8fb" align="right" width="100"/> Structural Models with Longitudinal Data
 <!-- badges: start -->
 <!-- badges: end -->
 
 <br>
-
 
 Those who study and work with humans are fundamentally interested in questions of causation. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in *causal processes* involving questions about when (timing) and to what extent (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people's lives. However, for many, conceptual, methodological, and practical barriers have prevented the use of methods for causal inference developed in other fields.
 <br>
@@ -112,5 +122,10 @@ Kainz, K., Greifer, N., Givens, A., Swietek, K., Lombardi, B. M., Zietz, S., & K
 Robins, J. M., Hernán, M. Á., & Brumback, B. (2000). Marginal Structural Models and Causal Inference in Epidemiology. Epidemiology, 11(5), 550–560.  
 
 Thoemmes, F., & Ong, A. D. (2016). A Primer on Inverse Probability of Treatment Weighting and Marginal Structural Models. https://doi.org/10.1177/2167696815621645  
+
+
+
+
+
 
 

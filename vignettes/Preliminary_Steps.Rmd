@@ -1,5 +1,5 @@
 ---
-title: "Preliminary Steps"
+title: "Recommended Preliminary Steps"
 author: "Isabella Stallworthy"
 date: "`r Sys.Date()`"
 output:
@@ -17,8 +17,9 @@ editor_options:
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>", 
-  echo = TRUE
+  comment = "#>",
+  echo = TRUE,
+  eval = TRUE
 )
 
 options(rmarkdown.html_vignette.check_title = FALSE)
@@ -77,14 +78,14 @@ As shown in Figure 1, for use of the *devMSMs* package, data in any of the above
 
 <br>
 
-### Core inputs
+### Core Inputs
 Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a> for more detail on the following core inputs. Here, we use ESETA1, a measure of economic strain experienced by the family, as the exposure and StrDif_Tot, or behavior problems measured by the SDQ, as the outcome.  
 
 ```{r}
 set.seed(1234)
 
 home_dir <- NA
-# home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
+#home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
 
 exposure <- "ESETA1"
 
@@ -128,9 +129,7 @@ As shown in Figure 2, users have several options for reading in data. They can b
 <br>
   
 * (P1) long data: complete or with missingness that can be formatted and converted to wide data and (P3) imputed as needed 
-
-* (P2) wide data: complete or missingness that can be formatted and (P3) imputed as needed 
-
+* (P2) wide data: complete or missingness that can be formatted and (P3) imputed as needed  
 * (P3) data already imputed in wide format can be read in as a list 
 
 <br>
@@ -153,12 +152,11 @@ head(data_long, n = c(5, 10))
 ```
 <br>
   
-#### P1a. Format long data
+#### P1a. Format Long Data
 For long data that is not correctly formatted, `formatLongData()` allows the users to supply existing variables for time (`time_var`), ID (`id_var`), and missing data (`missing`) for re-naming according to what is required by the package. It also allows the user to submit variables that should be factors and integers, and the function classes any factor confounders (`factor_confounders`) as factors, integer confounders (`integer_confounders`) as integers in the data, and all others as numeric.  
 
 Below, we format the simulated long FLP data.  
 ```{r}
-
 factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
                        "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                        "RHasSO")
@@ -183,7 +181,7 @@ We get a descriptive statistics summary of the exposure, ESETA1, and the outcome
 
 <br>
 
-#### P1b. Tranform formatted long data to wide
+#### P1b. Tranform Formatted Long Data to Wide
 Users with correctly formatted data in long format have the option of using the following code to transform their data into wide format, to proceed to using the package (if there is no missing data) or imputing (with < 20% missing data MAR).  
 
 We then transform our newly formatted long data into wide format, specifying `idvar` as "ID", `timevar` as "WAVE", and supplying the time points (encompassing exposure, confounder, and outcome time points) in the data as 6, 15, 24, 35, and 58 to `times`.    
@@ -233,7 +231,7 @@ head(data_wide,  n = c(5, 10))
 ```
 <br>
 
-#### P2a. Format wide data
+#### P2a. Format Wide Data
 Users beginning with a single unformatted data frame in long format can utilize a helper function `formatWideData()` to summarize exposure and outcome data and convert to required variable names. `formatWideData()` allows the users to supply existing variables for ID (`id_var`) and missing data (`missing`) for re-naming according to what is required by the package. It also allows the user to submit variables that should be factors and integers, and the function classes any factor confounders (`factor_confounders`) as factors, integer confounders (`integer_confounders`) as integers in the data, and all others as numeric.  
 
 Below, we format the simulated wide FLP data by listing out variables to make into factors and integers in wide format (e.g., "variable.t"), as well as the ID and missingness indicators.  
@@ -266,11 +264,10 @@ As shown below, users can use a helper function to impute their wide data or imp
 
 <br>
 
-#### P3a. Multiply impute formatted, wide data frame using mice
+#### P3a. Multiply Impute Formatted, Wide Data Frame using MICE
 Users have the option of using the helper `imputeData()` function to impute their correctly formatted wide data. This step can take a while to run. The user can specify how many imputed datasets to create (default m = 5). `imputeData()` draws on the `mice()` function from the *mice* package (van Buuren & Oudshoorn, 2011) to conduct multiple imputation by chained equations (mice). All other variables present in the dataset are used to impute missing data in each column.  
 
 The user can specify the imputation method through the `method` field drawing from the following list: “pmm” (predictive mean matching), “midastouch” (weighted predictive mean matching), “sample” (random sample from observed values), “rf” (random forest) or “cart” (classification and regression trees). Random forest imputation is the default given evidence for its efficiency and superior performance (Shah et al., 2014). Please review the *mice* documentation for more details.  
-
 Additionally, users can specify an integer value to `seed` in order to offset the random number generator in *mice()* and make reproducible imputations.  
 
 The parameter `read_imps_from_file` will allow you to read already imputed data in from local storage (TRUE) so as not to have to re-run this imputation code multiple times (FALSE; default). Users may use this parameter to supply their own mids object of imputed data from the *mice* package  (with the title ‘all_imp.rds’). Be sure to inspect the console for any warnings as well as the resulting imputed datasets. Any variables that have missing data following imputation may need to be removed due to high collinearity and/or low variability.   
@@ -304,6 +301,9 @@ imputed_data <- imputeData(data = data_wide_f, exposure = exposure, outcome = ou
 head(mice::complete(imputed_data, 1), n = c(5, 10))
 
 data <- imputed_data
+
+#testing
+lapply(1:imputed_data$m, function(x) {summary(mice::complete(imputed_data, x)$SmokTot)})
 ```
 
 We inspect the output to the console for any warnings from `mice()`.  
@@ -312,7 +312,7 @@ The mice object can now be assigned to `data` for use in the *deveMSMs* package 
 
 <br>
 
-#### P3b. Read in as a list of wide imputed data saved locally 
+#### P3b. Read in as a List of Wide Imputed Data Saved Locally 
 Alternatively, if a user has imputed datasets already created from wide, formatted data using a program other than *mice*, they can read in, as a list, files saved locally as .csv files (labeled “1”:m) in a single folder. This list can be assigned to `data` for use in the *deveMSMs* package (see *Workflows* vignettes).  
 
 Below, we load in a list of imputed data simulated from FLP, as an example. (See the example Rmarkdown file for code to do this with files saved locally.)  
@@ -327,7 +327,7 @@ head(data[[1]],  n = c(5, 10))
 <br>
 <br>
 
-### P4. Optional: Idenitfy Exposure Epochs
+### P4. Optional: Specify Exposure Epochs
 Users have the option to specify exposure epochs, or meaningful periods of developmental time that many encompass the time points at which the exposure was measured. The user has the option to draw on theory and the structure of their data to specify developmental epochs of exposure that differ from the time points at which exposure was collected.  
 
 To specify epochs, users utilize the optional `epochs` argument by providing a data frame that contains two variables: for epochs: provide, in quotations, a list of user-created names for each epoch; for values: as a list, for each named epoch, provide a single integer or a list of integers (from the exposure time points) that constitute each epoch. Each named epoch must have a corresponding value (but the values for each epoch can differ in their number of entries, as shown below). The user should ensure that all epoch values are included in the `exposure_time_pts` field.   
@@ -352,7 +352,7 @@ epochs
 Exposure histories are the units with which users will test their substantive hypotheses, and their construction should be determined by both theoretical and practical reasoning. We strongly recommend users verify and inspect exposure histories a priori in relation to their data and hypotheses.   
 <br>
 
-### P5a. Create high and low cutoff values (for continuous exposures)
+### P5a. Identify High and Low Cutoff Values (For Continuous Exposures)
 First, for continuously distributed exposures (regardless of whether or not exposure epochs are specified), we recommend users indicate high and low cutoff values as an optional input to the `compareHistories()`) *devMSMs* function (see *Workflows* vignettes).  
 
 To do so, they specify to `hi_lo_cut`, as a list, a quantile value (0-1) above which will be considered high levels exposure, followed by a quantile value (0-1) below which will be considered low levels of exposure (default is median split). These values may have to be revised following inspection of the sample distribution across the resulting exposure histories in the subsequent steps. These final values will be used in creating exposure histories in Step 5 of the *Workflows* vignettes.  
@@ -364,7 +364,7 @@ hi_lo_cut <- c(0.6, 0.3)
 <br>
 
 
-### P5b. Specify hypotheses-relevant exposure histories 
+### P5b. Specify Hypotheses-Relevant Exposure Histories 
 We strongly recommend users be selective about which histories, or developmental sequences of high and low exposure (at exposure time points or epochs), are vital for testing their hypotheses. We recommend that the user estimates and compares only a subset of all possible exposure histories using the `reference` and `comparison` fields (rather than comparing all possible exposure histories). 
 
 The user can specify a custom subset of exposure histories using the `reference` and `comparison` fields as optional inputs to the `compareHistories()` *devMSMs* function (see *Workflows* vignettes). To conduct these customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels (“low” or “high”, respectively).   
@@ -382,7 +382,7 @@ comparison <- c("h-h-h", "l-l-h", "h-l-l", "l-h-l")
 
 <br>
 
-### P5c. Inspect exposure histories and data
+### P5c. Inspect Exposure Histories and Data
 For all users, we highly recommend use of the helper `inspectData()` function (with the a complete dataset in long or wide format or imputed data in the case of missingness) to summarize exposure, outcome, and confounders and inspect the sample distribution among exposure histories. Based on any user-specified exposure epochs and high and low quantile values (for continuous exposures), this function outputs a table showing the sample distribution across all histories.  
 
 We strongly suggest visually inspecting this table and revising the designation of epochs and/or high and low quantile values (for continuous exposures) until each history contains a reasonable number of participants. While there is no gold standard required number per history cell, users should guard against extrapolation beyond the scope of the data. For example, in our data, when using 75th and 25th percentile cutoffs, there were histories that represented less than two cases and thus we re-evaluated our cutoffs. Users may wish to revise any epoch designation and high and low cutoff values, where applicable. The function conducts summaries and history distribution inspection for each imputed dataset if imputed data are supplied.   
@@ -394,10 +394,10 @@ Optional inputs are a home directory (if `save.out = TRUE`), epochs, high/low cu
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
 
 ```{r}
-inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, # required input
-            ti_confounders = ti_confounders, tv_confounders = tv_confounders, # required input
-            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
-            home_dir = home_dir, verbose = verbose, save.out = save.out) #optional input
+inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
+            ti_confounders = ti_confounders, tv_confounders = tv_confounders,
+            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, 
+            home_dir = home_dir, verbose = verbose, save.out = save.out) 
 ```
 Here, we see summaries of the data types as well as reasonable cell counts in each of our specified histories, for each imputed dataset. 
 
