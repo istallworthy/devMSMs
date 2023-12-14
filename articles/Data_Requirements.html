@@ -44,7 +44,7 @@
     <a class="dropdown-item" href="../articles/Terminology.html">Terminology</a>
     <a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements</a>
     <a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a>
-    <a class="dropdown-item" href="../articles/Preliminary_Steps.html">Preliminary Steps</a>
+    <a class="dropdown-item" href="../articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>
     <a class="dropdown-item" href="../articles/Workflow_Continuous_Exposure.html">Workflow: Continuous Exposure</a>
     <a class="dropdown-item" href="../articles/Customize_Balancing_Formulas.html">Customize Balancing Formulas</a>
   </div>
@@ -85,22 +85,7 @@ Stallworthy</h4>
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/amices/mice" class="external-link">"mice"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'mice'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     cbind, rbind</span></span></code></pre></div>
+<p><br></p>
 <p>We recommend considering several data requirements prior to using
 <em>devMSMs</em> and any of the vignettes.</p>
 <p>MSMs are most useful for strengthening causal inference using
@@ -117,8 +102,8 @@ there is no gold standard recommendation, we suggest users select
 exposures that have some within-person variation from which it would be
 reasonable to delineate different histories of “high” and “low” levels
 (see Step P5a in the recommended
-<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary
-Steps Vignette</a>) and avoid extrapolation.</p>
+<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended
+Preliminary Steps Vignette</a>) and avoid extrapolation.</p>
 <p>The outcome time point must be the last time point when exposure was
 measured or a time point after the last exposure measurement time point.
 For cases in which the outcome variable constitutes a growth process at
@@ -148,6 +133,21 @@ not collected at all time points. As a basis for specifying confounders,
 users should turn to the literature to delineate a causal model that
 lays out hypothesized relations between confounders, exposures, and
 outcome.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/amices/mice" class="external-link">"mice"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'mice'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     cbind, rbind</span></span></code></pre></div>
 <p>The following longitudinal data that accompany <em>devMSMs</em> are
 simulated based on data from the Family Life Project (FLP), a
 longitudinal study following 1,292 families representative of two
@@ -219,7 +219,7 @@ for identifiers), in one of three ways:</p>
 <p><br></p>
 <p>All variables should be classed as integers, numeric, or factors. The
 recommended
-<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">
+<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended
 Preliminary Steps Vignette</a> offers guidance for transforming data
 into each of those three types. All time-varying variables (including
 exposure and outcome) should have “.time” suffixes (e.g., “variable.t”).
@@ -238,8 +238,8 @@ represents wave 2). Columns G - I denote the exposure and outcome of
 interest (darker yellow), where G and H are time-varying values on each
 exposure, and column I is the outcome value at the final wave/timepoint.
 Missing data are denoted as <em>NA</em> and will need to be imputed
-(<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary
-Steps Vignette</a> Step P2).</p>
+(<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended
+Preliminary Steps vignette</a> Step P2).</p>
 </div>
 <p><br></p>
 <div class="section level3">
