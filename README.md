@@ -4,7 +4,7 @@
 # devMSMs: Implementing Marginal <img src="https://github.com/istallworthy/devMSMs/assets/31548151/0a1c69d7-1984-4ebe-8d16-0948d670a8fb" align="right" width="100"/> Structural Models with Longitudinal Data
 
 <!-- badges: start -->
-<!-- badges: end -->
+<!-- badges: end --->
 
 <br>
 
