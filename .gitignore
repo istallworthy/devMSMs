@@ -5,7 +5,7 @@
 docs
 .Rdata
 .httr-oauth
-.DS_Store
+**/.DS_Store
 Archive/*
 inst/doc
 /doc/

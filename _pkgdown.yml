@@ -1,18 +1,85 @@
 url: https://istallworthy.github.io/devMSMs/
+
 template:
   bootstrap: 5
   bootswatch: litera
+
 navbar:
   structure:
     left:  [intro, reference, articles, news]
     right: [search, github]
+
 footer:
   structure: 
     left: developed_by
     right: built_with
+
 home:
   title: An R package for conducting marginal structural models (MSMs) with longitudinal data
   description: add description here
+
+reference:
+  - title: "Create balancing formulas"
+    desc: >
+      Creates balancing formulas relating exposure to all relevant time-varying and time invariant confounders at each exposure time point to be used to create IPTW weights.
+    contents: 
+      - createFormulas
+
+  - title: "Create IPTW balancing weights"
+    desc: >
+      IPTW balancing weights (Thoemmes & Ong, 2016) using the `createWeights()` function, the shortened balancing formulas, and all available weighting methods.
+    contents: 
+      - createWeights
+
+  - title: "Trim IPTW balancing weights (if needed)"
+    desc: >
+      Trims IPTW balancing weights with heavy right tails by populating all weight values above a given quantile with the weight value of that quantile.
+    contents:
+      - trimWeights
+
+  - title: "Assess balance"
+    desc: >
+      Draws on functions from the cobalt package to quantify the relations between exposure and confounders at each exposure time point according to the guidelines from Jackson, 2016 on how to assess balance for time-varying exposures.
+    contents: 
+      - assessBalance 
+  
+  - title: "Fit weighted marginal outcome model"
+    desc: >
+      Fits weighted marginal outcome model as a generalized linear model of the user's choosing, relating exposure main effects to outcome using IPTW weights.
+    contents: 
+      - fitModel
+  
+  - title: "Estimate, compare, and visualize exposure histories"
+    desc: >
+      Takes fitted model output to created predicted values for user-specified histories (pooling for imputed data), before conducting contrast comparisons (pooling for imputed data), correcting for multiple comparisons, and then plotting results.
+    contents: 
+      - compareHistories
+      
+  - title: "Helper functions (`assessBalance`)"
+    contents:
+      - calcBalStats
+      - make_love_plot
+
+  - title: "Helper functions (`fitModel`)"
+    contents:
+      - getModel
+
+  - title: "Helper functions (`compareHistories`)"
+    contents:
+      - add_dose 
+      - add_histories
+      - create_custom_comparisons 
+      - create_custom_contrasts  
+      - eval_hist 
+      - get_comparison_values 
+      - get_reference_values  
+      - perform_multiple_comparison_correction 
+  
+  - title: "Example simulated datasets"
+    desc: "These example datasets are used throughout the vignettes"
+    contents: 
+      - starts_with("sim_")
+
 articles:
 - title: Articles
   navbar: ~

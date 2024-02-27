@@ -44,6 +44,7 @@ Suggests:
     stargazer,
     sjPlot,
     testthat (>= 3.0.0),
+    tinytable,
     rmarkdown
 Config/testthat/edition: 3
 URL: https://istallworthy.github.io/devMSMs/, https://github.com/istallworthy/devMSMs
