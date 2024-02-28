@@ -7,7 +7,7 @@ output:
         df_print: kable
         toc: false
 vignette: >
-  %\VignetteIndexEntry{Workflow_Continuous_Exposure}
+  %\VignetteIndexEntry{Workflow Continuous Exposure}
   %\VignetteEncoding{UTF-8}s
   %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -27,13 +27,14 @@ This vignette guides a user through the process of using *devMSMs* to fit margin
 
 The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">examplePipeline.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript *[add link here]*. We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow.  
 
-```{r setup}
-require("devtools", quietly = TRUE)
-
+```{r, eval = FALSE}
+# install.packages("devtools")
+require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
-library(devMSMs)
-
 devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+```
+```{r setup}
+library(devMSMs)
 library(devMSMsHelpers)
 ```
   

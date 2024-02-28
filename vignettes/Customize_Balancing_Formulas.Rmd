@@ -7,7 +7,7 @@ output:
         df_print: kable
         toc: false
 vignette: >
-  %\VignetteIndexEntry{Customize_Balancing_Formulas}
+  %\VignetteIndexEntry{Customize Balancing Formulas}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -25,10 +25,11 @@ The code contained in this vignette is also available, integrated code from the 
   
 <br>  
 
-```{r setup}
+```{r, eval = FALSE}
 require("devtools", quietly = TRUE)
-
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+```
+```{r setup}
 library(devMSMs)
 ```
 
@@ -143,7 +144,7 @@ short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposu
 
 
 ### Customize Updated Balancing Formulas (Step 3)
-he default use of `createFormulas()` with `type = "update"` creates updated balancing formulas at each exposure time point. Each formula contains all time invariant confounders; time-varying confounders measured at the time point directly prior (*t*-1 lag) to that exposure time point; as well as any time-varying confounders at greater lags that were not successfully balanced using the short balancing formulas.  
+The default use of `createFormulas()` with `type = "update"` creates updated balancing formulas at each exposure time point. Each formula contains all time invariant confounders; time-varying confounders measured at the time point directly prior (*t*-1 lag) to that exposure time point; as well as any time-varying confounders at greater lags that were not successfully balanced using the short balancing formulas.  
 
 When creating updated formulas, the user can specify the optional `concur_conf`, `keep_conf`, and `custom` arguments detailed above. Of note, `createFormulas()` does not check that formulas in the `custom` field meet criteria for the updated formula or identify any imbalanced confounders, and the user is responsible for ensuring the validity of these formulas. 
 <br>
