@@ -7,7 +7,7 @@ output:
         df_print: kable
         toc: false
 vignette: >
-  %\VignetteIndexEntry{Preliminary_Steps}
+  %\VignetteIndexEntry{Recommended Preliminary Steps}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown_notangle}
 editor_options:
@@ -75,14 +75,14 @@ The user who has already formatted their data in wide format according to the Da
 <br>
   
 We first install the *devMSMs* and *devMSMsHelpers* packages.  
-```{r setup}
+```{r, eval = FALSE}
 # install.packages("devtools")
 require(devtools, quietly = TRUE)
-
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
-library(devMSMs)
-
 devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+```
+```{r setup}
+library(devMSMs)
 library(devMSMsHelpers)
 ```
 <br>

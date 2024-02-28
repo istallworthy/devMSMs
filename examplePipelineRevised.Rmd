@@ -23,14 +23,14 @@ Until *devMSMs* is available on CRAN, you will need to install it directly from 
 
 You will always need to install the devMSMs helper functions from Github (*devMSMsHelpers*) if you wish to conduct the preliminary steps below. 
 
-```{r}
+```{r, eval = FALSE}
 install.packages("devtools", quiet = TRUE)
+devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+```
+```{r}
 library(devtools)
-
-install_github("istallworthy/devMSMs", quiet = TRUE)
 library(devMSMs)
-
-install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 library(devMSMsHelpers)
 ```
 
