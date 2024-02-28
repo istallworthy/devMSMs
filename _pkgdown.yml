@@ -81,14 +81,14 @@ reference:
       - starts_with("sim_")
 
 articles:
-- title: Articles
-  navbar: ~
-  contents:
-  - Terminology
-  - Data_Requirements
-  - Specify_Core_Inputs
-  - Preliminary_Steps
-  - Workflow_Continuous_Exposure
-  - Customize_Balancing_Formulas
+  - title: Articles
+    navbar: ~
+    contents:
+    - Terminology
+    - Data_Requirements
+    - Specify_Core_Inputs
+    - Preliminary_Steps
+    - Workflow_Continuous_Exposure
+    - Customize_Balancing_Formulas
  
  

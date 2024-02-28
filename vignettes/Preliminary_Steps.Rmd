@@ -35,7 +35,38 @@ The helper functions (summarized in Table 1) for the following recommended preli
 
 <br>
 
-![Table 1. Summary of *devMSMs* helper functions.](figures/helper function summary table.png){width=600px}  
+Table 1. Summary of *devMSMs* helper functions.
+```{r, echo = FALSE}
+helper_functions = data.frame(
+  Function = c(
+    "`formatLongData()`",
+    "`formatWideData()`",
+    "`imputeData()`",
+    "`inspectData()`"
+  ),
+  Purpose = c(
+    "Format long data with the correct column names, variable classes, and missingness indicators.",
+    "Format wide data with the correct column names, variable classes, and missingness indicators.",
+    "Wrapper for `mice::mice` to multiply impute wide data.",
+    "Summarizes data and the distribution of the sample across user-specified exposure histories."
+  ),
+  `Required Input` = c(
+    "(long) `data`, `exposure`, `exposure_time_pts`, `outcome`",
+    "(wide) `data`, `exposure`, `exposure_time_pts`, `outcome`",
+    "(wide) `data`, `exposure`, `outcome`",
+    "`data`, `exposure`, `exposure_time_pts`, `outcome`"
+  ),
+  Output = c(
+    "A data frame of formatted long data.\n\nSummary statistics.",
+    "A data frame of formatted wide data.\n\nSummary statistics.",
+    "A `mids` object of imputed data", 
+    "Weights object\n\nHistogram & summary of balancing weights."
+  )
+)
+
+library(tinytable)
+tt(helper_functions, theme = "striped")
+```
   
 
 <br>
@@ -46,10 +77,7 @@ The user who has already formatted their data in wide format according to the Da
 We first install the *devMSMs* and *devMSMsHelpers* packages.  
 ```{r setup}
 # install.packages("devtools")
-# install.packages("stats")
-
 require(devtools, quietly = TRUE)
-# library(stats)
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 library(devMSMs)
