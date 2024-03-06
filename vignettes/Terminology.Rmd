@@ -61,6 +61,8 @@ Table 2. Summary of the formula terminology used in the *devMSMs* package for cr
 
 ```{r}
 #| echo: false
+#| results: asis
+
 balance_formula <- data.frame(
   `Term` = c(
     '*Full balancing formula*\n\n`type = "full"`',
