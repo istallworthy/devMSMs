@@ -102,7 +102,7 @@ library(devMSMs)
 <br> 
 
 The helper functions can be installed from the accompanying *devMSMsHelpers* repo: 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 devtools::install_github("istallworthy/devMSMsHelpers")
 library(devMSMsHelpers)
 ```

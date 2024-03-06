@@ -26,9 +26,9 @@ You will always need to install the devMSMs helper functions from Github (*devMS
 ```{r, eval = FALSE}
 install.packages("devtools", quiet = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
-devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 ```
 ```{r}
+devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 library(devtools)
 library(devMSMs)
 library(devMSMsHelpers)

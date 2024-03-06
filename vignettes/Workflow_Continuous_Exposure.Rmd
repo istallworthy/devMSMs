@@ -31,9 +31,9 @@ The code contained in this vignette is also available, integrated code from the 
 # install.packages("devtools")
 require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
-devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 ```
 ```{r setup}
+devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 library(devMSMs)
 library(devMSMsHelpers)
 ```
