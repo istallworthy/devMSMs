@@ -431,11 +431,8 @@ Optional inputs are a home directory (if `save.out = TRUE`), epochs, high/low cu
 
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
 
-```{r}
-inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
-            ti_confounders = ti_confounders, tv_confounders = tv_confounders,
-            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, 
-            home_dir = home_dir, verbose = verbose, save.out = save.out) 
+```{r, eval = FALSE}
+inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, ti_confounders = ti_confounders, tv_confounders = tv_confounders,comparison = comparison, home_dir = home_dir, verbose = verbose, save.out = save.out) 
 ```
 Here, we see summaries of the data types as well as reasonable cell counts in each of our specified histories, for each imputed dataset. 
 
