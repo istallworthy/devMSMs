@@ -30,10 +30,14 @@ The outcome time point must be the last time point when exposure was measured or
   
 We advise the user to specify and include in the dataset any time invariant and time-varying variables that could possibly confound the relation between exposure and outcome. We also suggest using multiple measured variables within each construct to help reduce any effects from measurement bias (Kainz et al., 2017). Time varying confounders are ideal for maximizing the power of MSMs. However, specifying time-varying confounders in addition to the time-varying exposures variables is not required for using this package. Additional time-varying confounders could include developmental indicators that tend to track with the exposure over time that could also cause the outcome, including past levels of the exposure. Of note, the time points at which the confounders were collected must be equal to, or a subset of, the time points at which the exposure and outcome were collected in the data. In a perfect world, all exposures and potential confounders would be measured at all time points prior to the outcome. However, with real-world data due to planned and unplanned missingness, this is often not the case. Users should consider discussing the implications and limitations conferred by variables that could be confounders that were not collected at all time points. As a basis for specifying confounders, users should turn to the literature to delineate a causal model that lays out hypothesized relations between confounders, exposures, and outcome.  
 
-
 ```{r, eval = FALSE}
-require("devtools", quietly = TRUE)
+# install.packages("devtools")
+require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+```
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+if(!require("devtools")) install.packages("devtools", quiet = TRUE)
+if(!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 ```
 ```{r setup}
 library(devMSMs)

@@ -26,10 +26,16 @@ The code contained in this vignette is also available, integrated code from the 
 <br>  
 
 ```{r, eval = FALSE}
-require("devtools", quietly = TRUE)
+# install.packages("devtools")
+require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 ```
-```{r setup}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+if(!require("devtools")) install.packages("devtools", quiet = TRUE)
+if(!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+```
+```{r}
+library(devtools)
 library(devMSMs)
 ```
 
