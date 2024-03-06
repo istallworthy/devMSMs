@@ -30,7 +30,7 @@ Table 1. Summary of terminology used in *devMSMs*
 #| echo: false
 #| results: asis
 terms = data.frame(
-  Term  = c("Outcome", "Exposure", "Exposure Time Points", "Exposure Epochs", "Exposure Histories", "Exposure Dosage", "Backdoor Path", "Confounder", "Time-varying confounder", "Time invariant confounder", "Collider"),
+  Term  = c("**Outcome**", "**Exposure**", "**Exposure Time Points**", "**Exposure Epochs**", "**Exposure Histories**", "**Exposure Dosage**", "**Backdoor Path**", "**Confounder**", "**Time-varying confounder**", "**Time invariant confounder**", "**Collider**"),
   Definition = c("Any developmental construct measured at one or more time points including at a final outcome time point", 
   "Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome", 
   "Time points in development when the exposure was measured at which balancing formulas will be created", 
@@ -46,8 +46,7 @@ terms = data.frame(
 
 library(tinytable)
 tt(terms, theme = "striped") |>
-  format_tt(j = 1, fn = function(x) paste0("**", x, "**"), markdown = TRUE) |>
-  format_tt(j = 2, markdown = TRUE)
+  format_tt(markdown = TRUE)
 ```
 
 
