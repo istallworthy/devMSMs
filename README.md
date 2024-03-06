@@ -123,17 +123,23 @@ manuscript. <br>
 ## Installation
 
 *devMSMs* can be installed in R Studio from Github using the *devtools*
-package: <br>  
-`library(devtools)`  
-`install_github("istallworthy/devMSMs")`  
-`library(devMSMs)`
+package:
+
+``` r
+library(devtools)
+devtools::install_github("istallworthy/devMSMs")
+library(devMSMs)
+```
 
 <br>
 
 The helper functions can be installed from the accompanying
-*devMSMsHelpers* repo: <br>  
-`install_github("istallworthy/devMSMsHelpers")`  
-`library(devMSMsHelpers)`
+*devMSMsHelpers* repo:
+
+``` r
+devtools::install_github("istallworthy/devMSMsHelpers")
+library(devMSMsHelpers)
+```
 
 <br>
 

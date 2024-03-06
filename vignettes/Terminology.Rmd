@@ -25,7 +25,9 @@ This vignette contains some key definitions for using the <a href="https://istal
 <br>  
 
 Table 1. Summary of terminology used in *devMSMs*
-```{r, echo = FALSE}
+```{r}
+#| echo: false
+#| results: asis
 terms = data.frame(
   Term  = c("Outcome", "Exposure", "Exposure Time Points", "Exposure Epochs", "Exposure Histories", "Exposure Dosage", "Backdoor Path", "Confounder", "Time-varying confounder", "Time invariant confounder", "Collider"),
   Definition = c("Any developmental construct measured at one or more time points including at a final outcome time point", 
@@ -41,8 +43,10 @@ terms = data.frame(
   "A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which opens a backdoor path")
 )
 
+library(tinytable)
 tt(terms, theme = "striped") |>
-  format_tt(j = 1, fn = function(x) paste0("**", x, "**"))
+  format_tt(j = 1, fn = function(x) paste0("**", x, "**"), markdown = TRUE) |>
+  format_tt(j = 2, markdown = TRUE)
 ```
 
 <br>
@@ -55,7 +59,10 @@ tt(terms, theme = "striped") |>
 
 
 Table 3. Summary of the 6 core functions of the *devMSMs* package.
-```{r, echo = FALSE}
+```{r}
+#| echo: false
+#| results: asis
+
 main_functions = data.frame(
   Function = c(
     "[`createFormulas()`](/reference/createFormulas.html)", 
@@ -91,7 +98,9 @@ main_functions = data.frame(
   )
 )
 
-tt(main_functions, theme = "striped")
+library(tinytable)
+tt(main_functions, theme = "striped") |>
+  format_tt(markdown = TRUE)
 ```
-  
+
 
