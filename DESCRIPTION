@@ -38,6 +38,7 @@ Suggests:
     gbm,
     kableExtra,
     knitr,
+    markdown,
     mice,
     mitml,
     rmarkdown,
