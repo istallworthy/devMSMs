@@ -7,7 +7,7 @@ output:
         df_print: kable
         toc: false
 vignette: >
-  %\VignetteIndexEntry{Workflow_Continuous_Exposure}
+  %\VignetteIndexEntry{Workflow Continuous Exposure}
   %\VignetteEncoding{UTF-8}s
   %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -27,13 +27,20 @@ This vignette guides a user through the process of using *devMSMs* to fit margin
 
 The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">examplePipeline.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript *[add link here]*. We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow.  
 
-```{r setup}
-require("devtools", quietly = TRUE)
-
+```{r, eval = FALSE}
+# install.packages("devtools")
+require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
-library(devMSMs)
-
 devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+```
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+if(!require("devtools")) install.packages("devtools", quiet = TRUE)
+if(!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+if(!require("devMSMsHelpers")) devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+```
+```{r}
+library(devtools)
+library(devMSMs)
 library(devMSMsHelpers)
 ```
   
@@ -840,7 +847,7 @@ Similarly, we find no evidence for differences in behavioral problems as functio
 <br>
 <br>
   
-## References  
+### References  
 
 Arel-Bundock, V. 2023. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means,and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.  
   
@@ -849,7 +856,9 @@ Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Bar
 Cole, S. R., & Hernán, M. A. (2008). Constructing Inverse Probability Weights for Marginal Structural Models. American Journal of Epidemiology, 168(6), 656–664. https://doi.org/10.1093/aje/kwn164. 
   
 Greifer, Noah. 2023.WeightIt: Weighting for Covariate Balance in Observational Studies. https://CRAN.R-project.org/package=WeightIt.  
-  
+
+Jackson, John W. (2016). Diagnostics for Confounding of Time-varying and Other Joint Exposures. Epidemiology, 2016 Nov, 27(6), 859-69. https://doi.org/10.1097/EDE.0000000000000547.
+
 Lumley, Thomas. 2023. “survey: Analysis of Complex Survey Samples.”  
   
 Polley, Eric, Erin LeDell, Chris Kennedy, and Mark van der Laan. 2023. SuperLearner: SuperLearner Prediction. https://CRAN.R-project.org/package=SuperLearner.  

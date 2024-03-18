@@ -7,7 +7,7 @@ output:
         df_print: kable
         toc: false
 vignette: >
-  %\VignetteIndexEntry{Specify_Core_Inputs}
+  %\VignetteIndexEntry{Specify Core Inputs}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

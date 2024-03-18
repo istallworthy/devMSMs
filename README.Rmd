@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+library(tinytable)
 ```
 
 # devMSMs: Implementing Marginal <img src="https://github.com/istallworthy/devMSMs/assets/31548151/0a1c69d7-1984-4ebe-8d16-0948d670a8fb" align="right" width="100"/> Structural Models with Longitudinal Data
@@ -60,27 +61,51 @@ The package contains 6 core functions for implementing the two phases of the MSM
 <img width="820" alt="overview" src="https://github.com/istallworthy/devMSMs/assets/31548151/db0efeb1-c1e5-4c71-8062-01a5f34d56ab">
 <br>  
 <br>
-    
+
 Below is a summary of the terms used in the *devMSMs* vignettes and functions. More details and examples can be found in the accompanying manuscript. 
 <br>
   
-<img width="513" alt="term summary table" src="https://github.com/istallworthy/devMSMs/assets/31548151/e8839e88-20dc-4e55-9f88-b936876be75b">
+```{r, echo = FALSE}
+terms = data.frame(
+  Term  = c("**Outcome**", "**Exposure**", "**Exposure Time Points**", "**Exposure Epochs**", "**Exposure Histories**", "**Exposure Dosage**", "**Backdoor Path**", "**Confounder**", "**Time-varying confounder**", "**Time invariant confounder**", "**Collider**"),
+  Definition = c("Any developmental construct measured at one or more time points including at a final outcome time point", 
+  "Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome", 
+  "Time points in development when the exposure was measured at which balancing formulas will be created", 
+  "*(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories", 
+  "Sequences of relatively high (`'h'`) or low (`'p'`) levels of exposure at each exposure time point or exposure epoch", 
+  "Total cumulative exposure epochs during which an individual experienced high (or low) levels of exposure across an entire exposure history", 
+  "Any alternative, non-causal way (other than the direct causal effects from exposure to outcome) that the exposure at a given time point associates with the outcome within a causal diagram, often via confounders", 
+  "Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths", 
+  "A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time (exposure and outcome variables).", 
+  "A confounder measured at a single time point prior to the exposure time point which reflects a construct that is stable over time.", 
+  "A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which opens a backdoor path")
+)
+
+library(tinytable)
+tt(terms, theme = "striped") |>
+  format_tt(markdown = TRUE) 
+```
+
+<!-- <img width="513" alt="term summary table" src="https://github.com/istallworthy/devMSMs/assets/31548151/e8839e88-20dc-4e55-9f88-b936876be75b"> -->
 
 <br> 
  
 ## Installation
 *devMSMs* can be installed in R Studio from Github using the *devtools* package: 
-<br>  
-`library(devtools)`  
-`install_github("istallworthy/devMSMs")`  
-`library(devMSMs)`  
+```{r, eval = FALSE}
+# install.packages("devtools")
+require(devtools, quietly = TRUE)
+devtools::install_github("istallworthy/devMSMs")
+library(devMSMs)
+``` 
 
 <br> 
 
 The helper functions can be installed from the accompanying *devMSMsHelpers* repo: 
-<br>   
-`install_github("istallworthy/devMSMsHelpers")`  
-`library(devMSMsHelpers)`
+```{r, eval = FALSE}
+devtools::install_github("istallworthy/devMSMsHelpers")
+library(devMSMsHelpers)
+```
   
 <br> 
   
@@ -116,6 +141,8 @@ Fong, C., Hazlett, C., & Imai, K. (2018). Covariate balancing propensity score f
 Greifer N (2023). cobalt: Covariate Balance Tables and Plots. R package version 4.5.2, https://github.com/ngreifer/cobalt, https://ngreifer.github.io/cobalt/  
 
 Greifer N (2023). WeightIt: Weighting for Covariate Balance in Observational Studies. https://ngreifer.github.io/WeightIt/, https://github.com/ngreifer/WeightIt  
+
+Jackson, John W. (2016).Diagnostics for Confounding of Time-varying and Other Joint Exposures. Epidemiology, 2016 Nov, 27(6), 859-69. https://doi.org/10.1097/EDE.0000000000000547.
    
 Haber, N. A., Wood, M. E., Wieten, S., & Breskin, A. (2022). DAG With Omitted Objects Displayed (DAGWOOD): A framework for revealing causal assumptions in DAGs. Annals of Epidemiology, 68, 64–71. https://doi.org/10.1016/j.annepidem.2022.01.001  
   

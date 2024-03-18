@@ -7,7 +7,7 @@ output:
         df_print: kable
         toc: false
 vignette: >
-  %\VignetteIndexEntry{Preliminary_Steps}
+  %\VignetteIndexEntry{Recommended Preliminary Steps}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown_notangle}
 editor_options:
@@ -35,7 +35,39 @@ The helper functions (summarized in Table 1) for the following recommended preli
 
 <br>
 
-![Table 1. Summary of *devMSMs* helper functions.](figures/helper function summary table.png){width=600px}  
+Table 1. Summary of *devMSMs* helper functions.
+```{r, echo = FALSE}
+helper_functions = data.frame(
+  Function = c(
+    "`formatLongData()`",
+    "`formatWideData()`",
+    "`imputeData()`",
+    "`inspectData()`"
+  ),
+  Purpose = c(
+    "Format long data with the correct column names, variable classes, and missingness indicators.",
+    "Format wide data with the correct column names, variable classes, and missingness indicators.",
+    "Wrapper for `mice::mice` to multiply impute wide data.",
+    "Summarizes data and the distribution of the sample across user-specified exposure histories."
+  ),
+  `Required Input` = c(
+    "(long) `data`, `exposure`, `exposure_time_pts`, `outcome`",
+    "(wide) `data`, `exposure`, `exposure_time_pts`, `outcome`",
+    "(wide) `data`, `exposure`, `outcome`",
+    "`data`, `exposure`, `exposure_time_pts`, `outcome`"
+  ),
+  Output = c(
+    "A data frame of formatted long data.\n\nSummary statistics.",
+    "A data frame of formatted wide data.\n\nSummary statistics.",
+    "A `mids` object of imputed data", 
+    "Weights object\n\nHistogram & summary of balancing weights."
+  )
+)
+
+library(tinytable)
+tt(helper_functions, theme = "striped") |>
+  format(markdown = TRUE)
+```
   
 
 <br>
@@ -44,17 +76,19 @@ The user who has already formatted their data in wide format according to the Da
 <br>
   
 We first install the *devMSMs* and *devMSMsHelpers* packages.  
-```{r setup}
+```{r, eval = FALSE}
 # install.packages("devtools")
-# install.packages("stats")
-
 require(devtools, quietly = TRUE)
-# library(stats)
-
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
-library(devMSMs)
-
 devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+```
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+if(!require("devtools")) install.packages("devtools", quiet = TRUE)
+if(!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+if(!require("devMSMsHelpers")) devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+```
+```{r setup}
+library(devMSMs)
 library(devMSMsHelpers)
 ```
 <br>
@@ -63,7 +97,7 @@ We advise users implement the appropriate preliminary steps, with the goal of as
   
 * a single data frame of data in wide format with no missing data  
 
-* a mids object (output from mice::mice()) of data imputed in wide format  
+* a mids object (output from `mice::mice()`) of data imputed in wide format  
 
 * a list of data imputed in wide format as data frames.  
 <br>
@@ -93,25 +127,29 @@ exposure_time_pts <- c(6, 15, 24, 35, 58)
 
 outcome <- "StrDif_Tot.58"
 
-tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
-                    "MDI.6", "MDI.15",                                            
-                    "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
-                    "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
-                    "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
-                    "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
-                    "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
-                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
-                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",               
-                    "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
-                    "EARS_TJo.24", "EARS_TJo.35",                                        
-                    "LESMnPos.24", "LESMnPos.35",                                  
-                    "LESMnNeg.24", "LESMnNeg.35",       
-                    "StrDif_Tot.35", "StrDif_Tot.58",    
-                    "fscore.35", "fscore.58") 
+tv_confounders <- c(
+  "SAAmylase.6","SAAmylase.15", "SAAmylase.24",
+  "MDI.6", "MDI.15",                                            
+  "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
+  "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
+  "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
+  "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
+  "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
+  "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
+  "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",               
+  "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
+  "EARS_TJo.24", "EARS_TJo.35",                                        
+  "LESMnPos.24", "LESMnPos.35",                                  
+  "LESMnNeg.24", "LESMnNeg.35",       
+  "StrDif_Tot.35", "StrDif_Tot.58",    
+  "fscore.35", "fscore.58"
+) 
 
-ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
-                    "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
-                    "peri_health", "caregiv_health", "gov_assist")
+ti_confounders <- c(
+  "state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
+  "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
+  "peri_health", "caregiv_health", "gov_assist"
+)
 ```
 <br>
 
@@ -393,11 +431,8 @@ Optional inputs are a home directory (if `save.out = TRUE`), epochs, high/low cu
 
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
 
-```{r}
-inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
-            ti_confounders = ti_confounders, tv_confounders = tv_confounders,
-            epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, 
-            home_dir = home_dir, verbose = verbose, save.out = save.out) 
+```{r, eval = FALSE}
+inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, ti_confounders = ti_confounders, tv_confounders = tv_confounders,comparison = comparison, home_dir = home_dir, verbose = verbose, save.out = save.out) 
 ```
 Here, we see summaries of the data types as well as reasonable cell counts in each of our specified histories, for each imputed dataset. 
 

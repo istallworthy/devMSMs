@@ -22,29 +22,31 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports:
-    WeightIt,
-    marginaleffects,
-    stats,
-    utils,
-    ggplot2,
-    survey,
     cobalt,
-    rlang
+    ggplot2,
+    marginaleffects,
+    rlang,
+    stats,
+    survey,
+    utils,
+    WeightIt,
 Suggests: 
     CBPS,
-    gbm,
-    SuperLearner,
     dbarts,
+    gbm,
+    kableExtra,
+    knitr,
+    markdown,
     mice,
     mitml,
-    knitr,
-    kableExtra,
-    stargazer,
+    rmarkdown,
     sjPlot,
+    stargazer,
+    SuperLearner,
     testthat (>= 3.0.0),
-    rmarkdown
+    tinytable,
 Config/testthat/edition: 3
 URL: https://istallworthy.github.io/devMSMs/, https://github.com/istallworthy/devMSMs
 VignetteBuilder: knitr
