@@ -77,7 +77,7 @@
                         <h4 data-toc-skip class="author">Isabella
 Stallworthy</h4>
             
-            <h4 data-toc-skip class="date">2023-12-15</h4>
+            <h4 data-toc-skip class="date">2024-03-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Preliminary_Steps.Rmd" class="external-link"><code>vignettes/Preliminary_Steps.Rmd</code></a></small>
       <div class="d-none name"><code>Preliminary_Steps.Rmd</code></div>
@@ -106,10 +106,8 @@ note, <em>devMSMs</em> must also be installed and loaded to use these
 helper functions (see
 <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).</p>
 <p><br></p>
-<div class="figure">
-<img src="figures/helper%20function%20summary%20table.png" width="600" alt=""><p class="caption">Table 1. Summary of <em>devMSMs</em> helper
-functions.</p>
-</div>
+<p>Table 1. Summary of <em>devMSMs</em> helper functions.</p>
+<pre><code><span><span class="co">#&gt; [1] "&lt;S4 class 'tinytable' [package \"tinytable\"] with 23 slots&gt;"</span></span></code></pre>
 <p><br></p>
 <p>The user who has already formatted their data in wide format
 according to the Data Requirements vignette and imputed to accommodate
@@ -120,17 +118,13 @@ should use one of the <em>Workflows</em> vignettes to implement
 <em>devMSMs</em> with their longitudinal data.<br><br></p>
 <p>We first install the <em>devMSMs</em> and <em>devMSMsHelpers</em>
 packages.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="co"># install.packages("stats")</span></span>
-<span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co"># library(stats)</span></span>
-<span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMsHelpers"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMsHelpers"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">devMSMsHelpers</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>We advise users implement the appropriate preliminary steps, with the
@@ -139,8 +133,8 @@ Figure 1) for use in the package:</p>
 <ul>
 <li><p>a single data frame of data in wide format with no missing
 data</p></li>
-<li><p>a mids object (output from mice::mice()) of data imputed in wide
-format</p></li>
+<li><p>a mids object (output from <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice::mice()</a></code>) of data
+imputed in wide format</p></li>
 <li><p>a list of data imputed in wide format as data frames.<br><br></p></li>
 </ul>
 <p>As shown in Figure 1, for use of the <em>devMSMs</em> package, data
@@ -155,8 +149,8 @@ confounders (e.g, assessment version) can be included in the dataset for
 use and specification in the final modeling step (<em>Workflow</em>
 vignettes Step 5).</p>
 <p><br><br></p>
-<div class="figure">
-<img src="figures/sample%20data.png" width="900" alt=""><p class="caption">Figure 1. Abridged example structure of a wide
+<div class="float">
+<img src="figures/sample%20data.png" width="900" alt="Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as NA and will need to be imputed (Step P2)."><div class="figcaption">Figure 1. Abridged example structure of a wide
 dataset formatted as required for the devMSMs. Column A denotes the ID
 variable, column B (green) denotes a time in-variant confounder (e.g.,
 race, birth information), columns C - F denote two time-varying
@@ -166,7 +160,7 @@ represents wave 2). Columns G - I denote the exposure and outcome of
 interest (darker yellow), where G and H are time-varying values on each
 exposure, and column I is the outcome value at the final wave/timepoint.
 Missing data are denoted as <em>NA</em> and will need to be imputed
-(Step P2).</p>
+(Step P2).</div>
 </div>
 <p><br></p>
 <div class="section level3">
@@ -178,7 +172,7 @@ Core Inputs vignette</a> for more detail on the following core inputs.
 Here, we use ESETA1, a measure of economic strain experienced by the
 family, as the exposure and StrDif_Tot, or behavior problems measured by
 the SDQ, as the outcome.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">home_dir</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
@@ -190,32 +184,36 @@ the SDQ, as the outcome.</p>
 <span></span>
 <span><span class="va">outcome</span> <span class="op">&lt;-</span> <span class="st">"StrDif_Tot.58"</span></span>
 <span></span>
-<span><span class="va">tv_confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SAAmylase.6"</span>,<span class="st">"SAAmylase.15"</span>, <span class="st">"SAAmylase.24"</span>,</span>
-<span>                    <span class="st">"MDI.6"</span>, <span class="st">"MDI.15"</span>,                                            </span>
-<span>                    <span class="st">"RHasSO.6"</span>, <span class="st">"RHasSO.15"</span>, <span class="st">"RHasSO.24"</span>,<span class="st">"RHasSO.35"</span>, <span class="st">"RHasSO.58"</span>,                                         </span>
-<span>                    <span class="st">"WndNbrhood.6"</span>,<span class="st">"WndNbrhood.24"</span>, <span class="st">"WndNbrhood.35"</span>, <span class="st">"WndNbrhood.58"</span>,                                       </span>
-<span>                    <span class="st">"IBRAttn.6"</span>, <span class="st">"IBRAttn.15"</span>, <span class="st">"IBRAttn.24"</span>,                                   </span>
-<span>                    <span class="st">"B18Raw.6"</span>, <span class="st">"B18Raw.15"</span>, <span class="st">"B18Raw.24"</span>, <span class="st">"B18Raw.58"</span>,                                           </span>
-<span>                    <span class="st">"HOMEETA1.6"</span>, <span class="st">"HOMEETA1.15"</span>, <span class="st">"HOMEETA1.24"</span>, <span class="st">"HOMEETA1.35"</span>, <span class="st">"HOMEETA1.58"</span>,                               </span>
-<span>                    <span class="st">"InRatioCor.6"</span>, <span class="st">"InRatioCor.15"</span>, <span class="st">"InRatioCor.24"</span>, <span class="st">"InRatioCor.35"</span>, <span class="st">"InRatioCor.58"</span>,                         </span>
-<span>                    <span class="st">"ESETA1.6"</span>, <span class="st">"ESETA1.15"</span>, <span class="st">"ESETA1.24"</span>, <span class="st">"ESETA1.35"</span>, <span class="st">"ESETA1.58"</span>,               </span>
-<span>                    <span class="st">"CORTB.6"</span>, <span class="st">"CORTB.15"</span>, <span class="st">"CORTB.24"</span>,                                                                  </span>
-<span>                    <span class="st">"EARS_TJo.24"</span>, <span class="st">"EARS_TJo.35"</span>,                                        </span>
-<span>                    <span class="st">"LESMnPos.24"</span>, <span class="st">"LESMnPos.35"</span>,                                  </span>
-<span>                    <span class="st">"LESMnNeg.24"</span>, <span class="st">"LESMnNeg.35"</span>,       </span>
-<span>                    <span class="st">"StrDif_Tot.35"</span>, <span class="st">"StrDif_Tot.58"</span>,    </span>
-<span>                    <span class="st">"fscore.35"</span>, <span class="st">"fscore.58"</span><span class="op">)</span> </span>
+<span><span class="va">tv_confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"SAAmylase.6"</span>,<span class="st">"SAAmylase.15"</span>, <span class="st">"SAAmylase.24"</span>,</span>
+<span>  <span class="st">"MDI.6"</span>, <span class="st">"MDI.15"</span>,                                            </span>
+<span>  <span class="st">"RHasSO.6"</span>, <span class="st">"RHasSO.15"</span>, <span class="st">"RHasSO.24"</span>,<span class="st">"RHasSO.35"</span>, <span class="st">"RHasSO.58"</span>,                                         </span>
+<span>  <span class="st">"WndNbrhood.6"</span>,<span class="st">"WndNbrhood.24"</span>, <span class="st">"WndNbrhood.35"</span>, <span class="st">"WndNbrhood.58"</span>,                                       </span>
+<span>  <span class="st">"IBRAttn.6"</span>, <span class="st">"IBRAttn.15"</span>, <span class="st">"IBRAttn.24"</span>,                                   </span>
+<span>  <span class="st">"B18Raw.6"</span>, <span class="st">"B18Raw.15"</span>, <span class="st">"B18Raw.24"</span>, <span class="st">"B18Raw.58"</span>,                                           </span>
+<span>  <span class="st">"HOMEETA1.6"</span>, <span class="st">"HOMEETA1.15"</span>, <span class="st">"HOMEETA1.24"</span>, <span class="st">"HOMEETA1.35"</span>, <span class="st">"HOMEETA1.58"</span>,                               </span>
+<span>  <span class="st">"InRatioCor.6"</span>, <span class="st">"InRatioCor.15"</span>, <span class="st">"InRatioCor.24"</span>, <span class="st">"InRatioCor.35"</span>, <span class="st">"InRatioCor.58"</span>,                         </span>
+<span>  <span class="st">"ESETA1.6"</span>, <span class="st">"ESETA1.15"</span>, <span class="st">"ESETA1.24"</span>, <span class="st">"ESETA1.35"</span>, <span class="st">"ESETA1.58"</span>,               </span>
+<span>  <span class="st">"CORTB.6"</span>, <span class="st">"CORTB.15"</span>, <span class="st">"CORTB.24"</span>,                                                                  </span>
+<span>  <span class="st">"EARS_TJo.24"</span>, <span class="st">"EARS_TJo.35"</span>,                                        </span>
+<span>  <span class="st">"LESMnPos.24"</span>, <span class="st">"LESMnPos.35"</span>,                                  </span>
+<span>  <span class="st">"LESMnNeg.24"</span>, <span class="st">"LESMnNeg.35"</span>,       </span>
+<span>  <span class="st">"StrDif_Tot.35"</span>, <span class="st">"StrDif_Tot.58"</span>,    </span>
+<span>  <span class="st">"fscore.35"</span>, <span class="st">"fscore.58"</span></span>
+<span><span class="op">)</span> </span>
 <span></span>
-<span><span class="va">ti_confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"BioDadInHH2"</span>, <span class="st">"PmAge2"</span>, <span class="st">"PmBlac2"</span>, <span class="st">"TcBlac2"</span>, <span class="st">"PmMrSt2"</span>, <span class="st">"PmEd2"</span>, <span class="st">"KFASTScr"</span>,</span>
-<span>                    <span class="st">"RMomAgeU"</span>, <span class="st">"RHealth"</span>, <span class="st">"HomeOwnd"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
-<span>                    <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span>, <span class="st">"gov_assist"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ti_confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"state"</span>, <span class="st">"BioDadInHH2"</span>, <span class="st">"PmAge2"</span>, <span class="st">"PmBlac2"</span>, <span class="st">"TcBlac2"</span>, <span class="st">"PmMrSt2"</span>, <span class="st">"PmEd2"</span>, <span class="st">"KFASTScr"</span>,</span>
+<span>  <span class="st">"RMomAgeU"</span>, <span class="st">"RHealth"</span>, <span class="st">"HomeOwnd"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
+<span>  <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span>, <span class="st">"gov_assist"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>Some helper functions have optional arguments to suppress saving
 output locally (<code>save.out = FALSE</code>) and printing it to the
 console ( <code>verbose = FALSE</code>). The defaults to both arguments
 are TRUE. Users must supply a path to a home directory if
 <code>save.out = TRUE</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">save.out</span> <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span></span>
 <span><span class="va">verbose</span> <span class="op">=</span> <span class="cn">TRUE</span></span></code></pre></div>
@@ -232,11 +230,11 @@ and converted to wide data and (P3) imputed as needed</li>
 list</li>
 </ul>
 <p><br></p>
-<div class="figure">
-<img src="figures/prelim%20steps%20overview.png" width="900" alt=""><p class="caption">Figure 2. Schematic of recommended preliminary steps
-showing the transformation of the 3 different kinds of starting data
-(enumerated in bold) to the three kinds of data accepted by
-<em>devMSMs</em>.</p>
+<div class="float">
+<img src="figures/prelim%20steps%20overview.png" width="900" alt="Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated in bold) to the three kinds of data accepted by devMSMs."><div class="figcaption">Figure 2. Schematic of recommended preliminary
+steps showing the transformation of the 3 different kinds of starting
+data (enumerated in bold) to the three kinds of data accepted by
+<em>devMSMs</em>.</div>
 </div>
 <p><br><br></p>
 </div>
@@ -256,7 +254,7 @@ rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al.,
 2008). We take the example exposure of economic strain (ESETA1) measured
 at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior
 problems (StrDif_Tot) measured at 58 months.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_long_miss"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data_long</span> <span class="op">&lt;-</span> <span class="va">sim_data_long_miss</span></span>
@@ -282,7 +280,7 @@ confounders (<code>factor_confounders</code>) as factors, integer
 confounders (<code>integer_confounders</code>) as integers in the data,
 and all others as numeric.</p>
 <p>Below, we format the simulated long FLP data.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">factor_confounders</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"TcBlac2"</span>,<span class="st">"BioDadInHH2"</span>,<span class="st">"HomeOwnd"</span>, <span class="st">"PmBlac2"</span>,       </span>
 <span>                       <span class="st">"PmMrSt2"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"RHealth"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
 <span>                       <span class="st">"RHasSO"</span><span class="op">)</span></span>
@@ -342,7 +340,7 @@ specifying <code>idvar</code> as “ID”, <code>timevar</code> as “WAVE”,
 and supplying the time points (encompassing exposure, confounder, and
 outcome time points) in the data as 6, 15, 24, 35, and 58 to
 <code>times</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"stats"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">tv_confounders</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"\\:"</span>, <span class="va">tv_confounders</span><span class="op">)</span><span class="op">]</span>, <span class="st">"\\."</span><span class="op">)</span>, <span class="st">"["</span>, <span class="fl">1</span><span class="op">)</span></span>
@@ -380,7 +378,7 @@ outcome time points) in the data as 6, 15, 24, 35, and 58 to
 data (with or without missingness).</p>
 <p>Below, we we load in a single complete, wide data frame simulated
 from FLP as an example.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide</span></span>
@@ -395,7 +393,7 @@ from FLP as an example.</p>
 <p><br></p>
 <p>Data with missingness is more common with human data. Below we read
 in simulated wide FLP data with missingness.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide_miss"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data_wide</span> <span class="op">&lt;-</span> <span class="va">sim_data_wide_miss</span></span>
@@ -425,7 +423,7 @@ others as numeric.</p>
 <p>Below, we format the simulated wide FLP data by listing out variables
 to make into factors and integers in wide format (e.g., “variable.t”),
 as well as the ID and missingness indicators.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">factor_confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"state"</span>, <span class="st">"TcBlac2"</span>,<span class="st">"BioDadInHH2"</span>,<span class="st">"HomeOwnd"</span>, <span class="st">"PmBlac2"</span>,       </span>
 <span>                        <span class="st">"PmMrSt2"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"RHealth"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
 <span>                        <span class="st">"RHasSO.6"</span>, <span class="st">"RHasSO.15"</span>, <span class="st">"RHasSO.24"</span>, <span class="st">"RHasSO.35"</span>, <span class="st">"RHasSO.58"</span><span class="op">)</span></span>
@@ -537,7 +535,7 @@ files, we have set <code>m = 2</code> and <code>maxit = 0</code> here
 just for illustrative purposes. We recommend setting both
 <code>m = 5</code> and <code>maxit = 5</code> (<em>mice</em> default)
 when running data.)</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fl">1234</span></span>
 <span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
@@ -598,7 +596,7 @@ in the <em>deveMSMs</em> package (see <em>Workflows</em> vignettes).</p>
 <p>Below, we load in a list of imputed data simulated from FLP, as an
 example. (See the example Rmarkdown file for code to do this with files
 saved locally.)</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_imp_list"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">sim_data_imp_list</span></span>
@@ -648,7 +646,7 @@ basis for estimating and comparing exposure histories
 exposure time points will be used at the aforementioned steps.</p>
 <p>Below, we specify Infancy, Toddlerhood, and Childhood epochs that
 correspond to 6 and 15; 24 and 35; and 58 months, respectively.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epochs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>epochs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Infancy"</span>, </span>
 <span>                                <span class="st">"Toddlerhood"</span>, </span>
 <span>                                <span class="st">"Childhood"</span><span class="op">)</span>, </span>
@@ -691,7 +689,7 @@ steps. These final values will be used in creating exposure histories in
 Step 5 of the <em>Workflows</em> vignettes.</p>
 <p>Below, we specify the 60th and 30th percentiles to demarcate high and
 low levels of economic strain exposure, respectively.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hi_lo_cut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span> </span></code></pre></div>
 <p><br></p>
 </div>
@@ -740,7 +738,7 @@ than 5 time points).</p>
 reference event in comparison to high levels at all epochs (“h-h-h”) as
 well as all histories that contain 1 dose of exposure to high economic
 strain at different epochs.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reference</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l-l-l"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"h-h-h"</span>, <span class="st">"l-l-h"</span>, <span class="st">"h-l-l"</span>, <span class="st">"l-h-l"</span><span class="op">)</span> </span></code></pre></div>
@@ -780,132 +778,8 @@ histories.</p>
 files into the home directory: a correlation plot of all variables in
 the dataset, tables of exposure and outcome descriptive statistics, and
 two summary tables of the confounders considered at each time point.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/inspectData.html" class="external-link">inspectData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, </span>
-<span>            ti_confounders <span class="op">=</span> <span class="va">ti_confounders</span>, tv_confounders <span class="op">=</span> <span class="va">tv_confounders</span>,</span>
-<span>            epochs <span class="op">=</span> <span class="va">epochs</span>, hi_lo_cut <span class="op">=</span> <span class="va">hi_lo_cut</span>, reference <span class="op">=</span> <span class="va">reference</span>, comparison <span class="op">=</span> <span class="va">comparison</span>, </span>
-<span>            home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; Using github PAT from envvar GITHUB_PAT</span></span>
-<span><span class="co">#&gt; Skipping install of 'devMSMs' from a github remote, the SHA1 (5a4a24b1) has not changed since last install.</span></span>
-<span><span class="co">#&gt;   Use `force = TRUE` to force installation</span></span>
-<span><span class="co">#&gt; Imputation 1</span></span>
-<span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; USER ALERT: Out of the total of 1292 individuals in the sample, below is the distribution of the 412 (31.89%) individuals that fall into 5 out of the 5 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
-<span><span class="co">#&gt; USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Table: Summary of user-specified exposure ESETA1 histories based on exposure main effects Infancy, Toddlerhood, Childhood containing time points c(6, 15), c(24, 35), 58:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; |history |   n|</span></span>
-<span><span class="co">#&gt; |:-------|---:|</span></span>
-<span><span class="co">#&gt; |h-h-h   | 214|</span></span>
-<span><span class="co">#&gt; |h-l-l   |  18|</span></span>
-<span><span class="co">#&gt; |l-h-l   |  19|</span></span>
-<span><span class="co">#&gt; |l-l-h   |  42|</span></span>
-<span><span class="co">#&gt; |l-l-l   | 119|</span></span>
-<span><span class="co">#&gt; Imputation 2</span></span>
-<span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; USER ALERT: Out of the total of 1292 individuals in the sample, below is the distribution of the 401 (31.04%) individuals that fall into 5 out of the 5 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
-<span><span class="co">#&gt; USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Table: Summary of user-specified exposure ESETA1 histories based on exposure main effects Infancy, Toddlerhood, Childhood containing time points c(6, 15), c(24, 35), 58:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; |history |   n|</span></span>
-<span><span class="co">#&gt; |:-------|---:|</span></span>
-<span><span class="co">#&gt; |h-h-h   | 219|</span></span>
-<span><span class="co">#&gt; |h-l-l   |  14|</span></span>
-<span><span class="co">#&gt; |l-h-l   |  17|</span></span>
-<span><span class="co">#&gt; |l-l-h   |  36|</span></span>
-<span><span class="co">#&gt; |l-l-l   | 115|</span></span>
-<span><span class="co">#&gt; The following inspection is conducted on the first imputed dataset.</span></span>
-<span><span class="co">#&gt; USER ALERT: Below are the 67 variables spanning 33 unique domains that will be treated as confounding variables for the relation between ESETA1 and StrDif_Tot.58.</span></span>
-<span><span class="co">#&gt; Please inspect this list carefully. It should include all time-varying covariates, time invariant covariates, as well as lagged levels of exposure and outcome variables if they were collected at time points earlier than the outcome time point.</span></span>
-<span><span class="co">#&gt;  [1] "B18Raw.15"      "B18Raw.24"      "B18Raw.58"      "B18Raw.6"      </span></span>
-<span><span class="co">#&gt;  [5] "BioDadInHH2"    "caregiv_health" "CORTB.15"       "CORTB.24"      </span></span>
-<span><span class="co">#&gt;  [9] "CORTB.6"        "DrnkFreq"       "EARS_TJo.24"    "EARS_TJo.35"   </span></span>
-<span><span class="co">#&gt; [13] "ESETA1.15"      "ESETA1.24"      "ESETA1.35"      "ESETA1.58"     </span></span>
-<span><span class="co">#&gt; [17] "ESETA1.6"       "fscore.35"      "fscore.58"      "gov_assist"    </span></span>
-<span><span class="co">#&gt; [21] "HOMEETA1.15"    "HOMEETA1.24"    "HOMEETA1.35"    "HOMEETA1.58"   </span></span>
-<span><span class="co">#&gt; [25] "HOMEETA1.6"     "HomeOwnd"       "IBRAttn.15"     "IBRAttn.24"    </span></span>
-<span><span class="co">#&gt; [29] "IBRAttn.6"      "InRatioCor.15"  "InRatioCor.24"  "InRatioCor.35" </span></span>
-<span><span class="co">#&gt; [33] "InRatioCor.58"  "InRatioCor.6"   "KFASTScr"       "LESMnNeg.24"   </span></span>
-<span><span class="co">#&gt; [37] "LESMnNeg.35"    "LESMnPos.24"    "LESMnPos.35"    "MDI.15"        </span></span>
-<span><span class="co">#&gt; [41] "MDI.6"          "peri_health"    "PmAge2"         "PmBlac2"       </span></span>
-<span><span class="co">#&gt; [45] "PmEd2"          "PmMrSt2"        "RHasSO.15"      "RHasSO.24"     </span></span>
-<span><span class="co">#&gt; [49] "RHasSO.35"      "RHasSO.58"      "RHasSO.6"       "RHealth"       </span></span>
-<span><span class="co">#&gt; [53] "RMomAgeU"       "SAAmylase.15"   "SAAmylase.24"   "SAAmylase.6"   </span></span>
-<span><span class="co">#&gt; [57] "SmokTotl"       "state"          "StrDif_Tot.35"  "StrDif_Tot.58" </span></span>
-<span><span class="co">#&gt; [61] "SurpPreg"       "SWghtLB"        "TcBlac2"        "WndNbrhood.24" </span></span>
-<span><span class="co">#&gt; [65] "WndNbrhood.35"  "WndNbrhood.58"  "WndNbrhood.6"  </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; The following variables are designated as numeric: </span></span>
-<span><span class="co">#&gt; [1] "CORTB.15, CORTB.24, CORTB.6, ESETA1.15, ESETA1.24, ESETA1.35, ESETA1.58, ESETA1.6, fscore.35, fscore.58, HOMEETA1.15, HOMEETA1.24, HOMEETA1.35, HOMEETA1.58, HOMEETA1.6, InRatioCor.15, InRatioCor.24, InRatioCor.35, InRatioCor.58, InRatioCor.6, PmAge2, SAAmylase.15, SAAmylase.24, SAAmylase.6, StrDif_Tot.35, StrDif_Tot.58, WndNbrhood.24, WndNbrhood.35, WndNbrhood.58, WndNbrhood.6"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; The following variables are designated as factors: </span></span>
-<span><span class="co">#&gt; [1] ""</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Table: Other variable types</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; |               |variable       |type    |</span></span>
-<span><span class="co">#&gt; |:--------------|:--------------|:-------|</span></span>
-<span><span class="co">#&gt; |X              |X              |integer |</span></span>
-<span><span class="co">#&gt; |ALI_Le.35      |ALI_Le.35      |integer |</span></span>
-<span><span class="co">#&gt; |B18Raw.15      |B18Raw.15      |integer |</span></span>
-<span><span class="co">#&gt; |B18Raw.24      |B18Raw.24      |integer |</span></span>
-<span><span class="co">#&gt; |B18Raw.58      |B18Raw.58      |integer |</span></span>
-<span><span class="co">#&gt; |B18Raw.6       |B18Raw.6       |integer |</span></span>
-<span><span class="co">#&gt; |BioDadInHH2    |BioDadInHH2    |integer |</span></span>
-<span><span class="co">#&gt; |caregiv_health |caregiv_health |integer |</span></span>
-<span><span class="co">#&gt; |DrnkFreq       |DrnkFreq       |integer |</span></span>
-<span><span class="co">#&gt; |EARS_TJo.24    |EARS_TJo.24    |integer |</span></span>
-<span><span class="co">#&gt; |EARS_TJo.35    |EARS_TJo.35    |integer |</span></span>
-<span><span class="co">#&gt; |gov_assist     |gov_assist     |integer |</span></span>
-<span><span class="co">#&gt; |HomeOwnd       |HomeOwnd       |integer |</span></span>
-<span><span class="co">#&gt; |IBRAttn.15     |IBRAttn.15     |integer |</span></span>
-<span><span class="co">#&gt; |IBRAttn.24     |IBRAttn.24     |integer |</span></span>
-<span><span class="co">#&gt; |IBRAttn.6      |IBRAttn.6      |integer |</span></span>
-<span><span class="co">#&gt; |ID             |ID             |integer |</span></span>
-<span><span class="co">#&gt; |KFASTScr       |KFASTScr       |integer |</span></span>
-<span><span class="co">#&gt; |LESMnNeg.24    |LESMnNeg.24    |integer |</span></span>
-<span><span class="co">#&gt; |LESMnNeg.35    |LESMnNeg.35    |integer |</span></span>
-<span><span class="co">#&gt; |LESMnPos.24    |LESMnPos.24    |integer |</span></span>
-<span><span class="co">#&gt; |LESMnPos.35    |LESMnPos.35    |integer |</span></span>
-<span><span class="co">#&gt; |MDI.15         |MDI.15         |integer |</span></span>
-<span><span class="co">#&gt; |MDI.6          |MDI.6          |integer |</span></span>
-<span><span class="co">#&gt; |peri_health    |peri_health    |integer |</span></span>
-<span><span class="co">#&gt; |PmBlac2        |PmBlac2        |integer |</span></span>
-<span><span class="co">#&gt; |PmEd2          |PmEd2          |integer |</span></span>
-<span><span class="co">#&gt; |PmMrSt2        |PmMrSt2        |integer |</span></span>
-<span><span class="co">#&gt; |RHasSO.15      |RHasSO.15      |integer |</span></span>
-<span><span class="co">#&gt; |RHasSO.24      |RHasSO.24      |integer |</span></span>
-<span><span class="co">#&gt; |RHasSO.35      |RHasSO.35      |integer |</span></span>
-<span><span class="co">#&gt; |RHasSO.58      |RHasSO.58      |integer |</span></span>
-<span><span class="co">#&gt; |RHasSO.6       |RHasSO.6       |integer |</span></span>
-<span><span class="co">#&gt; |RHealth        |RHealth        |integer |</span></span>
-<span><span class="co">#&gt; |RMomAgeU       |RMomAgeU       |integer |</span></span>
-<span><span class="co">#&gt; |SmokTotl       |SmokTotl       |integer |</span></span>
-<span><span class="co">#&gt; |state          |state          |integer |</span></span>
-<span><span class="co">#&gt; |SurpPreg       |SurpPreg       |integer |</span></span>
-<span><span class="co">#&gt; |SWghtLB        |SWghtLB        |integer |</span></span>
-<span><span class="co">#&gt; |TcBlac2        |TcBlac2        |integer |</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Summary of Exposure Main Effects: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; USER ALERT: Out of the total of 1292 individuals in the sample, below is the distribution of the 412 (31.89%) individuals that fall into 5 out of the 5 the total user-defined exposure histories created from 30th and 60th percentile values for low and high levels of exposure ESETA1, respectively, across Infancy, Toddlerhood, Childhood. </span></span>
-<span><span class="co">#&gt; USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Table: Summary of user-specified exposure ESETA1 histories based on exposure main effects Infancy, Toddlerhood, Childhood containing time points c(6, 15), c(24, 35), 58:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; |history |   n|</span></span>
-<span><span class="co">#&gt; |:-------|---:|</span></span>
-<span><span class="co">#&gt; |h-h-h   | 214|</span></span>
-<span><span class="co">#&gt; |h-l-l   |  18|</span></span>
-<span><span class="co">#&gt; |l-h-l   |  19|</span></span>
-<span><span class="co">#&gt; |l-l-h   |  42|</span></span>
-<span><span class="co">#&gt; |l-l-l   | 119|</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Your outcome variable(s) have the following type(s): data.frame</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/devMSMsHelpers/man/inspectData.html" class="external-link">inspectData</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, ti_confounders <span class="op">=</span> <span class="va">ti_confounders</span>, tv_confounders <span class="op">=</span> <span class="va">tv_confounders</span>,comparison <span class="op">=</span> <span class="va">comparison</span>, home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> </span></code></pre></div>
 <p>Here, we see summaries of the data types as well as reasonable cell
 counts in each of our specified histories, for each imputed dataset.</p>
 <p><br></p>

@@ -77,7 +77,7 @@
                         <h4 data-toc-skip class="author">Isabella
 Stallworthy</h4>
             
-            <h4 data-toc-skip class="date">2023-12-15</h4>
+            <h4 data-toc-skip class="date">2024-03-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Workflow_Continuous_Exposure.Rmd" class="external-link"><code>vignettes/Workflow_Continuous_Exposure.Rmd</code></a></small>
       <div class="d-none name"><code>Workflow_Continuous_Exposure.Rmd</code></div>
@@ -107,12 +107,13 @@ concepts of the MSM process outlined in the manuscript and the practical
 steps and functions put forth in the following sections before
 implementing this workflow.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMsHelpers"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMsHelpers"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">devMSMsHelpers</span><span class="op">)</span></span></code></pre></div>
 <p>All <em>devMSMs</em> functions have optional arguments to suppress
 saving output locally (<code>save.out = FALSE</code>) and printing it to
@@ -122,7 +123,7 @@ functionality. Users must supply a path to a home directory
 (<code>home_dir</code>) if <code>save.out = TRUE</code>. All sub-folders
 referenced by each function are created automatically within the home
 directory.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">save.out</span> <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span></span>
 <span><span class="va">verbose</span> <span class="op">=</span> <span class="cn">TRUE</span></span></code></pre></div>
@@ -142,7 +143,7 @@ the outcome of behavior problems (StrDif_Tot) measured at 58 months.
 <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended
 Preliminary Steps vignette</a> for beginning with other data types,
 including missing data).</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_mice"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">sim_data_mice</span></span>
@@ -169,7 +170,7 @@ including missing data).</p>
 <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying
 Core Inputs vignette</a> for more detail on the following core
 inputs.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">home_dir</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
@@ -258,7 +259,7 @@ included concurrently in the balancing formulas (overriding the default
 which is to only include lagged confounders).</p>
 <p>We choose not to specify any concurrent confounders, as we cannot
 reliably distinguish them from mediators in our data.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">concur_conf</span> <span class="op">&lt;-</span> <span class="cn">NULL</span> </span></code></pre></div>
 <p>The user may also specify a list of custom formulas by specifying to
 <code>custom</code> a list of formulas, one for each exposure time point
@@ -279,14 +280,14 @@ Balancing Formulas vignette</a> for more detail on how to customize
 formulas.</p>
 <p>We chose not to create custom formulas and instead use
 <code><a href="../reference/createFormulas.html">createFormulas()</a></code> to make them.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">custom</span> <span class="op">&lt;-</span> <span class="cn">NULL</span> </span></code></pre></div>
 <p>The <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function saves out .csv and .rds
 files containing balancing formulas at each exposure time point for the
 specified <code>type</code> (“full”) in the ‘formulas/full/’ folder.</p>
 <p>The function returns a list of formulas labeled by type, exposure,
 outcome, and exposure time point.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"full"</span></span>
 <span></span>
 <span><span class="va">full_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, <span class="co">#required</span></span>
@@ -299,7 +300,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     HomeOwnd + KFASTScr + peri_health + PmAge2 + PmBlac2 + PmEd2 + </span></span>
 <span><span class="co">#&gt;     PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x560280feb550&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d095a61480&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 15 is: </span></span>
 <span><span class="co">#&gt; ESETA1.15 ~ B18Raw.6 + BioDadInHH2 + caregiv_health + CORTB.6 + </span></span>
@@ -308,7 +309,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.6 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.6 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x560280feb550&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d095a61480&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 24 is: </span></span>
 <span><span class="co">#&gt; ESETA1.24 ~ B18Raw.15 + B18Raw.6 + BioDadInHH2 + caregiv_health + </span></span>
@@ -318,7 +319,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.15 + </span></span>
 <span><span class="co">#&gt;     RHasSO.6 + RHealth + RMomAgeU + SAAmylase.15 + SAAmylase.6 + </span></span>
 <span><span class="co">#&gt;     SmokTotl + state + SurpPreg + SWghtLB + TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x560280feb550&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d095a61480&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 35 is: </span></span>
 <span><span class="co">#&gt; ESETA1.35 ~ B18Raw.15 + B18Raw.24 + B18Raw.6 + BioDadInHH2 + </span></span>
@@ -331,7 +332,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     RHasSO.15 + RHasSO.24 + RHasSO.6 + RHealth + RMomAgeU + SAAmylase.15 + </span></span>
 <span><span class="co">#&gt;     SAAmylase.24 + SAAmylase.6 + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2 + WndNbrhood.24 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x560280feb550&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d095a61480&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; The full formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 58 is: </span></span>
 <span><span class="co">#&gt; ESETA1.58 ~ B18Raw.15 + B18Raw.24 + B18Raw.6 + BioDadInHH2 + </span></span>
@@ -346,7 +347,7 @@ outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     RHealth + RMomAgeU + SAAmylase.15 + SAAmylase.24 + SAAmylase.6 + </span></span>
 <span><span class="co">#&gt;     SmokTotl + state + StrDif_Tot.35 + SurpPreg + SWghtLB + TcBlac2 + </span></span>
 <span><span class="co">#&gt;     WndNbrhood.24 + WndNbrhood.35 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x560280feb550&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;environment: 0x62d095a61480&gt;</span></span></code></pre></div>
 <p>As shown above, <code><a href="../reference/createFormulas.html">createFormulas()</a></code> creates a balancing
 formula for each exposure time point. Each full formula contains all
 time invariant confounders as well as all lagged time-varying
@@ -395,7 +396,7 @@ use of this workflow.</p>
 <p>As recommended, below we provide two balancing thresholds and
 identify income and parent education as important confounders in the
 relation between economic strain and behavior problems.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">balance_thresh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.1</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="va">imp_conf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"InRatioCor.6"</span>, <span class="st">"InRatioCor.15"</span>, <span class="st">"InRatioCor.24"</span>, <span class="st">"InRatioCor.35"</span>, <span class="st">"InRatioCor.58"</span>, <span class="st">"PmEd2"</span><span class="op">)</span> </span></code></pre></div>
@@ -410,7 +411,7 @@ balance for each exposure time point.</p>
 <p>The function returns a data frame (or list) of balance statistics,
 balance thresholds, and binary balanced tag for each confounder relevant
 to each exposure time point.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"prebalance"</span></span>
 <span></span>
 <span><span class="va">formulas</span> <span class="op">&lt;-</span> <span class="va">full_formulas</span></span>
@@ -422,7 +423,7 @@ to each exposure time point.</p>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point prior to weighting, using full formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using no weights and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.06 (range = -0.25 - 0.31).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -440,7 +441,7 @@ to each exposure time point.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using no weights and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.06 (range = -0.26 - 0.31).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -459,7 +460,7 @@ to each exposure time point.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-9-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-12-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the full formulas and no weights :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.06 (range = -0.26-0.31).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -567,7 +568,7 @@ excluded at this step if they occur at lags greater than <em>t</em>-1
 for each formula.</p>
 <p>Below, we choose not to specify any confounders to always retain at
 this step.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># keep_conf &lt;- "InRatioCor.6"</span></span>
 <span></span>
 <span><span class="va">keep_conf</span>  <span class="op">&lt;-</span>  <span class="cn">NULL</span> </span></code></pre></div>
@@ -577,7 +578,7 @@ see below) for the specified type (in this case, “short”) in the
 ‘formulas/short/’ folder.</p>
 <p>The function returns a list of balancing formulas labeled by type,
 exposure, outcome, and exposure time point.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"short"</span> </span>
 <span></span>
 <span><span class="va">short_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, </span>
@@ -591,7 +592,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     HomeOwnd + KFASTScr + peri_health + PmAge2 + PmBlac2 + PmEd2 + </span></span>
 <span><span class="co">#&gt;     PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x56027e0e4d50&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d097d277b8&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 15 is: </span></span>
 <span><span class="co">#&gt; ESETA1.15 ~ B18Raw.6 + BioDadInHH2 + caregiv_health + CORTB.6 + </span></span>
@@ -600,7 +601,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.6 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.6 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x56027e0e4d50&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d097d277b8&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 24 is: </span></span>
 <span><span class="co">#&gt; ESETA1.24 ~ B18Raw.15 + BioDadInHH2 + caregiv_health + CORTB.15 + </span></span>
@@ -609,7 +610,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.15 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.15 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x56027e0e4d50&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d097d277b8&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 35 is: </span></span>
 <span><span class="co">#&gt; ESETA1.35 ~ B18Raw.24 + BioDadInHH2 + caregiv_health + CORTB.24 + </span></span>
@@ -618,7 +619,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     LESMnPos.24 + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + </span></span>
 <span><span class="co">#&gt;     RHasSO.24 + RHealth + RMomAgeU + SAAmylase.24 + SmokTotl + </span></span>
 <span><span class="co">#&gt;     state + SurpPreg + SWghtLB + TcBlac2 + WndNbrhood.24</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x56027e0e4d50&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d097d277b8&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; The short formula for ESETA1 - StrDif_Tot.58 at ESETA1 time point 58 is: </span></span>
 <span><span class="co">#&gt; ESETA1.58 ~ BioDadInHH2 + caregiv_health + DrnkFreq + EARS_TJo.35 + </span></span>
@@ -627,7 +628,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.35 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SmokTotl + state + StrDif_Tot.35 + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2 + WndNbrhood.35</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x56027e0e4d50&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;environment: 0x62d097d277b8&gt;</span></span></code></pre></div>
 <p>Above, we inspect the shortened balancing formula at each exposure
 time point. These formulas are considerably shorter than the full
 formulas. For instance, at the 58-month exposure time point, the formula
@@ -654,7 +655,7 @@ function to create the initial around of IPTW balancing weights are:
 complete data (data frame, mids object, or a list of imputed datasets as
 dataframes in wide format), exposure (e.g., “variable”), outcome (e.g.,
 “variable.t”), and the short formulas (see Step 2a).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">formulas</span> <span class="op">&lt;-</span> <span class="va">short_formulas</span></span></code></pre></div>
 <p>The optional inputs are as follows.</p>
 <p>For <code>method</code>, provide one of the following methods for
@@ -666,7 +667,7 @@ methods that have been validated for longitudinal exposures: “cbps”
 al., 2013). More information can be found in the
 <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html" class="external-link"><em>WeightIt</em>
 documentation</a>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"cbps"</span></span></code></pre></div>
 <p>The <code><a href="../reference/createWeights.html">createWeights()</a></code> function can also take any number of
 additional arguments that will be passed to the
@@ -703,14 +704,14 @@ data are imputed).</p>
 <h5 id="cbps">CBPS<a class="anchor" aria-label="anchor" href="#cbps"></a>
 </h5>
 <p>Below, we create IPTW weights using the default CBPS method.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights.cbps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                              method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co">#optional</span></span>
 <span>                              home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span>  <span class="co">#optional</span></span>
 <span><span class="co">#&gt; For imputation 1 and the cbps weighting method, the median weight value is 1.1 (SD= 5.16; range= 0-132.54).</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; For imputation 2 and the cbps weighting method, the median weight value is 1.13 (SD= 3.78; range= 0-53.27).</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-14-2.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-17-2.png" width="700"></p>
 <p>As shown above, the distribution has a heavy right tail (typical of
 real-world data), and a median value of 1.21. The right tail of the
 distribution represents individuals who experienced statistically
@@ -723,16 +724,16 @@ unexpected levels of exposure given their levels of confounders.</p>
 <p>We then create IPTW balancing weights using all other available
 methods in order to evaluate and compare their performance in subsequent
 steps.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"glm"</span></span>
 <span></span>
 <span><span class="va">weights.glm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                             method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#optional</span></span>
 <span>                             home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span>  <span class="co">#optional</span></span>
 <span><span class="co">#&gt; For imputation 1 and the glm weighting method, the median weight value is 0.87 (SD= 1.87; range= 0.03-31.24).</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; For imputation 2 and the glm weighting method, the median weight value is 0.88 (SD= 1.64; range= 0.02-21.02).</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-15-2.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-18-2.png" width="700"></p>
 <p>As shown above, the GLM method produces a similar distribution of
 weights.</p>
 <p><br></p>
@@ -740,37 +741,37 @@ weights.</p>
 <div class="section level5">
 <h5 id="gbm">GBM<a class="anchor" aria-label="anchor" href="#gbm"></a>
 </h5>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"gbm"</span></span>
 <span></span>
 <span><span class="va">weights.gbm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                             method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co">#optional</span></span>
 <span>                             home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span>  <span class="co">#optional</span></span>
 <span><span class="co">#&gt; For imputation 1 and the gbm weighting method, the median weight value is 0.47 (SD= 0.91; range= 0.01-17.27).</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; For imputation 2 and the gbm weighting method, the median weight value is 0.48 (SD= 1.34; range= 0-34.87).</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-16-2.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-2.png" width="700"></p>
 <p><br></p>
 </div>
 <div class="section level5">
 <h5 id="bart">Bart<a class="anchor" aria-label="anchor" href="#bart"></a>
 </h5>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"bart"</span></span>
 <span></span>
 <span><span class="va">weights.bart</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
 <span>                              method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#optional</span></span>
 <span>                              home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional</span></span>
-<span><span class="co">#&gt; For imputation 1 and the bart weighting method, the median weight value is 0.69 (SD= 1.44; range= 0.05-27.08).</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; For imputation 2 and the bart weighting method, the median weight value is 0.68 (SD= 1.46; range= 0.04-24.6).</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-17-2.png" width="700"></p>
+<span><span class="co">#&gt; For imputation 1 and the bart weighting method, the median weight value is 0.69 (SD= 1.5; range= 0.05-25.28).</span></span></code></pre></div>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-1.png" width="700"></p>
+<pre><code><span><span class="co">#&gt; For imputation 2 and the bart weighting method, the median weight value is 0.69 (SD= 1.41; range= 0.03-22.53).</span></span></code></pre>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-2.png" width="700"></p>
 <p><br></p>
 </div>
 <div class="section level5">
 <h5 id="super">Super<a class="anchor" aria-label="anchor" href="#super"></a>
 </h5>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"super"</span></span>
 <span></span>
 <span><span class="va">weights.super</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, formulas <span class="op">=</span> <span class="va">formulas</span>, <span class="co">#required</span></span>
@@ -778,9 +779,9 @@ weights.</p>
 <span>                               home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional</span></span>
 <span><span class="co">#&gt; Loading required package: nnls</span></span>
 <span><span class="co">#&gt; For imputation 1 and the super weighting method, the median weight value is 0.97 (SD= 2.34; range= 0.02-36.66).</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; For imputation 2 and the super weighting method, the median weight value is 0.98 (SD= 1.97; range= 0.02-32.62).</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-18-2.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-2.png" width="700"></p>
 <p><br></p>
 </div>
 </div>
@@ -824,7 +825,7 @@ point.</p>
 <h5 id="cbps-1">CBPS<a class="anchor" aria-label="anchor" href="#cbps-1"></a>
 </h5>
 <p>We first assess balance for the CBPS weighting method.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"weighted"</span></span>
 <span></span>
 <span><span class="va">formulas</span> <span class="op">&lt;-</span> <span class="va">short_formulas</span></span>
@@ -838,7 +839,7 @@ point.</p>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using short formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using cbps and short formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.04 (range = -0.29 - 0.18).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -856,7 +857,7 @@ point.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using cbps and short formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.12 - 0.12).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -875,7 +876,7 @@ point.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-19-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the short formulas and cbps :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.16-0.13).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -900,7 +901,7 @@ point.</p>
 median absolute value correlation between confounder and exposure is
 0.03 and only 8 confounders remain imbalanced.</p>
 <p><br> ##### GLM</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">weights.glm</span></span>
 <span></span>
 <span><span class="va">balance_stats.glm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assessBalance.html">assessBalance</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, <span class="co">#required</span></span>
@@ -910,7 +911,7 @@ median absolute value correlation between confounder and exposure is
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using short formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using glm and short formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.11 - 0.21).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -928,7 +929,7 @@ median absolute value correlation between confounder and exposure is
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using glm and short formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.1 - 0.18).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -947,7 +948,7 @@ median absolute value correlation between confounder and exposure is
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-20-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the short formulas and glm :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.09-0.19).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -970,7 +971,7 @@ remaining imbalanced.</p>
 <div class="section level5">
 <h5 id="glm-1">GLM<a class="anchor" aria-label="anchor" href="#glm-1"></a>
 </h5>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">weights.gbm</span></span>
 <span></span>
 <span><span class="va">balance_stats.gbm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assessBalance.html">assessBalance</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, <span class="co">#required</span></span>
@@ -980,7 +981,7 @@ remaining imbalanced.</p>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using short formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using gbm and short formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.06 - 0.14).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -998,7 +999,7 @@ remaining imbalanced.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using gbm and short formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.11 - 0.18).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1017,7 +1018,7 @@ remaining imbalanced.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-21-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the short formulas and gbm :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.07-0.16).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1040,7 +1041,7 @@ imbalanced.</p>
 <div class="section level5">
 <h5 id="bart-1">Bart<a class="anchor" aria-label="anchor" href="#bart-1"></a>
 </h5>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">weights.bart</span></span>
 <span></span>
 <span><span class="va">balance_stats.bart</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assessBalance.html">assessBalance</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, <span class="co">#required</span></span>
@@ -1050,30 +1051,30 @@ imbalanced.</p>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using short formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using bart and short formulas: </span></span>
-<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.11 - 0.2).</span></span>
+<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.1 - 0.19).</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; As shown below, 12 out of 131 (9%) covariates across time points, corresponding to 4 out of 32 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.11 (range= -0.11-0.2):</span></span>
+<span><span class="co">#&gt; As shown below, 10 out of 131 (8%) covariates across time points, corresponding to 4 out of 32 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.1 (range= -0.1-0.19):</span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates for imputation 1 using bart and short formulas</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; | exp_time| balanced_n| imbalanced_n|  n|</span></span>
 <span><span class="co">#&gt; |--------:|----------:|------------:|--:|</span></span>
 <span><span class="co">#&gt; |        6|         17|            1| 18|</span></span>
-<span><span class="co">#&gt; |       15|         25|            3| 28|</span></span>
+<span><span class="co">#&gt; |       15|         26|            2| 28|</span></span>
 <span><span class="co">#&gt; |       24|         25|            2| 27|</span></span>
-<span><span class="co">#&gt; |       35|         27|            3| 30|</span></span>
+<span><span class="co">#&gt; |       35|         28|            2| 30|</span></span>
 <span><span class="co">#&gt; |       58|         25|            3| 28|</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using bart and short formulas: </span></span>
-<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.1 - 0.23).</span></span>
+<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.1 - 0.22).</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; As shown below, 9 out of 131 (7%) covariates across time points, corresponding to 5 out of 32 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.12 (range= -0.08-0.23):</span></span>
+<span><span class="co">#&gt; As shown below, 9 out of 131 (7%) covariates across time points, corresponding to 5 out of 32 domains, remain imbalanced with a remaining median absolute value correlation/std mean difference of 0.11 (range= -0.08-0.22):</span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates for imputation 2 using bart and short formulas</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; | exp_time| balanced_n| imbalanced_n|  n|</span></span>
@@ -1087,26 +1088,25 @@ imbalanced.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-25-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the short formulas and bart :</span></span>
-<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.09-0.21).</span></span>
+<span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.08-0.21).</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; As shown below, the following 10 covariates across time points out of 131 total (7.63%) spanning 5 domains out of 33 (15.15%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ESETA1 of 0.11 (range=-0.09-0.21) :</span></span>
+<span><span class="co">#&gt; As shown below, the following 9 covariates across time points out of 131 total (6.87%) spanning 4 domains out of 33 (12.12%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to ESETA1 of 0.11 (range=-0.08-0.21) :</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; |    |exposure | exp_time| covar_time|covariate      |    avg_bal| bal_thresh| balanced|</span></span>
 <span><span class="co">#&gt; |:---|:--------|--------:|----------:|:--------------|----------:|----------:|--------:|</span></span>
-<span><span class="co">#&gt; |1   |ESETA1   |        6|          0|caregiv_health |  0.1036188|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |22  |ESETA1   |       15|          6|ESETA1.6       |  0.2124575|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |47  |ESETA1   |       24|         15|B18Raw.15      |  0.1174658|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |50  |ESETA1   |       24|         15|ESETA1.15      |  0.1368297|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |54  |ESETA1   |       24|         15|InRatioCor.15  | -0.0785232|       0.05|        0|</span></span>
-<span><span class="co">#&gt; |78  |ESETA1   |       35|         24|ESETA1.24      |  0.1240865|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |82  |ESETA1   |       35|         24|InRatioCor.24  | -0.0873035|       0.05|        0|</span></span>
-<span><span class="co">#&gt; |106 |ESETA1   |       58|         35|ESETA1.35      |  0.1141368|       0.10|        0|</span></span>
-<span><span class="co">#&gt; |110 |ESETA1   |       58|         35|InRatioCor.35  | -0.0695586|       0.05|        0|</span></span>
-<span><span class="co">#&gt; |116 |ESETA1   |       58|          0|PmEd2          | -0.0511278|       0.05|        0|</span></span></code></pre>
+<span><span class="co">#&gt; |1   |ESETA1   |        6|          0|caregiv_health |  0.1000414|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |22  |ESETA1   |       15|          6|ESETA1.6       |  0.2083422|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |47  |ESETA1   |       24|         15|B18Raw.15      |  0.1092676|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |50  |ESETA1   |       24|         15|ESETA1.15      |  0.1315759|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |54  |ESETA1   |       24|         15|InRatioCor.15  | -0.0714754|       0.05|        0|</span></span>
+<span><span class="co">#&gt; |78  |ESETA1   |       35|         24|ESETA1.24      |  0.1209567|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |82  |ESETA1   |       35|         24|InRatioCor.24  | -0.0820285|       0.05|        0|</span></span>
+<span><span class="co">#&gt; |106 |ESETA1   |       58|         35|ESETA1.35      |  0.1129381|       0.10|        0|</span></span>
+<span><span class="co">#&gt; |110 |ESETA1   |       58|         35|InRatioCor.35  | -0.0627122|       0.05|        0|</span></span></code></pre>
 <p>For the BART weighting method, the median absolute value correlation
 between exposure and confounder is 0.02, with 11 confounders remaining
 imbalanced.</p>
@@ -1115,7 +1115,7 @@ imbalanced.</p>
 <div class="section level5">
 <h5 id="super-1">Super<a class="anchor" aria-label="anchor" href="#super-1"></a>
 </h5>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">weights.super</span> </span>
 <span></span>
 <span><span class="va">balance_stats.super</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assessBalance.html">assessBalance</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, <span class="co">#required</span></span>
@@ -1125,7 +1125,7 @@ imbalanced.</p>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using short formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using super and short formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.1 - 0.2).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1143,7 +1143,7 @@ imbalanced.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using super and short formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.08 - 0.18).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1162,7 +1162,7 @@ imbalanced.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-23-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the short formulas and super :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.07-0.19).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1237,7 +1237,7 @@ balance thresholds, and binary balanced tag for each confounder relevant
 to each exposure time point.</p>
 <p>Below, we assess the weights created using the SuperLearner method
 relative to the full balancing formulas.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"weighted"</span></span>
 <span></span>
 <span><span class="va">formulas</span> <span class="op">&lt;-</span> <span class="va">full_formulas</span></span>
@@ -1251,7 +1251,7 @@ relative to the full balancing formulas.</p>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using full formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using super and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.1 - 0.21).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1269,7 +1269,7 @@ relative to the full balancing formulas.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using super and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.08 - 0.25).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1288,7 +1288,7 @@ relative to the full balancing formulas.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-24-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-27-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the full formulas and super :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.07-0.23).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1341,7 +1341,7 @@ files containing balancing formulas at each exposure time point for the
 specified type in the ‘formulas/update/’ folder.</p>
 <p>The function returns a list of balancing formulas labeled by type,
 exposure, outcome, and exposure time point.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"update"</span></span>
 <span></span>
 <span><span class="va">bal_stats</span> <span class="op">&lt;-</span> <span class="va">balance_stats</span></span>
@@ -1356,7 +1356,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     HomeOwnd + KFASTScr + peri_health + PmAge2 + PmBlac2 + PmEd2 + </span></span>
 <span><span class="co">#&gt;     PmMrSt2 + RHealth + RMomAgeU + SmokTotl + state + SurpPreg + </span></span>
 <span><span class="co">#&gt;     SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5602786bb220&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d0b27f1730&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 15 no time-varying confounders at additional lags were added. </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1367,7 +1367,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.6 + RHealth + </span></span>
 <span><span class="co">#&gt;     RMomAgeU + SAAmylase.6 + SmokTotl + state + SurpPreg + SWghtLB + </span></span>
 <span><span class="co">#&gt;     TcBlac2 + WndNbrhood.6</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5602786bb220&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d0b27f1730&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 24 the following covariate(s) will be added to the short balancing formula:</span></span>
 <span><span class="co">#&gt;                           ESETA1.6, InRatioCor.6 </span></span>
@@ -1379,7 +1379,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     MDI.15 + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + </span></span>
 <span><span class="co">#&gt;     RHasSO.15 + RHealth + RMomAgeU + SAAmylase.15 + SmokTotl + </span></span>
 <span><span class="co">#&gt;     state + SurpPreg + SWghtLB + TcBlac2</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5602786bb220&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d0b27f1730&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 35 the following covariate(s) will be added to the short balancing formula:</span></span>
 <span><span class="co">#&gt;                           ESETA1.15, ESETA1.6 </span></span>
@@ -1392,7 +1392,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     PmBlac2 + PmEd2 + PmMrSt2 + RHasSO.24 + RHealth + RMomAgeU + </span></span>
 <span><span class="co">#&gt;     SAAmylase.24 + SmokTotl + state + SurpPreg + SWghtLB + TcBlac2 + </span></span>
 <span><span class="co">#&gt;     WndNbrhood.24</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5602786bb220&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x62d0b27f1730&gt;</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:</span></span>
 <span><span class="co">#&gt; For ESETA1 at exposure time point 58 the following covariate(s) will be added to the short balancing formula:</span></span>
 <span><span class="co">#&gt;                           ESETA1.15, InRatioCor.15 </span></span>
@@ -1404,7 +1404,7 @@ exposure, outcome, and exposure time point.</p>
 <span><span class="co">#&gt;     LESMnPos.35 + peri_health + PmAge2 + PmBlac2 + PmEd2 + PmMrSt2 + </span></span>
 <span><span class="co">#&gt;     RHasSO.35 + RHealth + RMomAgeU + SmokTotl + state + StrDif_Tot.35 + </span></span>
 <span><span class="co">#&gt;     SurpPreg + SWghtLB + TcBlac2 + WndNbrhood.35</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5602786bb220&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;environment: 0x62d0b27f1730&gt;</span></span></code></pre></div>
 <p>As shown above, several imbalanced confounders at lags greater than
 <em>t</em>-1 were added to the short formulas at exposure time points
 35-58. For instance, at the 35-month time point, economic strain at 6
@@ -1445,7 +1445,7 @@ WeightItMSM output a list of weights with either a single nested list
 each imputed dataset (if data are imputed).</p>
 <p>Below, we use the updated formulas and the SuperLearner weighting
 method to create a new round of IPTW balancing weights.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">formulas</span> <span class="op">&lt;-</span> <span class="va">updated_formulas</span></span>
 <span></span>
 <span><span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"super"</span></span>
@@ -1455,9 +1455,9 @@ method to create a new round of IPTW balancing weights.</p>
 <span>                               method <span class="op">=</span> <span class="va">method</span>, read_in_from_file <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#optional</span></span>
 <span>                               home_dir <span class="op">=</span> <span class="va">home_dir</span>, verbose <span class="op">=</span> <span class="va">verbose</span>, save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span> <span class="co">#optional</span></span>
 <span><span class="co">#&gt; For imputation 1 and the super weighting method, the median weight value is 1.02 (SD= 1.21; range= 0.02-20.33).</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-29-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; For imputation 2 and the super weighting method, the median weight value is 1.01 (SD= 1.01; range= 0.02-13.24).</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-26-2.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-29-2.png" width="700"></p>
 <p>As shown above, these weights have a median value of 1 and a heavy
 right tail.</p>
 <p><br></p>
@@ -1480,14 +1480,14 @@ the exposure (variable with no time points), outcome (e.g.,
 default is 0.95) above which the weights will be replaced with the
 weight value of that quantile to reduce the heavy right tail.</p>
 <p>Below, we use the default 95th percentile for trimming weights.</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">quantile</span> <span class="op">&lt;-</span> <span class="fl">0.95</span> </span></code></pre></div>
 <p>The <code><a href="../reference/trimWeights.html">trimWeights()</a></code> function saves out an .rds file of
 trimmed weights in the ‘weights/values/’ folder and a histogram of
 trimmed weights in the ‘weights/histograms/’ folder.</p>
 <p>The function returns a list of weights objects, containing trimmed
 weights, each in the form of weightitMSM output.</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">final_weights</span></span>
 <span></span>
 <span><span class="va">trim_weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trimWeights.html">trimWeights</a></span><span class="op">(</span>exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, weights <span class="op">=</span> <span class="va">weights</span>, <span class="co">#required</span></span>
@@ -1497,10 +1497,10 @@ weights, each in the form of weightitMSM output.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 1 and the ESETA1-StrDif_Tot.58 relation, following trimming at the 0.95 quantile, the median weight value is 1.02 (SD= 0.63; range= 0.02-3).</span></span>
 <span><span class="co">#&gt; Trimming weights to 95%.</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-28-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 2 and the ESETA1-StrDif_Tot.58 relation, following trimming at the 0.95 quantile, the median weight value is 1.01 (SD= 0.64; range= 0.02-3).</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-28-2.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-2.png" width="700"></p>
 <p>As shown above, the weights still have a median value of 1 but a much
 shorter right tail.</p>
 <p><br></p>
@@ -1508,7 +1508,7 @@ shorter right tail.</p>
 /- ~0.3 of the previously chosen quantile value, in order to conduct the
 recommended sensitivity analyses at subsequent steps.</p>
 <p>We first create weights at the 92nd quantile value.</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">quantile</span> <span class="op">&lt;-</span> <span class="fl">0.92</span> </span>
 <span></span>
 <span><span class="va">trim_weights.s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trimWeights.html">trimWeights</a></span><span class="op">(</span>exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, weights <span class="op">=</span> <span class="va">weights</span>, <span class="co">#required</span></span>
@@ -1518,12 +1518,12 @@ recommended sensitivity analyses at subsequent steps.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 1 and the ESETA1-StrDif_Tot.58 relation, following trimming at the 0.92 quantile, the median weight value is 1.02 (SD= 0.55; range= 0.02-2).</span></span>
 <span><span class="co">#&gt; Trimming weights to 92%.</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-29-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-32-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 2 and the ESETA1-StrDif_Tot.58 relation, following trimming at the 0.92 quantile, the median weight value is 1.01 (SD= 0.56; range= 0.02-2).</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-29-2.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-32-2.png" width="700"></p>
 <p>And then at the 98th quantile value.</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">quantile</span> <span class="op">&lt;-</span> <span class="fl">0.98</span> </span>
 <span></span>
 <span><span class="va">trim_weights.s2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trimWeights.html">trimWeights</a></span><span class="op">(</span>exposure <span class="op">=</span> <span class="va">exposure</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, weights <span class="op">=</span> <span class="va">weights</span>, <span class="co">#required</span></span>
@@ -1533,10 +1533,10 @@ recommended sensitivity analyses at subsequent steps.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 1 and the ESETA1-StrDif_Tot.58 relation, following trimming at the 0.98 quantile, the median weight value is 1.02 (SD= 0.78; range= 0.02-4).</span></span>
 <span><span class="co">#&gt; Trimming weights to 98%.</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-30-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 2 and the ESETA1-StrDif_Tot.58 relation, following trimming at the 0.98 quantile, the median weight value is 1.01 (SD= 0.76; range= 0.02-4).</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-30-2.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-2.png" width="700"></p>
 <p>We find comparable descriptive statistics for all sets of weights,
 with the upper range value varying by quantile cutoff. We will assess
 the consequences of these different ranges in subsequent steps.</p>
@@ -1572,7 +1572,7 @@ point.</p>
 balance thresholds, and binary balanced tag for each confounder relevant
 to each exposure time point.</p>
 <p>Below, we assess our final weights using the full formulas.</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"weighted"</span></span>
 <span></span>
 <span><span class="va">formulas</span> <span class="op">&lt;-</span> <span class="va">full_formulas</span></span>
@@ -1586,7 +1586,7 @@ to each exposure time point.</p>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using full formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using super and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.11 - 0.15).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1604,7 +1604,7 @@ to each exposure time point.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using super and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.1 - 0.13).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1623,7 +1623,7 @@ to each exposure time point.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-31-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the full formulas and super :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.1-0.14).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1668,7 +1668,7 @@ the first time point (6 months) that remain imbalanced following this
 final balance assessment as covariates.</p>
 <p>We inspect the table above and manually list out these imbalanced
 confounders and assign them to <code>covariates</code>.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">covariates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PmEd2"</span>, <span class="st">"ESETA1.6"</span>, <span class="st">"InRatioCor.6"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>Subsequently, we also assess balance for the weights trimmed at the
@@ -1682,7 +1682,7 @@ that check will be overwritten by the second sensitivity check if it is
 not renamed or re-located to a new folder first.</p>
 <p>We first assess balance for the weights trimmed at the 93rd quantile
 value.</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">trim_weights.s1</span></span>
 <span></span>
 <span><span class="va">final_balance_stats.s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assessBalance.html">assessBalance</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, <span class="co">#required</span></span>
@@ -1692,7 +1692,7 @@ value.</p>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using full formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using super and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.12 - 0.15).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1710,7 +1710,7 @@ value.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using super and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.1 - 0.13).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1729,7 +1729,7 @@ value.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-33-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-36-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the full formulas and super :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.11-0.14).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1762,7 +1762,7 @@ similar degree.</p>
 <p><br></p>
 <p>We next assess balance for the weights trimmed at the 98th quantile
 value.</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">trim_weights.s2</span></span>
 <span></span>
 <span><span class="va">final_balance_stats.s2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assessBalance.html">assessBalance</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, <span class="co">#required</span></span>
@@ -1772,7 +1772,7 @@ value.</p>
 <span><span class="co">#&gt; USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using full formulas.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 1**</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-5.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-1.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-2.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-3.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-4.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-5.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 1 using super and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.1 - 0.15).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1790,7 +1790,7 @@ value.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; **Imputation 2**</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-10.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-6.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-7.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-8.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-9.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-10.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: For exposure ESETA1 imputation 2 using super and full formulas: </span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.02 (range = -0.09 - 0.13).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1809,7 +1809,7 @@ value.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; *** Averaging Across All Imputations ***</span></span></code></pre>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-34-15.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-11.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-12.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-13.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-14.png" width="700"><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-37-15.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; USER ALERT: Averaging across all imputed datasets for exposure ESETA1 using the full formulas and super :</span></span>
 <span><span class="co">#&gt; The median absolute value relation between exposure and confounder is 0.03 (range = -0.08-0.14).</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1897,7 +1897,7 @@ user-specified exposure main effect interactions.</p></li>
 baseline/time-invariant confounders that remain imbalanced from Step 4
 and the possiblity of non-linear effects of economic strain on behavior
 problems.</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"m2"</span></span></code></pre></div>
 <p>If the user selects a covariate model (“m1” or “m3”), they are
 required to supply a list to <code>covariates</code> that corresponds to
@@ -1927,7 +1927,7 @@ epochs. Please see the
 <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended
 Preliminary Steps vignette</a> and accomanying manuscript for more
 details.</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epochs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>epochs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Infancy"</span>, <span class="st">"Toddlerhood"</span>, <span class="st">"Childhood"</span><span class="op">)</span>, </span>
 <span>                     values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
 <p>If the user selects an interaction model (“m2” or “m3”), they are
@@ -1939,7 +1939,7 @@ exposure main effects (3 in our case, as we specified 3 exposure
 epochs).</p>
 <p>We specify fitting all 3-way (and constituent) interactions between
 exposure main effects.</p>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">int_order</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></code></pre></div>
 <p>The user can also specify a <code>family</code> (as a function, not
 in quotations; e.g., gaussian) and <code>link</code> (in quotations,
@@ -1962,7 +1962,7 @@ the links “logit”, “probit”, “cloglog”, “identity”, “inverse�
 power link function. See the <em>survey</em> and <em>stats</em> R
 package documentations for more information.</p>
 <p>Below, we retain the default family and link functions.</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">family</span> <span class="op">&lt;-</span> <span class="va">gaussian</span></span>
 <span></span>
 <span><span class="va">link</span> <span class="op">&lt;-</span> <span class="st">"identity"</span> </span></code></pre></div>
@@ -1979,7 +1979,7 @@ do not advise proceeding to the subsequent history comparison step.
 imputed data.)</p>
 <p>This function returns a list of fitted model objects, each as svyglm
 output (labeled “0” if data are in data frame format).</p>
-<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">trim_weights</span></span>
 <span></span>
 <span><span class="va">models</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fitModel.html">fitModel</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">weights</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, <span class="co">#required</span></span>
@@ -2015,7 +2015,7 @@ fitting above if the main output is not renamed or relocated to a new
 folder first.</p>
 <p>We first fit the same model to the weights trimmed at the 92nd
 quantile.</p>
-<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">trim_weights.s1</span></span>
 <span></span>
 <span><span class="va">models.s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fitModel.html">fitModel</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">weights</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, <span class="co">#required</span></span>
@@ -2043,7 +2043,7 @@ quantile.</p>
 <p><b></b></p>
 <p>We then fit the same model with the weights trimmed at the 98th
 quantile.</p>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">trim_weights.s2</span></span>
 <span></span>
 <span><span class="va">models.s2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fitModel.html">fitModel</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">weights</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, <span class="co">#required</span></span>
@@ -2121,7 +2121,7 @@ ensure that there is is reasonable coverage in all of their histories to
 avoid extrapolation and maximize precision.</p>
 <p>Below, we specify that 60th and 30th percentile values to denote high
 and low levels of economic strain, respectively.</p>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hi_lo_cut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span> </span></code></pre></div>
 <p>Additionally, the user has the option to specify epochs that differ
 from the exposure time points using the optional <code>epochs</code>
@@ -2156,7 +2156,7 @@ from the <em>marginaleffects</em> package; Arel-Bundock, 2023) cannot
 accommodate all pairwise history comparisons for more than 5 time
 points.</p>
 <p>Below, we specify one reference and two comparison histories.</p>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reference</span> <span class="op">&lt;-</span> <span class="st">"l-l-l"</span> </span>
 <span></span>
 <span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"h-h-h"</span>, <span class="st">"l-l-h"</span>, <span class="st">"h-l-l"</span>, <span class="st">"l-h-l"</span><span class="op">)</span> </span></code></pre></div>
@@ -2173,7 +2173,7 @@ recommend interpreting the outcome of the most inclusive set of
 comparisons to avoid false discovery.</p>
 <p>Below, we retain the default Benjamini-Hochburg method for multiple
 comparison.</p>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mc_comp_method</span> <span class="op">&lt;-</span> <span class="st">"BH"</span></span></code></pre></div>
 <p>Based on their substantive interests, the user also has the option to
 choose which level of dosage (“h” or “l”) is tallied in labels of dose
@@ -2183,7 +2183,7 @@ lower levels are conceptualized as the exposure (e.g., lower income),
 the user may wish to choose dosage level “l”.</p>
 <p>Below, given our interest in histories of high economic strain, we
 specify that we wish to tally high doses of exposure.</p>
-<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dose_level</span> <span class="op">&lt;-</span> <span class="st">"h"</span></span></code></pre></div>
 <p>Lastly, the user can provide alternate plotting labels for exposure
 and outcome in the <code>exp_lab</code> and <code>out_lab</code> fields
@@ -2191,7 +2191,7 @@ and outcome in the <code>exp_lab</code> and <code>out_lab</code> fields
 exposure main effects +1) of colors or a Brewer color palette (colors;
 default is “Dark2”). See RColorBrewer::display.brewer.all() or <a href="https://r-graph-gallery.com/38-rcolorbrewers-palettes.html" class="external-link uri">https://r-graph-gallery.com/38-rcolorbrewers-palettes.html</a>).</p>
 <p>Below, we specify plotting labels and 4 colors.</p>
-<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exp_lab</span> <span class="op">&lt;-</span> <span class="st">"Economic Strain"</span> </span>
 <span></span>
 <span><span class="va">out_lab</span> <span class="op">&lt;-</span> <span class="st">"Behavior Problems"</span> </span>
@@ -2205,7 +2205,7 @@ for the histories in the ‘plots/’ folder.</p>
 comparisons containing contrast estimates, standard errors, statistics,
 p-values, low and high confidence intervals, and corrected p-values,
 labeled by history and dose.</p>
-<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="va">models</span> </span>
 <span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareHistories.html">compareHistories</a></span><span class="op">(</span>exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, model <span class="op">=</span> <span class="va">model</span>, <span class="co">#required</span></span>
@@ -2247,7 +2247,7 @@ labeled by history and dose.</p>
 <span><span class="co">#&gt; |(-0.209, -0.284, -0.345) - (0.545, -0.284, -0.345) |   0.0079|    0.0102|    0.7782| 394.8543|  0.4369|l-l-l vs h-l-l |0 vs 1 |       0.6791|</span></span>
 <span><span class="co">#&gt; |(-0.209, -0.284, -0.345) - (-0.209, 0.452, -0.345) |   0.0033|    0.0203|    0.1623|   1.6682|  0.8885|l-l-l vs l-h-l |0 vs 1 |       0.8885|</span></span>
 <span><span class="co">#&gt; |(-0.209, -0.284, -0.345) - (-0.209, -0.284, 0.31)  |   0.0086|    0.0120|    0.7137|   4.6930|  0.5093|l-l-l vs l-l-h |0 vs 1 |       0.6791|</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-47-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-50-1.png" width="700"></p>
 <p>As shown above, we first confirm that there is reasonable
 distribution of our sample with each of the specified exposure
 histories.</p>
@@ -2263,7 +2263,7 @@ the main history comparison above if the main output is not renamed or
 relocated to a new folder first.</p>
 <p>We first compare the same histories using the model fit with weights
 trimmed at the 92nd quantile value.</p>
-<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="va">models.s1</span> </span>
 <span></span>
 <span><span class="va">results.s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareHistories.html">compareHistories</a></span><span class="op">(</span>exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, model <span class="op">=</span> <span class="va">model</span>, <span class="co">#required</span></span>
@@ -2305,14 +2305,14 @@ trimmed at the 92nd quantile value.</p>
 <span><span class="co">#&gt; |(-0.209, -0.284, -0.345) - (0.545, -0.284, -0.345) |   0.0084|    0.0102|    0.8238| 221.7269|  0.4109|l-l-l vs h-l-l |0 vs 1 |       0.6684|</span></span>
 <span><span class="co">#&gt; |(-0.209, -0.284, -0.345) - (-0.209, 0.452, -0.345) |   0.0042|    0.0196|    0.2127|   1.6945|  0.8543|l-l-l vs l-h-l |0 vs 1 |       0.8543|</span></span>
 <span><span class="co">#&gt; |(-0.209, -0.284, -0.345) - (-0.209, -0.284, 0.31)  |   0.0088|    0.0120|    0.7319|   4.4065|  0.5013|l-l-l vs l-l-h |0 vs 1 |       0.6684|</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-48-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-51-1.png" width="700"></p>
 <p>As shown above, results indicate a marginal but non-significant
 contrast between “l-l-l” and “h-h-h” histories of economic strain
 exposure in relation to behavior problems in early childhood.</p>
 <p><br></p>
 <p>We then compare the same histories usign the model fit with weights
 trimmed at the 98th quantile value.</p>
-<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="va">models.s2</span> </span>
 <span></span>
 <span><span class="va">results.s2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compareHistories.html">compareHistories</a></span><span class="op">(</span>exposure <span class="op">=</span> <span class="va">exposure</span>, exposure_time_pts <span class="op">=</span> <span class="va">exposure_time_pts</span>, outcome <span class="op">=</span> <span class="va">outcome</span>, model <span class="op">=</span> <span class="va">model</span>, <span class="co">#required</span></span>
@@ -2354,16 +2354,15 @@ trimmed at the 98th quantile value.</p>
 <span><span class="co">#&gt; |(-0.209, -0.284, -0.345) - (0.545, -0.284, -0.345) |   0.0071|    0.0105|    0.6783| 243.2631|  0.4982|l-l-l vs h-l-l |0 vs 1 |       0.7239|</span></span>
 <span><span class="co">#&gt; |(-0.209, -0.284, -0.345) - (-0.209, 0.452, -0.345) |   0.0040|    0.0212|    0.1893|   1.6049|  0.8710|l-l-l vs l-h-l |0 vs 1 |       0.8710|</span></span>
 <span><span class="co">#&gt; |(-0.209, -0.284, -0.345) - (-0.209, -0.284, 0.31)  |   0.0084|    0.0127|    0.6618|   4.1634|  0.5429|l-l-l vs l-l-h |0 vs 1 |       0.7239|</span></span></code></pre></div>
-<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-49-1.png" width="700"></p>
+<p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-52-1.png" width="700"></p>
 <p>Similarly, we find no evidence for differences in behavioral problems
 as function of history of exposure to economic strain.</p>
 <p><br><br></p>
 </div>
 </div>
-</div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h2>
+<div class="section level3">
+<h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h3>
 <p>Arel-Bundock, V. 2023. marginaleffects: Predictions, Comparisons,
 Slopes, Marginal Means,and Hypothesis Tests. <a href="https://CRAN.R-project.org/package=marginaleffects" class="external-link uri">https://CRAN.R-project.org/package=marginaleffects</a>.</p>
 <p>Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D.,
@@ -2376,6 +2375,8 @@ Probability Weights for Marginal Structural Models. American Journal of
 Epidemiology, 168(6), 656–664. <a href="https://doi.org/10.1093/aje/kwn164" class="external-link uri">https://doi.org/10.1093/aje/kwn164</a>.</p>
 <p>Greifer, Noah. 2023.WeightIt: Weighting for Covariate Balance in
 Observational Studies. <a href="https://CRAN.R-project.org/package=WeightIt" class="external-link uri">https://CRAN.R-project.org/package=WeightIt</a>.</p>
+<p>Jackson, John W. (2016). Diagnostics for Confounding of Time-varying
+and Other Joint Exposures. Epidemiology, 2016 Nov, 27(6), 859-69. <a href="https://doi.org/10.1097/EDE.0000000000000547" class="external-link uri">https://doi.org/10.1097/EDE.0000000000000547</a>.</p>
 <p>Lumley, Thomas. 2023. “survey: Analysis of Complex Survey
 Samples.”</p>
 <p>Polley, Eric, Erin LeDell, Chris Kennedy, and Mark van der Laan.
@@ -2394,6 +2395,7 @@ Garrett-Peters, P., Mills-Koonce, R., Garrett-Peiers, P., Conger, R. D.,
 and Developmental Study of Young Children Living in Poor Rural
 Communities. Monographs of the Society for Research in Child
 Development, 78(5), i–150.</p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

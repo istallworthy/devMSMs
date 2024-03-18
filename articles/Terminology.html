@@ -77,7 +77,7 @@
                         <h4 data-toc-skip class="author">Isabella
 Stallworthy</h4>
             
-            <h4 data-toc-skip class="date">2023-12-15</h4>
+            <h4 data-toc-skip class="date">2024-03-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Terminology.Rmd" class="external-link"><code>vignettes/Terminology.Rmd</code></a></small>
       <div class="d-none name"><code>Terminology.Rmd</code></div>
@@ -94,25 +94,382 @@ Core Inputs</a>,
 <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended
 Preliminary Steps</a>, and <em>Workflows</em> vignettes. A more thorough
 introduction to these concepts can be found in the forthcoming
-manuscript: <em>[insert link]</em>.<br><br></p>
-<div class="figure">
-<img src="figures/term%20summary%20table.png" width="600" alt=""><p class="caption">Table 1. Summary of terminology used in
-<em>devMSMs</em></p>
+manuscript: <em>[insert link]</em>.</p>
+<div class="section level2">
+<h2 id="key-terminology">Key Terminology<a class="anchor" aria-label="anchor" href="#key-terminology"></a>
+</h2>
+<p>Table 1. Summary of terminology used in <em>devMSMs</em></p>
+ 
+
+  
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tinytable_f580wykff447br6v425n</title>
+<style>
+    </style>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script><div class="container">
+      <table class="table table table-striped" id="tinytable_f580wykff447br6v425n" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+<thead><tr>
+<th scope="col">Term</th>
+                <th scope="col">Definition</th>
+              </tr></thead>
+<tbody>
+<tr>
+<td><strong>Outcome</strong></td>
+                  <td>Any developmental construct measured at one or more time points including at a final outcome time point</td>
+                </tr>
+<tr>
+<td><strong>Exposure</strong></td>
+                  <td>Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome</td>
+                </tr>
+<tr>
+<td><strong>Exposure Time Points</strong></td>
+                  <td>Time points in development when the exposure was measured at which balancing formulas will be created</td>
+                </tr>
+<tr>
+<td><strong>Exposure Epochs</strong></td>
+                  <td>
+<em>(optional)</em> Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories</td>
+                </tr>
+<tr>
+<td><strong>Exposure Histories</strong></td>
+                  <td>Sequences of relatively high (<code>'h'</code>) or low (<code>'p'</code>) levels of exposure at each exposure time point or exposure epoch</td>
+                </tr>
+<tr>
+<td><strong>Exposure Dosage</strong></td>
+                  <td>Total cumulative exposure epochs during which an individual experienced high (or low) levels of exposure across an entire exposure history</td>
+                </tr>
+<tr>
+<td><strong>Backdoor Path</strong></td>
+                  <td>Any alternative, non-causal way (other than the direct causal effects from exposure to outcome) that the exposure at a given time point associates with the outcome within a causal diagram, often via confounders</td>
+                </tr>
+<tr>
+<td><strong>Confounder</strong></td>
+                  <td>Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths</td>
+                </tr>
+<tr>
+<td><strong>Time-varying confounder</strong></td>
+                  <td>A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time (exposure and outcome variables).</td>
+                </tr>
+<tr>
+<td><strong>Time invariant confounder</strong></td>
+                  <td>A confounder measured at a single time point prior to the exposure time point which reflects a construct that is stable over time.</td>
+                </tr>
+<tr>
+<td><strong>Collider</strong></td>
+                  <td>A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which opens a backdoor path</td>
+                </tr>
+</tbody>
+</table>
 </div>
-<p><br><br></p>
-<div class="figure">
-<img src="figures/formula%20term%20summary%20table.png" width="600" alt=""><p class="caption">Table 2. Summary of the formula terminology used in
-the <em>devMSMs</em> package for creating balancing weights and
-assessing their performance in devMSMs (<em>Workflows</em> vignettes
-Steps 4-6). The different kinds of formulas vary with respect to their
-inclusion of time-varying confounders and the <code>type</code>
-specification to create them using the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
-function.</p>
+
+    <script>
+      function styleCell_tinytable_iioer6aj79wtxdo9kckb(i, j, css_id) {
+        var table = document.getElementById("tinytable_f580wykff447br6v425n");
+        table.rows[i].cells[j].classList.add(css_id);
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_f580wykff447br6v425n');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_tinytable_iioer6aj79wtxdo9kckb(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_f580wykff447br6v425n");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+
+    </script>
 </div>
-<p><br><br></p>
-<div class="figure">
-<img src="figures/function%20summary%20table.png" width="600" alt=""><p class="caption">Table 3. Summary of the 6 core functions of the
-<em>devMSMs</em> package.</p>
+<div class="section level2">
+<h2 id="balancing-formula">Balancing Formula<a class="anchor" aria-label="anchor" href="#balancing-formula"></a>
+</h2>
+Balancing formula are formula created at each exposure time point,
+regressing exposure on confounders, for the purpose of creating and/or
+assessing balancing weights. The general form is given by:
+<pre><code>ESETA1.t ~ <span style="color: darkred">time-invariant</span> confounders + <span style="color: blue">time-varying</span> confounders + <i>lagged</i> <span style="color: seagreen;">outcomes</span> + <i>lagged</i> <span style="color: purple;">outcomes</span></code></pre>
+<p>Below is a table that summarizes the three formula <code>type</code>s
+that will be used.</p>
+<p>Table 2. Summary of the formula terminology used in the
+<em>devMSMs</em> package for creating balancing weights and assessing
+their performance in devMSMs (<em>Workflows</em> vignettes Steps 4-6).
+The different kinds of formulas vary with respect to their inclusion of
+time-varying confounders and the <code>type</code> specification to
+create them using the <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function.</p>
+ 
+
+  
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tinytable_f11yjub5s21nllu8xt4g</title>
+<style>
+.table td.tinytable_css_udbtczp3qzv2ollmwzbb, .table th.tinytable_css_udbtczp3qzv2ollmwzbb {    border-bottom: solid 0.1em #d3d8dc; }
+    </style>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script><div class="container">
+      <table class="table table table-borderless" id="tinytable_f11yjub5s21nllu8xt4g" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+<thead><tr>
+<th scope="col">Term</th>
+                <th scope="col">Definition</th>
+              </tr></thead>
+<tbody>
+<tr>
+<td>
+<em>Full balancing formula</em>
+<p><code>type = "full"</code></p>
+</td>
+                  <td>Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>all</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for pre-balance (<i>Workflows</i> vignettes Step 4b) and final balance assessment (<i>Workflows</i> vignettes Step 6).
+<pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: blue;">B18Raw.6</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: blue;">CORTB.6</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: seagreen;">ES.6</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: blue;">HOMEETA1.6</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre>
+</td>
+                </tr>
+<tr>
+<td>
+<em>Simplified balancing formula</em>
+<p><code>type = "short"</code></p>
+</td>
+                  <td>Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for creating and assessing preliminary balancing weights to determine optimal weighting method (<i>Workflows</i> vignettes Step 5b).
+<pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre>
+</td>
+                </tr>
+<tr>
+<td>
+<em>Updated balancing formula</em>
+<p><code>type = "update"</code></p>
+</td>
+                  <td>Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, as well as any <i>imbalanced</i> <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> levels <i>at t-1+</i> Used to create final balancing weights (<i>Workflows<i> vignettes Step 6).
+<pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.6</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre></i></i>
+</td>
+                </tr>
+</tbody>
+</table>
+</div>
+
+    <script>
+      function styleCell_tinytable_qhx7xp2zxk7swu0oatr3(i, j, css_id) {
+        var table = document.getElementById("tinytable_f11yjub5s21nllu8xt4g");
+        table.rows[i].cells[j].classList.add(css_id);
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_f11yjub5s21nllu8xt4g');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_tinytable_qhx7xp2zxk7swu0oatr3(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_f11yjub5s21nllu8xt4g");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+
+window.addEventListener('load', function () { styleCell_tinytable_qhx7xp2zxk7swu0oatr3(0, 0, 'tinytable_css_udbtczp3qzv2ollmwzbb') })
+window.addEventListener('load', function () { styleCell_tinytable_qhx7xp2zxk7swu0oatr3(0, 1, 'tinytable_css_udbtczp3qzv2ollmwzbb') })
+    </script>
+</div>
+<div class="section level2">
+<h2 id="core-functions-of-devmsms">6 core functions of <em>devMSMs</em><a class="anchor" aria-label="anchor" href="#core-functions-of-devmsms"></a>
+</h2>
+<p>There are 6 key functions that are used in the <em>devMSMs</em>
+workflow.</p>
+<p>Table 3. Summary of the 6 core functions of the <em>devMSMs</em>
+package.</p>
+ 
+
+  
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tinytable_lqdnm32vzyfig630urpt</title>
+<style>
+    </style>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script><div class="container">
+      <table class="table table table-striped" id="tinytable_lqdnm32vzyfig630urpt" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+<thead><tr>
+<th scope="col">Function</th>
+                <th scope="col">Purpose</th>
+                <th scope="col">Required.Input</th>
+                <th scope="col">Output</th>
+              </tr></thead>
+<tbody>
+<tr>
+<td><a href="/reference/createFormulas.html"><code>createFormulas()</code></a></td>
+                  <td>Creates balancing formulas at each exposure time point relating exposure to confounders.</td>
+                  <td>
+<code>exposure</code>, <code>exposure_time_pts</code>, <code>outcome</code>, <code>ti_confounders</code>, <code>tv_confounders</code>, <code>type</code> (<code>'full'</code>, <code>'short'</code>, <code>'update'</code>)</td>
+                  <td>List of balancing formulas for each exposure time point.
+<p>Formulas saved as .csv</p>
+</td>
+                </tr>
+<tr>
+<td><a href="/reference/assessBalance"><code>assessBalance()</code></a></td>
+                  <td>Assesses confounder balance at each exposure time point according to best practices (Jackson, 2016).</td>
+                  <td>
+<code>data</code>, <code>exposure</code>, <code>exposure_time_pts</code>, <code>outcome</code>, <code>formulas</code>, <code>type</code> (‘prebalance’, ‘weighted’)</td>
+                  <td>List of balance statistics
+<p>Tables &amp; love plots displaying balance statistics at each exposure time point</p>
+</td>
+                </tr>
+<tr>
+<td><a href="/reference/createWeights"><code>createWeights()</code></a></td>
+                  <td>Creates balancing weights for each person (wrapper for <code>weightit::weightitMSM</code>).</td>
+                  <td>
+<code>data</code>, <code>exposure</code>, <code>outcome</code>, <code>formulas</code>
+</td>
+                  <td>Weights object
+<p>Histogram &amp; summary of balancing weights.</p>
+</td>
+                </tr>
+<tr>
+<td><a href="/reference/trimWeights"><code>trimWeights()</code></a></td>
+                  <td>Trims balancing weights to account for heavy tails.</td>
+                  <td>
+<code>exposure</code>, <code>outcome</code>, <code>weights</code>
+</td>
+                  <td>Trimmed weights object
+<p>Histogram &amp; summary of trimmed weights</p>
+</td>
+                </tr>
+<tr>
+<td><a href="/reference/fitModel"><code>fitModel()</code></a></td>
+                  <td>Fits user-selected, weighted marginal model relating exposure to outcome.</td>
+                  <td>
+<code>data</code>, <code>weights</code>, <code>exposure</code>, <code>exposure_time_pts</code>, <code>outcome</code>, <code>model</code> (<code>m0</code>-<code>m3</code>)</td>
+                  <td>Fitted object
+<p>Omnibus test &amp; table of model evidence.</p>
+</td>
+                </tr>
+<tr>
+<td><a href="/reference/compareHistories"><code>compareHistories()</code></a></td>
+                  <td>Estimate, compare, &amp; visualize model-predicted outcomes as a function of exposure history.</td>
+                  <td>
+<code>exposure</code>, <code>exposure_time_pts</code>, <code>outcome</code>, <code>model</code>
+</td>
+                  <td>Tables of estimated values and comparisons.
+<p>Boxplot.</p>
+</td>
+                </tr>
+</tbody>
+</table>
+</div>
+
+    <script>
+      function styleCell_tinytable_uno846cxsr2yrx0seg75(i, j, css_id) {
+        var table = document.getElementById("tinytable_lqdnm32vzyfig630urpt");
+        table.rows[i].cells[j].classList.add(css_id);
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_lqdnm32vzyfig630urpt');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_tinytable_uno846cxsr2yrx0seg75(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_lqdnm32vzyfig630urpt");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+
+    </script>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

@@ -52,7 +52,140 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="create-balancing-formulas">Create balancing formulas<a class="anchor" aria-label="anchor" href="#create-balancing-formulas"></a></h2>
+      
+      <p class="section-desc"></p><p>Creates balancing formulas relating exposure to all relevant time-varying and time invariant confounders at each exposure time point to be used to create IPTW weights.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="createFormulas.html">createFormulas()</a></code> 
+        </dt>
+        <dd>Create balancing formulas</dd>
+      </dl></div><div class="section level2">
+      <h2 id="create-iptw-balancing-weights">Create IPTW balancing weights<a class="anchor" aria-label="anchor" href="#create-iptw-balancing-weights"></a></h2>
+      
+      <p class="section-desc"></p><p>IPTW balancing weights (Thoemmes &amp; Ong, 2016) using the <code><a href="../reference/createWeights.html">createWeights()</a></code> function, the shortened balancing formulas, and all available weighting methods.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="createWeights.html">createWeights()</a></code> 
+        </dt>
+        <dd>Creates IPTW balancing weights</dd>
+      </dl></div><div class="section level2">
+      <h2 id="trim-iptw-balancing-weights-if-needed-">Trim IPTW balancing weights (if needed)<a class="anchor" aria-label="anchor" href="#trim-iptw-balancing-weights-if-needed-"></a></h2>
+      
+      <p class="section-desc"></p><p>Trims IPTW balancing weights with heavy right tails by populating all weight values above a given quantile with the weight value of that quantile.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="trimWeights.html">trimWeights()</a></code> 
+        </dt>
+        <dd>Trim IPTW balancing weights</dd>
+      </dl></div><div class="section level2">
+      <h2 id="assess-balance">Assess balance<a class="anchor" aria-label="anchor" href="#assess-balance"></a></h2>
+      
+      <p class="section-desc"></p><p>Draws on functions from the cobalt package to quantify the relations between exposure and confounders at each exposure time point according to the guidelines from Jackson, 2016 on how to assess balance for time-varying exposures.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="assessBalance.html">assessBalance()</a></code> 
+        </dt>
+        <dd>Assesses confounder balancing</dd>
+      </dl></div><div class="section level2">
+      <h2 id="fit-weighted-marginal-outcome-model">Fit weighted marginal outcome model<a class="anchor" aria-label="anchor" href="#fit-weighted-marginal-outcome-model"></a></h2>
+      
+      <p class="section-desc"></p><p>Fits weighted marginal outcome model as a generalized linear model of the user’s choosing, relating exposure main effects to outcome using IPTW weights.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="fitModel.html">fitModel()</a></code> 
+        </dt>
+        <dd>Fit outcome model</dd>
+      </dl></div><div class="section level2">
+      <h2 id="estimate-compare-and-visualize-exposure-histories">Estimate, compare, and visualize exposure histories<a class="anchor" aria-label="anchor" href="#estimate-compare-and-visualize-exposure-histories"></a></h2>
+      
+      <p class="section-desc"></p><p>Takes fitted model output to created predicted values for user-specified histories (pooling for imputed data), before conducting contrast comparisons (pooling for imputed data), correcting for multiple comparisons, and then plotting results.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="compareHistories.html">compareHistories()</a></code> 
+        </dt>
+        <dd>Estimate, compare, and visualize exposure histories</dd>
+      </dl></div><div class="section level2">
+      <h2 id="helper-functions-assessbalance-">Helper functions (<code>assessBalance</code>)<a class="anchor" aria-label="anchor" href="#helper-functions-assessbalance-"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="calcBalStats.html">calcBalStats()</a></code> 
+        </dt>
+        <dd>Calculate balance stats based on Jackson paper</dd>
+      </dl><dl><dt>
+          
+          <code><a href="make_love_plot.html">make_love_plot()</a></code> 
+        </dt>
+        <dd>Create love plots showing balancing statistics</dd>
+      </dl></div><div class="section level2">
+      <h2 id="helper-functions-fitmodel-">Helper functions (<code>fitModel</code>)<a class="anchor" aria-label="anchor" href="#helper-functions-fitmodel-"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="getModel.html">getModel()</a></code> 
+        </dt>
+        <dd>Fits outcome model</dd>
+      </dl></div><div class="section level2">
+      <h2 id="helper-functions-comparehistories-">Helper functions (<code>compareHistories</code>)<a class="anchor" aria-label="anchor" href="#helper-functions-comparehistories-"></a></h2>
       
       
 
@@ -74,31 +207,6 @@
         <dd>Add history labels to table</dd>
       </dl><dl><dt>
           
-          <code><a href="assessBalance.html">assessBalance()</a></code> 
-        </dt>
-        <dd>Assesses confounder balancing</dd>
-      </dl><dl><dt>
-          
-          <code><a href="calcBalStats.html">calcBalStats()</a></code> 
-        </dt>
-        <dd>Calculate balance stats based on Jackson paper</dd>
-      </dl><dl><dt>
-          
-          <code><a href="compareHistories.html">compareHistories()</a></code> 
-        </dt>
-        <dd>Estimate, compare, and visualize exposure histories</dd>
-      </dl><dl><dt>
-          
-          <code><a href="createFormulas.html">createFormulas()</a></code> 
-        </dt>
-        <dd>Create balancing formulas</dd>
-      </dl><dl><dt>
-          
-          <code><a href="createWeights.html">createWeights()</a></code> 
-        </dt>
-        <dd>Creates IPTW balancing weights</dd>
-      </dl><dl><dt>
-          
           <code><a href="create_custom_comparisons.html">create_custom_comparisons()</a></code> 
         </dt>
         <dd>Creates custom comparisons</dd>
@@ -114,16 +222,6 @@
         <dd>Visualize distribution of sample across exposure histories</dd>
       </dl><dl><dt>
           
-          <code><a href="fitModel.html">fitModel()</a></code> 
-        </dt>
-        <dd>Fit outcome model</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getModel.html">getModel()</a></code> 
-        </dt>
-        <dd>Fits outcome model</dd>
-      </dl><dl><dt>
-          
           <code><a href="get_comparison_values.html">get_comparison_values()</a></code> 
         </dt>
         <dd>Finds custom comparison values</dd>
@@ -134,15 +232,21 @@
         <dd>Finds custom reference values</dd>
       </dl><dl><dt>
           
-          <code><a href="make_love_plot.html">make_love_plot()</a></code> 
-        </dt>
-        <dd>Create love plots showing balancing statistics</dd>
-      </dl><dl><dt>
-          
           <code><a href="perform_multiple_comparison_correction.html">perform_multiple_comparison_correction()</a></code> 
         </dt>
         <dd>Conduct multiple comparison correction</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="example-simulated-datasets">Example simulated datasets<a class="anchor" aria-label="anchor" href="#example-simulated-datasets"></a></h2>
+      
+      <p class="section-desc"></p><p>These example datasets are used throughout the vignettes</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="sim_data_imp_list.rda.html">sim_data_imp_list</a></code> 
         </dt>
@@ -190,13 +294,9 @@ These data contain economic strain (ESEATA1) as a binary variable, and have no m
           <code><a href="sim_data_wide_miss_bin.rda.html">sim_data_wide_miss_bin</a></code> 
         </dt>
         <dd>Wide data with missingness (binary exposure)</dd>
-      </dl><dl><dt>
-          
-          <code><a href="trimWeights.html">trimWeights()</a></code> 
-        </dt>
-        <dd>Trim IPTW balancing weights</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

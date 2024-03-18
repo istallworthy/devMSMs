@@ -77,7 +77,7 @@
                         <h4 data-toc-skip class="author">Isabella
 Stallworthy</h4>
             
-            <h4 data-toc-skip class="date">2023-12-15</h4>
+            <h4 data-toc-skip class="date">2024-03-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Data_Requirements.Rmd" class="external-link"><code>vignettes/Data_Requirements.Rmd</code></a></small>
       <div class="d-none name"><code>Data_Requirements.Rmd</code></div>
@@ -134,11 +134,11 @@ users should turn to the literature to delineate a causal model that
 lays out hypothesized relations between confounders, exposures, and
 outcome.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
-<span></span>
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/amices/mice" class="external-link">"mice"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'mice'</span></span>
@@ -162,7 +162,7 @@ for identifiers), in one of three ways:</p>
 <ol style="list-style-type: decimal">
 <li>a single data frame with no missing data;</li>
 </ol>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_wide"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sim_data_wide</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
@@ -177,7 +177,7 @@ for identifiers), in one of three ways:</p>
 <li>imputed data in the form of a mids object (output from
 <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice::mice()</a></code>);</li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_mice"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">sim_data_mice</span><span class="op">)</span></span>
@@ -200,7 +200,7 @@ for identifiers), in one of three ways:</p>
 <ol start="3" style="list-style-type: decimal">
 <li>imputed data as a list of imputed data frames.</li>
 </ol>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sim_data_imp_list"</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sim_data_imp_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
@@ -228,18 +228,20 @@ names. Variable names should not contain special characters other than
 underscores. Person identifiers should not contain characters. An
 abridged example data structure is shown in Figure 1 below.</p>
 <div class="figure">
-<img src="figures/sample%20data.png" width="600" alt=""><p class="caption">Figure 1. Abridged example structure of a wide
-dataset formatted as required for the devMSMs. Column A denotes the ID
-variable, column B (green) denotes a time in-variant confounder (e.g.,
-race, birth information), columns C - F denote two time-varying
-confounders (lighter yellow) at two different time points (e.g., age.1,
-age.2 and income.1, income.2, where .1 represents wave 1 and .2
-represents wave 2). Columns G - I denote the exposure and outcome of
-interest (darker yellow), where G and H are time-varying values on each
-exposure, and column I is the outcome value at the final wave/timepoint.
-Missing data are denoted as <em>NA</em> and will need to be imputed
+<img src="figures/sample%20data.png" alt="Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (&lt;a href='https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html'&gt;Recommended Preliminary Steps vignette&lt;/a&gt; Step P2)." width="600px"><p class="caption">
+Abridged example structure of a wide dataset formatted as required for
+the devMSMs. Column A denotes the ID variable, column B (green) denotes
+a time in-variant confounder (e.g., race, birth information), columns C
+- F denote two time-varying confounders (lighter yellow) at two
+different time points (e.g., age.1, age.2 and income.1, income.2, where
+.1 represents wave 1 and .2 represents wave 2). Columns G - I denote the
+exposure and outcome of interest (darker yellow), where G and H are
+time-varying values on each exposure, and column I is the outcome value
+at the final wave/timepoint. Missing data are denoted as <em>NA</em> and
+will need to be imputed
 (<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended
-Preliminary Steps vignette</a> Step P2).</p>
+Preliminary Steps vignette</a> Step P2).
+</p>
 </div>
 <p><br></p>
 <div class="section level3">

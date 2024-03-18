@@ -72,7 +72,7 @@
 <div class="page-header"><h1 id="devmsms-implementing-marginal--structural-models-with-longitudinal-data">devMSMs: Implementing Marginal <img src="https://github.com/istallworthy/devMSMs/assets/31548151/0a1c69d7-1984-4ebe-8d16-0948d670a8fb" align="right" width="100"> Structural Models with Longitudinal Data<a class="anchor" aria-label="anchor" href="#devmsms-implementing-marginal--structural-models-with-longitudinal-data"></a>
 </h1></div>
 <!-- badges: start -->
-<!-- badges: end --->
+<!-- badges: end -->
 <p><br></p>
 <p>Those who study and work with humans are fundamentally interested in questions of causation. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in <em>causal processes</em> involving questions about when (timing) and to what extent (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people’s lives. However, for many, conceptual, methodological, and practical barriers have prevented the use of methods for causal inference developed in other fields. <br></p>
 <p>The goal of this <em>devMSMs</em> package and accompanying tutorial paper, <em>Investigating Causal Questions in Human Development Using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R</em> (<em>insert preprint link here</em>), is to provide a set of tools for implementing marginal structural models (<strong>MSMs</strong>; Robins et al., 2000).</p>
@@ -98,15 +98,78 @@
 </h2>
 <p>The package contains 6 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures. <br><br><img width="820" alt="overview" src="https://github.com/istallworthy/devMSMs/assets/31548151/db0efeb1-c1e5-4c71-8062-01a5f34d56ab"><br><br><br></p>
 <p>Below is a summary of the terms used in the <em>devMSMs</em> vignettes and functions. More details and examples can be found in the accompanying manuscript. <br></p>
-<p><img width="513" alt="term summary table" src="https://github.com/istallworthy/devMSMs/assets/31548151/e8839e88-20dc-4e55-9f88-b936876be75b"></p>
-<p><br></p>
+<table class="table">
+<colgroup>
+<col width="10%">
+<col width="89%">
+</colgroup>
+<thead><tr class="header">
+<th>Term</th>
+<th>Definition</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>Outcome</strong></td>
+<td>Any developmental construct measured at one or more time points including at a final outcome time point</td>
+</tr>
+<tr class="even">
+<td><strong>Exposure</strong></td>
+<td>Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome</td>
+</tr>
+<tr class="odd">
+<td><strong>Exposure Time Points</strong></td>
+<td>Time points in development when the exposure was measured at which balancing formulas will be created</td>
+</tr>
+<tr class="even">
+<td><strong>Exposure Epochs</strong></td>
+<td>
+<em>(optional)</em> Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories</td>
+</tr>
+<tr class="odd">
+<td><strong>Exposure Histories</strong></td>
+<td>Sequences of relatively high (<code>'h'</code>) or low (<code>'p'</code>) levels of exposure at each exposure time point or exposure epoch</td>
+</tr>
+<tr class="even">
+<td><strong>Exposure Dosage</strong></td>
+<td>Total cumulative exposure epochs during which an individual experienced high (or low) levels of exposure across an entire exposure history</td>
+</tr>
+<tr class="odd">
+<td><strong>Backdoor Path</strong></td>
+<td>Any alternative, non-causal way (other than the direct causal effects from exposure to outcome) that the exposure at a given time point associates with the outcome within a causal diagram, often via confounders</td>
+</tr>
+<tr class="even">
+<td><strong>Confounder</strong></td>
+<td>Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths</td>
+</tr>
+<tr class="odd">
+<td><strong>Time-varying confounder</strong></td>
+<td>A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time (exposure and outcome variables).</td>
+</tr>
+<tr class="even">
+<td><strong>Time invariant confounder</strong></td>
+<td>A confounder measured at a single time point prior to the exposure time point which reflects a construct that is stable over time.</td>
+</tr>
+<tr class="odd">
+<td><strong>Collider</strong></td>
+<td>A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which opens a backdoor path</td>
+</tr>
+</tbody>
+</table>
+<!-- <img width="513" alt="term summary table" src="https://github.com/istallworthy/devMSMs/assets/31548151/e8839e88-20dc-4e55-9f88-b936876be75b"> --><p><br></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><em>devMSMs</em> can be installed in R Studio from Github using the <em>devtools</em> package: <br><br><code><a href="https://devtools.r-lib.org/" class="external-link">library(devtools)</a></code><br><code>install_github("istallworthy/devMSMs")</code><br><code><a href="https://istallworthy.github.io/devMSMs/">library(devMSMs)</a></code></p>
+<p><em>devMSMs</em> can be installed in R Studio from Github using the <em>devtools</em> package:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
-<p>The helper functions can be installed from the accompanying <em>devMSMsHelpers</em> repo: <br><br><code>install_github("istallworthy/devMSMsHelpers")</code><br><code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(devMSMsHelpers)</a></code></p>
+<p>The helper functions can be installed from the accompanying <em>devMSMsHelpers</em> repo:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"istallworthy/devMSMsHelpers"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">devMSMsHelpers</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level2">
@@ -134,6 +197,7 @@
 <p>Fong, C., Hazlett, C., &amp; Imai, K. (2018). Covariate balancing propensity score for a continuous treatment: Application to the efficacy of political advertisements. The Annals of Applied Statistics, 12(1), 156–177. <a href="https://doi.org/10.1214/17-AOAS1101" class="external-link uri">https://doi.org/10.1214/17-AOAS1101</a></p>
 <p>Greifer N (2023). cobalt: Covariate Balance Tables and Plots. R package version 4.5.2, <a href="https://github.com/ngreifer/cobalt" class="external-link uri">https://github.com/ngreifer/cobalt</a>, <a href="https://ngreifer.github.io/cobalt/" class="external-link uri">https://ngreifer.github.io/cobalt/</a></p>
 <p>Greifer N (2023). WeightIt: Weighting for Covariate Balance in Observational Studies. <a href="https://ngreifer.github.io/WeightIt/" class="external-link uri">https://ngreifer.github.io/WeightIt/</a>, <a href="https://github.com/ngreifer/WeightIt" class="external-link uri">https://github.com/ngreifer/WeightIt</a></p>
+<p>Jackson, John W. (2016).Diagnostics for Confounding of Time-varying and Other Joint Exposures. Epidemiology, 2016 Nov, 27(6), 859-69. <a href="https://doi.org/10.1097/EDE.0000000000000547" class="external-link uri">https://doi.org/10.1097/EDE.0000000000000547</a>.</p>
 <p>Haber, N. A., Wood, M. E., Wieten, S., &amp; Breskin, A. (2022). DAG With Omitted Objects Displayed (DAGWOOD): A framework for revealing causal assumptions in DAGs. Annals of Epidemiology, 68, 64–71. <a href="https://doi.org/10.1016/j.annepidem.2022.01.001" class="external-link uri">https://doi.org/10.1016/j.annepidem.2022.01.001</a></p>
 <p>Hirano, K., &amp; Imbens, G. W. (2004). The Propensity Score with Continuous Treatments. In Applied Bayesian Modeling and Causal Inference from Incomplete-Data Perspectives (pp. 73–84). John Wiley &amp; Sons, Ltd. <a href="https://doi.org/10.1002/0470090456.ch7" class="external-link uri">https://doi.org/10.1002/0470090456.ch7</a></p>
 <p>Kainz, K., Greifer, N., Givens, A., Swietek, K., Lombardi, B. M., Zietz, S., &amp; Kohn, J. L. (2017). Improving Causal Inference: Recommendations for Covariate Selection and Balance in Propensity Score Methods. Journal of the Society for Social Work and Research, 8(2), 279–303. <a href="https://doi.org/10.1086/691464" class="external-link uri">https://doi.org/10.1086/691464</a></p>
