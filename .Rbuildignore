@@ -11,3 +11,7 @@
 ^doc$
 ^Meta$
 ^README\.Rmd$
+^altdoc$
+^_quarto$
+^vignettes/*$
+^dev*.R$

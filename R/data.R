@@ -1,19 +1,19 @@
 #' Wide complete data (continuous exposure)
-#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families 
-#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural 
-#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). These data contain economic strain (ESEATA1) as a continuously 
-#' distributed variable and have no missing data. 
+#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
+#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
+#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). These data contain economic strain (ESEATA1) as a continuously
+#' distributed variable and have no missing data.
 #'
 #' @name sim_data_wide.rda
 #' @docType data
 #' @format A wide data frame of 1,292 observations
-#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months. 
+#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months.
 #' \itemize{
 #' \item "ID" subject id
 #' \item "ESETA1" continuous exposure of economic strain
 #' \item "StrDif_Tot.58" continuous outcome of behavioral problems
 #' \item "InRatioCor" continuous income-to-needs ratio
-#' \item "PmEd2" parent's education level (0-11 = less than high school, 
+#' \item "PmEd2" parent's education level (0-11 = less than high school,
 #' 12 = GED, 13 = GED and additional training, 14 = high school grad,
 #' 15 = high school and additional training, 16 = some college,
 #' 17 = associates degree, 18 = four year college degree, 19 = some post college,
@@ -21,8 +21,8 @@
 #' \item "state" family's state of residence (NC = North Carolina, PA = Pennslyvania)
 #' \item "TcBlac2" child's race (1 = Black, 0 = White)
 #' \item "bioDadInHH2" whether the biological father lives with the family (1 = yes, 0 = no)
-#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family, 
-#' 2 = owned or being bought by someone else, 3 = rented for rent, 
+#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family,
+#' 2 = owned or being bought by someone else, 3 = rented for rent,
 #' 4 = occupied without payment for rent)
 #' \item "KFASTScr" continuous score of caregiver reading comprehension
 #' \item "PmBlac2" primary caregiver's race (1 = Black, 0 = White)
@@ -33,21 +33,21 @@
 #' \item "RHealth" index of general caregiver health (1 = excellent, 2 = very good,
 #' 3 = good, 4 = fair, 5 = poor)
 #' \item "RHasSO" whether caregiver has significant other or not (1 = yes, 0 = no)
-#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less, 
+#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less,
 #' 2 = 2 - 99 cigarettes, 3 = 100 or more cigarettes)
 #' \item "caregiv_health" sum score of caregiver health problems including emotional problems,
-#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability, 
+#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability,
 #' general subjective health, mental health, overwight, seizures, depression, diabetes
-#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting, 
-#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues, 
-#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU, 
+#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting,
+#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues,
+#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU,
 #' smoked while pregnant, breach, excessive weight loss, incubation, water retention, had c-section
 #' \item "SWghtLB" child birth weight in pounds
 #' \item "SurpPreg" whether caregiver had a surprise pregnancy (1 = yes, 0 = no)
-#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never, 
+#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never,
 #' 2 = once or twice, 3 = once a month, 4 = twice a month, 5 = couple times/week, 6 = everyday)
 #' \item "gov_assist" sum score of whether family received government benefits including
-#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance, 
+#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance,
 #' government housing, transportation, school free lunch, WIC, and AFDC
 #' \item "ALI_LE" continuous child language expression
 #' \item "B18Raw" continuous caregiver total depression problems
@@ -55,54 +55,54 @@
 #' \item "EARS_TJo"
 #' \item "fscore" continuous executive function factor score
 #' \item "HOMEETA1" continuous sociocognitive resources factor score
-#' \item "IBRAttn" continuous child total joint attention 
+#' \item "IBRAttn" continuous child total joint attention
 #' \item "LESMnNeg" continuous family negative life events
 #' \item "LESMnPos" continuous family positive life events
 #' \item "MDI" continuous child Bayely mental development index
 #' \item "RHAsSO" whether caregiver has significant other at a given time (1 = yes, 0 = no)
 #' \item "SAAmylase" continuous child salivary alpha amylase at rest
-#' \item "WndNbrhood" continuous neighborhood safety 
+#' \item "WndNbrhood" continuous neighborhood safety
 #' }
-#' 
+#'
 #' @references
-#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021). 
-#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence: 
+#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).
+#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence:
 #' A Moderated Nonlinear Factor Model. Child Development, n/a(n/a). https://doi.org/10.1111/cdev.13504
-#' 
-#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). 
-#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and 
+#'
+#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008).
+#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and
 #' Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
-#' 
-#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., 
-#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and 
+#'
+#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
+#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
 #' Developmental Study of Young Children Living in Poor Rural Communities.
 #' Monographs of the Society for Research in Child Development, 78(5), i–150.
-#' 
-#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement 
-#' of executive function at age 3 years: psychometric properties and criterion validity of a 
+#'
+#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement
+#' of executive function at age 3 years: psychometric properties and criterion validity of a
 #' new battery of tasks. Psychological assessment, 22(2), 306.
-#'  
+#'
 
-#'@keywords datasets
+#' @keywords datasets
 "sim_data_wide"
 
 
 #' Wide complete data (binary exposure)
-#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families 
-#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural 
-#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). 
-#' These data contain economic strain (ESEATA1) as a binary variable, and have no missing data. 
+#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
+#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
+#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008).
+#' These data contain economic strain (ESEATA1) as a binary variable, and have no missing data.
 #'
 #' @name sim_data_wide_bin.rda
 #' @docType data
 #' @format A wide data frame of 1,292 observations
-#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months. 
+#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months.
 #' \itemize{
 #' \item "ID" subject id
 #' \item "ESETA1" continuous exposure of economic strain
 #' \item "StrDif_Tot.58" continuous outcome of behavioral problems
 #' \item "InRatioCor" continuous income-to-needs ratio
-#' \item "PmEd2" parent's education level (0-11 = less than high school, 
+#' \item "PmEd2" parent's education level (0-11 = less than high school,
 #' 12 = GED, 13 = GED and additional training, 14 = high school grad,
 #' 15 = high school and additional training, 16 = some college,
 #' 17 = associates degree, 18 = four year college degree, 19 = some post college,
@@ -110,8 +110,8 @@
 #' \item "state" family's state of residence (NC = North Carolina, PA = Pennslyvania)
 #' \item "TcBlac2" child's race (1 = Black, 0 = White)
 #' \item "bioDadInHH2" whether the biological father lives with the family (1 = yes, 0 = no)
-#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family, 
-#' 2 = owned or being bought by someone else, 3 = rented for rent, 
+#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family,
+#' 2 = owned or being bought by someone else, 3 = rented for rent,
 #' 4 = occupied without payment for rent)
 #' \item "KFASTScr" continuous score of caregiver reading comprehension
 #' \item "PmBlac2" primary caregiver's race (1 = Black, 0 = White)
@@ -122,21 +122,21 @@
 #' \item "RHealth" index of general caregiver health (1 = excellent, 2 = very good,
 #' 3 = good, 4 = fair, 5 = poor)
 #' \item "RHasSO" whether caregiver has significant other or not (1 = yes, 0 = no)
-#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less, 
+#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less,
 #' 2 = 2 - 99 cigarettes, 3 = 100 or more cigarettes)
 #' \item "caregiv_health" sum score of caregiver health problems including emotional problems,
-#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability, 
+#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability,
 #' general subjective health, mental health, overwight, seizures, depression, diabetes
-#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting, 
-#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues, 
-#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU, 
+#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting,
+#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues,
+#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU,
 #' smoked while pregnant, breach, excessive weight loss, incubation, water retention, had c-section
 #' \item "SWghtLB" child birth weight in pounds
 #' \item "SurpPreg" whether caregiver had a surprise pregnancy (1 = yes, 0 = no)
-#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never, 
+#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never,
 #' 2 = once or twice, 3 = once a month, 4 = twice a month, 5 = couple times/week, 6 = everyday)
 #' \item "gov_assist" sum score of whether family received government benefits including
-#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance, 
+#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance,
 #' government housing, transportation, school free lunch, WIC, and AFDC
 #' \item "ALI_LE" continuous child language expression
 #' \item "B18Raw" continuous caregiver total depression problems
@@ -144,53 +144,53 @@
 #' \item "EARS_TJo"
 #' \item "fscore" continuous executive function factor score
 #' \item "HOMEETA1" continuous sociocognitive resources factor score
-#' \item "IBRAttn" continuous child total joint attention 
+#' \item "IBRAttn" continuous child total joint attention
 #' \item "LESMnNeg" continuous family negative life events
 #' \item "LESMnPos" continuous family positive life events
 #' \item "MDI" continuous child Bayely mental development index
 #' \item "RHAsSO" whether caregiver has significant other at a given time (1 = yes, 0 = no)
 #' \item "SAAmylase" continuous child salivary alpha amylase at rest
-#' \item "WndNbrhood" continuous neighborhood safety 
+#' \item "WndNbrhood" continuous neighborhood safety
 #' }
-#' 
+#'
 #' @references
-#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021). 
-#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence: 
+#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).
+#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence:
 #' A Moderated Nonlinear Factor Model. Child Development, n/a(n/a). https://doi.org/10.1111/cdev.13504
-#' 
-#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). 
-#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and 
+#'
+#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008).
+#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and
 #' Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
-#' 
-#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., 
-#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and 
+#'
+#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
+#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
 #' Developmental Study of Young Children Living in Poor Rural Communities.
 #' Monographs of the Society for Research in Child Development, 78(5), i–150.
-#' 
-#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement 
-#' of executive function at age 3 years: psychometric properties and criterion validity of a 
+#'
+#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement
+#' of executive function at age 3 years: psychometric properties and criterion validity of a
 #' new battery of tasks. Psychological assessment, 22(2), 306.
-#'  
+#'
 #'
 "sim_data_wide_bin"
 
 
 #' Wide data with missingness (continuous exposure)
 #'
-#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families 
-#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural 
-#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package. 
-#' These data contain economic strain (ESEATA1) as a continuously distributed variable. 
+#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
+#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
+#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package.
+#' These data contain economic strain (ESEATA1) as a continuously distributed variable.
 #' @name sim_data_wide_miss.rda
 #' @docType data
 #' @format A wide data frame of 1,292 observations
-#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months. 
+#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months.
 #' \itemize{
 #' \item "ID" subject id
 #' \item "ESETA1" continuous exposure of economic strain
 #' \item "StrDif_Tot.58" continuous outcome of behavioral problems
 #' \item "InRatioCor" continuous income-to-needs ratio
-#' \item "PmEd2" parent's education level (0-11 = less than high school, 
+#' \item "PmEd2" parent's education level (0-11 = less than high school,
 #' 12 = GED, 13 = GED and additional training, 14 = high school grad,
 #' 15 = high school and additional training, 16 = some college,
 #' 17 = associates degree, 18 = four year college degree, 19 = some post college,
@@ -198,8 +198,8 @@
 #' \item "state" family's state of residence (NC = North Carolina, PA = Pennslyvania)
 #' \item "TcBlac2" child's race (1 = Black, 0 = White)
 #' \item "bioDadInHH2" whether the biological father lives with the family (1 = yes, 0 = no)
-#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family, 
-#' 2 = owned or being bought by someone else, 3 = rented for rent, 
+#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family,
+#' 2 = owned or being bought by someone else, 3 = rented for rent,
 #' 4 = occupied without payment for rent)
 #' \item "KFASTScr" continuous score of caregiver reading comprehension
 #' \item "PmBlac2" primary caregiver's race (1 = Black, 0 = White)
@@ -210,21 +210,21 @@
 #' \item "RHealth" index of general caregiver health (1 = excellent, 2 = very good,
 #' 3 = good, 4 = fair, 5 = poor)
 #' \item "RHasSO" whether caregiver has significant other or not (1 = yes, 0 = no)
-#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less, 
+#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less,
 #' 2 = 2 - 99 cigarettes, 3 = 100 or more cigarettes)
 #' \item "caregiv_health" sum score of caregiver health problems including emotional problems,
-#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability, 
+#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability,
 #' general subjective health, mental health, overwight, seizures, depression, diabetes
-#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting, 
-#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues, 
-#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU, 
+#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting,
+#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues,
+#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU,
 #' smoked while pregnant, breach, excessive weight loss, incubation, water retention, had c-section
 #' \item "SWghtLB" child birth weight in pounds
 #' \item "SurpPreg" whether caregiver had a surprise pregnancy (1 = yes, 0 = no)
-#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never, 
+#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never,
 #' 2 = once or twice, 3 = once a month, 4 = twice a month, 5 = couple times/week, 6 = everyday)
 #' \item "gov_assist" sum score of whether family received government benefits including
-#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance, 
+#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance,
 #' government housing, transportation, school free lunch, WIC, and AFDC
 #' \item "ALI_LE" continuous child language expression
 #' \item "B18Raw" continuous caregiver total depression problems
@@ -232,53 +232,53 @@
 #' \item "EARS_TJo"
 #' \item "fscore" continuous executive function factor score
 #' \item "HOMEETA1" continuous sociocognitive resources factor score
-#' \item "IBRAttn" continuous child total joint attention 
+#' \item "IBRAttn" continuous child total joint attention
 #' \item "LESMnNeg" continuous family negative life events
 #' \item "LESMnPos" continuous family positive life events
 #' \item "MDI" continuous child Bayely mental development index
 #' \item "RHAsSO" whether caregiver has significant other at a given time (1 = yes, 0 = no)
 #' \item "SAAmylase" continuous child salivary alpha amylase at rest
-#' \item "WndNbrhood" continuous neighborhood safety 
+#' \item "WndNbrhood" continuous neighborhood safety
 #' }
-#' 
+#'
 #' @references
-#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021). 
-#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence: 
+#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).
+#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence:
 #' A Moderated Nonlinear Factor Model. Child Development, n/a(n/a). https://doi.org/10.1111/cdev.13504
-#' 
-#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). 
-#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and 
+#'
+#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008).
+#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and
 #' Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
-#' 
-#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., 
-#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and 
+#'
+#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
+#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
 #' Developmental Study of Young Children Living in Poor Rural Communities.
 #' Monographs of the Society for Research in Child Development, 78(5), i–150.
-#' 
-#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement 
-#' of executive function at age 3 years: psychometric properties and criterion validity of a 
+#'
+#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement
+#' of executive function at age 3 years: psychometric properties and criterion validity of a
 #' new battery of tasks. Psychological assessment, 22(2), 306.
-#'  
+#'
 "sim_data_wide_miss"
 
 
 #' Wide data with missingness (binary exposure)
 #'
-#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families 
-#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural 
-#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package. 
+#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
+#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
+#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package.
 #' These data contain economic strain (ESEATA1) as a binary variable.
 #'
 #' @name sim_data_wide_miss_bin.rda
 #' @docType data
 #' @format A wide data frame of 1,292 observations
-#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months. 
+#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months.
 #' \itemize{
 #' \item "ID" subject id
 #' \item "ESETA1" continuous exposure of economic strain
 #' \item "StrDif_Tot.58" continuous outcome of behavioral problems
 #' \item "InRatioCor" continuous income-to-needs ratio
-#' \item "PmEd2" parent's education level (0-11 = less than high school, 
+#' \item "PmEd2" parent's education level (0-11 = less than high school,
 #' 12 = GED, 13 = GED and additional training, 14 = high school grad,
 #' 15 = high school and additional training, 16 = some college,
 #' 17 = associates degree, 18 = four year college degree, 19 = some post college,
@@ -286,8 +286,8 @@
 #' \item "state" family's state of residence (NC = North Carolina, PA = Pennslyvania)
 #' \item "TcBlac2" child's race (1 = Black, 0 = White)
 #' \item "bioDadInHH2" whether the biological father lives with the family (1 = yes, 0 = no)
-#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family, 
-#' 2 = owned or being bought by someone else, 3 = rented for rent, 
+#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family,
+#' 2 = owned or being bought by someone else, 3 = rented for rent,
 #' 4 = occupied without payment for rent)
 #' \item "KFASTScr" continuous score of caregiver reading comprehension
 #' \item "PmBlac2" primary caregiver's race (1 = Black, 0 = White)
@@ -298,21 +298,21 @@
 #' \item "RHealth" index of general caregiver health (1 = excellent, 2 = very good,
 #' 3 = good, 4 = fair, 5 = poor)
 #' \item "RHasSO" whether caregiver has significant other or not (1 = yes, 0 = no)
-#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less, 
+#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less,
 #' 2 = 2 - 99 cigarettes, 3 = 100 or more cigarettes)
 #' \item "caregiv_health" sum score of caregiver health problems including emotional problems,
-#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability, 
+#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability,
 #' general subjective health, mental health, overwight, seizures, depression, diabetes
-#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting, 
-#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues, 
-#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU, 
+#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting,
+#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues,
+#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU,
 #' smoked while pregnant, breach, excessive weight loss, incubation, water retention, had c-section
 #' \item "SWghtLB" child birth weight in pounds
 #' \item "SurpPreg" whether caregiver had a surprise pregnancy (1 = yes, 0 = no)
-#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never, 
+#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never,
 #' 2 = once or twice, 3 = once a month, 4 = twice a month, 5 = couple times/week, 6 = everyday)
 #' \item "gov_assist" sum score of whether family received government benefits including
-#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance, 
+#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance,
 #' government housing, transportation, school free lunch, WIC, and AFDC
 #' \item "ALI_LE" continuous child language expression
 #' \item "B18Raw" continuous caregiver total depression problems
@@ -320,33 +320,33 @@
 #' \item "EARS_TJo"
 #' \item "fscore" continuous executive function factor score
 #' \item "HOMEETA1" continuous sociocognitive resources factor score
-#' \item "IBRAttn" continuous child total joint attention 
+#' \item "IBRAttn" continuous child total joint attention
 #' \item "LESMnNeg" continuous family negative life events
 #' \item "LESMnPos" continuous family positive life events
 #' \item "MDI" continuous child Bayely mental development index
 #' \item "RHAsSO" whether caregiver has significant other at a given time (1 = yes, 0 = no)
 #' \item "SAAmylase" continuous child salivary alpha amylase at rest
-#' \item "WndNbrhood" continuous neighborhood safety 
+#' \item "WndNbrhood" continuous neighborhood safety
 #' }
-#' 
+#'
 #' @references
-#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021). 
-#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence: 
+#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).
+#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence:
 #' A Moderated Nonlinear Factor Model. Child Development, n/a(n/a). https://doi.org/10.1111/cdev.13504
-#' 
-#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). 
-#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and 
+#'
+#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008).
+#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and
 #' Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
-#' 
-#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., 
-#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and 
+#'
+#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
+#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
 #' Developmental Study of Young Children Living in Poor Rural Communities.
 #' Monographs of the Society for Research in Child Development, 78(5), i–150.
-#' 
-#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement 
-#' of executive function at age 3 years: psychometric properties and criterion validity of a 
+#'
+#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement
+#' of executive function at age 3 years: psychometric properties and criterion validity of a
 #' new battery of tasks. Psychological assessment, 22(2), 306.
-#'  
+#'
 #'
 "sim_data_wide_miss_bin"
 
@@ -354,22 +354,22 @@
 
 #' Long data with missingness (continuous exposure)
 #'
-#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families 
-#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural 
-#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package. 
+#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
+#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
+#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package.
 #' These data contain economic strain (ESEATA1) as a continuously distributed variable.
 #'
 #' @name sim_data_long_miss.rda
 #' @docType data
 #' @format A long data frame of 6, 458 observations
-#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months. 
+#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months.
 #' \itemize{
 #' \item "ID" subject id
 #' \item "WAVE" age (in months) when data were collected
 #' \item "ESETA1" continuous exposure of economic strain
 #' \item "StrDif_Tot.58" continuous outcome of behavioral problems
 #' \item "InRatioCor" continuous income-to-needs ratio
-#' \item "PmEd2" parent's education level (0-11 = less than high school, 
+#' \item "PmEd2" parent's education level (0-11 = less than high school,
 #' 12 = GED, 13 = GED and additional training, 14 = high school grad,
 #' 15 = high school and additional training, 16 = some college,
 #' 17 = associates degree, 18 = four year college degree, 19 = some post college,
@@ -377,8 +377,8 @@
 #' \item "state" family's state of residence (NC = North Carolina, PA = Pennslyvania)
 #' \item "TcBlac2" child's race (1 = Black, 0 = White)
 #' \item "bioDadInHH2" whether the biological father lives with the family (1 = yes, 0 = no)
-#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family, 
-#' 2 = owned or being bought by someone else, 3 = rented for rent, 
+#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family,
+#' 2 = owned or being bought by someone else, 3 = rented for rent,
 #' 4 = occupied without payment for rent)
 #' \item "KFASTScr" continuous score of caregiver reading comprehension
 #' \item "PmBlac2" primary caregiver's race (1 = Black, 0 = White)
@@ -389,21 +389,21 @@
 #' \item "RHealth" index of general caregiver health (1 = excellent, 2 = very good,
 #' 3 = good, 4 = fair, 5 = poor)
 #' \item "RHasSO" whether caregiver has significant other or not (1 = yes, 0 = no)
-#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less, 
+#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less,
 #' 2 = 2 - 99 cigarettes, 3 = 100 or more cigarettes)
 #' \item "caregiv_health" sum score of caregiver health problems including emotional problems,
-#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability, 
+#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability,
 #' general subjective health, mental health, overwight, seizures, depression, diabetes
-#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting, 
-#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues, 
-#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU, 
+#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting,
+#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues,
+#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU,
 #' smoked while pregnant, breach, excessive weight loss, incubation, water retention, had c-section
 #' \item "SWghtLB" child birth weight in pounds
 #' \item "SurpPreg" whether caregiver had a surprise pregnancy (1 = yes, 0 = no)
-#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never, 
+#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never,
 #' 2 = once or twice, 3 = once a month, 4 = twice a month, 5 = couple times/week, 6 = everyday)
 #' \item "gov_assist" sum score of whether family received government benefits including
-#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance, 
+#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance,
 #' government housing, transportation, school free lunch, WIC, and AFDC
 #' \item "ALI_LE" continuous child language expression
 #' \item "B18Raw" continuous caregiver total depression problems
@@ -411,55 +411,55 @@
 #' \item "EARS_TJo"
 #' \item "fscore" continuous executive function factor score
 #' \item "HOMEETA1" continuous sociocognitive resources factor score
-#' \item "IBRAttn" continuous child total joint attention 
+#' \item "IBRAttn" continuous child total joint attention
 #' \item "LESMnNeg" continuous family negative life events
 #' \item "LESMnPos" continuous family positive life events
 #' \item "MDI" continuous child Bayely mental development index
 #' \item "RHAsSO" whether caregiver has significant other at a given time (1 = yes, 0 = no)
 #' \item "SAAmylase" continuous child salivary alpha amylase at rest
-#' \item "WndNbrhood" continuous neighborhood safety 
+#' \item "WndNbrhood" continuous neighborhood safety
 #' }
-#' 
+#'
 #' @references
-#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021). 
-#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence: 
+#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).
+#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence:
 #' A Moderated Nonlinear Factor Model. Child Development, n/a(n/a). https://doi.org/10.1111/cdev.13504
-#' 
-#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). 
-#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and 
+#'
+#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008).
+#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and
 #' Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
-#' 
-#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., 
-#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and 
+#'
+#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
+#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
 #' Developmental Study of Young Children Living in Poor Rural Communities.
 #' Monographs of the Society for Research in Child Development, 78(5), i–150.
-#' 
-#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement 
-#' of executive function at age 3 years: psychometric properties and criterion validity of a 
+#'
+#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement
+#' of executive function at age 3 years: psychometric properties and criterion validity of a
 #' new battery of tasks. Psychological assessment, 22(2), 306.
-#'  
+#'
 #'
 "sim_data_long_miss"
 
 
 #' Long data with missingness (binary exposure)
 #'
-#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families 
-#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural 
-#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package. 
+#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
+#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
+#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package.
 #' These data contain economic strain (ESEATA1) as a binary variable.
 #'
 #' @name sim_data_long_miss_bin.rda
 #' @docType data
 #' @format A long data frame of 6,458 observations
-#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months. 
+#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months.
 #' \itemize{
 #' \item "ID" subject id
 #' \item "WAVE" age (in months) when data were collected
 #' \item "ESETA1" continuous exposure of economic strain
 #' \item "StrDif_Tot.58" continuous outcome of behavioral problems
 #' \item "InRatioCor" continuous income-to-needs ratio
-#' \item "PmEd2" parent's education level (0-11 = less than high school, 
+#' \item "PmEd2" parent's education level (0-11 = less than high school,
 #' 12 = GED, 13 = GED and additional training, 14 = high school grad,
 #' 15 = high school and additional training, 16 = some college,
 #' 17 = associates degree, 18 = four year college degree, 19 = some post college,
@@ -467,8 +467,8 @@
 #' \item "state" family's state of residence (NC = North Carolina, PA = Pennslyvania)
 #' \item "TcBlac2" child's race (1 = Black, 0 = White)
 #' \item "bioDadInHH2" whether the biological father lives with the family (1 = yes, 0 = no)
-#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family, 
-#' 2 = owned or being bought by someone else, 3 = rented for rent, 
+#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family,
+#' 2 = owned or being bought by someone else, 3 = rented for rent,
 #' 4 = occupied without payment for rent)
 #' \item "KFASTScr" continuous score of caregiver reading comprehension
 #' \item "PmBlac2" primary caregiver's race (1 = Black, 0 = White)
@@ -479,21 +479,21 @@
 #' \item "RHealth" index of general caregiver health (1 = excellent, 2 = very good,
 #' 3 = good, 4 = fair, 5 = poor)
 #' \item "RHasSO" whether caregiver has significant other or not (1 = yes, 0 = no)
-#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less, 
+#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less,
 #' 2 = 2 - 99 cigarettes, 3 = 100 or more cigarettes)
 #' \item "caregiv_health" sum score of caregiver health problems including emotional problems,
-#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability, 
+#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability,
 #' general subjective health, mental health, overwight, seizures, depression, diabetes
-#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting, 
-#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues, 
-#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU, 
+#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting,
+#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues,
+#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU,
 #' smoked while pregnant, breach, excessive weight loss, incubation, water retention, had c-section
 #' \item "SWghtLB" child birth weight in pounds
 #' \item "SurpPreg" whether caregiver had a surprise pregnancy (1 = yes, 0 = no)
-#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never, 
+#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never,
 #' 2 = once or twice, 3 = once a month, 4 = twice a month, 5 = couple times/week, 6 = everyday)
 #' \item "gov_assist" sum score of whether family received government benefits including
-#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance, 
+#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance,
 #' government housing, transportation, school free lunch, WIC, and AFDC
 #' \item "ALI_LE" continuous child language expression
 #' \item "B18Raw" continuous caregiver total depression problems
@@ -501,52 +501,52 @@
 #' \item "EARS_TJo"
 #' \item "fscore" continuous executive function factor score
 #' \item "HOMEETA1" continuous sociocognitive resources factor score
-#' \item "IBRAttn" continuous child total joint attention 
+#' \item "IBRAttn" continuous child total joint attention
 #' \item "LESMnNeg" continuous family negative life events
 #' \item "LESMnPos" continuous family positive life events
 #' \item "MDI" continuous child Bayely mental development index
 #' \item "RHAsSO" whether caregiver has significant other at a given time (1 = yes, 0 = no)
 #' \item "SAAmylase" continuous child salivary alpha amylase at rest
-#' \item "WndNbrhood" continuous neighborhood safety 
+#' \item "WndNbrhood" continuous neighborhood safety
 #' }
-#'#' @references
-#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021). 
-#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence: 
+#' #' @references
+#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).
+#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence:
 #' A Moderated Nonlinear Factor Model. Child Development, n/a(n/a). https://doi.org/10.1111/cdev.13504
-#' 
-#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). 
-#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and 
+#'
+#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008).
+#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and
 #' Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
-#' 
-#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., 
-#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and 
+#'
+#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
+#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
 #' Developmental Study of Young Children Living in Poor Rural Communities.
 #' Monographs of the Society for Research in Child Development, 78(5), i–150.
-#' 
-#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement 
-#' of executive function at age 3 years: psychometric properties and criterion validity of a 
+#'
+#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement
+#' of executive function at age 3 years: psychometric properties and criterion validity of a
 #' new battery of tasks. Psychological assessment, 22(2), 306.
 "sim_data_long_miss_bin"
 
 
 #' Wide data imputed with mice (continuous exposure)
 #'
-#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families 
-#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural 
-#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package 
-#' prior to imputation using mice via random forest. 
+#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
+#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
+#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package
+#' prior to imputation using mice via random forest.
 #' These data contain economic strain (ESEATA1) as a continuously distributed variable.
 #'
 #' @name sim_data_mice.rda
 #' @docType data
 #' @format A wide data frame of 1,292 observations
-#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months. 
+#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months.
 #' \itemize{
 #' \item "ID" subject id
 #' \item "ESETA1" continuous exposure of economic strain
 #' \item "StrDif_Tot.58" continuous outcome of behavioral problems
 #' \item "InRatioCor" continuous income-to-needs ratio
-#' \item "PmEd2" parent's education level (0-11 = less than high school, 
+#' \item "PmEd2" parent's education level (0-11 = less than high school,
 #' 12 = GED, 13 = GED and additional training, 14 = high school grad,
 #' 15 = high school and additional training, 16 = some college,
 #' 17 = associates degree, 18 = four year college degree, 19 = some post college,
@@ -554,8 +554,8 @@
 #' \item "state" family's state of residence (NC = North Carolina, PA = Pennslyvania)
 #' \item "TcBlac2" child's race (1 = Black, 0 = White)
 #' \item "bioDadInHH2" whether the biological father lives with the family (1 = yes, 0 = no)
-#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family, 
-#' 2 = owned or being bought by someone else, 3 = rented for rent, 
+#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family,
+#' 2 = owned or being bought by someone else, 3 = rented for rent,
 #' 4 = occupied without payment for rent)
 #' \item "KFASTScr" continuous score of caregiver reading comprehension
 #' \item "PmBlac2" primary caregiver's race (1 = Black, 0 = White)
@@ -566,21 +566,21 @@
 #' \item "RHealth" index of general caregiver health (1 = excellent, 2 = very good,
 #' 3 = good, 4 = fair, 5 = poor)
 #' \item "RHasSO" whether caregiver has significant other or not (1 = yes, 0 = no)
-#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less, 
+#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less,
 #' 2 = 2 - 99 cigarettes, 3 = 100 or more cigarettes)
 #' \item "caregiv_health" sum score of caregiver health problems including emotional problems,
-#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability, 
+#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability,
 #' general subjective health, mental health, overwight, seizures, depression, diabetes
-#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting, 
-#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues, 
-#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU, 
+#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting,
+#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues,
+#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU,
 #' smoked while pregnant, breach, excessive weight loss, incubation, water retention, had c-section
 #' \item "SWghtLB" child birth weight in pounds
 #' \item "SurpPreg" whether caregiver had a surprise pregnancy (1 = yes, 0 = no)
-#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never, 
+#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never,
 #' 2 = once or twice, 3 = once a month, 4 = twice a month, 5 = couple times/week, 6 = everyday)
 #' \item "gov_assist" sum score of whether family received government benefits including
-#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance, 
+#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance,
 #' government housing, transportation, school free lunch, WIC, and AFDC
 #' \item "ALI_LE" continuous child language expression
 #' \item "B18Raw" continuous caregiver total depression problems
@@ -588,55 +588,55 @@
 #' \item "EARS_TJo"
 #' \item "fscore" continuous executive function factor score
 #' \item "HOMEETA1" continuous sociocognitive resources factor score
-#' \item "IBRAttn" continuous child total joint attention 
+#' \item "IBRAttn" continuous child total joint attention
 #' \item "LESMnNeg" continuous family negative life events
 #' \item "LESMnPos" continuous family positive life events
 #' \item "MDI" continuous child Bayely mental development index
 #' \item "RHAsSO" whether caregiver has significant other at a given time (1 = yes, 0 = no)
 #' \item "SAAmylase" continuous child salivary alpha amylase at rest
-#' \item "WndNbrhood" continuous neighborhood safety 
+#' \item "WndNbrhood" continuous neighborhood safety
 #' }
-#' 
+#'
 #' @references
-#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021). 
-#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence: 
+#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).
+#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence:
 #' A Moderated Nonlinear Factor Model. Child Development, n/a(n/a). https://doi.org/10.1111/cdev.13504
-#' 
-#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). 
-#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and 
+#'
+#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008).
+#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and
 #' Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
-#' 
-#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., 
-#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and 
+#'
+#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
+#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
 #' Developmental Study of Young Children Living in Poor Rural Communities.
 #' Monographs of the Society for Research in Child Development, 78(5), i–150.
-#' 
-#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement 
-#' of executive function at age 3 years: psychometric properties and criterion validity of a 
+#'
+#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement
+#' of executive function at age 3 years: psychometric properties and criterion validity of a
 #' new battery of tasks. Psychological assessment, 22(2), 306.
-#'  
+#'
 #'
 "sim_data_mice"
 
 
 #' Wide data imputed and read in (continuous exposure)
 #'
-#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families 
-#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural 
-#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package before 
-#' imputing with the mice package and reading in each imputed dataset. These data contain economic strain (ESEATA1) as a continuously 
-#' distributed variable. 
+#' These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families
+#' representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural
+#' child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). MAR missingness has been added using the missMethods package before
+#' imputing with the mice package and reading in each imputed dataset. These data contain economic strain (ESEATA1) as a continuously
+#' distributed variable.
 #'
 #' @name sim_data_imp_list.rda
 #' @docType data
 #' @format A wide data frame of 1,292 observations
-#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months. 
+#' There are 36 measured variables collected at one or more of the following time points: 6, 15, 24, 35, and 58 months.
 #' \itemize{
 #' \item "ID" subject id
 #' \item "ESETA1" continuous exposure of economic strain
 #' \item "StrDif_Tot.58" continuous outcome of behavioral problems
 #' \item "InRatioCor" continuous income-to-needs ratio
-#' \item "PmEd2" parent's education level (0-11 = less than high school, 
+#' \item "PmEd2" parent's education level (0-11 = less than high school,
 #' 12 = GED, 13 = GED and additional training, 14 = high school grad,
 #' 15 = high school and additional training, 16 = some college,
 #' 17 = associates degree, 18 = four year college degree, 19 = some post college,
@@ -644,8 +644,8 @@
 #' \item "state" family's state of residence (NC = North Carolina, PA = Pennslyvania)
 #' \item "TcBlac2" child's race (1 = Black, 0 = White)
 #' \item "bioDadInHH2" whether the biological father lives with the family (1 = yes, 0 = no)
-#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family, 
-#' 2 = owned or being bought by someone else, 3 = rented for rent, 
+#' \item "HomeOwnd" whether family owns home (1 = owned or being bought by family,
+#' 2 = owned or being bought by someone else, 3 = rented for rent,
 #' 4 = occupied without payment for rent)
 #' \item "KFASTScr" continuous score of caregiver reading comprehension
 #' \item "PmBlac2" primary caregiver's race (1 = Black, 0 = White)
@@ -656,21 +656,21 @@
 #' \item "RHealth" index of general caregiver health (1 = excellent, 2 = very good,
 #' 3 = good, 4 = fair, 5 = poor)
 #' \item "RHasSO" whether caregiver has significant other or not (1 = yes, 0 = no)
-#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less, 
+#' \item "SmokTotl" total cigarettes biological mother smoked while pregnant (1 = 21 cigarettes or less,
 #' 2 = 2 - 99 cigarettes, 3 = 100 or more cigarettes)
 #' \item "caregiv_health" sum score of caregiver health problems including emotional problems,
-#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability, 
+#' ADHD, asthma, cancer, high blood pressure, limited mobility, learning disability,
 #' general subjective health, mental health, overwight, seizures, depression, diabetes
-#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting, 
-#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues, 
-#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU, 
+#' \item "peri_health" sum score of pregnancy/birth health including excessive vomitting,
+#' fetal distress, colic, had alcohol, high blood pressure, heavy bleeding, infection, congenital issues,
+#' stay in pediatric intensive care, labor induction, independent breathing at birth, had surgery, in NICU,
 #' smoked while pregnant, breach, excessive weight loss, incubation, water retention, had c-section
 #' \item "SWghtLB" child birth weight in pounds
 #' \item "SurpPreg" whether caregiver had a surprise pregnancy (1 = yes, 0 = no)
-#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never, 
+#' \item "DrnkFreq" how frequently caregiver drank while pregnant (1 = never,
 #' 2 = once or twice, 3 = once a month, 4 = twice a month, 5 = couple times/week, 6 = everyday)
 #' \item "gov_assist" sum score of whether family received government benefits including
-#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance, 
+#' early headstart, early intervention, food stamps, subsidized childcare, heating assistance,
 #' government housing, transportation, school free lunch, WIC, and AFDC
 #' \item "ALI_LE" continuous child language expression
 #' \item "B18Raw" continuous caregiver total depression problems
@@ -678,33 +678,32 @@
 #' \item "EARS_TJo"
 #' \item "fscore" continuous executive function factor score
 #' \item "HOMEETA1" continuous sociocognitive resources factor score
-#' \item "IBRAttn" continuous child total joint attention 
+#' \item "IBRAttn" continuous child total joint attention
 #' \item "LESMnNeg" continuous family negative life events
 #' \item "LESMnPos" continuous family positive life events
 #' \item "MDI" continuous child Bayely mental development index
 #' \item "RHAsSO" whether caregiver has significant other at a given time (1 = yes, 0 = no)
 #' \item "SAAmylase" continuous child salivary alpha amylase at rest
-#' \item "WndNbrhood" continuous neighborhood safety 
+#' \item "WndNbrhood" continuous neighborhood safety
 #' }
-#' 
+#'
 #' @references
-#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021). 
-#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence: 
+#' DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D. (2021).
+#' Capturing Environmental Dimensions of Adversity and Resources in the Context of Poverty Across Infancy Through Early Adolescence:
 #' A Moderated Nonlinear Factor Model. Child Development, n/a(n/a). https://doi.org/10.1111/cdev.13504
-#' 
-#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). 
-#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and 
+#'
+#' Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008).
+#' Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and
 #' Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
-#' 
-#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., 
-#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and 
+#'
+#' Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R.,
+#' Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
 #' Developmental Study of Young Children Living in Poor Rural Communities.
 #' Monographs of the Society for Research in Child Development, 78(5), i–150.
-#' 
-#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement 
-#' of executive function at age 3 years: psychometric properties and criterion validity of a 
+#'
+#' Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010). The measurement
+#' of executive function at age 3 years: psychometric properties and criterion validity of a
 #' new battery of tasks. Psychological assessment, 22(2), 306.
 #'
 #'
 "sim_data_imp_list"
-

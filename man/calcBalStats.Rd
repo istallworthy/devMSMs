@@ -4,54 +4,22 @@
 \alias{calcBalStats}
 \title{Calculate balance stats based on Jackson paper}
 \usage{
-calcBalStats(
-  data,
-  formulas,
-  exposure,
-  exposure_time_pts,
-  outcome,
-  balance_thresh,
-  k = 0,
-  weights = NULL,
-  imp_conf = NULL,
-  home_dir = NULL,
-  verbose = TRUE,
-  save.out = TRUE
-)
+calcBalStats(data, obj, weights = NULL, balance_thresh = NULL, imp_conf = NULL)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, path to folder of imputed
 .csv files, or mids object}
 
-\item{formulas}{list of balancing formulas at each time point output from
-createFormulas()}
+\item{obj}{initialized MSM object from \code{initMSM}}
 
-\item{exposure}{name of exposure variable}
-
-\item{exposure_time_pts}{list of integers at which weights will be
-created/assessed that correspond to time points when exposure wass measured}
-
-\item{outcome}{name of outcome variable with ".timepoint" suffix}
+\item{weights}{(optional) list of IPTW weights output from createWeights}
 
 \item{balance_thresh}{(optional) one or two numbers between 0 and 1
 indicating a single balancingn threshold or thresholds for more and less
 important confounders, respectively}
 
-\item{k}{(optional) imputation number}
-
-\item{weights}{(optional) list of IPTW weights output from createWeights}
-
 \item{imp_conf}{(optional) list of variable names reflecting important
 confounders (required if two balance thresholds are provided)}
-
-\item{home_dir}{(optional) path to home directory (required if save.out =
-TRUE)}
-
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
-TRUE)}
-
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally}
 }
 \value{
 data frame of balance statistics
@@ -61,54 +29,4 @@ Calculate weighted or unweighted standardized balance statistics for a given
 exposure time point, using all relevant confounders. Draws on Jackson, 2016
 approaches to assessing balance for time-varying exposures by weighting
 statistics based on sample distribution in exposure histories.
-}
-\examples{
-test <- data.frame(ID = 1:50,
-                   A.1 = rnorm(n = 50),
-                   A.2 = rnorm(n = 50),
-                   A.3 = rnorm(n = 50),
-                   B.1 = rnorm(n = 50),
-                   B.2 = rnorm(n = 50),
-                   B.3 = rnorm(n = 50),
-                   C = rnorm(n = 50),
-                   D.3 = rnorm(n = 50))
-test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
-
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
-                    ti_confounders = "C",
-                    type = "full",
-                    save.out = FALSE)
-
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   save.out = FALSE)
-
-c <- calcBalStats(data = test,
-                  formulas = f,
-                  exposure = "A",
-                  exposure_time_pts = c(1, 2, 3),
-                  outcome = "D.3",
-                  balance_thresh = 0.1,
-                  save.out = FALSE)
-c <- calcBalStats(data = test,
-                  formulas = f,
-                  exposure = "A",
-                  exposure_time_pts = c(1, 2, 3),
-                  outcome = "D.3",
-                  balance_thresh = c(0.05, 0.1),
-                  imp_conf = "B2",
-                  save.out = FALSE)
-c <- calcBalStats(data = test,
-                  formulas = f,
-                  exposure = "A",
-                  exposure_time_pts = c(1, 2, 3),
-                  outcome = "D.3",
-                  balance_thresh = 0.1,
-                  weights = w[[1]],
-                  save.out = FALSE)
 }

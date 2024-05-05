@@ -18,11 +18,18 @@ reference values
 Finds custom reference values
 }
 \examples{
-d <- data.frame(e = c("A.1", "A.2", "A.3"),
-               l = c(0, 0, 0),
-               h = c(1, 1, 1))
-r <- get_reference_values(d = d,
-                          reference = "l-l-l" )
-r <- get_reference_values(d = d,
-                          reference = "h-h-h" )
+d <- data.frame(
+  e = c("A.1", "A.2", "A.3"),
+  l = c(0, 0, 0),
+  h = c(1, 1, 1)
+)
+r <- get_reference_values(
+  d = d,
+  reference = "l-l-l"
+)
+r <- get_reference_values(
+  d = d,
+  reference = "h-h-h"
+)
+
 }

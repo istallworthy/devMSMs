@@ -126,7 +126,8 @@ manuscript. <br>
 package:
 
 ``` r
-library(devtools)
+# install.packages("devtools")
+require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs")
 library(devMSMs)
 ```

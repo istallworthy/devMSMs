@@ -9,912 +9,289 @@
 #'   <https://cran.r-project.org/web/packages/cobalt/index.html>}
 #' @seealso {Jackson, 2016 for more on assessing balance for time-varying
 #'   exposures, <https://pubmed.ncbi.nlm.nih.gov/27479649/>}
-#' @param home_dir (optional) path to home directory (required if save.out =
-#'   TRUE)
+#'
 #' @param data data in wide format as: a data frame, list of imputed data
 #'   frames, or mids object
-#' @param exposure name of exposure variable
-#' @param exposure_time_pts list of integers at which weights will be
-#'   created/assessed that correspond to time points when exposure wass measured
-#' @param outcome name of outcome variable with ".timepoint" suffix
-#' @param formulas list of balancing formulas at each time point output from
-#'   createFormulas()
-#' @param weights list of IPTW weights output from createWeights, required for
-#'   type 'weighted'
-#' @param type type of balance assessment; 'prebalance' or 'weighted'
+#' @param obj initialized MSM object from `initMSM`
+#' @param weights list of IPTW weights output from `createWeights`,
+#'   required for type 'weighted'
 #' @param balance_thresh (optional) one or two numbers between 0 and 1
 #'   indicating a single balancing threshold or thresholds for more and less
 #'   important confounders, respectively (default = 0.1)
 #' @param imp_conf (optional) list of variable names reflecting important
 #'   confounders, required if two balance thresholds are supplied
-#' @param verbose (optiona) TRUE or FALSE indicator for user output (default is
+#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
 #'   TRUE)
 #' @param save.out (optional) TRUE or FALSE indicator to save output and
 #'   intermediary output locally (default is TRUE)
+#' @param home_dir (optional) path to home directory
+#'   (required if save.out = TRUE)
 #' @returns a data frame of balance statistics
-#' @export
 #' @examples
-#'
-#' test <- data.frame(ID = 1:50,
-#'                    A.1 = rnorm(n = 50),
-#'                    A.2 = rnorm(n = 50),
-#'                    A.3 = rnorm(n = 50),
-#'                    B.1 = rnorm(n = 50),
-#'                    B.2 = rnorm(n = 50),
-#'                    B.3 = rnorm(n = 50),
-#'                    C = rnorm(n = 50),
-#'                    D.3 = rnorm(n = 50))
-#' test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
-#'
-#' f <- createFormulas(exposure = "A",
-#'                     exposure_time_pts = c(1, 2, 3),
-#'                     outcome = "D.3",
-#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
-#'                     ti_confounders = "C",
-#'                     type = "short",
-#'                     save.out = FALSE)
-#'
-#' #Prebalance
-#' b <- assessBalance(data = test,
-#'                    exposure = "A",
-#'                    exposure_time_pts = c(1, 2, 3),
-#'                    outcome = "D.3",
-#'                    type = "prebalance",
-#'                    formulas = f,
-#'                    save.out = FALSE)
-#' b <- assessBalance(data = test,
-#'                    exposure = "A",
-#'                    exposure_time_pts = c(1, 2, 3),
-#'                    outcome = "D.3",
-#'                    type = "prebalance",
-#'                    formulas = f,
-#'                    balance_thresh = 0.2,
-#'                    save.out = FALSE)
-#' b <- assessBalance(data = test,
-#'                    exposure = "A",
-#'                    exposure_time_pts = c(1, 2, 3),
-#'                    outcome = "D.3",
-#'                    type = "prebalance",
-#'                    formulas = f,
-#'                    balance_thresh = c(0.1, 0.2),
-#'                    imp_conf = "B.1",
-#'                    save.out = FALSE)
-#' f <- createFormulas(exposure = "A",
-#'                     exposure_time_pts = c(1, 2, 3),
-#'                     outcome = "D.3",
-#'                     tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3", "A.1:B.1"),
-#'                     ti_confounders = "C",
-#'                     type = "short",
-#'                     save.out = FALSE)
-#' b <- assessBalance(data = test,
-#'                    exposure = "A",
-#'                    exposure_time_pts = c(1, 2, 3),
-#'                    outcome = "D.3",
-#'                    type = "prebalance",
-#'                    formulas = f,
-#'                    save.out = FALSE)
-#'
+#' library(devMSMs)
+#' data <- data.frame(
+#'   ID = 1:50,
+#'   A.1 = rnorm(n = 50),
+#'   A.2 = rnorm(n = 50),
+#'   A.3 = rnorm(n = 50),
+#'   B.1 = rnorm(n = 50),
+#'   B.2 = rnorm(n = 50),
+#'   B.3 = rnorm(n = 50),
+#'   C = rnorm(n = 50),
+#'   D.3 = rnorm(n = 50)
+#' )
+#' obj <- initMSM(
+#'   data,
+#'   exposure = c("A.1", "A.2", "A.3"),
+#'   ti_conf = c("C"),
+#'   tv_conf = c("B.1", "B.2", "B.3", "D.3")
+#' )
+#' f <- createFormulas(obj, type = "short")
+#' 
+#' # Prebalance
+#' b <- assessBalance(data = data, obj = obj)
+#' print(b)
+#' 
+#' # returns list of ggplots for each exposure variable
+#' plots <- plot(b) 
+#' plots[[1]]
+#' plots[[2]]
+#' plots[[3]]
+#' 
+#' 
 #' # Weighted
-#' w <- createWeights(data = test,
-#'                    exposure = "A",
-#'                    outcome = "D.3",
-#'                    formulas = f,
-#'                    save.out = FALSE)
-#'
-#' b <- assessBalance(data = test,
-#'                    exposure = "A",
-#'                    exposure_time_pts = c(1, 2, 3),
-#'                    outcome = "D.3",
-#'                    type = "weighted",
-#'                    weights = w,
-#'                    formulas = f,
-#'                    save.out = FALSE)
-#' b <- assessBalance(data = test,
-#'                    exposure = "A",
-#'                    exposure_time_pts = c(1, 2, 3),
-#'                    outcome = "D.3",
-#'                    type = "weighted",
-#'                    weights = w,
-#'                    formulas = f,
-#'                    balance_thresh = 0.2,
-#'                    save.out = FALSE)
-#' b <- assessBalance(data = test,
-#'                    exposure = "A",
-#'                    exposure_time_pts = c(1, 2, 3),
-#'                    outcome = "D.3",
-#'                    type = "weighted",
-#'                    weights = w,
-#'                    formulas = f,
-#'                    balance_thresh = c(0.1, 0.2),
-#'                    imp_conf = "B.1",
-#'                    save.out = FALSE)
-
-
-assessBalance <- function(data, exposure, exposure_time_pts, outcome, type, formulas, weights = NULL, balance_thresh = NULL,
-                          imp_conf = NULL, home_dir = NULL, verbose = TRUE, save.out = TRUE) {
-  
-  if (!is.logical(save.out)) {
-    stop("Please set save.out to either TRUE or FALSE.",
-         all. = FALSE)
-  }
-  if (length(save.out) != 1) {
-    stop("Please provide a single TRUE or FALSE value to save.out.",
-         call. = FALSE)
-  }
+#' w <- createWeights(data = data, obj = obj, formulas = f)
+#' bw <- assessBalance(data = data, obj = obj, weights = w)
+#' print(bw)
+#' 
+#' @export
+assessBalance <- function(
+    data, obj, weights = NULL, balance_thresh = NULL, imp_conf = NULL,
+    verbose = FALSE, save.out = FALSE, home_dir = NULL) {
+  ### Checks ----
+  dreamerr::check_arg(verbose, save.out, "scalar logical")
   if (save.out) {
-    if (missing(home_dir)) {
-      stop("Please supply a home directory.",
-           call. = FALSE)
-    }
-    if (!is.character(home_dir)) {
-      stop("Please provide a valid home directory path as a string if you wish to save output locally.",
-           call. = FALSE)
-    }
-    if (!dir.exists(home_dir)) {
-      stop("Please provide a valid home directory path if you wish to save output locally.",
-           call. = FALSE)
-    }
+    dreamerr::check_arg_plus(home_dir, "path dir")
     rlang::check_installed(c("knitr", "kableExtra", "stargazer"))
   }
-  
-  if (missing(data)) {
-    stop("Please supply data as either a dataframe with no missing data or imputed data in the form of a mids object or path to folder with imputed csv datasets.",
-         call. = FALSE)
+
+  .check_data(data)
+  if (!inherits(obj, "devMSM")) {
+    stop("`obj` must be output from `initMSM`", call. = FALSE)
   }
-  
-  if (!inherits(data, "mids") && !is.data.frame(data) &&
-      !(is.list(data) && all(vapply(data, is.data.frame, logical(1L))))) {
-    stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.",
-         call. = FALSE)
+  # dreamerr::check_arg(obj, "class(devMSM)", .message = "`obj` must be output from `initMSM`")
+
+  if (is.null(weights)) {
+    type <- "prebalance"
+    weights_method <- "no weights"
+  } else {
+    .check_weights(weights)
+    type <- "weighted"
+    weights_method <- weights[[1]]$method
   }
-  
-  if (is.list(data) && !is.data.frame(data)  && !inherits(data, "mids") &&
-      !all(sapply(data, is.data.frame))) {
-    stop("Please supply a list of data frames that have been imputed.",
-         call. = FALSE)
-  }
-  
-  if (inherits(data, "mids")) {
-    rlang::check_installed("mice")
-  }
-  
-  if (missing(exposure)) {
-    stop("Please supply a single exposure.",
-         call. = FALSE)
-  }
-  if (!is.character(exposure) | length(exposure) != 1) {
-    stop("Please supply a single exposure as a character.",
-         call. = FALSE)
-  }
-  else if (grepl("\\.", exposure)) {
-    stop("Please supply an exposure without the '.time' suffix or any '.' special characters. Note that the exposure variables in your dataset should be labeled with the '.time' suffix.",
-          call. = FALSE)
-  }
-  
-  if (missing(outcome)) {
-    stop("Please supply a single outcome.",
-         call. = FALSE)
-  }
-  if (!is.character(outcome) | length(outcome) != 1) {
-    stop("Please supply a single outcome as a character.",
-         call. = FALSE)
-  }
-  else if (!grepl("\\.", outcome)) {
-    stop("Please supply an outcome variable with a '.time' suffix with the outcome time point such that it matches the variable name in your wide data",
-          call. = FALSE)
-  }
-  else if (as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) != 
-           exposure_time_pts[length(exposure_time_pts)] && 
-           !as.numeric(unlist(sapply(strsplit(outcome, "\\."), "[", 2))) > 
-           exposure_time_pts[length(exposure_time_pts)] ) {
-    stop("Please supply an outcome variable with a time point that is equal to or greater than the last exposure time point.",
-          call. = FALSE)
-  }
-  
-  if (missing(exposure_time_pts)) {
-    stop("Please supply the exposure time points at which you wish to create weights.",
-         call. = FALSE)
-  }
-  if (!is.numeric(exposure_time_pts)) {
-    stop("Please supply a list of exposure time points as integers.",
-         call. = FALSE)
-  }
-  else if (!length(exposure_time_pts) > 1) {
-    stop("Please supply at least two exposure time points.",
-          call. = FALSE)
-  }
-  
-  if (missing(formulas)) {
-    stop("Please supply a list of balancing formulas.",
-         call. = FALSE)
-  }
-  if (!is.list(formulas) | is.data.frame(formulas)) {
-    stop("Please provide a list of formulas for each exposure time point",
-         call. = FALSE)
-  }
-  else if (length(formulas) != length(exposure_time_pts)) {
-    stop("Please provide a list of formulas with one entry for each exposure time point",
-          call. = FALSE)
-  }
-  else if (is.list(formulas) && !is.data.frame(formulas)) {
-    if (sum(sapply(formulas, function(x) {
-      inherits(x, "formula")})) != length(formulas)) {
-      stop("Please supply a list of formulas for each exposure time point.",
-            call. = FALSE)
-    }
-  }
-  
-  if (missing(type)) {
-    stop("Please supply a 'weighted', 'prebalance' type",
-         call. = FALSE)
-  }
-  if (!inherits(type, "character") || length(type) != 1 ) {
-    stop("Please provide a single type as a character string from the following list: 'prebalance', 'weighted'",
-         call. = FALSE)
-  }
-  if (!type %in% c("prebalance", "weighted")) {
-    stop("Please provide a type from the following list: 'prebalance', 'weighted'",
-         call. = FALSE)
-  }
-  if (type == "prebalance" && !is.null(weights)) {
-    stop("The 'prebalance' mode of this function assesses balance prior to weighting and thus does not take weights.",
-         call. = FALSE)
-  }
-  if (type == "weighted" && (is.null(weights) || missing(weights))) {
-    stop("The 'weighted' mode of this function requires weights be supplied in the form of output from createWeights.",
-         call. = FALSE)
-  }
-  
-  if (!inherits(data, "mids") && !is.data.frame(data) &&
-      !(is.list(data) && all(vapply(data, is.data.frame, logical(1L))))) {
-    stop("Please provide either a 'mids' object, a data frame, or a list of imputed csv files in the 'data' field.",
-         call. = FALSE)
-  }
-  
-  
-  if (!is.null(weights) && (!is.list(weights) || is.data.frame(weights))) {
-    stop("Please supply a list of weights output from the createWeights function.",
-         call. = FALSE)
-  }
-  if (is.list(weights) && !is.data.frame(weights) &&
-      !all(sapply(weights, inherits, "weightitMSM"))) {
-    stop("Please supply a list of weights output from the createWeights function.",
-         call. = FALSE)
-  }
-  
-  if (!is.numeric(balance_thresh) && !is.null(balance_thresh)) {
-    stop("Please provide one or two balance thresholds as numbers from 0-1.",
-         call. = FALSE)
-  }
-  if (!is.null(balance_thresh) && !length(balance_thresh < 3)) {
-    stop("Please provide one or two balance thresholds as numbers from 0-1.",
-         call. = FALSE)
-  }
+
+  dreamerr::check_set_arg(
+    balance_thresh, "numeric vector len(1,2) GT{0} LT{1} NULL{0.1}"
+  )
+  dreamerr::check_arg(imp_conf, "character vector NULL")
   if (length(balance_thresh) == 2 && is.null(imp_conf)) {
-    stop("If you wish to provide different balance threshold for important and less important confounders, please provide a list of important confounders in the 'imp_conf' field.",
-         call. = FALSE)
+    stop("If you wish to provide different balance threshold for important and less important confounders, please provide a list of important confounders in the 'imp_conf' field.", call. = FALSE)
   }
-  if (is.null(balance_thresh)) {
-    balance_thresh <- 0.1
+  if (!is.null(imp_conf) && length(balance_thresh) == 1) {
+    stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively", call. = FALSE)
   }
-  
-  if (!is.null(imp_conf) && length(balance_thresh) == 1 && !is.null(balance_thresh) ) {
-    stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively",
-         call. = FALSE)
-  }
-  if (!is.null(imp_conf) && !is.character(imp_conf)) {
-    stop("Please provide a list variable names as characters that are important confounders.",
-         call. = FALSE)
-  }
-  
-  if (!is.logical(verbose)) {
-    stop("Please set verbose to either TRUE or FALSE.",
-         call. = FALSE)
-  }
-  if (length(verbose) != 1) {
-    stop("Please provide a single TRUE or FALSE value to verbose.",
-         call. = FALSE)
-  }
-  
-  mi <- !is.data.frame(data)
-  
-  folder <- switch(type, "prebalance" = "prebalance/", "weighted/")
-  
+
   if (save.out) {
-    balance_dir <- file.path(home_dir, "balance")
-    if (!dir.exists(balance_dir)) {
-      dir.create(balance_dir)
-    }
-    folder_dir <- file.path(home_dir, "balance", folder)
-    if (!dir.exists(folder_dir)) {
-      dir.create(folder_dir)
-    }
-    plots_dir <- file.path(home_dir, "balance", folder, "plots")
-    if (!dir.exists(plots_dir)) {
-      dir.create(plots_dir)
-    }
+    .create_dir_if_needed(file.path(home_dir, "balance"))
+    .create_dir_if_needed(file.path(home_dir, "balance", type))
+    .create_dir_if_needed(file.path(home_dir, "balance", type, "plots"))
   }
-  
-  weights_method <- switch(type, "prebalance" = "no weights", weights[[1]]$method)
-  
-  form_name <- sapply(strsplit(names(formulas[1]), "_form"), "[", 1)
-  
-  
-  ### Getting balance statistics
-  
-  if (type == "prebalance") {
-    
-    if (verbose) {
-      message(sprintf("USER ALERT: The following statistics display covariate imbalance at each exposure time point prior to weighting, using %s formulas.\n",
-                      form_name))
-      cat("\n")
-    }
-    
-    # Running balance stats function, unweighted, on each imputed dataset
-    
-    if (mi) {
-      
-      if (inherits(data, "mids")) {
-        m <- data$m
-        
-        bal_stats <- lapply(seq_len(m), function(k) {
-          
-          d <- as.data.frame(mice::complete(data, k))
-          
-          if (anyNA(d)) {
-            stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-                 call. = FALSE)
-          }
-          
-          exposure_type <- if (is.numeric(d[, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
-          
-          if (sum(duplicated(d$"ID")) > 0) {
-            stop("Please provide wide imputed datasets with a single row per ID.",
-                 call. = FALSE)
-          }
-          
-          calcBalStats(data = d, formulas = formulas, exposure = exposure, 
-                       exposure_time_pts = exposure_time_pts, outcome = outcome,
-                       balance_thresh = balance_thresh, k = k, weights = NULL, 
-                       imp_conf = imp_conf, home_dir = home_dir, 
-                       verbose = verbose, save.out = save.out)
-        })
-      }
-      else {
-        
-        m <- length(data)
-        
-        bal_stats <- lapply(seq_len(m), function(k) {
-          d <- data[[k]]
-          
-          if (anyNA(d)) {
-            stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-                 call. = FALSE)
-          }
-          
-          exposure_type <- if (is.numeric(d[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
-          
-          if (sum(duplicated(d[["ID"]])) > 0) {
-            stop("Please provide wide imputed datasets with a single row per ID.", 
-                 call. = FALSE)
-          }
-          
-          calcBalStats(data = d, formulas = formulas, exposure = exposure, 
-                       exposure_time_pts = exposure_time_pts, outcome = outcome,
-                       balance_thresh = balance_thresh, k = k, weights = NULL, 
-                       imp_conf = imp_conf, home_dir = home_dir, 
-                       verbose = verbose, save.out = save.out)
-        })
-      }
-      
-      # Save out balance stats for each imputed dataset
-      
-      bal_stats_all_imp <- do.call("rbind", bal_stats)
-      bal_stats_all_imp <- bal_stats_all_imp[order(bal_stats_all_imp$covariate), ]
-      
-      
-      if (save.out) {
-        write.csv(bal_stats_all_imp, 
-                  file.path(home_dir, "balance", type, sprintf("%s_all_imps_balance_stat_summary.csv",
-                                                               exposure)))
-        if (verbose ) {
-          cat("Pre balance statistics for each imputed dataset have now been saved in the 'balance/prebalance/' folder", "\n")
-        }
-        
-      }
-      
-      
-      # Gathering imbalanced covariate statistics to average across imputed datasets for the final list/assessment of imbalanced covariates
-      # Averaging across imputed datasets
-      
-      all_bal_stats <- data.frame(
-        exposure = exposure,
-        exp_time = bal_stats[[1]]$exp_time,
-        covar_time = bal_stats[[1]]$covar_time,
-        covariate = bal_stats[[1]]$covariate,
-        avg_bal = rowMeans(do.call(cbind, lapply(bal_stats, `[[`, "std_bal_stats"))))
-      
-      #adds custom bal thresh info
-      
-      if (!is.null(imp_conf)) {
-        
-        all_bal_stats$bal_thresh <- ifelse(all_bal_stats$covariate %in% imp_conf,
-                                           balance_thresh[1], balance_thresh[2])
-        
-        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
-                                           all_bal_stats$bal_thresh, 1, 0)
-      }
-      else {
-        all_bal_stats$bal_thresh <- balance_thresh
-        
-        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
-                                           all_bal_stats$bal_thresh, 1, 0)
-      }
-      
-      
-      if (verbose) {
-        cat("\n")
-        cat(paste0("*** Averaging Across All Imputations ***"), "\n")
-      }
-      
-      tot_covars <- sapply(strsplit(all_bal_stats$covariate, "\\."), `[`, 1)
-    }
-    else {
-      
-      if (sum(duplicated(data[["ID"]])) > 0) {
-        stop("Please provide wide dataset with a single row per ID.",
-             call. = FALSE)
-      }
-      
-      if (anyNA(data)) {
-        stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-             call. = FALSE)
-      }
-      
-      exposure_type <- if (is.numeric(data[[paste0(exposure, '.', exposure_time_pts[1])]])) "continuous" else "binary"
-      
-      bal_stats <- calcBalStats(data = data, formulas = formulas, exposure = exposure, 
-                                exposure_time_pts = exposure_time_pts, outcome = outcome, 
-                                balance_thresh = balance_thresh, k = 0, weights = NULL, 
-                                imp_conf = imp_conf, home_dir = home_dir, 
-                                verbose = verbose, save.out = save.out)
-      
-      # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
-      
-      all_bal_stats <- data.frame(
-        exposure = exposure,
-        exp_time = bal_stats$exp_time,
-        covar_time = bal_stats$covar_time,
-        covariate = bal_stats$covariate,
-        avg_bal = bal_stats$std_bal_stats,
-        bal_thresh = bal_stats$bal_thresh,
-        balanced = bal_stats$balanced)
-      
-      tot_covars <- sapply(strsplit(all_bal_stats$covariate, "\\."), `[`, 1)
-    }
-  } #ends prebalance
-  
-  
-  # Weighted
-  
-  else if (type == "weighted") {
-    
-    if (verbose) {
-      message(sprintf("USER ALERT: The following statistics display covariate imbalance at each exposure time point following IPTW weighting, using %s formulas.\n", 
-                      form_name))
-      cat("\n")
-    }
-    
-    if (mi) {
-      
-      # Running balance stats function, unweighted, on each imputed dataset w/ no weights
-      
-      if (inherits(data, "mids")) {
-        m <- data$m
-        
-        bal_stats <- lapply(seq_len(m), function(k) {
-          d <- as.data.frame(mice::complete(data, k))
-          
-          if (anyNA(d)) {
-            stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-                 call. = FALSE)
-          }
-          if (sum(duplicated(d[["ID"]])) > 0) {
-            stop("Please provide wide imputed datasets with a single row per ID.", 
-                 call. = FALSE)
-          }
-          
-          w <- weights[[k]]
-          
-          calcBalStats(data = d, formulas = formulas, exposure = exposure, 
-                       exposure_time_pts = exposure_time_pts, outcome = outcome,
-                       balance_thresh = balance_thresh, k = k, weights = w, 
-                       imp_conf = imp_conf, home_dir = home_dir, 
-                       verbose = verbose, save.out = save.out)
-        })
-      }
-      else {
-        m <- length(data)
-        
-        bal_stats <- lapply(seq_len(m), function(k) {
-          d <- data[[k]]
-          
-          if (anyNA(d)) {
-            stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).",
-                 call. = FALSE)
-          }
-          if (sum(duplicated(d[["ID"]])) > 0) {
-            stop("Please provide wide imputed datasets with a single row per ID.", 
-                 call. = FALSE)
-          }
-          
-          w <- weights[[k]]
-          
-          calcBalStats(data = d, formulas = formulas, exposure = exposure, 
-                       exposure_time_pts = exposure_time_pts, outcome = outcome,
-                       balance_thresh = balance_thresh, k = k, weights = w, 
-                       imp_conf = imp_conf, home_dir = home_dir, 
-                       verbose = verbose, save.out = save.out)
-        })
-      }
-      
-      
-      # Save out balance stats for each imputed dataset
-      
-      bal_stats_all_imp <- do.call("rbind", bal_stats)
-      bal_stats_all_imp <- bal_stats_all_imp[order(bal_stats_all_imp$covariate), ]
-      
-      if (save.out) {
-        write.csv(bal_stats_all_imp, 
-                  file.path(home_dir, "balance", type, sprintf("%s_all_imps_balance_stat_summary.csv",
-                                                               exposure)))
-        if (verbose) {
-          cat("Weighted balance statistics for each imputed dataset have now been saved in the 'balance/weighted/' folder", "\n")
-        }
-      }
-      
-      # Gathering imbalanced covariate statistics to average across imputed datasets for the final list/assessment of imbalanced covariates
-      # Averaging across imputed datasets
-      
-      all_bal_stats <- data.frame(
-        exposure = exposure,
-        exp_time = bal_stats[[1]]$exp_time,
-        covar_time = bal_stats[[1]]$covar_time,
-        covariate = bal_stats[[1]]$covariate,
-        avg_bal = rowMeans(do.call(cbind, lapply(bal_stats, `[[`, "std_bal_stats"))))
-      
-      # #adds custom bal thresh info
-      
-      if (!is.null(imp_conf)) {
-        
-        all_bal_stats$bal_thresh <-ifelse(all_bal_stats$covariate %in% imp_conf,
-                                          balance_thresh[1], balance_thresh[2])
-        
-        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
-                                           all_bal_stats$bal_thresh, 1, 0)
-      }
-      else {
-        all_bal_stats$bal_thresh <- balance_thresh
-        
-        all_bal_stats$balanced <- ifelse(abs(all_bal_stats$avg_bal) <
-                                           all_bal_stats$bal_thresh, 1, 0)
-      }
-      
-      if (verbose) {
-        cat("\n")
-        cat(paste0("*** Averaging Across All Imputations ***"), "\n")
-      }
-      
-      tot_covars <- sapply(strsplit(all_bal_stats$covariate, "\\."), `[`, 1)
-    }
-    else {
-      
-      if (sum(duplicated(data$"ID")) > 0) {
-        stop("Please provide wide dataset with a single row per ID.",
-             call. = FALSE)
-      }
-      
-      w <- weights[[1]]
-      bal_stats <- calcBalStats(data = data, formulas = formulas, exposure = exposure, 
-                                exposure_time_pts = exposure_time_pts, outcome = outcome, 
-                                balance_thresh = balance_thresh, k = 0, 
-                                weights = w, imp_conf = imp_conf, home_dir = home_dir, 
-                                verbose = verbose, save.out = save.out)
-      
-      # Gathering imbalanced covariate statistics for the final list/assessment of imbalanced covariates
-      
-      all_bal_stats  <- data.frame(
-        exposure = exposure,
-        exp_time = bal_stats$exp_time,
-        covar_time = bal_stats$covar_time,
-        covariate = bal_stats$covariate,
-        avg_bal = bal_stats$std_bal_stats,
-        bal_thresh = bal_stats$bal_thresh,
-        balanced = bal_stats$balanced)
-      
-      # Getting totals
-      
-      tot_covars <- sapply(strsplit(all_bal_stats$covariate, "\\."), `[`, 1)
-    }
-  } #ends weighted
-  
-  ### Plotting and summarizing
-  
-  tot_cons <- unique(tot_covars) # Total domains/constructs
-  
-  
-  # Make love plot to summarize imbalance at each exposure time point
-  
-  data_type <- if (mi) "imputed" else "single"
-  
-  weights_method <- if (type == "weighted") weights[[1]]$method else "no weights"
-  
-  
-  #only making additional love plots for imputed data (averaging)
-  
-  if (mi) {
-    sapply(seq_along(exposure_time_pts), function(i) {
-      exposure_time_pt <- exposure_time_pts[i]
-      
-      if (inherits(data, "mids")) {
-        exposure_type <- if (is.numeric(mice::complete(data, 1)[, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
-        
-      }
-      else if (!is.data.frame(data)) {
-        exposure_type <- if (is.numeric(data[[1]][, paste0(exposure, '.', exposure_time_pts[1])])) "continuous" else "binary"
-      }
-      
-      temp <- all_bal_stats[all_bal_stats$exp_time == exposure_time_pt, , drop = FALSE]
-      
-      make_love_plot(home_dir = home_dir, folder = folder, exposure = exposure,
-                     exposure_time_pt = exposure_time_pt,
-                     exposure_type = exposure_type,
-                     k = "Averaged Across Imputations", form_name = form_name, balance_stats = temp,
-                     # data_type = data_type, 
-                     data_type = "single", #indicating single averages (across imputed data) 
-                     balance_thresh = balance_thresh,
-                     weights_method = weights_method, imp_conf = imp_conf,
-                     save.out = save.out, verbose = TRUE)
-    })
+
+  ### START ----
+  if (inherits(data, "mids")) {
+    data_type <- "mids"
+    m <- data$m
+  } else if (inherits(data, "list")) {
+    data_type <- "list"
+    m <- length(data)
+  } else {
+    data_type <- "data.frame"
+    data <- list(data)
+    m <- 1
   }
-  
-  if (save.out) {
-    outfile <- file.path(home_dir, "balance", type, 
-                         sprintf("%s_%s-%s_all_%s_%s_associations.html",
-                                 form_name, exposure, outcome, type, 
-                                 weights_method))
-    
-    # Save out all correlations/std mean differences
-    
-    sink(outfile)
-    stargazer::stargazer(all_bal_stats,
-                         type = "html",
-                         digits = 2,
-                         column.labels = colnames(all_bal_stats),
-                         summary = FALSE,
-                         rownames = FALSE,
-                         header = FALSE,
-                         out = outfile)
-    sink()
-    
-    
-    if (verbose) {
-      if (mi) {
-        cat(sprintf("Summary plots for %s %s averaged across all imputations have been saved out for each time point in the 'balance/%s/plots/' folder.\n",
-                    form_name, exposure, type))
-      }
-      else {
-        cat(sprintf("Summary plots for %s %s have now been saved out for each time point in the 'balance/%s/plots/' folder.\n",
-                    form_name, exposure, type))
-      }
-      cat("\n")
+
+  # calcBalStats ----
+  all_bal_stats <- lapply(seq_len(m), function(k) {
+    if (data_type == "mids") {
+      d <- as.data.frame(mice::complete(data, k))
+    } else {
+      d <- data[[k]]
     }
-    
-    # Saving out all pre-balance associations
-    
-    write.csv(all_bal_stats, 
-              file.path(home_dir, "balance", type, 
-                        sprintf("%s_%s_%s_stat_summary.csv",
-                                exposure, type, weights_method)),
-              row.names = FALSE)
-    
-    
-    if (verbose) {
-      if (mi) {
-        cat(sprintf("Check 'balance/%s/' folder for a table of all %s correlations or standardized mean differences averaged across imputed datasets.\n",
-                    type, type))
-      }
-      else {
-        cat(sprintf("Check 'balance/%s/' folder for a table of all %s correlations or standardized mean differences.\n",
-                    type, type))
-      }
-      cat("\n")
-    }
+    w <- weights[[k]]$weights
+
+    return(calcBalStats(
+      data = d, obj = obj, weights = w,
+      balance_thresh = balance_thresh, imp_conf = imp_conf
+    ))
+  })
+
+  class(all_bal_stats) <- c("devMSM_bal_stats", "list")
+  attr(all_bal_stats, "data_type") <- data_type
+  attr(all_bal_stats, "exposure_type") <- attr(obj, "exposure_type")
+
+  is_weighted <- !(is.null(weights))
+  attr(all_bal_stats, "weighted") <- is_weighted
+  if (is_weighted) {
+    attr(all_bal_stats, "weight_method") <- attr(weights, "method")
   }
-  
-  # Finding all imbalanced variables
-  
-  unbalanced_covars <- all_bal_stats[all_bal_stats$balanced == 0, , drop = FALSE]
-  
-  unbalanced_constructs  <- sapply(strsplit(unbalanced_covars$covariate, "\\."),
-                                   "[", 1)[!duplicated(sapply(strsplit(unbalanced_covars$covariate, 
-                                                                       "\\."), "[", 1))]
-  
-  if (save.out) {
-    summ <- rbind(exposure = exposure,
-                  form_type = form_name,
-                  weights_method = weights_method,
-                  med_bal_stat = round(median(abs(all_bal_stats$avg_bal)), 4),
-                  min_bal_stat = round(median(abs(all_bal_stats$avg_bal)), 4),
-                  max_bal_stat = round(max(all_bal_stats$avg_ba), 4))
-  }
-  
-  if (mi) {
-    if (verbose) {
-      
-      cat(sprintf("USER ALERT: Averaging across all imputed datasets for exposure %s using the %s formulas and %s :\n",
-                  exposure, form_name, weights_method))
-      
-      cat(sprintf("The median absolute value relation between exposure and confounder is %s (range = %s-%s).\n",
-                  round(median(abs(all_bal_stats$avg_bal)), 2),
-                  round(min(all_bal_stats$avg_ba), 2),
-                  round(max(all_bal_stats$avg_ba), 2)))
-    }
-    
-    if (nrow(unbalanced_covars) > 0) {
-      
-      if (save.out) {
-        summ <- rbind(summ,
-                      n_imbal_confounders = nrow(unbalanced_covars),
-                      n_confounders = length(tot_covars),
-                      perc_imbal_confounders = round(nrow(unbalanced_covars) / 
-                                                       length(tot_covars) * 100, 4),
-                      n_imbal_domains = length(unbalanced_constructs),
-                      n_domains =  length(tot_cons),
-                      perc_imbal_domains = round(length(unbalanced_constructs) / 
-                                                   length(tot_cons) * 100, 4),
-                      imbal_med_bal_stat = round(median(abs(as.numeric(unbalanced_covars$avg_bal[unbalanced_covars$balanced == 0]))), 4),
-                      imbal_min_bal_stat = round(min(unbalanced_covars$avg_bal), 4),
-                      imbal_max_bal_stat = round(max(unbalanced_covars$avg_bal), 4)
-        )
-      }
-      
-      if (verbose) {
-        cat("\n")
-        cat(sprintf("As shown below, the following %s covariates across time points out of %s total (%s%%) spanning %s domains out of %s (%s%%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to %s of %s (range=%s-%s) :",
-                    nrow(unbalanced_covars),
-                    length(tot_covars),
-                    round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2),
-                    length(unbalanced_constructs),
-                    length(tot_cons),
-                    round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
-                    exposure,
-                    round(median(abs(as.numeric(unbalanced_covars$avg_bal[unbalanced_covars$balanced == 0]))), 2),
-                    round(min(unbalanced_covars$avg_bal), 2),
-                    round(max(unbalanced_covars$avg_bal), 2)))
-      }
-      
-    }
-    else {
-      if (save.out) {
-        summ <- rbind(summ,
-                      n_imbal_confounders = 0)
-      }
-      if (verbose) {
-        cat("There are no imbalanced covariates.", "\n")
-      }
-      
-    }
-  }
-  else { #non imputed
-    if (verbose) {
-      cat(sprintf("USER ALERT: For exposure %s using the %s formulas and %s :\n",
-                  exposure, form_name, weights_method))
-      
-      cat(sprintf("The median absolute value relation between exposure and confounder is %s (range = %s -%s). \n",
-                  round(median(abs(all_bal_stats$avg_bal)), 2),
-                  round(min(all_bal_stats$avg_ba), 2),
-                  round(max(all_bal_stats$avg_ba), 2)))
-    }
-    
-    if (nrow(unbalanced_covars) > 0) {
-      
-      if (save.out) {
-        summ <- rbind(summ,
-                      n_imbal_confounders = nrow(unbalanced_covars),
-                      n_confounders = length(tot_covars),
-                      perc_imbal_confounders = round(nrow(unbalanced_covars) / 
-                                                       length(tot_covars) * 100, 4),
-                      n_imbal_domains = length(unbalanced_constructs),
-                      n_domains =  length(tot_cons),
-                      perc_imbal_domains = round(length(unbalanced_constructs) / 
-                                                   length(tot_cons) * 100, 4),
-                      imbal_med_bal_stat =  round(median(abs(as.numeric(unlist(unbalanced_covars[unbalanced_covars$balanced == 0, ][, "avg_bal"])))), 4),
-                      imbal_min_bal_stat = round(min(unbalanced_covars$avg_bal), 4),
-                      imbal_max_bal_stat = round(max(unbalanced_covars$avg_bal), 4)
-        )
-      }
-      
-      if (verbose) {
-        cat(sprintf("As shown below, the following %s covariates across time points out of %s total (%s%%) spanning %s domains out of %s (%s%%) are imbalanced with a remaining median absolute value correlation/std mean difference in relation to %s of %s (range=%s-%s) :\n",
-                    nrow(unbalanced_covars),
-                    length(tot_covars),
-                    round(nrow(unbalanced_covars) / length(tot_covars) * 100, 2),
-                    length(unbalanced_constructs),
-                    length(tot_cons),
-                    round(length(unbalanced_constructs) / length(tot_cons) * 100, 2),
-                    exposure,
-                    round(median(abs(as.numeric(unlist(unbalanced_covars[unbalanced_covars$balanced == 0, ][, "avg_bal"])))), 2),
-                    round(min(unbalanced_covars$avg_bal), 2),
-                    round(max(unbalanced_covars$avg_bal), 2)))
-      }
-    }
-    else {
-      if (save.out) {
-        summ <- rbind(summ,
-                      n_imbal_confounders = 0)
-      }
-      if (verbose) {
-        cat("There are no imbalanced covariates.", "\n")
-      }
-    }
-  }
-  
-  
-  if (nrow(unbalanced_covars) > 0) {
-    if (verbose) {
-      rlang::check_installed("knitr")
-      cat("\n")
-      cat("\n")
-      cat(knitr::kable(unbalanced_covars,
-                       caption = "Imbalanced Covariates",
-                       format = 'pipe'), sep = "\n")
-      
-      cat("\n")
-    }
-    
-    if (save.out) {
-      
-      # save out summary balance assessment
-      
-      k <- knitr::kable(summ,
-                        caption = sprintf("Summary of %s Exposure for %s using %s",
-                                          exposure, form_name, weights_method),
-                        format = 'html')
-      kableExtra::save_kable(k,
-                             file = file.path(home_dir, "balance", type, 
-                                              sprintf("%s_%s-%s_%s_%s_balance_summary.html",
-                                                      form_name, exposure, outcome, 
-                                                      type, weights_method)))
-      
-      
-      # Save out only imbalanced covariates
-      
-      outfile <- file.path(home_dir, "balance", type, 
-                           sprintf("%s_%s-%s_%s_%s_all_covariates_imbalanced.html",
-                                   form_name, exposure, outcome, type, 
-                                   weights_method))
-      
-      sink(outfile)
-      stargazer::stargazer(unbalanced_covars,
-                           type = "html",
-                           digits = 2,
-                           column.labels = colnames(unbalanced_covars),
-                           summary = FALSE,
-                           rownames = FALSE,
-                           header = FALSE,
-                           out = outfile)
-      sink()
-    }
-  }
-  else {
-    if (verbose) {
-      cat("There are no imbalanced covariates.")
-    }
-  }
-  
-  all_bal_stats
+  return(all_bal_stats)
 }
 
+#' @export
+print.devMSM_bal_stats <- function(x, i = 1, ...) {
+  all_bal_stats <- x[[i]]
+  data_type <- attr(x, "data_type")
+  weight_method <- attr(x, "weight_method")
 
+  ### Summarizing balance ----
+  vars <- unique(unlist(lapply(all_bal_stats, "[[", "covariate")))
+  n_covars <- Reduce(`+`, lapply(all_bal_stats, nrow))
+  imbalanced_covars <- unlist(lapply(all_bal_stats, function(x) x$covariate[x$balanced == 0]))
+  n_imbalanced_covars <- length(imbalanced_covars)
 
+  # Early return, no imbalanced
+  if (n_imbalanced_covars == 0) {
+    msg <- if (data_type == "imputed") {
+      if (!is.null(weight_method)) {
+        sprintf("No covariates remain imbalaned for imputation %s using `%s` weighting method.", i, weight_method)
+      } else {
+        sprintf("No covariates are imbalaned for imputation %s.", i)
+      }
+    } else {
+      if (!is.null(weight_method)) {
+        sprintf("No covariates remain imbalaned using `%s` weighting method.", weight_method)
+      } else {
+        sprintf("No covariates are imbalaned.")
+      }
+    }
+    message(msg)
+
+    return(invisible())
+  }
+
+  # TODO: This will break with factor variables e.g. `F.1_b`
+  # remaining_imbalanced_domains <- .remove_time_pts_from_vars(unlist(imbalanced_covars))
+  imbalanced_std_bal_stats <- unlist(lapply(
+    all_bal_stats, function(x) x$std_bal_stats[x$balanced == 0]
+  ))
+  tab_bal_summary <- do.call(
+    rbind,
+    lapply(all_bal_stats, function(bal_stats) {
+      b <- bal_stats$balanced
+      data.frame(
+        exposure = bal_stats$exposure[1],
+        n_covars = length(b),
+        n_imablance_covars = sum(1 - b)
+      )
+    })
+  )
+
+  msg <- if (data_type == "imputed") {
+    if (!is.null(weight_method)) {
+      sprintf("USER ALERT: For imputation %s using `%s` weighting method:", i, weight_method)
+    } else {
+      sprintf("USER ALERT: For imputation %s:", i)
+    }
+  } else {
+    if (!is.null(weight_method)) {
+      sprintf("USER ALERT: Using `%s` weighting method:", weight_method)
+    } else {
+      sprintf("USER ALERT:")
+    }
+  }
+  caption <- if (data_type == "imputed") {
+    if (!is.null(weight_method)) {
+      sprintf("Imbalanced Covariates for imputation %s using `%s`", i, weight_method)
+    } else {
+      sprintf("Imbalanced Covariates for imputation %s", i)
+    }
+  } else {
+    if (!is.null(weight_method)) {
+      sprintf("Imbalanced Covariates using `%s`", weight_method)
+    } else {
+      sprintf("Imbalanced covariates")
+    }
+  }
+
+  # TODO:
+  # , corresponding to %s out of %s domains,
+  # remaining_imbalanced_domains,
+  # total_domains,
+  message(msg)
+  cat(sprintf(
+    "As shown below, %s out of %s (%0.1f%%) covariates across time points remain imbalanced with a remaining median absolute value correlation/std mean difference of %.2f (range = %.2f - %.2f):\n",
+    n_imbalanced_covars,
+    n_covars,
+    (n_imbalanced_covars / n_covars) * 100,
+    median(abs(imbalanced_std_bal_stats)),
+    min(imbalanced_std_bal_stats),
+    max(imbalanced_std_bal_stats)
+  ))
+  colnames(tab_bal_summary) <- c("Exposure", "Total # of covariates", "# of imbalanced covariates")
+  print(tinytable::tt(tab_bal_summary, caption = caption), output = "markdown")
+}
+
+#' @export
+plot.devMSM_bal_stats <- function(x, i = 1, verbose = TRUE, save.out = FALSE, ...) {
+  all_bal_stats <- x[[i]]
+  data_type <- attr(x, "data_type")
+  weight_method <- attr(x, "weight_method")
+
+  exposure_type <- attr(x, "exposure_type")
+  x_lab <- if (exposure_type == "continuous") {
+    "Correlation with Exposure"
+  } else {
+    "Standardized Mean Difference Between Exposures"
+  }
+  k <- ifelse(data_type == "data.frame", 0, i)
+
+  # Loop through exposure variables
+  lps <- lapply(all_bal_stats, function(balance_stats) {
+    lp <- make_love_plot(
+      balance_stats = balance_stats,
+      exposure_type = exposure_type,
+      k = k,
+      weight_method = attr(x, "weight_method")
+    )
+  })
+
+  for (lp in lps) {
+    if (verbose) { 
+      plot(lp)
+    } 
+    
+    # TODO: Save plots
+    # if (save.out) {
+    #   filename <- file.path(
+    #     home_dir,
+    #     "balance",
+    #     folder,
+    #     "plots",
+    #     sprintf(
+    #       "%s_imp_%s_%s_%s_%s_summary_balance_plot.jpeg",
+    #       form_name,
+    #       k,
+    #       exposure,
+    #       exposure_time_pt,
+    #       weight_method
+    #     )
+    #   )
+    # 
+    #   suppressMessages(
+    #     ggplot2::ggsave(lp, filename = filename, width = 6, height = 8)
+    #   )
+    # }
+  }
+
+  return(lps)
+}

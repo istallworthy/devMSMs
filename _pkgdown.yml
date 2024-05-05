@@ -19,6 +19,12 @@ home:
   description: add description here
 
 reference:
+  - title: "Initialize devMSM"
+    desc: >
+      Creates initial devMSM object that will be used by all the functions.
+    contents:
+      - initMSM
+
   - title: "Create balancing formulas"
     desc: >
       Creates balancing formulas relating exposure to all relevant time-varying and time invariant confounders at each exposure time point to be used to create IPTW weights.
@@ -84,11 +90,12 @@ articles:
   - title: Articles
     navbar: ~
     contents:
+    - Dev
     - Terminology
     - Data_Requirements
     - Specify_Core_Inputs
     - Preliminary_Steps
-    - Workflow_Continuous_Exposure
     - Customize_Balancing_Formulas
+    # - Workflow_Continuous_Exposure
  
  

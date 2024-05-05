@@ -1,15 +1,6 @@
 ---
 title: "Specify Core Inputs"
-author: "Isabella Stallworthy"
-date: "`r Sys.Date()`"
-output:
-    html_vignette:
-        df_print: kable
-        toc: false
-vignette: >
-  %\VignetteIndexEntry{Specify Core Inputs}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+format: html
 ---
 
 ```{r, include = FALSE}
@@ -34,7 +25,7 @@ Users are required to specify home directory, or in quotations, a path to a desi
 
 ```{r}
 home_dir <- NA
-#home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' 
+# home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa'
 ```
   
 <br>
@@ -77,37 +68,41 @@ outcome <- "StrDif_Tot.58"
 #### Time Invariant Confounders
 Specifying at least one time invariant confounder is required for the use of this package as required input for the `createFormulas()` function. Time invariant confounders could include core demographic or birth characteristics (e.g., sex, racial group membership, birth complications) that might cause either the exposure or outcome, either directly or as a proxy, as suggested by theory and/or evidenced by strong associations in the existing literature.   
   
-Here, the user can also include any interaction terms between time invariant variables (e.g., “variable:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level. For `ti_confounders`, as a list, in quotations, provide the names of all confounders (e.g., “variable”, “variable:variable”) in your dataset that are time invariant.  
+Here, the user can also include any interaction terms between time invariant variables (e.g., “variable:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level. For `ti_conf`, as a list, in quotations, provide the names of all confounders (e.g., “variable”, “variable:variable”) in your dataset that are time invariant.  
   
 ```{r}
-ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
-                    "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
-                    "peri_health", "caregiv_health", "gov_assist")
+ti_conf <- c(
+  "state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
+  "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
+  "peri_health", "caregiv_health", "gov_assist"
+)
 ```
 
   
   
 #### Time-varying Confounders
-Specifying at least time-varying exposures as time-varying confounders is required for the use of this package as required input for the `createFormulas()` *devMSMs* function (see *Workflows* vignettes). In `tv_confounders` as a list, in quotations, provide the names of all variables in wide format (e.g., “variable.t”) in your dataset that are time-varying (including time-varying confounders, exposures, and outcomes). These should include all time-varying exposure variables and all outcome variables present in the dataset (e.g., “variable.t”). Note that time-varying confounders should also include any confounders measured repeatedly at all time points (e.g., InRatioCor) or any collected only at one or several specific time points, and missing at other time points, but are not time invariant.   
+Specifying at least time-varying exposures as time-varying confounders is required for the use of this package as required input for the `createFormulas()` *devMSMs* function (see *Workflows* vignettes). In `tv_conf` as a list, in quotations, provide the names of all variables in wide format (e.g., “variable.t”) in your dataset that are time-varying (including time-varying confounders, exposures, and outcomes). These should include all time-varying exposure variables and all outcome variables present in the dataset (e.g., “variable.t”). Note that time-varying confounders should also include any confounders measured repeatedly at all time points (e.g., InRatioCor) or any collected only at one or several specific time points, and missing at other time points, but are not time invariant.   
   
 Here, the user can also include any interaction terms between time-varying variables (e.g., “variable.t:variable.t”) or between time invariant and time-varying variables (e.g., “variable.t:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level.  
   
 ```{r}
-tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
-                    "MDI.6", "MDI.15",                                            
-                    "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
-                    "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
-                    "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
-                    "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
-                    "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
-                    "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
-                    "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",               
-                    "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
-                    "EARS_TJo.24", "EARS_TJo.35",                                        
-                    "LESMnPos.24", "LESMnPos.35",                                  
-                    "LESMnNeg.24", "LESMnNeg.35",       
-                    "StrDif_Tot.35", "StrDif_Tot.58",    
-                    "fscore.35", "fscore.58") 
+tv_conf <- c(
+  "SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
+  "MDI.6", "MDI.15",
+  "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58",
+  "WndNbrhood.6", "WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",
+  "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",
+  "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",
+  "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",
+  "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",
+  "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",
+  "CORTB.6", "CORTB.15", "CORTB.24",
+  "EARS_TJo.24", "EARS_TJo.35",
+  "LESMnPos.24", "LESMnPos.35",
+  "LESMnNeg.24", "LESMnNeg.35",
+  "StrDif_Tot.35", "StrDif_Tot.58",
+  "fscore.35", "fscore.58"
+)
 ```
   
 <br>

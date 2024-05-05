@@ -6,16 +6,12 @@
 \usage{
 createWeights(
   data,
-  exposure,
-  outcome,
+  obj,
   formulas,
-  method = "cbps",
-  SL.library = "SL.glm",
-  criterion = NA,
+  method = c("glm", "gbm", "bart", "super", "cbps"),
+  verbose = FALSE,
+  save.out = FALSE,
   home_dir = NULL,
-  read_in_from_file = FALSE,
-  verbose = TRUE,
-  save.out = TRUE,
   ...
 )
 }
@@ -23,35 +19,23 @@ createWeights(
 \item{data}{data in wide format as: a data frame, list of imputed data
 frames, or mids object}
 
-\item{exposure}{name of exposure variable}
-
-\item{outcome}{name of outcome variable with ".timepoint" suffix}
+\item{obj}{initialized MSM object from \code{initMSM}}
 
 \item{formulas}{list of balancing formulas at each time point output from
-createFormulas()}
+\code{createFormulas()}}
 
 \item{method}{(optional) character string of weightitMSM() balancing method
 abbreviation (default is Covariate Balancing Propensity Score "cbps")}
 
-\item{SL.library}{required for superLearner weighting method ("super"); see
-SuperLearner::listWrappers() for options}
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
+FALSE)}
 
-\item{criterion}{(optional) criterion used to select best weights (default is
-"p.mean" minimizing avg Pearson correlation for continuous exposures and
-"smd.mean" for binary exposures) (requird for "gbm" method)}
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is FALSE)}
 
 \item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
 
-\item{read_in_from_file}{(optional) TRUE or FALSE indicator to read in
-weights that have been previously run and saved locally (default is FALSE)}
-
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
-TRUE)}
-
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is TRUE)}
-
-\item{...}{for other inputs to weightitMSM()}
+\item{...}{pass custom arguments to \code{weightitMSM()}}
 }
 \value{
 list of IPTW balancing weights
@@ -62,83 +46,42 @@ using balancing formulas that relate exposure at each time point to all
 relevant confounders.
 }
 \examples{
-test <- data.frame(ID = 1:50,
-                   A.1 = rnorm(n = 50),
-                   A.2 = rnorm(n = 50),
-                   A.3 = rnorm(n = 50),
-                   B.1 = rnorm(n = 50),
-                   B.2 = rnorm(n = 50),
-                   B.3 = rnorm(n = 50),
-                   C = rnorm(n = 50),
-                   D.3 = rnorm(n = 50))
-test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+library(devMSMs)
+data <- data.frame(
+  ID = 1:50,
+  A.1 = rnorm(n = 50),
+  A.2 = rnorm(n = 50),
+  A.3 = rnorm(n = 50),
+  B.1 = rnorm(n = 50),
+  B.2 = rnorm(n = 50),
+  B.3 = rnorm(n = 50),
+  C = rnorm(n = 50),
+  D.3 = rnorm(n = 50)
+)
+obj <- initMSM(
+  data,
+  exposure = c("A.1", "A.2", "A.3"),
+  ti_conf = c("C"),
+  tv_conf = c("B.1", "B.2", "B.3", "D.3")
+)
+f <- createFormulas(obj, type = "short")
 
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
-                    ti_confounders = "C",
-                    type = "short",
-                    save.out = FALSE)
+w <- createWeights(data = data, obj = obj, formulas = f)
+print(w)
+plot(w)
+
+# Methods from `WeightIt::weightitMSM`
 \dontshow{if (requireNamespace("CBPS", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   save.out = FALSE)
-                   
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3", "A.1:B.1"),
-                    ti_confounders = "C",
-                    type = "short",
-                    save.out = FALSE)
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   save.out = FALSE)
-                   
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   method = "cbps",
-                   save.out = FALSE)
+w <- createWeights(data = data, obj = obj, formulas = f, method = "cbps")
 \dontshow{\}) # examplesIf}
-\dontshow{if (requireNamespace("CBPS", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   method = "cbps",
-                   save.out = FALSE)
-\dontshow{\}) # examplesIf}
-\dontshow{if (requireNamespace("gbm", quietly = TRUE)                   ) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   method = "gbm",
-                   save.out = FALSE)                    
+\dontshow{if (requireNamespace("gbm", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+w <- createWeights(data = data, obj = obj, formulas = f, method = "gbm")
 \dontshow{\}) # examplesIf}
 \dontshow{if (requireNamespace("dbarts", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   method = "bart",
-                   save.out = FALSE)
+w <- createWeights(data = data, obj = obj, formulas = f, method = "bart")
 \dontshow{\}) # examplesIf}
 \dontshow{if (requireNamespace("SuperLearner", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   method = "super",
-                   save.out = FALSE)   
-                                                     
+w <- createWeights(data = data, obj = obj, formulas = f, method = "super")
 \dontshow{\}) # examplesIf}
 }
 \seealso{

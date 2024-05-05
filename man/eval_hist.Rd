@@ -44,33 +44,45 @@ Create customized, user-specified exposure histories and tables displaying
 sample distribution across them for user inspection.
 }
 \examples{
-test <- data.frame(ID = 1:50,
-                   A.1 = rnorm(n = 50),
-                   A.2 = rnorm(n = 50),
-                   A.3 = rnorm(n = 50),
-                   B.1 = rnorm(n = 50),
-                   B.2 = rnorm(n = 50),
-                   B.3 = rnorm(n = 50),
-                   C = rnorm(n = 50),
-                   D.3 = rnorm(n = 50))
+test <- data.frame(
+  ID = 1:50,
+  A.1 = rnorm(n = 50),
+  A.2 = rnorm(n = 50),
+  A.3 = rnorm(n = 50),
+  B.1 = rnorm(n = 50),
+  B.2 = rnorm(n = 50),
+  B.3 = rnorm(n = 50),
+  C = rnorm(n = 50),
+  D.3 = rnorm(n = 50)
+)
 test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
 
-h <- eval_hist(data = test,
-               exposure = "A",
-               time_pts = c(1, 2, 3))
-h <- eval_hist(data = test,
-               exposure = "A",
-               time_pts = c(1, 2, 3),
-               epochs = data.frame(epochs = c("Infancy", "Toddlerhood"),
-                                   values = I(list(c(1, 2), c(3)))))
-h <- eval_hist(data = test,
-               exposure = "A",
-               time_pts = c(1, 2, 3),
-               hi_lo_cut = c(0.6, 0.3))
-h <- eval_hist(data = test,
-               exposure = "A",
-               time_pts = c(1, 2, 3),
-               hi_lo_cut = c(0.6, 0.3),
-               ref = "l-l-l",
-               comps = "h-h-h")
+h <- eval_hist(
+  data = test,
+  exposure = "A",
+  time_pts = c(1, 2, 3)
+)
+h <- eval_hist(
+  data = test,
+  exposure = "A",
+  time_pts = c(1, 2, 3),
+  epochs = data.frame(
+    epochs = c("Infancy", "Toddlerhood"),
+    values = I(list(c(1, 2), c(3)))
+  )
+)
+h <- eval_hist(
+  data = test,
+  exposure = "A",
+  time_pts = c(1, 2, 3),
+  hi_lo_cut = c(0.6, 0.3)
+)
+h <- eval_hist(
+  data = test,
+  exposure = "A",
+  time_pts = c(1, 2, 3),
+  hi_lo_cut = c(0.6, 0.3),
+  ref = "l-l-l",
+  comps = "h-h-h"
+)
 }

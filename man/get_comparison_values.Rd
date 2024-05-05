@@ -18,13 +18,22 @@ comparison values
 Finds custom comparison values
 }
 \examples{
-d <- data.frame(e = c("A.1", "A.2", "A.3"),
-               l = c(0, 0, 0),
-               h = c(1, 1, 1))
-r <- get_comparison_values(d = d,
-                          comp_histories = "l-l-l" )
-r <- get_comparison_values(d = d,
-                          comp_histories = "h-h-h" )
-r <- get_comparison_values(d = d,
-                         comp_histories = c("h-h-h", "h-h-l"))
+d <- data.frame(
+  e = c("A.1", "A.2", "A.3"),
+  l = c(0, 0, 0),
+  h = c(1, 1, 1)
+)
+r <- get_comparison_values(
+  d = d,
+  comp_histories = "l-l-l"
+)
+r <- get_comparison_values(
+  d = d,
+  comp_histories = "h-h-h"
+)
+r <- get_comparison_values(
+  d = d,
+  comp_histories = c("h-h-h", "h-h-l")
+)
+
 }

@@ -25,13 +25,15 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports:
     cobalt,
+    dreamerr,
     ggplot2,
     marginaleffects,
     rlang,
     stats,
     survey,
+    tinytable,
     utils,
-    WeightIt,
+    WeightIt
 Suggests: 
     CBPS,
     dbarts,
@@ -45,8 +47,7 @@ Suggests:
     sjPlot,
     stargazer,
     SuperLearner,
-    testthat (>= 3.0.0),
-    tinytable,
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://istallworthy.github.io/devMSMs/, https://github.com/istallworthy/devMSMs
 VignetteBuilder: knitr

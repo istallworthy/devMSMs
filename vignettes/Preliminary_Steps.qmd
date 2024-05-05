@@ -1,17 +1,6 @@
 ---
 title: "Recommended Preliminary Steps"
-author: "Isabella Stallworthy"
-date: "`r Sys.Date()`"
-output:
-    html_vignette:
-        df_print: kable
-        toc: false
-vignette: >
-  %\VignetteIndexEntry{Recommended Preliminary Steps}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown_notangle}
-editor_options:
-  chunk_output_type: console
+format: html
 ---
 
 ```{r, include = FALSE}
@@ -21,8 +10,7 @@ knitr::opts_chunk$set(
   echo = TRUE,
   eval = TRUE
 )
-
-options(rmarkdown.html_vignette.check_title = FALSE)
+library(tinytable)
 ```
 
 <br>
@@ -35,9 +23,10 @@ The helper functions (summarized in Table 1) for the following recommended preli
 
 <br>
 
-Table 1. Summary of *devMSMs* helper functions.
-```{r, echo = FALSE}
-helper_functions = data.frame(
+```{r}
+#| echo: false
+#| tbl-cap: "Summary of *devMSMs* helper functions."
+helper_functions <- data.frame(
   Function = c(
     "`formatLongData()`",
     "`formatWideData()`",
@@ -59,12 +48,11 @@ helper_functions = data.frame(
   Output = c(
     "A data frame of formatted long data.\n\nSummary statistics.",
     "A data frame of formatted wide data.\n\nSummary statistics.",
-    "A `mids` object of imputed data", 
+    "A `mids` object of imputed data",
     "Weights object\n\nHistogram & summary of balancing weights."
   )
 )
 
-library(tinytable)
 tt(helper_functions, theme = "striped") |>
   format(markdown = TRUE)
 ```
@@ -83,9 +71,9 @@ devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 ```
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-if(!require("devtools")) install.packages("devtools", quiet = TRUE)
-if(!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
-if(!require("devMSMsHelpers")) devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+if (!require("devtools")) install.packages("devtools", quiet = TRUE)
+if (!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+if (!require("devMSMsHelpers")) devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 ```
 ```{r setup}
 library(devMSMs)
@@ -107,7 +95,7 @@ As shown in Figure 1, for use of the *devMSMs* package, data in any of the above
 <br>
 <br>
   
-![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](figures/sample data.png){width=900px} 
+![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](figures/sample_data.png){width=900px} 
   
 
 <br>
@@ -119,7 +107,7 @@ Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_
 set.seed(1234)
 
 home_dir <- NA
-#home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
+# home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' #note: no / after
 
 exposure <- "ESETA1"
 
@@ -127,25 +115,25 @@ exposure_time_pts <- c(6, 15, 24, 35, 58)
 
 outcome <- "StrDif_Tot.58"
 
-tv_confounders <- c(
-  "SAAmylase.6","SAAmylase.15", "SAAmylase.24",
-  "MDI.6", "MDI.15",                                            
-  "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
-  "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
-  "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
-  "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
-  "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
-  "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
-  "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",               
-  "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
-  "EARS_TJo.24", "EARS_TJo.35",                                        
-  "LESMnPos.24", "LESMnPos.35",                                  
-  "LESMnNeg.24", "LESMnNeg.35",       
-  "StrDif_Tot.35", "StrDif_Tot.58",    
+tv_conf <- c(
+  "SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
+  "MDI.6", "MDI.15",
+  "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58",
+  "WndNbrhood.6", "WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",
+  "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",
+  "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",
+  "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",
+  "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",
+  "ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58",
+  "CORTB.6", "CORTB.15", "CORTB.24",
+  "EARS_TJo.24", "EARS_TJo.35",
+  "LESMnPos.24", "LESMnPos.35",
+  "LESMnNeg.24", "LESMnNeg.35",
+  "StrDif_Tot.35", "StrDif_Tot.58",
   "fscore.35", "fscore.58"
-) 
+)
 
-ti_confounders <- c(
+ti_conf <- c(
   "state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
   "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
   "peri_health", "caregiv_health", "gov_assist"
@@ -156,9 +144,9 @@ ti_confounders <- c(
 Some helper functions have optional arguments to suppress saving output locally (`save.out = FALSE`) and printing it to the console ( `verbose = FALSE`). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out = TRUE`.  
 
 ```{r}
-save.out = FALSE
+save.out <- FALSE
 
-verbose = TRUE
+verbose <- TRUE
 ```
 
 <br>
@@ -172,7 +160,7 @@ As shown in Figure 2, users have several options for reading in data. They can b
 
 <br>
 
-![Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated in bold) to the three kinds of data accepted by *devMSMs*.](figures/prelim steps overview.png){width=900px}  
+![Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated in bold) to the three kinds of data accepted by *devMSMs*.](figures/prelim_steps_overview.png){width=900px}  
   
 <br>
 <br>
@@ -195,22 +183,28 @@ For long data that is not correctly formatted, `formatLongData()` allows the use
 
 Below, we format the simulated long FLP data.  
 ```{r}
-factor_confounders = c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                       "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                       "RHasSO")
+factor_confounders <- c(
+  "state", "TcBlac2", "BioDadInHH2", "HomeOwnd", "PmBlac2",
+  "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+  "RHasSO"
+)
 
-integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
-                        "gov_assist", "B18Raw", "EARS_TJo", "MDI")
+integer_confounders <- c(
+  "KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health",
+  "gov_assist", "B18Raw", "EARS_TJo", "MDI"
+)
 
-data_long_f <- formatLongData(data = data_long, exposure = exposure, 
-                              exposure_time_pts = exposure_time_pts, outcome = outcome, 
-                              time_var = "WAVE", 
-                              id_var = "ID",                                
-                              missing = NA,
-                              factor_confounders = factor_confounders,    
-                              integer_confounders = integer_confounders, 
-                              home_dir = home_dir, 
-                              save.out = save.out) 
+data_long_f <- formatLongData(
+  data = data_long, exposure = exposure,
+  exposure_time_pts = exposure_time_pts, outcome = outcome,
+  time_var = "WAVE",
+  id_var = "ID",
+  missing = NA,
+  factor_confounders = factor_confounders,
+  integer_confounders = integer_confounders,
+  home_dir = home_dir,
+  save.out = save.out
+)
 
 head(data_long_f, n = c(5, 10))
 ```
@@ -227,15 +221,17 @@ We then transform our newly formatted long data into wide format, specifying `id
 ```{r}
 require("stats", quietly = TRUE)
 
-v <- sapply(strsplit(tv_confounders[!grepl("\\:", tv_confounders)], "\\."), "[", 1)
+v <- sapply(strsplit(tv_conf[!grepl("\\:", tv_conf)], "\\."), "[", 1)
 v <- v[!duplicated(v)]
 
-data_wide_f <- stats::reshape(data = data_long_f, 
-                            idvar = "ID",
-                            v.names = v, 
-                            timevar = "WAVE",
-                            times = c(6, 15, 24, 35, 58), 
-                            direction = "wide")
+data_wide_f <- stats::reshape(
+  data = data_long_f,
+  idvar = "ID",
+  v.names = v,
+  timevar = "WAVE",
+  times = c(6, 15, 24, 35, 58),
+  direction = "wide"
+)
 
 data_wide_f <- data_wide_f[, colSums(is.na(data_wide_f)) < nrow(data_wide_f)]
 
@@ -254,7 +250,7 @@ data("sim_data_wide", package = "devMSMs")
 
 data_wide <- sim_data_wide
 
-head(data_wide,  n = c(5, 10))
+head(data_wide, n = c(5, 10))
 ```
 
 <br>
@@ -265,7 +261,7 @@ data("sim_data_wide_miss", package = "devMSMs")
 
 data_wide <- sim_data_wide_miss
 
-head(data_wide,  n = c(5, 10))
+head(data_wide, n = c(5, 10))
 ```
 <br>
 
@@ -274,20 +270,26 @@ Users beginning with a single unformatted data frame in long format can utilize 
 
 Below, we format the simulated wide FLP data by listing out variables to make into factors and integers in wide format (e.g., "variable.t"), as well as the ID and missingness indicators.  
 ```{r}
-factor_confounders <- c("state", "TcBlac2","BioDadInHH2","HomeOwnd", "PmBlac2",       
-                        "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-                        "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58")
+factor_confounders <- c(
+  "state", "TcBlac2", "BioDadInHH2", "HomeOwnd", "PmBlac2",
+  "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
+  "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58"
+)
 
-integer_confounders = c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health" , 
-                        "gov_assist", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58", 
-                        "EARS_TJo.24", "EARS_TJo.35", "MDI.6", "MDI.15")
+integer_confounders <- c(
+  "KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health",
+  "gov_assist", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",
+  "EARS_TJo.24", "EARS_TJo.35", "MDI.6", "MDI.15"
+)
 
-data_wide_f <- formatWideData(data = data_wide, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, 
-                              id_var = "ID",
-                              missing = NA, 
-                              factor_confounders = factor_confounders,
-                              integer_confounders = integer_confounders,
-                              home_dir = home_dir, save.out = save.out) 
+data_wide_f <- formatWideData(
+  data = data_wide, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome,
+  id_var = "ID",
+  missing = NA,
+  factor_confounders = factor_confounders,
+  integer_confounders = integer_confounders,
+  home_dir = home_dir, save.out = save.out
+)
 
 head(data_wide_f, n = c(5, 10))
 ```
@@ -327,21 +329,25 @@ s <- 1234
 
 m <- 2
 
-method <- "rf" 
+method <- "rf"
 
 maxit <- 0
 
-imputed_data <- imputeData(data = data_wide_f, exposure = exposure, outcome = outcome, 
-                           m = m, method = method, maxit = maxit, para_proc = FALSE, 
-                           seed = s, read_imps_from_file = FALSE, 
-                           home_dir = home_dir, save.out = save.out)
+imputed_data <- imputeData(
+  data = data_wide_f, exposure = exposure, outcome = outcome,
+  m = m, method = method, maxit = maxit, para_proc = FALSE,
+  seed = s, read_imps_from_file = FALSE,
+  home_dir = home_dir, save.out = save.out
+)
 
 head(mice::complete(imputed_data, 1), n = c(5, 10))
 
 data <- imputed_data
 
-#testing
-lapply(1:imputed_data$m, function(x) {summary(mice::complete(imputed_data, x)$SmokTot)})
+# testing
+lapply(1:imputed_data$m, function(x) {
+  summary(mice::complete(imputed_data, x)$SmokTot)
+})
 ```
 
 We inspect the output to the console for any warnings from `mice()`.  
@@ -359,7 +365,7 @@ data("sim_data_imp_list", package = "devMSMs")
 
 data <- sim_data_imp_list
 
-head(data[[1]],  n = c(5, 10))
+head(data[[1]], n = c(5, 10))
 ```
 
 <br>
@@ -374,13 +380,18 @@ The exposure epochs will be arguments in the `fitModel()` and `compareHistories(
 
 Below, we specify Infancy, Toddlerhood, and Childhood epochs that correspond to 6 and 15; 24 and 35; and 58 months, respectively.  
 ```{r}
-epochs <- data.frame(epochs = c("Infancy", 
-                                "Toddlerhood", 
-                                "Childhood"), 
-                     values = I(list(c(6, 15), 
-                                     c(24, 35), 
-                                     c(58)
-                     ))) 
+epochs <- data.frame(
+  epochs = c(
+    "Infancy",
+    "Toddlerhood",
+    "Childhood"
+  ),
+  values = I(list(
+    c(6, 15),
+    c(24, 35),
+    c(58)
+  ))
+)
 epochs
 ```
 
@@ -397,7 +408,7 @@ To do so, they specify to `hi_lo_cut`, as a list, a quantile value (0-1) above w
 
 Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.  
 ```{r}
-hi_lo_cut <- c(0.6, 0.3) 
+hi_lo_cut <- c(0.6, 0.3)
 ```
 <br>
 
@@ -415,7 +426,7 @@ Below, we specify low economic strain at all epochs ("l-l-l") as our reference e
 ```{r}
 reference <- c("l-l-l")
 
-comparison <- c("h-h-h", "l-l-h", "h-l-l", "l-h-l") 
+comparison <- c("h-h-h", "l-l-h", "h-l-l", "l-h-l")
 ```
 
 <br>
@@ -432,7 +443,7 @@ Optional inputs are a home directory (if `save.out = TRUE`), epochs, high/low cu
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
 
 ```{r, eval = FALSE}
-inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, ti_confounders = ti_confounders, tv_confounders = tv_confounders,comparison = comparison, home_dir = home_dir, verbose = verbose, save.out = save.out) 
+inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, ti_conf = ti_conf, tv_conf = tv_conf, comparison = comparison, home_dir = home_dir, verbose = verbose, save.out = save.out)
 ```
 Here, we see summaries of the data types as well as reasonable cell counts in each of our specified histories, for each imputed dataset. 
 

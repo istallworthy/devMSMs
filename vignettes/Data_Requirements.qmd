@@ -1,15 +1,6 @@
 ---
 title: "Data Requirements"
-author: "Isabella Stallworthy"
-date: "`r Sys.Date()`"
-output:
-    html_vignette:
-        df_print: kable
-        toc: false
-vignette: >
-  %\VignetteIndexEntry{Data Requirements}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+format: html
 ---
 
 ```{r, include = FALSE}
@@ -36,8 +27,8 @@ require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 ```
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-if(!require("devtools")) install.packages("devtools", quiet = TRUE)
-if(!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+if (!require("devtools")) install.packages("devtools", quiet = TRUE)
+if (!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 ```
 ```{r setup}
 library(devMSMs)
@@ -82,15 +73,8 @@ head(sim_data_imp_list[[1]], n = c(5, 10))
 <br>
 
 All variables should be classed as integers, numeric, or factors. The recommended <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps Vignette</a> offers guidance for transforming data into each of those three types. All time-varying variables (including exposure and outcome) should have “.time” suffixes (e.g., “variable.t”). All time invariant variables should be labeled with only their variable names. Variable names should not contain special characters other than underscores. Person identifiers should not contain characters. An abridged example data structure is shown in Figure 1 below.
-  
-```{r}
-#| echo = FALSE,
-#| out.width = "600px",
-#| fig.cap = "Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (<a href='https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html'>Recommended Preliminary Steps vignette</a> Step P2)."
 
-knitr::include_graphics("figures/sample data.png")
-```
-
+![Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (<a href='https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html'>Recommended Preliminary Steps vignette</a> Step P2).](figures/sample data.png)
 
 <br>
 

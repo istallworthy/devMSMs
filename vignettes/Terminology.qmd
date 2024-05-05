@@ -1,15 +1,6 @@
 ---
 title: "Terminology"
-author: "Isabella Stallworthy"
-date: "`r Sys.Date()`"
-output:
-    html_vignette:
-        df_print: kable
-        toc: false
-vignette: >
-  %\VignetteIndexEntry{Terminology}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+format: html
 ---
 
 ```{r, include = FALSE}
@@ -18,6 +9,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "figures/"
 )
+library(tinytable)
 ```
 <br>
 
@@ -25,26 +17,26 @@ This vignette contains some key definitions for using the <a href="https://istal
 
 ## Key Terminology
 
-Table 1. Summary of terminology used in *devMSMs*
 ```{r}
 #| echo: false
-#| results: asis
-terms = data.frame(
-  Term  = c("**Outcome**", "**Exposure**", "**Exposure Time Points**", "**Exposure Epochs**", "**Exposure Histories**", "**Exposure Dosage**", "**Backdoor Path**", "**Confounder**", "**Time-varying confounder**", "**Time invariant confounder**", "**Collider**"),
-  Definition = c("Any developmental construct measured at one or more time points including at a final outcome time point", 
-  "Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome", 
-  "Time points in development when the exposure was measured at which balancing formulas will be created", 
-  "*(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories", 
-  "Sequences of relatively high (`'h'`) or low (`'p'`) levels of exposure at each exposure time point or exposure epoch", 
-  "Total cumulative exposure epochs during which an individual experienced high (or low) levels of exposure across an entire exposure history", 
-  "Any alternative, non-causal way (other than the direct causal effects from exposure to outcome) that the exposure at a given time point associates with the outcome within a causal diagram, often via confounders", 
-  "Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths", 
-  "A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time (exposure and outcome variables).", 
-  "A confounder measured at a single time point prior to the exposure time point which reflects a construct that is stable over time.", 
-  "A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which opens a backdoor path")
+#| tbl-cap: "Summary of terminology used in *devMSMs*"
+terms <- data.frame(
+  Term = c("**Outcome**", "**Exposure**", "**Exposure Time Points**", "**Exposure Epochs**", "**Exposure Histories**", "**Exposure Dosage**", "**Backdoor Path**", "**Confounder**", "**Time-varying confounder**", "**Time invariant confounder**", "**Collider**"),
+  Definition = c(
+    "Any developmental construct measured at one or more time points including at a final outcome time point",
+    "Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome",
+    "Time points in development when the exposure was measured at which balancing formulas will be created",
+    "*(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories",
+    "Sequences of relatively high (`'h'`) or low (`'p'`) levels of exposure at each exposure time point or exposure epoch",
+    "Total cumulative exposure epochs during which an individual experienced high (or low) levels of exposure across an entire exposure history",
+    "Any alternative, non-causal way (other than the direct causal effects from exposure to outcome) that the exposure at a given time point associates with the outcome within a causal diagram, often via confounders",
+    "Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths",
+    "A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time (exposure and outcome variables).",
+    "A confounder measured at a single time point prior to the exposure time point which reflects a construct that is stable over time.",
+    "A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which opens a backdoor path"
+  )
 )
 
-library(tinytable)
 tt(terms, theme = "striped") |>
   format_tt(markdown = TRUE)
 ```
@@ -57,12 +49,11 @@ Balancing formula are formula created at each exposure time point, regressing ex
 
 Below is a table that summarizes the three formula `type`s that will be used.
 
-Table 2. Summary of the formula terminology used in the *devMSMs* package for creating balancing weights and assessing their performance in devMSMs (*Workflows* vignettes Steps 4-6). The different kinds of formulas vary with respect to their inclusion of time-varying confounders and the `type` specification to create them using the `createFormulas()` function.
+Table 2. 
 
 ```{r}
 #| echo: false
-#| results: asis
-
+#| tbl-cap: "Summary of the formula terminology used in the *devMSMs* package for creating balancing weights and assessing their performance in devMSMs (*Workflows* vignettes Steps 4-6). The different kinds of formulas vary with respect to their inclusion of time-varying confounders and the `type` specification to create them using the `createFormulas()` function."
 balance_formula <- data.frame(
   `Term` = c(
     '*Full balancing formula*\n\n`type = "full"`',
@@ -76,7 +67,6 @@ balance_formula <- data.frame(
   )
 )
 
-library(tinytable)
 tt(balance_formula) |>
   format_tt(markdown = TRUE)
 ```
@@ -86,47 +76,46 @@ tt(balance_formula) |>
 
 There are 6 key functions that are used in the *devMSMs* workflow.
 
-Table 3. Summary of the 6 core functions of the *devMSMs* package.
 ```{r}
 #| echo: false
+#| tbl-cap: "Summary of the 6 core functions of the *devMSMs* package."
 #| results: asis
 
-main_functions = data.frame(
+main_functions <- data.frame(
   Function = c(
-    "[`createFormulas()`](/reference/createFormulas.html)", 
-    "[`assessBalance()`](/reference/assessBalance)", 
-    "[`createWeights()`](/reference/createWeights)", 
-    "[`trimWeights()`](/reference/trimWeights)", 
-    "[`fitModel()`](/reference/fitModel)", 
+    "[`createFormulas()`](/reference/createFormulas.html)",
+    "[`assessBalance()`](/reference/assessBalance)",
+    "[`createWeights()`](/reference/createWeights)",
+    "[`trimWeights()`](/reference/trimWeights)",
+    "[`fitModel()`](/reference/fitModel)",
     "[`compareHistories()`](/reference/compareHistories)"
   ),
   Purpose = c(
-    "Creates balancing formulas at each exposure time point relating exposure to confounders.", 
-    "Assesses confounder balance at each exposure time point according to best practices (Jackson, 2016).", 
-    "Creates balancing weights for each person (wrapper for `weightit::weightitMSM`).", 
-    "Trims balancing weights to account for heavy tails.", 
-    "Fits user-selected, weighted marginal model relating exposure to outcome.", 
+    "Creates balancing formulas at each exposure time point relating exposure to confounders.",
+    "Assesses confounder balance at each exposure time point according to best practices (Jackson, 2016).",
+    "Creates balancing weights for each person (wrapper for `weightit::weightitMSM`).",
+    "Trims balancing weights to account for heavy tails.",
+    "Fits user-selected, weighted marginal model relating exposure to outcome.",
     "Estimate, compare, & visualize model-predicted outcomes as a function of exposure history."
   ),
   `Required Input` = c(
-    "`exposure`, `exposure_time_pts`, `outcome`, `ti_confounders`, `tv_confounders`, `type` (`'full'`, `'short'`, `'update'`)", 
-    "`data`, `exposure`, `exposure_time_pts`, `outcome`, `formulas`, `type` ('prebalance', 'weighted')", 
-    "`data`, `exposure`, `outcome`, `formulas`", 
-    "`exposure`, `outcome`, `weights`", 
-    "`data`, `weights`, `exposure`, `exposure_time_pts`, `outcome`, `model` (`m0`-`m3`)", 
+    "`exposure`, `exposure_time_pts`, `outcome`, `ti_conf`, `tv_conf`, `type` (`'full'`, `'short'`, `'update'`)",
+    "`data`, `exposure`, `exposure_time_pts`, `outcome`, `formulas`, `type` ('prebalance', 'weighted')",
+    "`data`, `exposure`, `outcome`, `formulas`",
+    "`exposure`, `outcome`, `weights`",
+    "`data`, `weights`, `exposure`, `exposure_time_pts`, `outcome`, `model` (`m0`-`m3`)",
     "`exposure`, `exposure_time_pts`, `outcome`, `model`"
   ),
   Output = c(
-    "List of balancing formulas for each exposure time point. \n\nFormulas saved as .csv", 
-    "List of balance statistics\n\nTables & love plots displaying balance statistics at each exposure time point", 
-    "Weights object \n\nHistogram & summary of balancing weights.", 
-    "Trimmed weights object\n\nHistogram & summary of trimmed weights", 
-    "Fitted object\n\nOmnibus test & table of model evidence.", 
+    "List of balancing formulas for each exposure time point. \n\nFormulas saved as .csv",
+    "List of balance statistics\n\nTables & love plots displaying balance statistics at each exposure time point",
+    "Weights object \n\nHistogram & summary of balancing weights.",
+    "Trimmed weights object\n\nHistogram & summary of trimmed weights",
+    "Fitted object\n\nOmnibus test & table of model evidence.",
     "Tables of estimated values and comparisons.\n\nBoxplot. "
   )
 )
 
-library(tinytable)
 tt(main_functions, theme = "striped") |>
   format_tt(markdown = TRUE)
 ```

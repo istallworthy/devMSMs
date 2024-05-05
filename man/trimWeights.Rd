@@ -5,32 +5,33 @@
 \title{Trim IPTW balancing weights}
 \usage{
 trimWeights(
-  exposure,
-  outcome,
   weights,
-  quantile = NA,
-  home_dir = NULL,
-  verbose = TRUE,
-  save.out = TRUE
+  at = 0,
+  lower = FALSE,
+  verbose = FALSE,
+  save.out = FALSE,
+  home_dir = NULL
 )
 }
 \arguments{
-\item{exposure}{name of exposure variable}
-
-\item{outcome}{name of outcome variable with ".timepoint" suffix}
-
 \item{weights}{list of IPTW weights output from createWeights()}
 
-\item{quantile}{(optional) numeric value between 0 and 1 of quantile value at
-which to trim weights (default is 0.95)}
+\item{at}{\code{numeric}; either the quantile of the weights above which
+weights are to be trimmed. A single number between .5 and 1, or the number
+of weights to be trimmed (e.g., \code{at = 3} for the top 3 weights to be
+set to the 4th largest weight).}
 
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
+\item{lower}{\code{logical}; whether also to trim at the lower quantile
+(e.g., for \code{at = .9}, trimming at both .1 and .9, or for \code{at = 3},
+trimming the top and bottom 3 weights). Default is \code{FALSE} to only trim the higher weights.}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is TRUE)}
+
+\item{home_dir}{path to home directory (required if save.out = TRUE)}
 }
 \value{
 list of model output with trimmed weights
@@ -40,39 +41,34 @@ Trims IPTW balancing weights with heavy right tails by populating all weight
 values above a given quantile with the weight value of that quantile.
 }
 \examples{
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
-                    ti_confounders = "C",
-                    type = "full",
-                    save.out = FALSE)
+library(devMSMs)
+data <- data.frame(
+  ID = 1:50,
+  A.1 = rnorm(n = 50),
+  A.2 = rnorm(n = 50),
+  A.3 = rnorm(n = 50),
+  B.1 = rnorm(n = 50),
+  B.2 = rnorm(n = 50),
+  B.3 = rnorm(n = 50),
+  C = rnorm(n = 50),
+  D.3 = rnorm(n = 50)
+)
+obj <- initMSM(
+  data,
+  exposure = c("A.1", "A.2", "A.3"),
+  ti_conf = c("C"),
+  tv_conf = c("B.1", "B.2", "B.3", "D.3")
+)
+f <- createFormulas(obj, type = "short")
 
-test <- data.frame(ID = 1:50,
-                   A.1 = rnorm(n = 50),
-                   A.2 = rnorm(n = 50),
-                   A.3 = rnorm(n = 50),
-                   B.1 = rnorm(n = 50),
-                   B.2 = rnorm(n = 50),
-                   B.3 = rnorm(n = 50),
-                   C = rnorm(n = 50),
-                   D.3 = rnorm(n = 50))
+w <- createWeights(data = data, obj = obj, formulas = f)
+tw <- trimWeights(w)
+print(tw)
+plot(tw)
 
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   save.out = FALSE)
+trimWeights(w, at = 0.975, lower = TRUE)
 
-t <- trimWeights(exposure = "A",
-                 outcome = "D.3",
-                 weights = w,
-                 save.out = FALSE)
-t <- trimWeights(exposure = "A",
-                 outcome = "D.3",
-                 weights = w,
-                 quantile = 0.75,
-                 save.out = FALSE)
+
 }
 \seealso{
 \code{\link[WeightIt:trim]{WeightIt::trim()}},

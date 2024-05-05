@@ -6,37 +6,23 @@
 \usage{
 assessBalance(
   data,
-  exposure,
-  exposure_time_pts,
-  outcome,
-  type,
-  formulas,
+  obj,
   weights = NULL,
   balance_thresh = NULL,
   imp_conf = NULL,
-  home_dir = NULL,
-  verbose = TRUE,
-  save.out = TRUE
+  verbose = FALSE,
+  save.out = FALSE,
+  home_dir = NULL
 )
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
 frames, or mids object}
 
-\item{exposure}{name of exposure variable}
+\item{obj}{initialized MSM object from \code{initMSM}}
 
-\item{exposure_time_pts}{list of integers at which weights will be
-created/assessed that correspond to time points when exposure wass measured}
-
-\item{outcome}{name of outcome variable with ".timepoint" suffix}
-
-\item{type}{type of balance assessment; 'prebalance' or 'weighted'}
-
-\item{formulas}{list of balancing formulas at each time point output from
-createFormulas()}
-
-\item{weights}{list of IPTW weights output from createWeights, required for
-type 'weighted'}
+\item{weights}{list of IPTW weights output from \code{createWeights},
+required for type 'weighted'}
 
 \item{balance_thresh}{(optional) one or two numbers between 0 and 1
 indicating a single balancing threshold or thresholds for more and less
@@ -45,14 +31,14 @@ important confounders, respectively (default = 0.1)}
 \item{imp_conf}{(optional) list of variable names reflecting important
 confounders, required if two balance thresholds are supplied}
 
-\item{home_dir}{(optional) path to home directory (required if save.out =
-TRUE)}
-
-\item{verbose}{(optiona) TRUE or FALSE indicator for user output (default is
+\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
 TRUE)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is TRUE)}
+
+\item{home_dir}{(optional) path to home directory
+(required if save.out = TRUE)}
 }
 \value{
 a data frame of balance statistics
@@ -64,100 +50,42 @@ guidelines from Jackson, 2016 on how to assess balance for time-varying
 exposures.
 }
 \examples{
+library(devMSMs)
+data <- data.frame(
+  ID = 1:50,
+  A.1 = rnorm(n = 50),
+  A.2 = rnorm(n = 50),
+  A.3 = rnorm(n = 50),
+  B.1 = rnorm(n = 50),
+  B.2 = rnorm(n = 50),
+  B.3 = rnorm(n = 50),
+  C = rnorm(n = 50),
+  D.3 = rnorm(n = 50)
+)
+obj <- initMSM(
+  data,
+  exposure = c("A.1", "A.2", "A.3"),
+  ti_conf = c("C"),
+  tv_conf = c("B.1", "B.2", "B.3", "D.3")
+)
+f <- createFormulas(obj, type = "short")
 
-test <- data.frame(ID = 1:50,
-                   A.1 = rnorm(n = 50),
-                   A.2 = rnorm(n = 50),
-                   A.3 = rnorm(n = 50),
-                   B.1 = rnorm(n = 50),
-                   B.2 = rnorm(n = 50),
-                   B.3 = rnorm(n = 50),
-                   C = rnorm(n = 50),
-                   D.3 = rnorm(n = 50))
-test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+# Prebalance
+b <- assessBalance(data = data, obj = obj)
+print(b)
 
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
-                    ti_confounders = "C",
-                    type = "short",
-                    save.out = FALSE)
+# returns list of ggplots for each exposure variable
+plots <- plot(b) 
+plots[[1]]
+plots[[2]]
+plots[[3]]
 
-#Prebalance
-b <- assessBalance(data = test,
-                   exposure = "A",
-                   exposure_time_pts = c(1, 2, 3),
-                   outcome = "D.3",
-                   type = "prebalance",
-                   formulas = f,
-                   save.out = FALSE)
-b <- assessBalance(data = test,
-                   exposure = "A",
-                   exposure_time_pts = c(1, 2, 3),
-                   outcome = "D.3",
-                   type = "prebalance",
-                   formulas = f,
-                   balance_thresh = 0.2,
-                   save.out = FALSE)
-b <- assessBalance(data = test,
-                   exposure = "A",
-                   exposure_time_pts = c(1, 2, 3),
-                   outcome = "D.3",
-                   type = "prebalance",
-                   formulas = f,
-                   balance_thresh = c(0.1, 0.2),
-                   imp_conf = "B.1",
-                   save.out = FALSE)
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3", "A.1:B.1"),
-                    ti_confounders = "C",
-                    type = "short",
-                    save.out = FALSE)
-b <- assessBalance(data = test,
-                   exposure = "A",
-                   exposure_time_pts = c(1, 2, 3),
-                   outcome = "D.3",
-                   type = "prebalance",
-                   formulas = f,
-                   save.out = FALSE)
 
 # Weighted
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   save.out = FALSE)
+w <- createWeights(data = data, obj = obj, formulas = f)
+bw <- assessBalance(data = data, obj = obj, weights = w)
+print(bw)
 
-b <- assessBalance(data = test,
-                   exposure = "A",
-                   exposure_time_pts = c(1, 2, 3),
-                   outcome = "D.3",
-                   type = "weighted",
-                   weights = w,
-                   formulas = f,
-                   save.out = FALSE)
-b <- assessBalance(data = test,
-                   exposure = "A",
-                   exposure_time_pts = c(1, 2, 3),
-                   outcome = "D.3",
-                   type = "weighted",
-                   weights = w,
-                   formulas = f,
-                   balance_thresh = 0.2,
-                   save.out = FALSE)
-b <- assessBalance(data = test,
-                   exposure = "A",
-                   exposure_time_pts = c(1, 2, 3),
-                   outcome = "D.3",
-                   type = "weighted",
-                   weights = w,
-                   formulas = f,
-                   balance_thresh = c(0.1, 0.2),
-                   imp_conf = "B.1",
-                   save.out = FALSE)
 }
 \seealso{
 {\link{cobalt} package,
