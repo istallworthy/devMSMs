@@ -28,6 +28,7 @@ Imports:
     dreamerr,
     ggplot2,
     marginaleffects,
+    markdown,
     modelsummary,
     rlang,
     stats,
