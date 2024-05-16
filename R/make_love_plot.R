@@ -8,15 +8,15 @@
 #' @examples 
 #' print("tbd")
 #'
-#' @export
+#' @keywords internal
 make_love_plot <- function(balance_stats, exposure_type = c("continuous", "binary"), k = 0, weight_method = NULL) {
-  exposure <- balance_stats$exposure[1]
-  exposure_time_pt <- balance_stats$exposure_time[1]
+  
+  # exposure <- balance_stats$exposure[1]
+  # exposure_time_pt <- balance_stats$exposure_time[1]
   # exposure_type <- balance_stats$exposure_type[1]
 
-  balance_thresh <- unique(balance_stats$bal_thresh)
-
   # Symmetric
+  balance_thresh <- unique(balance_stats$bal_thresh)
   xrange <- c(
     balance_stats$std_bal_stats,
     balance_thresh,
@@ -24,21 +24,18 @@ make_love_plot <- function(balance_stats, exposure_type = c("continuous", "binar
   )
   xrange <- c(-max(abs(xrange)), max(abs(xrange)))
 
-  # TODO: Check about `data_type` = "single"
   # data.frame, list, mice
   if (k == 0) {
-    if (is.null(weight_method)) {
-      title <- sprintf("%s Balance", exposure)
-    } else {
-      title <- sprintf("%s Balance using `%s` weights", exposure, weight_method)
-    }
+    title_imputation_note <- ""
   } else {
-    if (is.null(weight_method)) {
-      title <- sprintf("%s Balance for Imputation %s", exposure, k)
-    } else {
-      title <- sprintf("%s Balance for Imputation %s using `%s` weights", exposure, k, weight_method)
-    }
+    title_imputation_note <- sprintf("for Imputation %s ", k)
   }
+  if (is.null(weight_method)) {
+    title <- sprintf("Covariate balance %s", title_imputation_note)
+  } else {
+    title <- sprintf("Covariate balance %susing `%s` weights", title_imputation_note, weight_method)
+  }
+  
   x_lab <- if (exposure_type == "continuous") {
     "Correlation with Exposure"
   } else {
@@ -52,7 +49,12 @@ make_love_plot <- function(balance_stats, exposure_type = c("continuous", "binar
 
   # For correct y-axis ordering
   balance_stats <- balance_stats[order(balance_stats$std_bal_stats), , drop = FALSE]
-  balance_stats$covariate <- factor(balance_stats$covariate, levels = balance_stats$covariate, ordered = TRUE)
+  balance_stats$covariate <- factor(
+    balance_stats$covariate, 
+    levels = unique(balance_stats$covariate), 
+    ordered = TRUE
+  )
+  balance_stats$Exposure = balance_stats$exposure
 
   # Make love plot per exposure time point
   lp <- ggplot2::ggplot(data = balance_stats) +
@@ -61,13 +63,18 @@ make_love_plot <- function(balance_stats, exposure_type = c("continuous", "binar
         y = .data$covariate,
         x = .data$std_bal_stats
       ),
-      fill = "white", alpha = 1
+      fill = "white", alpha = 1, size = 1.2
+    ) +
+    ggplot2::facet_wrap(
+      ~ .data$Exposure, 
+      scales = "free_y",
+      labeller = "label_both"
     ) +
     ggplot2::geom_vline(
       xintercept = c(balance_thresh, -balance_thresh),
       linetype = "dashed", color = "red"
     ) +
-    ggplot2::labs(x = x_lab, y = "Covariate", title = title) +
+    ggplot2::labs(x = x_lab, y = "Covariate", title = title) + 
     ggplot2::scale_x_continuous(limits = xrange) +
     y_scale +
     ggplot2::theme(

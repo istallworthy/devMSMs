@@ -28,6 +28,7 @@ Imports:
     dreamerr,
     ggplot2,
     marginaleffects,
+    modelsummary,
     rlang,
     stats,
     survey,
@@ -38,14 +39,10 @@ Suggests:
     CBPS,
     dbarts,
     gbm,
-    kableExtra,
     knitr,
-    markdown,
     mice,
     mitml,
     rmarkdown,
-    sjPlot,
-    stargazer,
     SuperLearner,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

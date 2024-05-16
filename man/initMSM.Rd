@@ -4,19 +4,38 @@
 \alias{initMSM}
 \title{Initial step in \code{devMSMs} workflow}
 \usage{
-initMSM(data, exposure, tv_conf, ti_conf)
+initMSM(
+  data,
+  exposure,
+  epoch = NULL,
+  tv_conf,
+  ti_conf = NULL,
+  concur_conf = NULL,
+  sep = "[\\\\._]"
+)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
-frames, or mids object}
+frames, or \code{mids} object from the \code{mice} package}
 
 \item{exposure}{names of exposure variables with ".timepoint" suffix}
+
+\item{epoch}{(optional) group set of exposure variables into categories.
+Provide a character vector corresponding to the category for each exposure}
 
 \item{tv_conf}{list of time-varying confounders with ".timepoint"
 suffix, should include exposure and outcome variables (at least
 time-varying exposure variables required here)}
 
-\item{ti_conf}{list of time invariant confounders (at least one required)}
+\item{ti_conf}{list of time invariant confounders. Can be left as NULL for none.}
+
+\item{concur_conf}{(optional) list of variable names reflecting time-varying
+confounders to retain in formulas contemporaneously (default is none)}
+
+\item{sep}{(optional) The seperator between the variable and the time period. The
+variable names will be split by the last occurance of \code{sep} with the
+second string containing the time. This uses regex notation, so \code{.} must
+be \verb{\\\\.}}
 }
 \value{
 object of class \code{devMSM} that contains the initialized information.
@@ -29,4 +48,26 @@ By \code{.timepoint} suffix, we mean that time-varying and exposure variable
 names must end with either \code{.#} or a \verb{_#}. This allows us to extract the
 time-period when the variable is measured and will allow us to properly
 create the formulae (omitting future mediators)
+}
+\examples{
+data <- data.frame(
+  A.1 = rnorm(n = 50),
+  A.2 = rnorm(n = 50),
+  A.3 = rnorm(n = 50),
+  B.1 = rnorm(n = 50),
+  B.2 = rnorm(n = 50),
+  B.3 = rnorm(n = 50),
+  D.3 = rnorm(n = 50),
+  L.1 = sample(c(0,1), size = 50, replace = TRUE),
+  C   = rnorm(n = 50)
+)
+obj <- initMSM(
+  data = data, exposure = c("A.1", "A.2", "A.3"),
+  tv_conf = c("B.1", "B.2", "B.3", "D.3"), 
+  ti_conf = "C"
+)
+
+obj
+
+
 }

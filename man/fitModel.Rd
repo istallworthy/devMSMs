@@ -2,37 +2,36 @@
 % Please edit documentation in R/fitModel.R
 \name{fitModel}
 \alias{fitModel}
+\alias{print.devMSM_models}
 \title{Fit outcome model}
 \usage{
 fitModel(
   data,
+  obj,
   weights,
-  exposure,
-  exposure_time_pts,
   outcome,
-  model,
-  family = NULL,
-  link = NA,
+  model = c("m0", "m1", "m2", "m3"),
   int_order = NA,
   covariates = NULL,
-  epochs = NULL,
-  home_dir = NULL,
-  verbose = TRUE,
-  save.out = TRUE
+  family = NULL,
+  link = NA,
+  verbose = FALSE,
+  save.out = FALSE,
+  home_dir = NULL
 )
+
+\method{print}{devMSM_models}(x, i = 1, ...)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
-frames, or mids object}
+frames, or \code{mids} object from the \code{mice} package}
 
-\item{weights}{list of IPTW weights output from createWeights()}
+\item{obj}{initialized MSM object from \code{\link[=initMSM]{initMSM()}}}
 
-\item{exposure}{name of exposure variable}
+\item{weights}{list of IPTW weights output from \code{\link[=createWeights]{createWeights()}}}
 
-\item{exposure_time_pts}{list of integers at which weights will be
-created/assessed that correspond to time points when exposure was measured}
-
-\item{outcome}{name of outcome variable with ".timepoint" suffix}
+\item{outcome}{name of outcome variable with ".timepoint" suffix.
+See \code{\link[=initMSM]{initMSM()}} for details on suffix}
 
 \item{model}{character indicating one of the following outcome models:
 \itemize{
@@ -42,34 +41,92 @@ created/assessed that correspond to time points when exposure was measured}
 \item "m3" (exposure main effects, their interactions, & covariates)
 }}
 
-\item{family}{(optional) family function specification for svyglm model}
-
-\item{link}{(optional) character link function specification for svyglm model}
-
 \item{int_order}{integer specification of highest order exposure main effects
 interaction, required for interaction models ("m2", "m3")}
 
 \item{covariates}{list of characters reflecting variable names of covariates,
 required for covariate models ("m1", "m3")}
 
-\item{epochs}{(optional) data frame of exposure epoch labels and values}
+\item{family}{(optional) family function specification for \code{\link[WeightIt:glm_weightit]{WeightIt::glm_weightit()}} model}
 
-\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
+\item{link}{(optional) character link function specification for \code{\link[WeightIt:glm_weightit]{WeightIt::glm_weightit()}} model}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
-TRUE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
+(default is FALSE)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is TRUE)}
+intermediary output locally (default is FALSE)}
+
+\item{home_dir}{path to home directory (required if save.out = TRUE)}
+
+\item{x}{devMSM_models object from \code{fitModel}}
+
+\item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over.}
+
+\item{...}{ignored}
 }
 \value{
-list of svyglm model output
+list containing \code{\link[WeightIt:glm_weightit]{WeightIt::glm_weightit()}} model output. It is the length
+of the number of datasets (1 for a data.frame or the number of imputed datasets)
 }
 \description{
 Fits weighted marginal outcome model as a generalized linear model of the
 user's choosing, relating exposure main effects to outcome using IPTW
 weights.
 }
+\examples{
+library(devMSMs)
+data <- data.frame(
+  ID = 1:50,
+  A.1 = rnorm(n = 50),
+  A.2 = rnorm(n = 50),
+  A.3 = rnorm(n = 50),
+  B.1 = rnorm(n = 50),
+  B.2 = rnorm(n = 50),
+  B.3 = rnorm(n = 50),
+  C = rnorm(n = 50),
+  D.3 = rnorm(n = 50)
+)
+obj <- initMSM(
+  data,
+  exposure = c("A.1", "A.2", "A.3"),
+  ti_conf = c("C"),
+  tv_conf = c("B.1", "B.2", "B.3", "D.3")
+)
+f <- createFormulas(obj, type = "short")
+w <- createWeights(data = data, obj = obj, formulas = f)
+
+fit_m0 <- fitModel(
+  data = data, obj = obj, weights = w, 
+  outcome = "D.3", model = "m0"
+)
+print(fit_m0)
+
+fit_m1 <- fitModel(
+  data = data, obj = obj, weights = w, 
+  outcome = "D.3", model = "m1", 
+  covariates = c("C")
+)
+print(fit_m1)
+
+fit_m2 <- fitModel(
+  data = data, obj = obj, weights = w, 
+  outcome = "D.3", model = "m2", 
+  int_order = 2
+)
+print(fit_m2)
+
+fit_m3 <- fitModel(
+  data = data, obj = obj, weights = w, 
+  outcome = "D.3", model = "m3",
+  int_order = 2, covariates = c("C")
+)
+print(fit_m3)
+
+
+
+}
 \seealso{
-\code{\link[survey:svyglm]{survey::svyglm()}} for more on family/link specifications.
+\code{\link[WeightIt:glm_weightit]{WeightIt::glm_weightit()}} for more on family/link specifications.
 }

@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 library(tinytable)
 ```
 
-# devMSMs: Implementing Marginal <img src="https://github.com/istallworthy/devMSMs/assets/31548151/0a1c69d7-1984-4ebe-8d16-0948d670a8fb" align="right" width="100"/> Structural Models with Longitudinal Data
+# devMSMs: Implementing Marginal <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100"/> Structural Models with Longitudinal Data
 <!-- badges: start -->
 <!-- badges: end -->
 
@@ -58,7 +58,7 @@ Core features of *devMSMs* include:
 ## Overview
 The package contains 6 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures.
 <br>  
-<img width="820" alt="overview" src="https://github.com/istallworthy/devMSMs/assets/31548151/db0efeb1-c1e5-4c71-8062-01a5f34d56ab">
+<img width="820" alt="devMSMs overview" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png">
 <br>  
 <br>
 
@@ -112,7 +112,7 @@ library(devMSMsHelpers)
 ## Recommended Workflow
 We propose a recommended workflow for using *devMSMs* to answer causal questions with longituinal data. We suggest using the vignettes in the order they appear in the Articles tab. After reading the accompanying manuscript, We recommend first reviewing the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes as you begin preparing your data. We then recommend downloading the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> which contains all the code desribed in the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a>, and *Workflows* vignettes (for binary (TBA) or <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a> exposures) for implementing the steps below.
   
-<img width="800" alt="Screen Shot 2023-11-08 at 4 00 44 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/91216ef3-e4c3-4c8a-a522-f683105bfc66">
+<img width="800" alt="devMSMs schematic of workflow" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png">
 
 <br> 
 

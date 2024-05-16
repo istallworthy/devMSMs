@@ -66,7 +66,7 @@ exposure_time_pts <- c(6, 15, 24, 35, 58)
 outcome <- "StrDif_Tot.58"
 
 #required; list in wide format
-tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
+tv_conf <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
                     "MDI.6", "MDI.15",                                            
                     "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
                     "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
@@ -85,7 +85,7 @@ tv_confounders <- c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
 ) 
 
 #required
-ti_confounders <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
+ti_conf <- c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
                     "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
                     "peri_health", "caregiv_health", "gov_assist"
                     #, "state:SmokTotl", "PmAge2:PmBlac2", "PmAge2:PmEd2" #testing interaction terms
@@ -152,7 +152,7 @@ data_long_f <- formatLongData(data = data_long, exposure = exposure, exposure_ti
 Users with correctly formatted data in long format have the option of using the following code to transform their data into wide format, to proceed to using the package (if there is no missing data) or imputing (with < 20% missing data MAR). They may see some warnings about *NA* values.    
 
 ```{r}
-v <- sapply(strsplit(tv_confounders[!grepl("\\:", tv_confounders)], "\\."), "[", 1)
+v <- sapply(strsplit(tv_conf[!grepl("\\:", tv_conf)], "\\."), "[", 1)
 v <- v[!duplicated(v)]
 
 library(stats)
@@ -332,7 +332,7 @@ We strongly recommend all users inspect their data and history distribution usin
 
 ```{r}
 inspectData(data = data, exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, # required input
-            ti_confounders = ti_confounders, tv_confounders = tv_confounders, # required input
+            ti_conf = ti_conf, tv_conf = tv_conf, # required input
             epochs = epochs, hi_lo_cut = hi_lo_cut, reference = reference, comparison = comparison, #optional input
             home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional input
 ```
@@ -374,7 +374,7 @@ type <- "full"
 
 #all inputs
 full_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, #required
-                                type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, #required
+                                type = type, ti_conf = ti_conf, tv_conf = tv_conf, #required
                                 concur_conf = concur_conf, custom = custom, #optional
                                 home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 ```
@@ -433,7 +433,7 @@ type <- "short"
 
 #all inputs
 short_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, #required
-                                 type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, #required
+                                 type = type, ti_conf = ti_conf, tv_conf = tv_conf, #required
                                  concur_conf = concur_conf, keep_conf = keep_conf, custom = custom, #optional
                                  home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 ```
@@ -576,7 +576,7 @@ bal_stats <- balance_stats
 
 #all inputs
 updated_formulas <- createFormulas(exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome, #required
-                                   type = type, ti_confounders = ti_confounders, tv_confounders = tv_confounders, bal_stats = bal_stats, #required
+                                   type = type, ti_conf = ti_conf, tv_conf = tv_conf, bal_stats = bal_stats, #required
                                    concur_conf = concur_conf, keep_conf = keep_conf, #optional
                                    home_dir = home_dir, verbose = TRUE, save.out = TRUE) #optional
 ```

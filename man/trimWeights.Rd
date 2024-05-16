@@ -2,7 +2,7 @@
 % Please edit documentation in R/trimWeights.R
 \name{trimWeights}
 \alias{trimWeights}
-\title{Trim IPTW balancing weights}
+\title{Trim IPTW balancing weights, if needed}
 \usage{
 trimWeights(
   weights,
@@ -14,7 +14,7 @@ trimWeights(
 )
 }
 \arguments{
-\item{weights}{list of IPTW weights output from createWeights()}
+\item{weights}{list of IPTW weights output from \code{\link[=createWeights]{createWeights()}}}
 
 \item{at}{\code{numeric}; either the quantile of the weights above which
 weights are to be trimmed. A single number between .5 and 1, or the number
@@ -25,16 +25,17 @@ set to the 4th largest weight).}
 (e.g., for \code{at = .9}, trimming at both .1 and .9, or for \code{at = 3},
 trimming the top and bottom 3 weights). Default is \code{FALSE} to only trim the higher weights.}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
-TRUE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
+(default is FALSE)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is TRUE)}
+intermediary output locally (default is FALSE)}
 
 \item{home_dir}{path to home directory (required if save.out = TRUE)}
 }
 \value{
-list of model output with trimmed weights
+a list containing \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} output. It is the length
+of the number of datasets (1 for a data.frame or the number of imputed datasets).
 }
 \description{
 Trims IPTW balancing weights with heavy right tails by populating all weight
@@ -67,7 +68,6 @@ print(tw)
 plot(tw)
 
 trimWeights(w, at = 0.975, lower = TRUE)
-
 
 }
 \seealso{

@@ -16,11 +16,13 @@
 #'   confounders (required if two balance thresholds are provided)
 #' @return data frame of balance statistics
 #'
-calcBalStats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp_conf = NULL) {
+#' @keywords internal
+calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp_conf = NULL) {
   # NOTE:
   # 1. Checks are already done in assessBalance
   # 2. This assumes data is a `data.frame` (and not list/mids) and weights is a `weightitMSM` object (and not devMSM_weights). This is done in `assessBalance`
 
+  # TODO: Calculate effective sample size with `cobalt:ESS`
   ### Calculate balance stats ----
   exposure <- attr(obj, "exposure")
   exposure_time_pts <- attr(obj, "exposure_time_pts")
@@ -50,10 +52,10 @@ calcBalStats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp_c
     lagged_time_pts <- exposure_time_pts[exposure_time_pts < exposure_time_pt]
     lagged_exposure_names <- exposure[exposure_time_pts < exposure_time_pt]
 
-    # All lagged variable (var_time_pt <= exposure_time_pt)
+    # All lagged variable (var_time_pt < exposure_time_pt)
     vars <- c(
-      ti_conf[ti_conf_time <= exposure_time_pt],
-      tv_conf[tv_conf_time <= exposure_time_pt],
+      ti_conf,
+      tv_conf[tv_conf_time < exposure_time_pt],
       exposure[exposure_time_pts < exposure_time_pt]
     )
 
@@ -61,7 +63,7 @@ calcBalStats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp_c
       is.character(data[[v]]) || is.factor(data[[v]])
     })
     if (any(var_is_factorable)) {
-      # TODO: any options or leave default (dropping first level)
+      # TODO: any options or leave default (dropping first level)?
       bal_vars <- cobalt::splitfactor(data[, vars, drop = FALSE])
     } else {
       bal_vars <- data[, vars, drop = FALSE]
@@ -138,7 +140,6 @@ calcBalStats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp_c
       weighted_bal_stats <- history_bal_stats %*% prop_sum$prop
 
       if (exposure_type == "continuous") {
-        # TODO: confirm unweighted
         # unweighted covar sd *
         s1 <- cobalt::col_w_sd(bal_vars)
 
@@ -183,37 +184,6 @@ calcBalStats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp_c
     all_prop_weights <- c(all_prop_weights, list(prop_sum))
     all_bal_stats <- c(all_bal_stats, list(bal_stats))
   } # Ends exposure_time_pts loop
-
-  # TODO: Make love plot per exposure time point
-  # make_love_plot(
-  #   home_dir = home_dir, folder = folder, exposure = exposure,
-  #   exposure_time_pt = exposure_time_pt,
-  #   exposure_type = exposure_type,
-  #   k = k, form_type = form_type, balance_stats = bal_stats,
-  #   data_type = data_type, balance_thresh = balance_thresh,
-  #   weights_method = weights_method, imp_conf = imp_conf,
-  #   save.out = save.out, verbose = verbose
-  # )
-
-  # TODO:
-  # if (verbose & save.out) {
-  #   if (data_type == "imputed") {
-  #     cat(sprintf(
-  #       "For each time point and imputation, %s summary plots for  %s
-  #                formulas weighting method %s have now been saved in the %s plots/' folder.\n",
-  #       gsub("/", "", folder), form_type, weights_method, folder
-  #     ))
-  #     cat("\n")
-  #   } else {
-  #     cat(sprintf(
-  #       "For each time point, %s summary plots for  %s
-  #                formulas weighting method %s have now been saved in the %s plots/' folder.\n",
-  #       gsub("/", "", folder), form_type, weights_method, folder
-  #     ))
-  #     cat("\n")
-  #   }
-  # }
-
   
   return(all_bal_stats)
 }

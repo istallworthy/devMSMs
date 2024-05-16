@@ -2,22 +2,24 @@
 % Please edit documentation in R/createFormulas.R
 \name{createFormulas}
 \alias{createFormulas}
+\alias{print.devMSM_formulas}
 \title{Create balancing formulas}
 \usage{
 createFormulas(
   obj,
   type = c("full", "short", "update"),
   custom = NULL,
-  concur_conf = NULL,
   keep_conf = NULL,
   bal_stats = NULL,
   verbose = FALSE,
   save.out = FALSE,
   home_dir = NULL
 )
+
+\method{print}{devMSM_formulas}(x, ...)
 }
 \arguments{
-\item{obj}{initialized MSM object from \code{initMSM}}
+\item{obj}{initialized MSM object from \code{\link[=initMSM]{initMSM()}}}
 
 \item{type}{type of formula to create from 'full' (includes all lagged
 time-varying confounders), 'short' (includes time-varying confounders at
@@ -27,25 +29,25 @@ time-varying confounders at lags great than t-1)}
 \item{custom}{(optional) custom list of formulas at each exposure time point
 (default is to create automatically according to type)}
 
-\item{concur_conf}{(optional) list of variable names reflecting time-varying
-confounders to retain in formulas contemporaneously (default is none)}
-
 \item{keep_conf}{(optional) list of variable names reflecting confounders to
 always retain in formulas (default depends on type)}
 
-\item{bal_stats}{list of balance statistics from assessBalance(), required
-for 'update' type}
+\item{bal_stats}{list of balance statistics from \code{\link[=assessBalance]{assessBalance()}}}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for user output
-(default is TRUE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
+(default is FALSE)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is FALSE)}
 
 \item{home_dir}{path to home directory (required if save.out = TRUE)}
+
+\item{x}{devMSM_formulas object from \code{\link[=createFormulas]{createFormulas()}}}
+
+\item{...}{ignored}
 }
 \value{
-list of balancing formulas at each exposure time point
+a list containing balancing formulas. It is the length of the number of exposure variables.
 }
 \description{
 Creates balancing formulas relating exposure to all relevant time-varying and
@@ -74,13 +76,16 @@ obj <- initMSM(
 
 # Full Formulas
 f <- createFormulas(obj, type = "full")
+print(f)
 
 # Short Formulas
 f <- createFormulas(obj, type = "short")
+print(f)
 
 # Update Formulas
 w <- createWeights(data = data, obj = obj, formulas = f)
 b <- assessBalance(data = data, obj = obj, weights = w)
 f <- createFormulas(obj, type = "update", bal_stats = b)
+print(f)
 
 }

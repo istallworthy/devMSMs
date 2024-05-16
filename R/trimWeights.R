@@ -1,4 +1,4 @@
-#' Trim IPTW balancing weights
+#' Trim IPTW balancing weights, if needed
 #'
 #' Trims IPTW balancing weights with heavy right tails by populating all weight
 #' values above a given quantile with the weight value of that quantile.
@@ -6,15 +6,13 @@
 #' @seealso [WeightIt::trim()],
 #'   <https://search.r-project.org/CRAN/refmans/WeightIt/html/trim.html> which
 #'   this function wraps
-#' @param weights list of IPTW weights output from createWeights()
+#' 
+#' @inheritParams devMSM_common_docs
 #' @inheritParams WeightIt::trim
-#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
-#'   TRUE)
-#' @param save.out (optional) TRUE or FALSE indicator to save output and
-#'   intermediary output locally (default is TRUE)
-#' @param home_dir path to home directory (required if save.out = TRUE)
-#' @return list of model output with trimmed weights
-#' @export
+#' 
+#' @return a list containing [WeightIt::weightitMSM()] output. It is the length 
+#'  of the number of datasets (1 for a data.frame or the number of imputed datasets).
+#' 
 #' @examples
 #' library(devMSMs)
 #' data <- data.frame(
@@ -43,7 +41,7 @@
 #' 
 #' trimWeights(w, at = 0.975, lower = TRUE)
 #' 
-#' 
+#' @export
 trimWeights <- function(weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE, home_dir = NULL) {
   ### Checks ----
   dreamerr::check_arg(verbose, save.out, "scalar logical")
@@ -66,21 +64,6 @@ trimWeights <- function(weights, at = 0, lower = FALSE, verbose = FALSE, save.ou
   attr(trim_weights, "method") <- attr(weights, "method")
   attr(trim_weights, "trim") <- attr(trim_weights[[1]][["weights"]], "trim")
   attr(trim_weights, "trim.lower") <- attr(trim_weights[[1]][["weights"]], "trim.lower")
-
-  # TODO: 
-  # if (save.out) {
-  #   saveRDS(
-  #     trim_weights,
-  #     file.path(
-  #       home_dir, "weights", "values",
-  #       sprintf(
-  #         "%s-%s_%s_%s_weights_trim.rds",
-  #         exposure, outcome, weights[[1]]$method,
-  #         quantile
-  #       )
-  #     )
-  #   )
-  # }
 
   if (verbose) print(trim_weights)
   return(trim_weights)

@@ -79,7 +79,7 @@ However, if users wish to also include any time-varying confounders measured con
 For example, to include 24-month maternal depression in the 24-month balancing formula, we do the following:
 
 ```{r}
-full_formulas <- createFormulas(obj  = obj, type = "full", concur_conf = "B18Raw.24")
+full_formulas <- createFormulas(obj  = obj, type = "full", keep_conf = "B18Raw.24")
 print(full_formulas)
 ```
 
@@ -91,23 +91,20 @@ To create custom formulas, the user creates a list with an entry for each exposu
   
 Below, we illustrate an abridged example for specifying the `custom` arguments for the exposure, ESETA1, at 6-, 15-, 24-, 35-, and 58-month time points.   
 ```{r}
-# custom <- list(
-#   "full_form-6" = as.formula("ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
-#   "full_form-15" = as.formula("ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
-#   "full_form-24" = as.formula("ESETA1.24 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
-#   "full_form-35" = as.formula("ESETA1.35 ~ BioDadInHH2 + DrnkFreq + gov_assist"),
-#   "full_form-58" = as.formula("ESETA1.58 ~ BioDadInHH2 + DrnkFreq + gov_assist")
-# )
+custom <- list(
+  ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist,
+  ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist,
+  ESETA1.24 ~ BioDadInHH2 + DrnkFreq + gov_assist,
+  ESETA1.35 ~ BioDadInHH2 + DrnkFreq + gov_assist,
+  ESETA1.58 ~ BioDadInHH2 + DrnkFreq + gov_assist
+)
 ```
   
 `customFormulas()` then checks and retains these formulas for further use with the package.  
 
 ```{r}
-# full_formulas <- createFormulas(
-#   exposure = exposure, exposure_time_pts = exposure_time_pts, outcome = outcome,
-#   type = "full", ti_conf = ti_conf, tv_conf = tv_conf,
-#   custom = custom, verbose = TRUE, save.out = FALSE
-# )
+full_formulas <- createFormulas(obj = obj, custom = custom)
+print(full_formulas)
 ```
 
 <br>

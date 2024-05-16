@@ -5,23 +5,17 @@
 #' relevant confounders.
 #'
 #' @export
-#' @seealso {[WeightIt::weightitMSM()],
-#'   <https://ngreifer.github.io/WeightIt/reference/weightitMSM.html>}
-#' @param data data in wide format as: a data frame, list of imputed data
-#'   frames, or mids object
-#' @param obj initialized MSM object from `initMSM`
-#' @param formulas list of balancing formulas at each time point output from
-#'   `createFormulas()`
+#' @seealso 
+#'  [WeightIt::weightitMSM()],
+#'  <https://ngreifer.github.io/WeightIt/reference/weightitMSM.html>;
+#' 
+#' @inheritParams devMSM_common_docs
 #' @param method (optional) character string of weightitMSM() balancing method
 #'   abbreviation (default is Covariate Balancing Propensity Score "cbps")
-#' @param ... pass custom arguments to `weightitMSM()`
-#' @param verbose (optional) TRUE or FALSE indicator for user output (default is
-#'   FALSE)
-#' @param save.out (optional) TRUE or FALSE indicator to save output and
-#'   intermediary output locally (default is FALSE)
-#' @param home_dir path to home directory (required if 'save.out' = TRUE)
-#' @return list of IPTW balancing weights
-#' @export
+#' @param ... pass custom arguments to [WeightIt::weightitMSM()]
+#' @return a list containing [WeightIt::weightitMSM()] output. It is the length 
+#'  of the number of datasets (1 for a data.frame or the number of imputed datasets).
+#' 
 #' @examples
 #' library(devMSMs)
 #' data <- data.frame(
@@ -50,16 +44,14 @@
 #' # Methods from `WeightIt::weightitMSM`
 #' @examplesIf requireNamespace("CBPS", quietly = TRUE)
 #' w <- createWeights(data = data, obj = obj, formulas = f, method = "cbps")
-#'
 #' @examplesIf requireNamespace("gbm", quietly = TRUE)
 #' w <- createWeights(data = data, obj = obj, formulas = f, method = "gbm")
-#'
 #' @examplesIf requireNamespace("dbarts", quietly = TRUE)
 #' w <- createWeights(data = data, obj = obj, formulas = f, method = "bart")
-#'
 #' @examplesIf requireNamespace("SuperLearner", quietly = TRUE)
 #' w <- createWeights(data = data, obj = obj, formulas = f, method = "super")
 #'
+#' @export
 createWeights <- function(
     data, obj, formulas,
     method = c("glm", "gbm", "bart", "super", "cbps"),
@@ -87,9 +79,10 @@ createWeights <- function(
   ### Create weights ----
   dots <- list(...)
 
+  # data is a single data.frame in this function
   calculate_weights <- function(formulas, data, method, verbose, dots) {
-    # TODO: Write `check_formula_data_for_na` to only look at variables in the formula
-    if (anyNA(data)) {
+    vars = unique(unlist(lapply(formulas, function(f) c(all.vars(f)))))
+    if (anyNA(data[, vars])) {
       stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).", call. = FALSE)
     }
 
@@ -102,7 +95,7 @@ createWeights <- function(
       # stabilize = TRUE,
     )
     
-    # TODO: Discuss defaults
+    # TODO: Isa and Noah to discuss defaults
     custom_args <- switch(method,
       "super" = list(SL.library = "SL.glm"),
       "glm" = list(use.kernel = TRUE),
@@ -146,15 +139,26 @@ createWeights <- function(
   attr(weights, "method") <- method
   attr(weights, "form_type") <- form_type
 
+  if (verbose) print(weights, i = 1)
   return(weights)
 }
 
-
-# TODO: Print for each x? `all = FALSE` default, but print them
+#' @rdname createWeights
+#' 
+#' @inheritParams devMSM_common_docs
+#' @param x devMSM_weights object from [createWeights()]
+#' @param ... ignored
+#' 
 #' @export
 print.devMSM_weights <- function(x, i = 1, ...) {
-  w <- x[[i]]$weights
+  if (identical(i, TRUE)) { 
+    for (j in seq_along(x)) {
+      print(x, i = j)
+    }
+    return(invisible(NULL))
+  }
 
+  w <- x[[i]]$weights
   trim <- attr(x, "trim")
   trim_lower <- attr(x, "trim")
   data_type <- attr(x, "data_type")
@@ -169,7 +173,7 @@ print.devMSM_weights <- function(x, i = 1, ...) {
   }
 
   msg <- sprintf(
-    "For %sthe \`%s\` weighting method, %sthe median weight value is %s (SD = %s; range = %s-%s).",
+    "For %sthe \`%s\` weighting method, %sthe median weight value is %s (SD = %s; range = %s-%s).\n",
     list_str,
     method,
     trim_str,
@@ -178,13 +182,21 @@ print.devMSM_weights <- function(x, i = 1, ...) {
     round(min(w), 2),
     round(max(w))
   )
-
   cat(msg)
   return(invisible(NULL))
 }
 
+#' @rdname createWeights
 #' @export
 plot.devMSM_weights <- function(x, i = 1, ...) {
+  if (identical(i, TRUE)) { 
+    ps <- lapply(seq_along(x), function(j) {
+      p <- plot(x, i = j)
+      return(p)
+    })
+    return(ps)
+  }
+
   w <- x[[i]]$weights
   trim <- attr(x, "trim")
   trim_lower <- attr(x, "trim")

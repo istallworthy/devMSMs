@@ -2,6 +2,8 @@
 % Please edit documentation in R/createWeights.R
 \name{createWeights}
 \alias{createWeights}
+\alias{print.devMSM_weights}
+\alias{plot.devMSM_weights}
 \title{Creates IPTW balancing weights}
 \usage{
 createWeights(
@@ -14,31 +16,40 @@ createWeights(
   home_dir = NULL,
   ...
 )
+
+\method{print}{devMSM_weights}(x, i = 1, ...)
+
+\method{plot}{devMSM_weights}(x, i = 1, ...)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
-frames, or mids object}
+frames, or \code{mids} object from the \code{mice} package}
 
-\item{obj}{initialized MSM object from \code{initMSM}}
+\item{obj}{initialized MSM object from \code{\link[=initMSM]{initMSM()}}}
 
-\item{formulas}{list of balancing formulas at each time point output from
-\code{createFormulas()}}
+\item{formulas}{list of balancing formulas at each time point output from \code{\link[=createFormulas]{createFormulas()}}}
 
 \item{method}{(optional) character string of weightitMSM() balancing method
 abbreviation (default is Covariate Balancing Propensity Score "cbps")}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
-FALSE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
+(default is FALSE)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is FALSE)}
 
-\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
+\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
-\item{...}{pass custom arguments to \code{weightitMSM()}}
+\item{...}{ignored}
+
+\item{x}{devMSM_weights object from \code{\link[=createWeights]{createWeights()}}}
+
+\item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over.}
 }
 \value{
-list of IPTW balancing weights
+a list containing \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} output. It is the length
+of the number of datasets (1 for a data.frame or the number of imputed datasets).
 }
 \description{
 Creates IPTW balancing weights at each user-specified exposure time point
@@ -85,6 +96,6 @@ w <- createWeights(data = data, obj = obj, formulas = f, method = "super")
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-{\code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}},
-\url{https://ngreifer.github.io/WeightIt/reference/weightitMSM.html}}
+\code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}},
+\url{https://ngreifer.github.io/WeightIt/reference/weightitMSM.html};
 }

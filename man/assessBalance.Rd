@@ -2,6 +2,9 @@
 % Please edit documentation in R/assessBalance.R
 \name{assessBalance}
 \alias{assessBalance}
+\alias{print.devMSM_bal_stats}
+\alias{summary.devMSM_bal_stats}
+\alias{plot.devMSM_bal_stats}
 \title{Assesses confounder balancing}
 \usage{
 assessBalance(
@@ -14,15 +17,20 @@ assessBalance(
   save.out = FALSE,
   home_dir = NULL
 )
+
+\method{print}{devMSM_bal_stats}(x, i = 1, t = TRUE, ...)
+
+\method{summary}{devMSM_bal_stats}(object, i = 1, t = TRUE, ...)
+
+\method{plot}{devMSM_bal_stats}(x, i = 1, t = TRUE, ...)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
-frames, or mids object}
+frames, or \code{mids} object from the \code{mice} package}
 
-\item{obj}{initialized MSM object from \code{initMSM}}
+\item{obj}{initialized MSM object from \code{\link[=initMSM]{initMSM()}}}
 
-\item{weights}{list of IPTW weights output from \code{createWeights},
-required for type 'weighted'}
+\item{weights}{(optional) list of IPTW weights output from \code{\link[=createWeights]{createWeights()}}}
 
 \item{balance_thresh}{(optional) one or two numbers between 0 and 1
 indicating a single balancing threshold or thresholds for more and less
@@ -31,17 +39,30 @@ important confounders, respectively (default = 0.1)}
 \item{imp_conf}{(optional) list of variable names reflecting important
 confounders, required if two balance thresholds are supplied}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
-TRUE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
+(default is FALSE)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is TRUE)}
+intermediary output locally (default is FALSE)}
 
-\item{home_dir}{(optional) path to home directory
-(required if save.out = TRUE)}
+\item{home_dir}{path to home directory (required if save.out = TRUE)}
+
+\item{x}{devMSM_bal_stats object from \code{assessBalance}}
+
+\item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over.}
+
+\item{t}{Which exposure variable to use. Can either be an index from 1, ..., num exposures or
+a string containing the exposure varaible name (e.g. \code{"A.3"}). With \code{t = TRUE}, all exposure
+variables will be looped over.}
+
+\item{...}{ignored}
+
+\item{object}{devMSM_bal_stats object from \code{\link[=assessBalance]{assessBalance()}}}
 }
 \value{
-a data frame of balance statistics
+a list containing balance statistics as a dataframe. It is the length
+of the number of datasets (1 for a data.frame or the number of imputed datasets)
 }
 \description{
 Draws on functions from the cobalt package to quantify the relations between
@@ -74,23 +95,21 @@ f <- createFormulas(obj, type = "short")
 b <- assessBalance(data = data, obj = obj)
 print(b)
 
-# returns list of ggplots for each exposure variable
-plots <- plot(b) 
-plots[[1]]
-plots[[2]]
-plots[[3]]
-
+# returns ggplot of balance stats for all exposure variables
+plots <- plot(b, t = TRUE)
+# can plot only specific exposure time periods
+plot(b, t = "A.3")
+plot(b, t = 3)
 
 # Weighted
 w <- createWeights(data = data, obj = obj, formulas = f)
 bw <- assessBalance(data = data, obj = obj, weights = w)
 print(bw)
+plot(bw)
 
 }
 \seealso{
-{\link{cobalt} package,
-\url{https://cran.r-project.org/web/packages/cobalt/index.html}}
-
-{Jackson, 2016 for more on assessing balance for time-varying
-exposures, \url{https://pubmed.ncbi.nlm.nih.gov/27479649/}}
+\link{cobalt} package, \url{https://cran.r-project.org/web/packages/cobalt/index.html};
+Jackson, 2016 for more on assessing balance for time-varying exposures,
+\url{https://pubmed.ncbi.nlm.nih.gov/27479649/}
 }

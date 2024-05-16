@@ -36,11 +36,6 @@ reference:
       IPTW balancing weights (Thoemmes & Ong, 2016) using the `createWeights()` function, the shortened balancing formulas, and all available weighting methods.
     contents: 
       - createWeights
-
-  - title: "Trim IPTW balancing weights (if needed)"
-    desc: >
-      Trims IPTW balancing weights with heavy right tails by populating all weight values above a given quantile with the weight value of that quantile.
-    contents:
       - trimWeights
 
   - title: "Assess balance"
@@ -60,26 +55,6 @@ reference:
       Takes fitted model output to created predicted values for user-specified histories (pooling for imputed data), before conducting contrast comparisons (pooling for imputed data), correcting for multiple comparisons, and then plotting results.
     contents: 
       - compareHistories
-      
-  - title: "Helper functions (`assessBalance`)"
-    contents:
-      - calcBalStats
-      - make_love_plot
-
-  - title: "Helper functions (`fitModel`)"
-    contents:
-      - getModel
-
-  - title: "Helper functions (`compareHistories`)"
-    contents:
-      - add_dose 
-      - add_histories
-      - create_custom_comparisons 
-      - create_custom_contrasts  
-      - eval_hist 
-      - get_comparison_values 
-      - get_reference_values  
-      - perform_multiple_comparison_correction 
   
   - title: "Example simulated datasets"
     desc: "These example datasets are used throughout the vignettes"
