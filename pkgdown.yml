@@ -1,14 +1,14 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   Customize_Balancing_Formulas: Customize_Balancing_Formulas.html
   Data_Requirements: Data_Requirements.html
+  Dev: Dev.html
   Preliminary_Steps: Preliminary_Steps.html
   Specify_Core_Inputs: Specify_Core_Inputs.html
   Terminology: Terminology.html
-  Workflow_Continuous_Exposure: Workflow_Continuous_Exposure.html
-last_built: 2024-03-18T20:08Z
+last_built: 2024-05-20T19:12Z
 urls:
   reference: https://istallworthy.github.io/devMSMs/reference
   article: https://istallworthy.github.io/devMSMs/articles
