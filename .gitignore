@@ -11,3 +11,8 @@ inst/doc
 /doc/
 /Meta/
 .DS_Store
+altdoc/freeze.rds
+^_quarto$
+_quarto
+_quarto/
+!_quarto/_freeze/

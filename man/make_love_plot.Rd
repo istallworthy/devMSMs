@@ -6,116 +6,28 @@
 \usage{
 make_love_plot(
   balance_stats,
-  exposure,
-  exposure_time_pt,
-  exposure_type,
+  exposure_type = c("continuous", "binary"),
   k = 0,
-  form_name,
-  data_type,
-  balance_thresh,
-  weights_method,
-  imp_conf,
-  save.out = FALSE,
-  home_dir = NULL,
-  folder = NULL,
-  verbose = TRUE
+  weight_method = NULL
 )
 }
 \arguments{
 \item{balance_stats}{data frame of balance statistics}
 
-\item{exposure}{name of exposure variable}
-
-\item{exposure_time_pt}{exposure time point integer}
-
-\item{exposure_type}{character indicating binary or continuous exposure type}
+\item{exposure_type}{String either "continuous" or "binary"}
 
 \item{k}{imputation number}
 
-\item{form_name}{formula name}
-
-\item{data_type}{single or imputed data type}
-
-\item{balance_thresh}{one or two numbers between 0 and 1 indicating a single
-balancing threshold or thresholds for more and less important confounders,
-respectively}
-
-\item{weights_method}{method character string of WeightItMSM() balancing
-method abbreviation}
-
-\item{imp_conf}{list of variable names reflecting important confounders}
-
-\item{save.out}{TRUE or FALSE indicator to save output and intermediary
-output locally}
-
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
-
-\item{folder}{folder path for saving}
-
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
-TRUE)}
+\item{weight_method}{name of weighting method (NULL for unweighted)}
 }
 \value{
-none
+ggplot2 object
 }
 \description{
 Create love plots showing balancing statistics
 }
 \examples{
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
-                    ti_confounders = "C",
-                    type = "full",
-                    save.out = FALSE)
+print("tbd")
 
-test <- data.frame(ID = 1:50,
-                   A.1 = rnorm(n = 50),
-                   A.2 = rnorm(n = 50),
-                   A.3 = rnorm(n = 50),
-                   B.1 = rnorm(n = 50),
-                   B.2 = rnorm(n = 50),
-                   B.3 = rnorm(n = 50),
-                   C = rnorm(n = 50),
-                   D.3 = rnorm(n = 50))
-test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
-
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   save.out = FALSE)
-
-b <- assessBalance(data = test,
-                   exposure = "A",
-                   exposure_time_pts = c(1, 2, 3),
-                   outcome = "D.3",
-                   type = "weighted",
-                   weights = w,
-                   formulas = f,
-                   save.out = FALSE)
-
-make_love_plot(balance_stats = b,
-               exposure = "A",
-               exposure_time_pt = 1,
-               exposure_type = "continuous",
-               form_name = "form_name",
-               data_type = "single",
-               balance_thresh = 0.1,
-               imp_conf = NULL,
-               weights_method = w[[1]]$method,
-               save.out = FALSE,
-               folder = "prebalance/")
-make_love_plot(balance_stats = b,
-               exposure = "A",
-               exposure_time_pt = 2,
-               exposure_type = "continuous",
-               form_name = "form_name",
-               data_type = "single",
-               balance_thresh = c(0.05, 0.1),
-               imp_conf = "A.2",
-               weights_method = w[[1]]$method,
-               save.out = FALSE,
-               folder = "weighted/")
 }
+\keyword{internal}

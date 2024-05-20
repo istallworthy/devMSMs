@@ -2,44 +2,49 @@
 % Please edit documentation in R/compareHistories.R
 \name{compareHistories}
 \alias{compareHistories}
+\alias{print.devMSM_comparisons}
+\alias{plot.devMSM_comparisons}
+\alias{summary.devMSM_comparisons}
 \title{Estimate, compare, and visualize exposure histories}
 \usage{
 compareHistories(
-  home_dir,
-  exposure,
-  exposure_time_pts,
-  outcome,
-  model,
-  epochs = NULL,
-  hi_lo_cut = NULL,
+  obj,
+  fit,
+  hi_lo_cut = c(0.3, 0.6),
+  dose_level = c("h", "l"),
   reference = NULL,
   comparison = NULL,
-  mc_comp_method = NA,
-  dose_level = NA,
-  exp_lab = NA,
-  out_lab = NA,
-  colors = NULL,
-  verbose = TRUE,
-  save.out = TRUE
+  mc_comp_method = stats::p.adjust.methods,
+  verbose = FALSE,
+  save.out = FALSE,
+  home_dir
 )
+
+\method{print}{devMSM_comparisons}(x, ...)
+
+\method{plot}{devMSM_comparisons}(
+  x,
+  colors = "Dark2",
+  exp_lab = NULL,
+  out_lab = NULL,
+  save.out = FALSE,
+  home_dir = NULL,
+  ...
+)
+
+\method{summary}{devMSM_comparisons}(object, type = c("preds", "comps"), ...)
 }
 \arguments{
-\item{home_dir}{path to home directory (required if 'save.out' = TRUE)}
+\item{obj}{initialized MSM object from \code{\link[=initMSM]{initMSM()}}}
 
-\item{exposure}{name of exposure variable}
-
-\item{exposure_time_pts}{list of integers at which weights will be
-created/assessed that correspond to time points when exposure wass measured}
-
-\item{outcome}{name of outcome variable with ".timepoint" suffix}
-
-\item{model}{list of model outputs from fitModel()}
-
-\item{epochs}{(optional) data frame of exposure epoch labels and values}
+\item{fit}{list of model outputs from \code{\link[=fitModel]{fitModel()}}}
 
 \item{hi_lo_cut}{(optional) list of two numbers indicating quantile values
 that reflect high and low values, respectively, for continuous exposure
 (default is median split)}
+
+\item{dose_level}{(optional) "l" or "h" indicating whether low or high doses
+should be tallied in tables and plots (default is high "h")}
 
 \item{reference}{(optional) list sof one or more strings of "-"-separated "l"
 and "h" values indicative of a reference exposure history to which to
@@ -53,8 +58,20 @@ reference, required if reference is supplied}
 comparison correction method for stats::p.adjust, default is
 Benjamini-Hochburg ("BH")}
 
-\item{dose_level}{(optional) "l" or "h" indicating whether low or high doses
-should be tallied in tables and plots (default is high "h")}
+\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
+(default is FALSE)}
+
+\item{save.out}{(optional) TRUE or FALSE indicator to save output and
+intermediary output locally (default is FALSE)}
+
+\item{home_dir}{path to home directory (required if save.out = TRUE)}
+
+\item{x}{devMSM_histories object from \code{\link[=compareHistories]{compareHistories()}}}
+
+\item{...}{ignored}
+
+\item{colors}{(optional) character specifying Brewer palette or list of
+colors (n(epochs)+1) for plotting (default is "Dark2" palette)}
 
 \item{exp_lab}{(optional) character label for exposure variable in plots
 (default is variable name)}
@@ -62,17 +79,17 @@ should be tallied in tables and plots (default is high "h")}
 \item{out_lab}{(optional) character label for outcome variable in plots
 (default is variable name)}
 
-\item{colors}{(optional) character specifying Brewer palette or list of
-colors (n(epochs)+1) for plotting (default is "Dark2" palette)}
+\item{object}{devMSM_histories object from \code{\link[=compareHistories]{compareHistories()}}}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for user output (default is
-TRUE)}
-
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is TRUE)}
+\item{type}{Either "preds" or "comps" corresponding to the
+results of \code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}} at low and high dosages or
+\code{\link[marginaleffects:comparisons]{marginaleffects::comparisons()}} respectively}
 }
 \value{
-data frame of history comparisons
+list containing two dataframes: \code{preds} with predictions from
+\code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}} containing average expected outcome
+for different exposure histories and \code{comps} with contrasts from
+\code{\link[marginaleffects:comparisons]{marginaleffects::comparisons()}} comparing different exposure history
 }
 \description{
 Takes fitted model output to created predicted values for user-specified
@@ -81,94 +98,56 @@ histories (pooling for imputed data), before conducting contrast comparisons
 plotting results.
 }
 \examples{
-f <- createFormulas(exposure = "A",
-                    exposure_time_pts = c(1, 2, 3),
-                    outcome = "D.3",
-                    tv_confounders = c("A.1", "A.2", "A.3", "B.1", "B.2", "B.3"),
-                    ti_confounders = "C",
-                    type = "full",
-                    save.out = FALSE)
+library(devMSMs)
+data <- data.frame(
+  ID = 1:50,
+  A.1 = rnorm(n = 50),
+  A.2 = rnorm(n = 50),
+  A.3 = rnorm(n = 50),
+  B.1 = rnorm(n = 50),
+  B.2 = rnorm(n = 50),
+  B.3 = rnorm(n = 50),
+  C = rnorm(n = 50),
+  D.3 = rnorm(n = 50)
+)
+obj <- initMSM(
+  data,
+  exposure = c("A.1", "A.2", "A.3"),
+  ti_conf = c("C"),
+  tv_conf = c("B.1", "B.2", "B.3", "D.3")
+)
+f <- createFormulas(obj, type = "short")
+w <- createWeights(data = data, obj = obj, formulas = f)
+fit <- fitModel(
+  data = data, obj = obj, weights = w, 
+  outcome = "D.3", model = "m0"
+)
 
-test <- data.frame(ID = 1:50,
-                   A.1 = rnorm(n = 50),
-                   A.2 = rnorm(n = 50),
-                   A.3 = rnorm(n = 50),
-                   B.1 = rnorm(n = 50),
-                   B.2 = rnorm(n = 50),
-                   B.3 = rnorm(n = 50),
-                   C = rnorm(n = 50),
-                   D.3 = rnorm(n = 50))
-test[, c("A.1", "A.2", "A.3")] <- lapply(test[, c("A.1", "A.2", "A.3")], as.numeric)
+comp = compareHistories(
+  obj, fit = fit,
+  hi_lo_cut = c(0.3, 0.6)
+)
+print(comp)
+plot(comp)
+summary(comp, "preds")
+summary(comp, "comps")
 
-w <- createWeights(data = test,
-                   exposure = "A",
-                   outcome = "D.3",
-                   formulas = f,
-                   save.out = FALSE)
+comp2 = compareHistories(
+  obj, fit = fit, 
+  reference = "l-l-l",
+  comparison = c("h-h-h", "h-h-l") 
+) 
+print(comp2)
+plot(comp2)
+summary(comp2, "preds")
+summary(comp2, "comps")
 
-m <- fitModel(data = test,
-              weights = w,
-              exposure = "A",
-              exposure_time_pts = c(1, 2, 3),
-              outcome = "D.3",
-              model = "m0",
-              save.out = FALSE)
-
-r <- compareHistories(exposure = "A",
-                      exposure_time_pts = c(1, 2, 3),
-                      outcome = "D.3",
-                      model = m,
-                      save.out = FALSE)
-r <- compareHistories(exposure = "A",
-                      exposure_time_pts = c(1, 2, 3),
-                      outcome = "D.3",
-                      model = m,
-                      reference = "l-l-l",
-                      comparison = "h-h-h",
-                      save.out = FALSE)
-r <- compareHistories(exposure = "A",
-                      exposure_time_pts = c(1, 2, 3),
-                      outcome = "D.3",
-                      model = m,
-                      reference = "l-l-l",
-                      comparison = c("h-h-h", "h-l-l"),
-                      save.out = FALSE)
-r <- compareHistories(exposure = "A",
-                      exposure_time_pts = c(1, 2, 3),
-                      outcome = "D.3",
-                      model = m,
-                      reference = c("l-l-l", "l-h-h"),
-                      comparison = c("h-h-h"),
-                      save.out = FALSE)
-r <- compareHistories(exposure = "A",
-                      exposure_time_pts = c(1, 2, 3),
-                      outcome = "D.3",
-                      model = m,
-                      reference = c("l-l-l", "l-h-h"),
-                      comparison = c("h-h-h", "l-l-h"),
-                      save.out = FALSE)
-r <- compareHistories(exposure = "A",
-                      exposure_time_pts = c(1, 2, 3),
-                      outcome = "D.3",
-                      model = m,
-                      reference = c("l-l-l", "l-h-h"),
-                      comparison = c("h-h-h", "l-l-h"),
-                      hi_lo_cut = c(0.60, 0.30),
-                      mc_comp_method = "BH",
-                      dose_level = "l",
-                      exp_lab = "Hello",
-                      out_lab = "Goodbye",
-                      colors = "Set1",
-                      save.out = FALSE)
-                      
 }
 \seealso{
-{\code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}},
-\url{https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf}}
-
-{\code{\link[marginaleffects:hypotheses]{marginaleffects::hypotheses()}},
-\url{https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf}}
-
-{\code{\link[stats:p.adjust]{stats::p.adjust()}},
-\url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust}}
+\code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}},
+\url{https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf};
+\code{\link[marginaleffects:hypotheses]{marginaleffects::hypotheses()}},
+\url{https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf};
+\code{\link[stats:p.adjust]{stats::p.adjust()}},
+\url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust};
 }

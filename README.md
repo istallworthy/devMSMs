@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# devMSMs: Implementing Marginal <img src="https://github.com/istallworthy/devMSMs/assets/31548151/0a1c69d7-1984-4ebe-8d16-0948d670a8fb" align="right" width="100"/> Structural Models with Longitudinal Data
+# devMSMs: Implementing Marginal <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100"/> Structural Models with Longitudinal Data
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -94,7 +94,7 @@ Core features of *devMSMs* include:
 The package contains 6 core functions for implementing the two phases of
 the MSM process: longitudinal confounder adjustment and outcome modeling
 of longitudinal data with time-varying exposures. <br>  
-<img width="820" alt="overview" src="https://github.com/istallworthy/devMSMs/assets/31548151/db0efeb1-c1e5-4c71-8062-01a5f34d56ab">
+<img width="820" alt="devMSMs overview" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png">
 <br>  
 <br>
 
@@ -126,7 +126,8 @@ manuscript. <br>
 package:
 
 ``` r
-library(devtools)
+# install.packages("devtools")
+require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs")
 library(devMSMs)
 ```
@@ -163,7 +164,7 @@ Steps</a>, and *Workflows* vignettes (for binary (TBA) or
 <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a>
 exposures) for implementing the steps below.
 
-<img width="800" alt="Screen Shot 2023-11-08 at 4 00 44 PM" src="https://github.com/istallworthy/devMSMs/assets/31548151/91216ef3-e4c3-4c8a-a522-f683105bfc66">
+<img width="800" alt="devMSMs schematic of workflow" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png">
 
 <br>
 
