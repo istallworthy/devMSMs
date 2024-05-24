@@ -54,12 +54,16 @@
 #' @export
 createWeights <- function(
     data, obj, formulas,
-    method = c("glm", "gbm", "bart", "super", "cbps"),
-    verbose = FALSE, save.out = FALSE, home_dir = NULL,
+    method = c("glm", "gbm", "bart", "super", "cbps", "ipt"),
+    verbose = FALSE, save.out = FALSE,
     ...) {
   ### Checks ----
   dreamerr::check_arg(verbose, save.out, "scalar logical")
-  if (save.out) dreamerr::check_arg_plus(home_dir, "path dir")
+ 
+  home_dir <- attr(obj, "home_dir")
+  if (is.null(home_dir) && save.out){
+    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
+  }
 
   .check_data(data)
   dreamerr::check_arg(formulas, "class(devMSM_formulas)")
@@ -101,7 +105,8 @@ createWeights <- function(
       "glm" = list(use.kernel = TRUE),
       "gbm" = list(use.kernel = TRUE, criterion = "p.mean"), # required? even tho doc says there is default
       "cbps" = list(use.kernel = TRUE, over = FALSE),
-      "bart" = list(use.kernel = TRUE, over = FALSE)
+      "bart" = list(use.kernel = TRUE, over = FALSE),
+      "ipt" = list(use.kernel = TRUE, over = FALSE)
     )
     args <- modifyList(args, custom_args)
 

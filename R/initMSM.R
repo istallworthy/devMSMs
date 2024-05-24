@@ -46,7 +46,8 @@
 #'
 #'
 #' @export
-initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL, concur_conf = NULL, sep = "[\\._]") {
+initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL, 
+                    concur_conf = NULL, home_dir = NULL, sep = "[\\._]") {
 
   if (inherits(data, "mids")) {
     d <- data[[1]]
@@ -90,6 +91,8 @@ initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL, concu
   if (any(exposure %in% tv_conf)) {
     stop("`exposure` must not be in `tv_conf`.", call. = FALSE)
   }
+  
+  dreamerr::check_arg_plus(home_dir, "path dir")  
 
   # checking exposure type
   lapply(seq_along(exposure), function(i) {
@@ -131,7 +134,8 @@ initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL, concu
   attr(obj, "exposure_time_pts") <- exposure_time_pts
   attr(obj, "exposure_type") <- exposure_type
   attr(obj, "sep") <- sep
-
+  attr(obj, "home_dir") <- home_dir
+  
   return(obj)
 }
 

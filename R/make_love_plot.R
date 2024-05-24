@@ -25,15 +25,17 @@ make_love_plot <- function(balance_stats, exposure_type = c("continuous", "binar
   xrange <- c(-max(abs(xrange)), max(abs(xrange)))
 
   # data.frame, list, mice
-  if (k == 0) {
+  if (is.na(k)) {
+    title_imputation_note <- sprintf("Averaging Across Imputed Datasets ")
+  } else if (k == 0) {
     title_imputation_note <- ""
   } else {
     title_imputation_note <- sprintf("for Imputation %s ", k)
   }
   if (is.null(weight_method)) {
-    title <- sprintf("Covariate balance %s", title_imputation_note)
+    title <- sprintf("Covariate Balance %s", title_imputation_note)
   } else {
-    title <- sprintf("Covariate balance %susing `%s` weights", title_imputation_note, weight_method)
+    title <- sprintf("Covariate Balance %susing `%s` weights ", title_imputation_note, weight_method)
   }
   
   x_lab <- if (exposure_type == "continuous") {

@@ -136,6 +136,46 @@ perm2 <- function(r, v) {
   do.call(function(...) paste(..., sep = "-"), res)
 }
 
+#' Averages balance stats across imputed datasets: df of all times
+#' 
+#' @keywords internal
+.avg_imp_bal_stats <- function(bal_stats) {
+
+  temp <- lapply(bal_stats, function(x){
+    b <- do.call(rbind, lapply(x, as.data.frame))
+  })
+  bal_stats <- do.call(rbind, lapply(bal_stats[[1]], as.data.frame))
+  bal_stats$std_bal_stats = rowMeans(do.call(cbind, 
+                                             lapply(temp, function(x) abs(x[["std_bal_stats"]]))))
+  bal_stats$balanced <- ifelse(bal_stats$std_bal_stats < 
+                                 bal_stats$bal_thresh, 1, 0) # recalc balanced
+
+  return(bal_stats)
+}
+
+#' Averages balance stats across imputed datasets: list by time
+#' 
+#' @keywords internal
+.avg_imp_bal_stats_time <- function(bal_stats) {
+
+  avgs = lapply(1:5, function(y) {
+    rowMeans(do.call(cbind, 
+                     lapply(
+                       lapply(1:2, function(x){
+                         x <- bal_stats[[x]]
+                         out <- x[[y]]
+                         out
+                       }), function(x) abs(x[["std_bal_stats"]]))))
+  })
+  
+  test <- bal_stats[[1]]
+  bal_stats <- lapply(1:5, function(x){
+    test[[x]]$std_bal_stats <- avgs[[x]]
+    test[[x]]
+  })
+  bal_stats
+}
+
 
 # fitModel ----
 #' Takes row means of eposure variables in the same epoch

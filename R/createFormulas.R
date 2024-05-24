@@ -54,10 +54,15 @@
 createFormulas <- function(
     obj, type = c("full", "short", "update"), custom = NULL,
     keep_conf = NULL, bal_stats = NULL,
-    verbose = FALSE, save.out = FALSE, home_dir = NULL) {
+    verbose = FALSE, save.out = FALSE) {
+  
   ### Checks ----
   dreamerr::check_arg(verbose, save.out, "scalar logical")
-  if (save.out) dreamerr::check_arg_plus(home_dir, "path dir")
+  
+  home_dir <- attr(obj, "home_dir")
+  if (is.null(home_dir) && save.out){
+    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
+  } else if (save.out) dreamerr::check_arg_plus(home_dir, "path dir")
 
   # Extract var_tab and get variables
   var_tab <- attr(obj, "var_tab")
@@ -65,9 +70,14 @@ createFormulas <- function(
   ti_conf_time <- var_tab$time[var_tab$type == "ti_conf"]
   tv_conf <- var_tab$var[var_tab$type == "tv_conf"]
   tv_conf_time <- var_tab$time[var_tab$type == "tv_conf"]
-  tv_conf_time <- tv_conf_time - 0.01 * var_tab$concur_conf[var_tab$type == "tv_conf"]
+  if (!is.null(var_tab$concur_conf)) { # added to fix bug if no concur_conf
+    tv_conf_time <- tv_conf_time - 0.01 * var_tab$concur_conf[var_tab$type == "tv_conf"]
+  }
   exposure <- var_tab$var[var_tab$type == "exposure"]
   exposure_time <- var_tab$time[var_tab$type == "exposure"]
+  
+  data_type <- attr(bal_stats, "data_type")
+  
 
   # Check keep_conf
   dreamerr::check_arg(keep_conf, "vector character | NULL")
@@ -180,19 +190,28 @@ createFormulas <- function(
     }
 
     if (type == "update") {
-      # TODO: Check this
+      # TODO: Check this <--IS: this need to be looking at balance stats averaged across imputed data, w/ imputed data; not working w/ imputed data
+      ## IS added
+      if (data_type == "data.frame") {  # non-imputed data
+        bal_stats <- bal_stats[[1]]
+        bal_stats <- do.call(rbind, lapply(bal_stats, as.data.frame))
+      } else if (data_type == "list" || data_type == "mids") { # imputed data --needs averaging
+        bal_stats <- .avg_imp_bal_stats(bal_stats)
+      }
+
       update_include <- bal_stats$covariate[
-        bal_stats$balanced == 0 &
-          bal_stats$exp_time == i_time &
+         bal_stats$balanced == 0 &
+          bal_stats$exposure_time == i_time &
           as.numeric(bal_stats$covar_time) < im1_time &
           as.numeric(bal_stats$covar_time) > 0
       ]
       tv_include <- c(tv_include, update_include)
+      
     }
 
     # adding in any user-specified concurrent confounders (default is only lagged)
     keep_time <- .extract_time_pts_from_vars(keep_conf, sep = attr(obj, "sep"))
-    keep_include <- keep_conf[keep_time == i_time]
+    keep_include <- keep_conf[keep_time < i_time]
 
     vars_to_include <- unique(c(ti_include, tv_include, keep_include))
 

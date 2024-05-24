@@ -42,9 +42,13 @@
 #' trimWeights(w, at = 0.975, lower = TRUE)
 #' 
 #' @export
-trimWeights <- function(weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE, home_dir = NULL) {
+trimWeights <- function(weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE) {
   ### Checks ----
   dreamerr::check_arg(verbose, save.out, "scalar logical")
+  home_dir <- attr(obj, "home_dir")
+  if (is.null(home_dir) && save.out){
+    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
+  }
   if (save.out) dreamerr::check_arg_plus(home_dir, "path dir")
   
   dreamerr::check_arg(at, "scalar numeric GT(0.5) LT(1) | scalar integer GT(1)")

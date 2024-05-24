@@ -40,6 +40,7 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
   tv_conf_time <- var_tab$time[var_tab$type == "tv_conf"]
   exposure <- var_tab$var[var_tab$type == "exposure"]
   exposure_time <- var_tab$time[var_tab$type == "exposure"]
+  sep <- attr(obj, "sep") 
 
   # creating initial data frames
   # data frame with all sampling weights for all exposures at all exposure time points for all histories
@@ -179,11 +180,18 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
 
     bal_stats$exposure <- exposure_name
     bal_stats$exposure_time <- exposure_time_pt
+    
+    # added by IS as covar_time is needed for "update" in createFormulas()
+    bal_stats$covar_time <- NA
+    bal_stats$covar_time <- as.numeric(.extract_time_pts_from_vars(bal_stats$covariate, sep = sep))
 
     # collect proportions for histories at this time point
     all_prop_weights <- c(all_prop_weights, list(prop_sum))
     all_bal_stats <- c(all_bal_stats, list(bal_stats))
   } # Ends exposure_time_pts loop
+  
+  
+
   
   return(all_bal_stats)
 }

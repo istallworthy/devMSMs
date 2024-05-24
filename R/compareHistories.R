@@ -84,7 +84,7 @@ compareHistories <- function(
     hi_lo_cut = c(0.3, 0.6), dose_level = c("h", "l"),
     reference = NULL, comparison = NULL,
     mc_comp_method = stats::p.adjust.methods,
-    verbose = FALSE, save.out = FALSE, home_dir) {
+    verbose = FALSE, save.out = FALSE) {
   ### Checks ----
   dreamerr::check_arg(verbose, save.out, "scalar logical")
   if (save.out) {
@@ -97,6 +97,11 @@ compareHistories <- function(
   }
 
   dreamerr::check_arg(fit, "class(devMSM_models)")
+  
+  home_dir <- attr(obj, "home_dir")
+  if (is.null(home_dir) && save.out){
+    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
+  }
 
   # Get objects from `obj`
   exposure <- attr(obj, "exposure")

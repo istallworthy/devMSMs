@@ -34,8 +34,8 @@ Imports:
     stats,
     survey,
     tinytable,
-    utils,
-    WeightIt
+    WeightIt,
+    utils
 Suggests: 
     CBPS,
     dbarts,

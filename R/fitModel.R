@@ -78,9 +78,14 @@ fitModel <- function(
     data, obj, weights, outcome,
     model = c("m0", "m1", "m2", "m3"), int_order = NA, covariates = NULL,
     family = NULL, link = NA,
-    verbose = FALSE, save.out = FALSE, home_dir = NULL) {
+    verbose = FALSE, save.out = FALSE) {
   ### Checks ----
   dreamerr::check_arg(verbose, save.out, "scalar logical")
+  
+  home_dir <- attr(obj, "home_dir")
+  if (is.null(home_dir) && save.out){
+    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
+  }
   if (save.out) {
     dreamerr::check_arg_plus(home_dir, "path dir")
     .create_dir_if_needed(file.path(home_dir, "models"))
@@ -157,13 +162,13 @@ fitModel <- function(
     ), call. = FALSE)
   }
   
-  # TODO: Include this?
-  miss <- !(covariates %in% var_tab$var[var_tab$type != "exposure"])
-  if (any(miss)) {
-    warning(sprintf(
-      "Please make sure all variables in `covariates` are included as either exposure variables, time-varying confounders, or time invariant confounders.\nThe following variables are not: %s", paste(covariates[miss], sep = ", ")
-    ), call. = FALSE)
-  }
+  # # TODO: Include this?
+  # miss <- !(covariates %in% var_tab$var[var_tab$type != "exposure"])
+  # if (any(miss)) {
+  #   warning(sprintf(
+  #     "Please make sure all variables in `covariates` are included as either exposure variables, time-varying confounders, or time invariant confounders.\nThe following variables are not: %s", paste(covariates[miss], sep = ", ")
+  #   ), call. = FALSE)
+  # }
 
   # getting null comparisons for LHT
   null_model <- if (model %in% c("m0", "m2")) {

@@ -61,19 +61,19 @@
 #' @export
 assessBalance <- function(
     data, obj, weights = NULL, balance_thresh = NULL, imp_conf = NULL,
-    verbose = FALSE, save.out = FALSE, home_dir = NULL) {
+    verbose = FALSE, save.out = FALSE) {
   ### Checks ----
   dreamerr::check_arg(verbose, save.out, "scalar logical")
   if (save.out) {
     dreamerr::check_arg_plus(home_dir, "path dir")
   }
-
+  
   .check_data(data)
   if (!inherits(obj, "devMSM")) {
     stop("`obj` must be output from `initMSM`", call. = FALSE)
   }
   # dreamerr::check_arg(obj, "class(devMSM)", .message = "`obj` must be output from `initMSM`")
-
+  
   if (is.null(weights)) {
     type <- "prebalance"
     weights_method <- "no weights"
@@ -82,7 +82,7 @@ assessBalance <- function(
     type <- "weighted"
     weights_method <- weights[[1]]$method
   }
-
+  
   dreamerr::check_set_arg(
     balance_thresh, "numeric vector len(1,2) GT{0} LT{1} NULL{0.1}"
   )
@@ -93,13 +93,16 @@ assessBalance <- function(
   if (!is.null(imp_conf) && length(balance_thresh) == 1) {
     stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively", call. = FALSE)
   }
-
-  if (save.out) {
+  
+  home_dir <- attr(obj, "home_dir")
+  if (is.null(home_dir) && save.out){
+    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
+  } else if (save.out) {
     .create_dir_if_needed(file.path(home_dir, "balance"))
     .create_dir_if_needed(file.path(home_dir, "balance", type))
     .create_dir_if_needed(file.path(home_dir, "balance", type, "plots"))
   }
-
+  
   ### START ----
   if (inherits(data, "mids")) {
     data_type <- "mids"
@@ -112,7 +115,7 @@ assessBalance <- function(
     data <- list(data)
     m <- 1
   }
-
+  
   # calcBalStats ----
   all_bal_stats <- lapply(seq_len(m), function(k) {
     if (data_type == "mids") {
@@ -122,24 +125,24 @@ assessBalance <- function(
     }
     # `weightitMSM` object
     w <- weights[[k]]
-
+    
     return(calc_bal_stats(
       data = d, obj = obj, weights = w$weights,
       balance_thresh = balance_thresh, imp_conf = imp_conf
     ))
   })
-
+  
   class(all_bal_stats) <- c("devMSM_bal_stats", "list")
   attr(all_bal_stats, "data_type") <- data_type
   attr(all_bal_stats, "exposure") <- attr(obj, "exposure")
   attr(all_bal_stats, "exposure_type") <- attr(obj, "exposure_type")
-
+  
   is_weighted <- !(is.null(weights))
   attr(all_bal_stats, "weighted") <- is_weighted
   if (is_weighted) {
     attr(all_bal_stats, "weight_method") <- attr(weights, "method")
   }
-
+  
   if (verbose) print(all_bal_stats, i = 1, t = TRUE)
   return(all_bal_stats)
 }
@@ -151,17 +154,31 @@ assessBalance <- function(
 #' @param ... ignored
 #'
 #' @export
-print.devMSM_bal_stats <- function(x, i = 1, t = TRUE, ...) {
+print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
+  if (missing(i)) {
+    i <- NA
+  }
+  data_type <- attr(object, "data_type")
+  
   if (identical(i, TRUE)) {
     lapply(seq_along(x), function(j) {
       print(x, i = j, t = t)
     })
     return(invisible(NULL))
   }
-
+  
+  ## IS added to print avgs over impts for i = NA
+  if (is.na(i)) {
+    if (data_type == "list" | data_type == "mids") {
+      all_bal_stats <- .avg_imp_bal_stats_time(x) 
+    } else {
+      all_bal_stats <- x[[i]]
+    }
+  }
+  
   # Process t
   exposure <- attr(x, "exposure")
-  all_bal_stats <- x[[i]]
+  # all_bal_stats <- x[[i]]
   dreamerr::check_arg(t, "integer vector | logical scalar | character vector")
   if (all(t %in% exposure)) {
     t <- match(t, exposure)
@@ -174,13 +191,17 @@ print.devMSM_bal_stats <- function(x, i = 1, t = TRUE, ...) {
       length(exposure)
     ), call. = FALSE)
   }
-
+  
   if (length(x) == 1) {
     tbl_caption <- "Balance Stats for all Exposure Time Periods"
   } else {
-    tbl_caption <- sprintf("Balance Stats for all Exposure Time Periods for imputation (%s)", i)
+    if (!is.na(i)) {
+      tbl_caption <- sprintf("Balance Stats for all Exposure Time Periods for imputation (%s)", i)
+    } else {
+      tbl_caption <- sprintf("Balance Stats for all Exposure Time Periods Averaging Across Imputed Datasets")
+    }
   }
-
+  
   balance_stats <- do.call(rbind, lapply(t, function(j) all_bal_stats[[j]]))
   balance_stats <- balance_stats[, c("exposure", "covariate", "std_bal_stats", "bal_thresh", "balanced")]
   t <- tinytable::tt(balance_stats, digits = 3, caption = tbl_caption)
@@ -194,24 +215,45 @@ print.devMSM_bal_stats <- function(x, i = 1, t = TRUE, ...) {
 #' @param ... ignored
 #'
 #' @export
-summary.devMSM_bal_stats <- function(object, i = 1, t = TRUE, ...) {
-  all_bal_stats <- object[[i]]
+summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
   data_type <- attr(object, "data_type")
   weight_method <- attr(object, "weight_method")
-
+  
+  if (missing(i)) {
+    i <- NA
+  }
+  
+  ## IS added to print avgs over impts for i = NA
+  if (is.na(i)) {
+    if (data_type == "list" | data_type == "mids") {
+      all_bal_stats <- .avg_imp_bal_stats_time(object) 
+    } else {
+      all_bal_stats <- object[[i]]
+    }
+  }
+  
   ### Summarizing balance ----
   vars <- unique(unlist(lapply(all_bal_stats, "[[", "covariate")))
   n_covars <- Reduce(`+`, lapply(all_bal_stats, nrow))
   imbalanced_covars <- unlist(lapply(all_bal_stats, function(object) object$covariate[object$balanced == 0]))
   n_imbalanced_covars <- length(imbalanced_covars)
-
+  
   # Early return, no imbalanced
   if (n_imbalanced_covars == 0) {
-    msg <- if (data_type == "imputed") {
+    msg <- if (data_type == "list" | data_type == "mids") {
       if (!is.null(weight_method)) {
-        sprintf("No covariates remain imbalaned for imputation %s using `%s` weighting method.", i, weight_method)
+        if (!is.na(i)) {
+          sprintf("No covariates remain imbalaned for imputation %s using `%s` weighting method.", i, weight_method)
+        }
+        if (is.na(i)) {
+          sprintf("Averaging across imputed datasets using %s weighting method.", weight_method)
+        }
       } else {
-        sprintf("No covariates are imbalaned for imputation %s.", i)
+        if (!is.na(i)) {
+          sprintf("No covariates are imbalanced for imputation %s.", i)
+        } else if (is.na(i)){
+          sprintf("No covariates are imbalanced averaging across imputed datasets.")
+        }
       }
     } else {
       if (!is.null(weight_method)) {
@@ -221,10 +263,10 @@ summary.devMSM_bal_stats <- function(object, i = 1, t = TRUE, ...) {
       }
     }
     message(msg)
-
+    
     return(invisible())
   }
-
+  
   imbalanced_std_bal_stats <- unlist(lapply(
     all_bal_stats, function(object) object$std_bal_stats[object$balanced == 0]
   ))
@@ -239,12 +281,20 @@ summary.devMSM_bal_stats <- function(object, i = 1, t = TRUE, ...) {
       )
     })
   )
-
-  msg <- if (data_type == "imputed") {
+  
+  msg <- if (data_type == "list" || data_type == "mids") {
     if (!is.null(weight_method)) {
-      sprintf("USER ALERT: For imputation %s using `%s` weighting method:", i, weight_method)
+      if (!is.na(i)) {
+        sprintf("USER ALERT: For imputation %s using `%s` weighting method:", i, weight_method)
+      } else if (is.na(i)){
+        sprintf("USER ALERT: Averaging across imputed datasets using `%s` weighting method:", weight_method)
+      }
     } else {
-      sprintf("USER ALERT: For imputation %s:", i)
+      if (!is.na(i)){
+        sprintf("USER ALERT: For imputation %s:", i)
+      } else if (is.na(i)){
+        sprintf("USER ALERT: Averaging across imputated datasets:")
+      }
     }
   } else {
     if (!is.null(weight_method)) {
@@ -261,12 +311,20 @@ summary.devMSM_bal_stats <- function(object, i = 1, t = TRUE, ...) {
     median(abs(imbalanced_std_bal_stats)),
     max(abs(imbalanced_std_bal_stats))
   )
-
-  caption <- if (data_type == "imputed") {
+  
+  caption <- if (data_type == "list" || data_type == "mids") {
     if (!is.null(weight_method)) {
-      sprintf("Imbalanced Covariates for imputation %s using `%s`", i, weight_method)
+      if (!is.na(i)) {
+        sprintf("Imbalanced Covariates for imputation %s using `%s`", i, weight_method)
+      } else {
+        sprintf("Imbalanced Covariates Averaging Across Imputed Datasetrs using `%s`", weight_method)
+      }
     } else {
-      sprintf("Imbalanced Covariates for imputation %s", i)
+      if (!is.na(i)) {
+        sprintf("Imbalanced Covariates for imputation %s", i)
+      } else {
+        sprintf("Imbalanced Covariates Averaged Across Imputed Datasets")
+      }
     }
   } else {
     if (!is.null(weight_method)) {
@@ -277,7 +335,7 @@ summary.devMSM_bal_stats <- function(object, i = 1, t = TRUE, ...) {
   }
   colnames(tab_bal_summary) <- c("Exposure", "Total # of covariates", "# of imbalanced covariates")
   t <- tinytable::tt(tab_bal_summary, caption = caption)
-
+  
   cat(msg, main_msg)
   print(t, output = "markdown")
 }
@@ -289,10 +347,23 @@ summary.devMSM_bal_stats <- function(object, i = 1, t = TRUE, ...) {
 #' @param ... ignored
 #'
 #' @export
-plot.devMSM_bal_stats <- function(x, i = 1, t = TRUE, ...) {
+plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
   data_type <- attr(x, "data_type")
   weight_method <- attr(x, "weight_method")
-
+  
+  if (missing(i)) {
+    i <- NA
+  }
+  
+  ## IS added to print avgs over impts for i = NA
+  if (is.na(i)) {
+    if (data_type == "list" || data_type == "mids") {
+      all_bal_stats <- .avg_imp_bal_stats_time(x) 
+    } else {
+      all_bal_stats <- x[[i]]
+    }
+  }
+  
   exposure <- attr(x, "exposure")
   exposure_type <- attr(x, "exposure_type")
   x_lab <- if (exposure_type == "continuous") {
@@ -301,9 +372,9 @@ plot.devMSM_bal_stats <- function(x, i = 1, t = TRUE, ...) {
     "Standardized Mean Difference Between Exposures"
   }
   k <- ifelse(data_type == "data.frame", 0, i)
-
+  
   # Process t
-  all_bal_stats <- x[[i]]
+  # all_bal_stats <- x[[i]]
   dreamerr::check_arg(t, "integer vector | logical scalar | character vector")
   if (all(t %in% exposure)) {
     t <- match(t, exposure)
@@ -316,9 +387,9 @@ plot.devMSM_bal_stats <- function(x, i = 1, t = TRUE, ...) {
       length(exposure)
     ), call. = FALSE)
   }
-
+  
   balance_stats <- do.call(rbind, lapply(t, function(j) all_bal_stats[[j]]))
-
+  
   # Loop through selected exposure variables
   lp <- make_love_plot(
     balance_stats = balance_stats,
@@ -326,6 +397,6 @@ plot.devMSM_bal_stats <- function(x, i = 1, t = TRUE, ...) {
     k = k,
     weight_method = attr(x, "weight_method")
   )
-
+  
   return(lp)
 }
