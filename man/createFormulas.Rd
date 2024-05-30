@@ -12,8 +12,7 @@ createFormulas(
   keep_conf = NULL,
   bal_stats = NULL,
   verbose = FALSE,
-  save.out = FALSE,
-  home_dir = NULL
+  save.out = FALSE
 )
 
 \method{print}{devMSM_formulas}(x, ...)
@@ -39,8 +38,6 @@ always retain in formulas (default depends on type)}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is FALSE)}
-
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{x}{devMSM_formulas object from \code{\link[=createFormulas]{createFormulas()}}}
 

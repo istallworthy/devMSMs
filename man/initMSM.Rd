@@ -11,6 +11,7 @@ initMSM(
   tv_conf,
   ti_conf = NULL,
   concur_conf = NULL,
+  home_dir = NULL,
   sep = "[\\\\._]"
 )
 }
@@ -31,6 +32,8 @@ time-varying exposure variables required here)}
 
 \item{concur_conf}{(optional) list of variable names reflecting time-varying
 confounders to retain in formulas contemporaneously (default is none)}
+
+\item{home_dir}{(optional) directory for saving output}
 
 \item{sep}{(optional) The seperator between the variable and the time period. The
 variable names will be split by the last occurance of \code{sep} with the

@@ -11,6 +11,7 @@
 #' @param ti_conf list of time invariant confounders. Can be left as NULL for none.
 #' @param concur_conf (optional) list of variable names reflecting time-varying
 #'   confounders to retain in formulas contemporaneously (default is none)
+#' @param home_dir (optional) directory for saving output 
 #' @param sep (optional) The seperator between the variable and the time period. The
 #'   variable names will be split by the last occurance of `sep` with the
 #'   second string containing the time. This uses regex notation, so `.` must

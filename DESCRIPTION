@@ -8,6 +8,9 @@ Authors@R: c(person("Isabella", "Stallworthy",
             person("Noah", "Greifer",
             email = "ngreifer@iq.harvard.edu",
             role = c("aut", "ctb")),
+	    person("Kyle", "Butts",
+	    email = "buttskyle96@gmail.com",
+	    role = ("ctb")),
             person("Meriah", "DeJoseph",
             email = "meriahd@stanford.edu",
             role = c("aut")),
@@ -17,7 +20,7 @@ Authors@R: c(person("Isabella", "Stallworthy",
             person("Daniel", "Berry",
             email = "dberry@umn.edu",
             role = c("aut")))
-Description: Functions for preparing, assessing, and implementing MSMS with longitudinal data.
+Description: Functions for implementing MSMS with longitudinal data.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

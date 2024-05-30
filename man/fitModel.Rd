@@ -16,8 +16,7 @@ fitModel(
   family = NULL,
   link = NA,
   verbose = FALSE,
-  save.out = FALSE,
-  home_dir = NULL
+  save.out = FALSE
 )
 
 \method{print}{devMSM_models}(x, i = 1, ...)
@@ -56,8 +55,6 @@ required for covariate models ("m1", "m3")}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is FALSE)}
-
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{x}{devMSM_models object from \code{fitModel}}
 

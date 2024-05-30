@@ -10,10 +10,9 @@ createWeights(
   data,
   obj,
   formulas,
-  method = c("glm", "gbm", "bart", "super", "cbps"),
+  method = c("glm", "gbm", "bart", "super", "cbps", "ipt"),
   verbose = FALSE,
   save.out = FALSE,
-  home_dir = NULL,
   ...
 )
 
@@ -37,8 +36,6 @@ abbreviation (default is Covariate Balancing Propensity Score "cbps")}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is FALSE)}
-
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{...}{ignored}
 

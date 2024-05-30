@@ -6,7 +6,7 @@
 \alias{devMSMs-package}
 \title{devMSMs: Implementing Marginal Structural Models with Longitudinal Data}
 \description{
-Functions for preparing, assessing, and implementing MSMS with longitudinal data.
+Functions for implementing MSMS with longitudinal data.
 }
 \seealso{
 Useful links:
@@ -25,6 +25,11 @@ Authors:
   \item Meriah DeJoseph \email{meriahd@stanford.edu}
   \item Emily Padrutt \email{padru004@umn.edu}
   \item Daniel Berry \email{dberry@umn.edu}
+}
+
+Other contributors:
+\itemize{
+  \item Kyle Butts \email{buttskyle96@gmail.com} [contributor]
 }
 
 }

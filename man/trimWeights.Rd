@@ -4,14 +4,7 @@
 \alias{trimWeights}
 \title{Trim IPTW balancing weights, if needed}
 \usage{
-trimWeights(
-  weights,
-  at = 0,
-  lower = FALSE,
-  verbose = FALSE,
-  save.out = FALSE,
-  home_dir = NULL
-)
+trimWeights(weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE)
 }
 \arguments{
 \item{weights}{list of IPTW weights output from \code{\link[=createWeights]{createWeights()}}}
@@ -30,8 +23,6 @@ trimming the top and bottom 3 weights). Default is \code{FALSE} to only trim the
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is FALSE)}
-
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
 }
 \value{
 a list containing \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} output. It is the length
