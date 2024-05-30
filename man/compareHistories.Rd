@@ -16,8 +16,7 @@ compareHistories(
   comparison = NULL,
   mc_comp_method = stats::p.adjust.methods,
   verbose = FALSE,
-  save.out = FALSE,
-  home_dir
+  save.out = FALSE
 )
 
 \method{print}{devMSM_comparisons}(x, ...)
@@ -64,8 +63,6 @@ Benjamini-Hochburg ("BH")}
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is FALSE)}
 
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
-
 \item{x}{devMSM_histories object from \code{\link[=compareHistories]{compareHistories()}}}
 
 \item{...}{ignored}
@@ -78,6 +75,8 @@ colors (n(epochs)+1) for plotting (default is "Dark2" palette)}
 
 \item{out_lab}{(optional) character label for outcome variable in plots
 (default is variable name)}
+
+\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{object}{devMSM_histories object from \code{\link[=compareHistories]{compareHistories()}}}
 

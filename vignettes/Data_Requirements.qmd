@@ -57,12 +57,6 @@ devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 if (!require("devtools")) install.packages("devtools", quiet = TRUE)
 if (!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 ```
-
-```{r setup}
-library(devMSMs)
-require("mice", quietly = TRUE)
-```
-  
   
 The following longitudinal data that accompany *devMSMs* are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain (ESETA1) measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems (StrDif_Tot) measured at 58 months.  
   
@@ -81,6 +75,8 @@ head(sim_data_wide, n = c(5, 10))
 (2) imputed data in the form of a mids object (output from `mice::mice()`);  
   
 ```{r}
+require("mice", quietly = TRUE)
+
 data("sim_data_mice", package = "devMSMs")
 
 class(sim_data_mice)

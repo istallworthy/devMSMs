@@ -155,10 +155,18 @@ assessBalance <- function(
 #'
 #' @export
 print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
-  if (missing(i)) {
-    i <- NA
+  
+  # IS added 
+  data_type <- if (length(x) > 1) "imputed" else "data frame"
+  
+  if (is.na(i)) {
+    if (data_type == "imputed") {
+      i <- NA
+    } else {
+      i <- 1
+    }
   }
-  data_type <- attr(object, "data_type")
+  
   
   if (identical(i, TRUE)) {
     lapply(seq_along(x), function(j) {
@@ -169,12 +177,11 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
   
   ## IS added to print avgs over impts for i = NA
   if (is.na(i)) {
-    if (data_type == "list" | data_type == "mids") {
-      all_bal_stats <- .avg_imp_bal_stats_time(x) 
-    } else {
-      all_bal_stats <- x[[i]]
-    }
+    all_bal_stats <- .avg_imp_bal_stats_time(x) 
+  } else {
+    all_bal_stats <- x[[i]]
   }
+  
   
   # Process t
   exposure <- attr(x, "exposure")
@@ -192,7 +199,7 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
     ), call. = FALSE)
   }
   
-  if (length(x) == 1) {
+  if (data_type == "data frame") {
     tbl_caption <- "Balance Stats for all Exposure Time Periods"
   } else {
     if (!is.na(i)) {
@@ -216,21 +223,24 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
 #'
 #' @export
 summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
-  data_type <- attr(object, "data_type")
+  data_type<- attr(object, "data_type")
   weight_method <- attr(object, "weight_method")
   
-  if (missing(i)) {
-    i <- NA
+  if (is.na(i)) {
+    if (data_type == "mids" || data_type == "list") {
+      i <- NA
+    } else {
+      i <- 1
+    }
   }
   
   ## IS added to print avgs over impts for i = NA
   if (is.na(i)) {
-    if (data_type == "list" | data_type == "mids") {
-      all_bal_stats <- .avg_imp_bal_stats_time(object) 
-    } else {
-      all_bal_stats <- object[[i]]
-    }
+    all_bal_stats <- .avg_imp_bal_stats_time(object) 
+  } else {
+    all_bal_stats <- object[[i]]
   }
+  
   
   ### Summarizing balance ----
   vars <- unique(unlist(lapply(all_bal_stats, "[[", "covariate")))
@@ -240,7 +250,7 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
   
   # Early return, no imbalanced
   if (n_imbalanced_covars == 0) {
-    msg <- if (data_type == "list" | data_type == "mids") {
+    msg <- if (data_type == "mids" || data_type == "list") {
       if (!is.null(weight_method)) {
         if (!is.na(i)) {
           sprintf("No covariates remain imbalaned for imputation %s using `%s` weighting method.", i, weight_method)
@@ -348,22 +358,24 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
 #'
 #' @export
 plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
-  data_type <- attr(x, "data_type")
+  data_type<- attr(x, "data_type")
   weight_method <- attr(x, "weight_method")
-  
-  if (missing(i)) {
-    i <- NA
+
+  if (is.na(i)) {
+    if (data_type == "mids" || data_type == "list") {
+      i <- NA
+    } else {
+      i <- 1
+    }
   }
   
   ## IS added to print avgs over impts for i = NA
   if (is.na(i)) {
-    if (data_type == "list" || data_type == "mids") {
-      all_bal_stats <- .avg_imp_bal_stats_time(x) 
-    } else {
-      all_bal_stats <- x[[i]]
-    }
+    all_bal_stats <- .avg_imp_bal_stats_time(x) 
+  } else {
+    all_bal_stats <- x[[i]]
   }
-  
+
   exposure <- attr(x, "exposure")
   exposure_type <- attr(x, "exposure_type")
   x_lab <- if (exposure_type == "continuous") {

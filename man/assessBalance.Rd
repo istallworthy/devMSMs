@@ -14,15 +14,14 @@ assessBalance(
   balance_thresh = NULL,
   imp_conf = NULL,
   verbose = FALSE,
-  save.out = FALSE,
-  home_dir = NULL
+  save.out = FALSE
 )
 
-\method{print}{devMSM_bal_stats}(x, i = 1, t = TRUE, ...)
+\method{print}{devMSM_bal_stats}(x, i = NA, t = TRUE, ...)
 
-\method{summary}{devMSM_bal_stats}(object, i = 1, t = TRUE, ...)
+\method{summary}{devMSM_bal_stats}(object, i = NA, t = TRUE, ...)
 
-\method{plot}{devMSM_bal_stats}(x, i = 1, t = TRUE, ...)
+\method{plot}{devMSM_bal_stats}(x, i = NA, t = TRUE, ...)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
@@ -44,8 +43,6 @@ confounders, required if two balance thresholds are supplied}
 
 \item{save.out}{(optional) TRUE or FALSE indicator to save output and
 intermediary output locally (default is FALSE)}
-
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{x}{devMSM_bal_stats object from \code{assessBalance}}
 
