@@ -1,6 +1,15 @@
 ---
 title: "Customize Balancing Formulas"
 format: html
+date: "`r Sys.Date()`"
+output:
+    html_vignette:
+        df_print: kable
+        toc: true
+vignette: >
+  %\VignetteIndexEntry{Customize_Balancing_Formulas}
+  %\VignetteEncoding{UTF-8}s
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r, include = FALSE}
@@ -12,22 +21,17 @@ knitr::opts_chunk$set(
 
 This vignette provides guidance on how to customize balancing formulas for use in *devMSMs*. Please first review the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a> and any of the *Workflows* vignettes. 
   
-The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">examplePipeline.rmd file</a>.  
+The code contained in this vignette is also available, integrated code from the other vignettes, in the ExampleWorkflow.rmd.  
   
 <br>  
 
-```{r, eval = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # install.packages("devtools")
 require(devtools, quietly = TRUE)
+
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
-```
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-if (!require("devtools")) install.packages("devtools", quiet = TRUE)
-if (!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
-```
-```{r}
-library(devtools)
-library(devMSMs)
+require(devMSMs, quietly = TRUE)
+
 ```
 
 <br>  
@@ -36,6 +40,7 @@ library(devMSMs)
 We specify core inputs to the *devMSMs* functions.  
 ```{r}
 exposure <- c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58")
+
 tv_conf <- c(
   "SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
   "MDI.6", "MDI.15",
@@ -52,6 +57,7 @@ tv_conf <- c(
   "StrDif_Tot.35", "StrDif_Tot.58",
   "fscore.35", "fscore.58"
 )
+
 ti_conf <- c(
   "state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
   "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
@@ -59,8 +65,12 @@ ti_conf <- c(
 )
 
 data(sim_data_wide, package = "devMSMs")
-obj = initMSM(
-  data = sim_data_wide, exposure = exposure, tv_conf = tv_conf, ti_conf = ti_conf
+
+obj <- devMSMs::initMSM(
+  data = sim_data_wide, 
+  exposure = exposure, 
+  tv_conf = tv_conf, 
+  ti_conf = ti_conf
 )
 ```
 <br> 
@@ -79,15 +89,20 @@ However, if users wish to also include any time-varying confounders measured con
 For example, to include 24-month maternal depression in the 24-month balancing formula, we do the following:
 
 ```{r}
-full_formulas <- createFormulas(obj  = obj, type = "full", keep_conf = "B18Raw.24")
+full_formulas <- createFormulas(obj  = obj, 
+                                type = "full", 
+                                keep_conf = "B18Raw.24")
+
 print(full_formulas)
 ```
 
 Now `B18Raw.24` is included in the 24-month balancing formula in addition to the 35-and 58-month formulas.  
 
-Alternatively, a user could completely customize the full formulas by manually creating formulas for each exposure time point using the optional `custom` argument. This argument must be formatted identically to the default output of the `createFormulas()` function. 
+Alternatively, a user could completely customize the full formulas by manually creating formulas for each exposure time point using the optional `custom` argument. 
   
-To create custom formulas, the user creates a list with an entry for each exposure time point (labeled "full_form_t"), each of which contains the balancing formula for exposure at that time point. `createFormulas()` will conduct checks to ensure there is a formula for each time point and provides cautionary warnings for unusual variables (e.g., those measured after the exposure time point). However, the user is responsible for ensuring the validity of these formulas. Users may wish to make custom formulas if they want to include any confounder interactions or polynomials in their balancing formulas.  
+To create custom formulas, the user creates a list with an entry for each exposure time point, each of which contains the balancing formula for exposure at that time point. `createFormulas()` will conduct checks to ensure there is a formula for each time point and provides cautionary warnings for unusual variables (e.g., those measured after the exposure time point). However, the user is responsible for ensuring the validity of these formulas. Users may wish to make custom formulas if they want to include any confounder interactions or polynomials in their balancing formulas.  
+
+Of note, if the user creates a custom "full" formula, they will also have to create custom formulas when using `createFormulas()` to make "short" and "updated" formulas. 
   
 Below, we illustrate an abridged example for specifying the `custom` arguments for the exposure, ESETA1, at 6-, 15-, 24-, 35-, and 58-month time points.   
 ```{r}
@@ -103,7 +118,9 @@ custom <- list(
 `customFormulas()` then checks and retains these formulas for further use with the package.  
 
 ```{r}
-full_formulas <- createFormulas(obj = obj, custom = custom)
+full_formulas <- createFormulas(obj = obj, 
+                                custom = custom)
+
 print(full_formulas)
 ```
 
@@ -120,14 +137,16 @@ For example, to always retain income in all formulas in lagged form, overriding 
 
 As shown below, the `createFormulas` function now retains income at 6 months in all 15-, 24-, 35-, and 58-month formulas, overriding the *t*-1 lag rule for that variable. Without this specification, income at 6 months would have been omitted in formulas for exposure at 24, 35, and 58 months.  
 ```{r}
-short_formulas <- createFormulas(obj = obj, type = "short", keep_conf = c("InRatioCor.6"))
+short_formulas <- createFormulas(obj = obj, 
+                                 type = "short", 
+                                 keep_conf = c("InRatioCor.6"))
 print(short_formulas)
 ```
 <br>
 
 
 ### Customize Updated Balancing Formulas (Step 3)
-The default use of `createFormulas()` with `type = "update"` creates updated balancing formulas at each exposure time point. Each formula contains all time invariant confounders; time-varying confounders measured at the time point directly prior (*t*-1 lag) to that exposure time point; as well as any time-varying confounders at greater lags that were not successfully balanced using the short balancing formulas.  
+The default use of `createFormulas()` with `type` = "update" creates updated balancing formulas at each exposure time point. Each formula contains all time invariant confounders; time-varying confounders measured at the time point directly prior (*t*-1 lag) to that exposure time point; as well as any time-varying confounders at greater lags that were not successfully balanced using the short balancing formulas.  
 
 When creating updated formulas, the user can specify the optional `concur_conf`, `keep_conf`, and `custom` arguments detailed above. Of note, `createFormulas()` does not check that formulas in the `custom` field meet criteria for the updated formula or identify any imbalanced confounders, and the user is responsible for ensuring the validity of these formulas. 
 <br>

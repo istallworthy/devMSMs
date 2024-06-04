@@ -165,6 +165,10 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
     } else {
       i <- 1
     }
+  } else {
+    if (data_type == "imputed"){
+      all_bal_stats <- .avg_imp_bal_stats_time(x) 
+    }
   }
   
   
@@ -231,6 +235,10 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
       i <- NA
     } else {
       i <- 1
+    }
+  }else {
+    if (data_type == "imputed"){
+      all_bal_stats <- .avg_imp_bal_stats_time(object) 
     }
   }
   
@@ -366,6 +374,10 @@ plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
       i <- NA
     } else {
       i <- 1
+    }
+  }else {
+    if (data_type == "imputed"){
+      all_bal_stats <- .avg_imp_bal_stats_time(x) 
     }
   }
   

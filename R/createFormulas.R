@@ -63,7 +63,7 @@ createFormulas <- function(
   if (is.null(home_dir) && save.out){
     stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
   } else if (save.out) dreamerr::check_arg_plus(home_dir, "path dir")
-
+  
   # Extract var_tab and get variables
   var_tab <- attr(obj, "var_tab")
   ti_conf <- var_tab$var[var_tab$type == "ti_conf"]
@@ -78,7 +78,7 @@ createFormulas <- function(
   
   data_type <- attr(bal_stats, "data_type")
   
-
+  
   # Check keep_conf
   dreamerr::check_arg(keep_conf, "vector character | NULL")
   if (!all(keep_conf %in% tv_conf)) {
@@ -87,7 +87,7 @@ createFormulas <- function(
   if (any(exposure %in% keep_conf)) {
     stop("Do not include the exposure concurrently as a confounder. Please revise the keep_conf field.", call. = FALSE)
   }
-
+  
   type <- match.arg(type, several.ok = FALSE)
   if (type != "update" && !is.null(bal_stats)) {
     stop("Please only provide balance statistics for the type 'update'.", call. = FALSE)
@@ -101,7 +101,7 @@ createFormulas <- function(
       .message = "Please provide a data frame of balance statistics from the assessBalance function."
     )
   }
-
+  
   ### For custom formulas, check and then pass through ----
   if (!is.null(custom)) {
     dreamerr::check_arg(
@@ -109,7 +109,7 @@ createFormulas <- function(
       .data = exposure,
       .message = "If you wish to supply custom formulas, please provide a list of formulas for each exposure time point."
     )
-
+    
     # Very minorly clean custom formulas
     processed <- lapply(seq_along(custom), function(i) {
       
@@ -118,7 +118,7 @@ createFormulas <- function(
         form, "ts formula",
         .arg_name = paste0("custom[[", i, "]]")
       )
-
+      
       ## Check exposure variable (LHS)
       exposure_var <- rlang::expr_text(rlang::f_lhs(form))
       if (!(exposure_var == exposure[i])) {
@@ -145,9 +145,9 @@ createFormulas <- function(
           "Please make sure all variables in your custom formulas are included as either exposure variables, time-varying confounders, or time invariant confounders.\nThe following variables are not: %s", paste(included_covs[miss], sep = ", ")
         ), call. = FALSE)
       }
-
+      
       # TODO: Process interactions? Seems not needed
-
+      
       return(list(
         formula = form,
         exposure_time = exposure_time[i],
@@ -158,28 +158,42 @@ createFormulas <- function(
         )
       ))
     })
-
+    
     forms <- lapply(processed, function(x) x$formula)
     class(forms) <- c("devMSM_formulas", "list")
     attr(forms, "type") <- "custom"
     attr(forms, "exposure_times") <- sapply(processed, function(x) x$exposure_time)
     attr(forms, "exposure_vars") <- sapply(processed, function(x) x$exposure_var)
     attr(forms, "msgs") <- sapply(processed, function(x) x$msg)
-
+    
     if (verbose) print(forms)
     return(forms)
   }
-
+  
   ### Create formulas  ----
   forms <- list()
   exposure_times <- c()
   exposure_vars <- c()
   msgs <- c()
   update_msgs <- c()
+  
+  # IS moved out of for loop below --only needs to be done once
+  # processing bal stats
+  if (type == "update") {
+    # TODO: Check this <--IS: this need to be looking at balance stats averaged across imputed data, w/ imputed data; not working w/ imputed data
+    ## IS added
+    if (data_type == "data.frame") {  # non-imputed data
+      all_bal_stats <- bal_stats[[1]]
+      # all_bal_stats <- do.call(rbind, lapply(bal_stats, as.data.frame))
+    } else if (data_type == "list" || data_type == "mids") { # imputed data --needs averaging
+      all_bal_stats <- .avg_imp_bal_stats_time(bal_stats)
+    }}
+  
+  
   for (i in seq_along(exposure_time)) {
     i_time <- exposure_time[i]
     im1_time <- if (i == 1) 0 else exposure_time[i - 1]
-
+    
     ti_include <- ti_conf
     if (type == "full") {
       tv_include <- tv_conf[tv_conf_time < i_time]
@@ -188,36 +202,37 @@ createFormulas <- function(
       tv_include <- tv_conf[tv_conf_time >= im1_time & tv_conf_time < i_time]
       tv_include <- c(tv_include, exposure[exposure_time >= im1_time & exposure_time < i_time])
     }
-
+    
     if (type == "update") {
-      # TODO: Check this <--IS: this need to be looking at balance stats averaged across imputed data, w/ imputed data; not working w/ imputed data
-      ## IS added
-      if (data_type == "data.frame") {  # non-imputed data
-        bal_stats <- bal_stats[[1]]
-        bal_stats <- do.call(rbind, lapply(bal_stats, as.data.frame))
-      } else if (data_type == "list" || data_type == "mids") { # imputed data --needs averaging
-        bal_stats <- .avg_imp_bal_stats(bal_stats)
-      }
-
+      bal_stats <- all_bal_stats[[i]]
+      
       update_include <- bal_stats$covariate[
-         bal_stats$balanced == 0 &
+        bal_stats$balanced == 0 &
           bal_stats$exposure_time == i_time &
           as.numeric(bal_stats$covar_time) < im1_time &
           as.numeric(bal_stats$covar_time) > 0
       ]
-      tv_include <- c(tv_include, update_include)
       
+      # IS added
+      update_include <- update_include[!is.na(update_include)]
+      
+      # TODO: IS added: making variable match tv conf (removing level from factors i.e., "RHasSO.6_1") --formula vars need to match data cols required for createWeights
+      update_include[!update_include %in% tv_conf] <- 
+        tv_conf[which.min(adist(update_include[!update_include %in% tv_conf], tv_conf))]
+      # ^ found most similar tv_conf --likely not best solution but didn't want to mess w/ special characters/strsplit()
+      
+      tv_include <- c(tv_include, update_include)
     }
-
+    
     # adding in any user-specified concurrent confounders (default is only lagged)
     keep_time <- .extract_time_pts_from_vars(keep_conf, sep = attr(obj, "sep"))
     keep_include <- keep_conf[keep_time < i_time]
-
+    
     vars_to_include <- unique(c(ti_include, tv_include, keep_include))
-
+    
     # Creates formula for the given exposure time point
     f <- reformulate(vars_to_include, response = exposure[i])
-
+    
     if (!exists("update_msg")) update_msg <- NULL
     exposure_times <- c(exposure_times, i_time)
     exposure_vars <- c(exposure_vars, exposure[i])
@@ -229,11 +244,11 @@ createFormulas <- function(
       )
     )
     update_msgs <- c(update_msgs, update_msg)
-
+    
     # Assigns the form to forms list
     forms[[i]] <- f
   }
-
+  
   ### Output ----
   class(forms) <- c("devMSM_formulas", "list")
   attr(forms, "type") <- type
@@ -241,7 +256,7 @@ createFormulas <- function(
   attr(forms, "exposure_vars") <- exposure_vars
   attr(forms, "msgs") <- msgs
   attr(forms, "update_msgs") <- update_msgs
-
+  
   if (verbose) print(forms, short = FALSE)
   if (save.out) {
     forms_dir <- file.path(home_dir, "formulas", type)
@@ -253,7 +268,7 @@ createFormulas <- function(
     ))
     writeLines(msgs, con = forms_csv_file)
   }
-
+  
   if (verbose) print(forms)
   return(forms)
 }
@@ -265,19 +280,19 @@ createFormulas <- function(
 #' @export
 print.devMSM_formulas <- function(x, ...) {
   user_alert <- switch(attr(x, "type"),
-    "full" = "USER ALERT: Please manually inspect the full balancing formula below:",
-    "short" = "USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:",
-    "update" = "USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:",
-    "custom" = "USER ALERT: Please manually inspect the slightly cleaned custom formula below: "
+                       "full" = "USER ALERT: Please manually inspect the full balancing formula below:",
+                       "short" = "USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:",
+                       "update" = "USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:",
+                       "custom" = "USER ALERT: Please manually inspect the slightly cleaned custom formula below: "
   )
-
+  
   lapply(seq_along(x), function(i) {
     msg <- attr(x, "msgs")[[i]]
     message(user_alert)
-
+    
     if (i < length(x)) msg <- paste0(msg, "\n\n")
     cat(msg)
-
+    
     return(NULL)
   })
   return(invisible(NULL))

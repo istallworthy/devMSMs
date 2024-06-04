@@ -7,9 +7,7 @@ output: html_document
 
 Please review the accompanying manuscript for a full conceptual and practical introduction to MSMs in the context of developmental data. Please also see the vignettes on the *devMSMs* website for step-by-step guidance on the use of this code: https://istallworthy.github.io/devMSMs/index.html. 
 
-We highly recommend first implementing the *Preliminary Steps Vignette*
-https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html (drawing on functions from devMSMsHelpers: https://github.com/istallworthy/devMSMsHelpers) prior to using this workflow. 
-
+We highly recommend first implementing the *Data Requirements* and *Specify Core Inputs* Vignettes prior to using this workflow. 
 
 Headings denote accompanying website sections and steps. We suggest using the interactive outline tool (located above the Console) for ease of navigation.
 
@@ -324,8 +322,8 @@ We recommend users use the short formulas to create IPTW weights using all the a
 formulas <- short_formulas
 
 # NOTE: need to add new weighting method --maybe make more flexible to allow for future new ones
-# NOTE: discuss weighting defaults
-# NOTE: implement effective sample size?
+# TODO: NOTE: discuss weighting defaults
+# TODO: NOTE: implement effective sample size?
 # NOTE: do we want to retain the read in and check functionality so they don't need to be recreated each time?
 
 weights.def <- createWeights(obj = obj, 
@@ -379,13 +377,13 @@ weights.super <- createWeights(obj = obj,
 weights.super
 plot(weights.super)
 
-method <- "ipt"
-weights.ipt <- createWeights(obj = obj, 
-                             formulas = formulas, 
-                             method = method, 
-                             save.out = FALSE)
-weights.ipt
-plot(weights.ipt)
+# method <- "ipt"
+# weights.ipt <- createWeights(obj = obj, 
+#                              formulas = formulas, 
+#                              method = method, 
+#                              save.out = FALSE)
+# weights.ipt
+# plot(weights.ipt)
 ```
 
 
@@ -494,8 +492,6 @@ summary(balance_stats.cbps)
 
 plot(balance_stats.cbps)
 
-# NOTE: need to add for imputed data!
-
 ```
 
 
@@ -576,7 +572,8 @@ weights <- final_weights
 
 #all inputs
 
-trim_weights <- trimWeights(weights = weights, 
+trim_weights <- trimWeights(obj = obj,
+                            weights = weights, 
                             at = quantile, 
                             save.out = TRUE)
 
@@ -590,11 +587,13 @@ Next, conduct sensitivity analyses using two other quantile values.
 
 ```{r}
 quantile <- 0.92 # optional quantile of weights above which weights are trimmed (default is 0.95)
-trim_weights.s1 <- trimWeights(weights = weights, 
+trim_weights.s1 <- trimWeights(obj = obj,
+                               weights = weights, 
                                at = quantile)
 
 quantile <- 0.98 # optional quantile of weights above which weights are trimmed (default is 0.95)
-trim_weights.s2 <- trimWeights(weights = weights, 
+trim_weights.s2 <- trimWeights(obj = obj,
+                               weights = weights, 
                                at = quantile)
 ```
 
@@ -645,7 +644,7 @@ covariates <- c("ESETA1.6", "InRatioCor.6", "gov_assist", "PMEd2")
 #### Sensitvity Analyses
 Next, conduct the recommended specifying sensitivity analyses to match the main analyses above.  
 
-Note: If `save.out = TRUE`, please run the above main analysis and then rename or relocate the following output, before running each sensitivity test and renaming/relocating each one in the same manner:  
+Note: If `save.out` = TRUE, please run the above main analysis and then rename or relocate the following output, before running each sensitivity test and renaming/relocating each one in the same manner:  
 
 In the balance -> weighted folder, .csv/.html tables of:  
 - balance statistics
