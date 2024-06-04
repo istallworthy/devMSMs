@@ -47,7 +47,7 @@ w
 plot(w)
 
 # Trim weights ----
-t <- trimWeights(w, at = 0.975, lower = FALSE)
+t <- trimWeights(obj, w, at = 0.975, lower = FALSE)
 t
 plot(t)
 
