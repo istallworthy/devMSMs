@@ -25,7 +25,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 
 This vignette is designed to aid users in preparing their data for use with *devMSMs*. Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html"\>Specifying Core Inputs</a> vignettes.
 
-The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">examplePipeline.rmd file</a>.
+The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>.
 
 # Data Requirements
 
@@ -43,7 +43,7 @@ We advise users implement the appropriate preliminary steps, with the goal of as
 
 -   a mids object (output from `mice::mice()`) of data imputed in wide format
 
--   a list of data imputed in wide format as data frames.\
+-   a list of data imputed in wide format as data frames.
     <br>
 
 As shown in Figure 1, for use of the *devMSMs* package, data in any of the above 3 formats, must be wide and contain an “ID” column for subject identifier and exposure, outcome, and all confounders as separate columns (as shown in Figure 1). Column names can include only underscore special characters and time-varying variables should have a suffix that consists of a period followed by the time point (e.g., “variable.6”). All variables should be classed as integer, numeric, or a factor (not character). Auxiliary or nuisance covariates that are not confounders (e.g, assessment version) can be included in the dataset for use and specification in the final modeling step (*Workflow* vignettes Step 5).
@@ -214,7 +214,7 @@ outcome <- "StrDif_Tot.58"
 
 ```
 
-Some helper functions have optional arguments to suppress saving output locally (`save.out = FALSE`) and printing it to the console ( `verbose = FALSE`). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out = TRUE`.
+Some helper functions have optional arguments to suppress saving output locally (`save.out` = FALSE) and printing it to the console ( `verbose` = FALSE). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out` = TRUE.
 
 ```{r}
 save.out <- FALSE
@@ -399,7 +399,7 @@ Additionally, users can specify an integer value to `seed` in order to offset th
 
 The parameter `read_imps_from_file` will allow you to read already imputed data in from local storage (TRUE) so as not to have to re-run this imputation code multiple times (FALSE; default). Users may use this parameter to supply their own mids object of imputed data from the *mice* package (with the title ‘all_imp.rds’). Be sure to inspect the console for any warnings as well as the resulting imputed datasets. Any variables that have missing data following imputation may need to be removed due to high collinearity and/or low variability.
 
-The required inputs for this function are a data frame in wide format (formatted according to pre-requirements listed above), m number of imputed datasets to create, a path to the home directory (if `save.out = TRUE`), exposure (e.g., “variable”), and outcome (e.g., “variable.t”). The home directory path, exposure, and outcome should already be defined if the user completed the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a>.
+The required inputs for this function are a data frame in wide format (formatted according to pre-requirements listed above), m number of imputed datasets to create, a path to the home directory (if `save.out` = TRUE), exposure (e.g., “variable”), and outcome (e.g., “variable.t”). The home directory path, exposure, and outcome should already be defined if the user completed the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a>.
 
 The optional inputs are as follows.
 
@@ -409,7 +409,7 @@ The user may also specify any additional inputs accepted by `mice::mice()` and w
 
 The user can also indicate if they have already created imputed datasets from this function and wish to read them in (`read_imps_from_file = TRUE` rather than recreate them (default).
 
-For this example, we create 2 imputed datasets using the default random forest method and 0 iterations (just for illustrative purposes), set a seed for reproducibility, and assign the output to `data` for use with *devMSMs*. This code takes some time to run. (Note: given the challenges of imputing data from .rda files, we have set `m = 2` and `maxit = 0` here just for illustrative purposes. We recommend setting both `m = 5` and `maxit = 5` (*mice* default) when running data.)
+For this example, we create 2 imputed datasets using the default random forest method and 0 iterations (just for illustrative purposes), set a seed for reproducibility, and assign the output to `data` for use with *devMSMs*. This code takes some time to run. (Note: given the challenges of imputing data from .rda files, we have set `m` = 2 and `maxit` = 0 here just for illustrative purposes. We recommend setting both `m` = 5 and `maxit` = 5 (*mice* default) when running data.)
 
 ```{r}
 s <- 1234
@@ -453,7 +453,7 @@ The mice object can now be assigned to `data` for use in the *deveMSMs* package 
 
 ### D3b. Read in as a List of Wide Imputed Data Saved Locally
 
-Alternatively, if a user has imputed datasets already created from wide, formatted data using a program other than *mice*, they can read in, as a list, files saved locally as .csv files (labeled “1”:m) in a single folder. This list can be assigned to `data` for use in the *deveMSMs* package (see *Workflows* vignettes).
+Alternatively, if a user has imputed datasets already created from wide, formatted data using a program other than *mice*, they can read in, as a list, files saved locally as .csv files in a single folder. This list can be assigned to `data` for use in the *deveMSMs* package (see *Workflows* vignettes).
 
 Below, we load in a list of imputed data simulated from FLP, as an example. (See the example Rmarkdown file for code to do this with files saved locally.)
 
