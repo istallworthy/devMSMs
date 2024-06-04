@@ -2,11 +2,11 @@
 % Please edit documentation in R/utils.R
 \name{.avg_imp_bal_stats_time}
 \alias{.avg_imp_bal_stats_time}
-\title{Averages balance stats across imputed datasets: list by time}
+\title{Added by IS: Averages balance stats across imputed datasets: list by time}
 \usage{
 .avg_imp_bal_stats_time(bal_stats)
 }
 \description{
-Averages balance stats across imputed datasets: list by time
+Added by IS: Averages balance stats across imputed datasets: list by time
 }
 \keyword{internal}

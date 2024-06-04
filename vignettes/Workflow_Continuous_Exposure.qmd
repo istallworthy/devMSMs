@@ -23,7 +23,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 
 <br>
 
-This vignette guides a user through the process of using *devMSMs* to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Preparation</a> vignettes.  
+This vignette guides a user through the process of using *devMSMs* to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.  
 
 The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript *[add link here]*. We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow.  
 
@@ -41,7 +41,7 @@ library(devMSMsHelpers)
 ```
   
 
-All *devMSMs* functions have an option to save intermediate and final outputs. Users must supply a path to a home directory (`home_dir`) if `save.out = TRUE`. All sub-folders referenced by each function are created automatically within the home directory. We recommend saving outputs for future use but do not for this example.  
+All *devMSMs* functions have an option to save intermediate and final outputs. Users must supply a path to a home directory (`home_dir`) if `save.out` = TRUE. All sub-folders referenced by each function are created automatically within the home directory. We recommend saving outputs for future use but do not for this example.  
 
 ```{r}
 
@@ -55,7 +55,7 @@ save.out = FALSE
 # PRELIMINARY SETUP PHASE: Specify & Inspect Core Package Inputs
 
 ## P1. Read in Wide Data
-We highly recommend first implementing the *Data Preparation Vignette* https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html before assigning to the variable, `data`, one of the following wide data formats (see Figure 1) for use in the package (see preliminary steps for more on data formatting):  
+We highly recommend first implementing the *Data Requirements & Preparation Vignette* https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html before assigning to the variable, `data`, one of the following wide data formats (see Figure 1) for use in the package:  
 
 * a single data frame of data in wide format with no missing data  
 
@@ -65,7 +65,7 @@ We highly recommend first implementing the *Data Preparation Vignette* https://i
 
 See the Data Preparation vignette for more detail.  
 
-We first load in imputed datasets as a mice object. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain (ESETA1) measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems (StrDif_Tot) measured at 58 months. (See <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps vignette</a> for beginning with other data types, including missing data).  
+We first load in imputed datasets as a mice object. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain ("ESETA1") measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems ("StrDif_Tot") measured at 58 months. (See <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements & Preparation vignette</a> for beginning with other data types, including missing data).  
   
 ```{r}
 data("sim_data_mice", package = "devMSMs")
@@ -78,15 +78,14 @@ head(mice::complete(data, 1), n = c(5, 10))
 <br>
 
 ## P2. Create MSM Object
-The first step is to create an initial object by specifying the core variables and data for use with the package. See the Specify Core Inputs vignette for more information. 
-
-Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a> for more detail on the following core inputs.  
+The first step is to create an initial object by specifying the core variables and data for use with the package. Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a> for more detail on the following core inputs.  
 
 Below, we specify data, exposure, time invariant and time-varying confounders, as well as exposure epochs. 
 
-There are severeal other optional fields that a user could specify in the MSM object.
+There are several other optional fields that a user could specify in the MSM object.
 
 * The user also has the option to specify `concur_conf`, indicating, as a list of character strings, the names of any time-varying confounders (e.g., “variable.time”) they wish to be included concurrently in the balancing formulas (overriding the default which is to only include lagged confounders).  
+  
 * If the user wishes to save any outputs from the *devMSMs* functions, they must specify, as a character string, a valid home directory (without the final slash) to `home_dir`. 
   
 ```{r}
@@ -95,8 +94,10 @@ set.seed(1234)
 obj <- initMSM(
   data,
   exposure = c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58"),
-  ti_conf =  c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
-               "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
+  ti_conf =  c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", 
+               "PmMrSt2", "PmEd2", "KFASTScr",
+               "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", 
+               "SmokTotl", "DrnkFreq",
                "peri_health", "caregiv_health", "gov_assist"),
   tv_conf = c("SAAmylase.6","SAAmylase.15", "SAAmylase.24", 
               "MDI.6", "MDI.15",                                            
@@ -151,7 +152,7 @@ We strongly suggest visually inspecting this table and revising the designation 
 
 The required inputs for `inspectData()` are: complete data (as a data frame in wide or long format, a list of imputed data frames in wide format, or a mids object), exposure (e.g., “variable”), and outcome (e.g., “variable.t”).   
 
-Optional inputs are a home directory (if `save.out = TRUE`), epochs, high/low cutoff values for continuous exposures, and specification of reference and comparison histories. 
+Optional inputs are a home directory (if `save.out` = TRUE), epochs, high/low cutoff values for continuous exposures, and specification of reference and comparison histories. 
 
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
 
@@ -164,7 +165,7 @@ inspectData(data = data,
             outcome = outcome, 
             reference = reference, 
             comparison = comparison, 
-            home_dir = home_dir, 
+            # home_dir = home_dir, 
             verbose = TRUE,
             save.out = FALSE)
 ```
@@ -184,19 +185,19 @@ The goal of this first phase is to minimize the associations between confounders
 <br>
 
 #### Step 1a. Create Full Balancing Formulas at Each Exposure Time Point
-We first create comprehensive, full balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type = “full”`). This step creates full formulas containing all measured confounding variables at each exposure time point, including all time-invariant confounders and lagged time-varying confounders. The code automatically excludes time-varying confounders at the contemporaneous time point given that they cannot be decisively differentiated from mediators which should not be balanced on (Thoemmes & Ong, 2016), although this can be modified by the user if they have strong reason to believe a concurrent variable is not a mediator (see below).   
+We first create comprehensive, full balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type` = “full”). This step creates full formulas containing all measured confounding variables at each exposure time point, including all time-invariant confounders and lagged time-varying confounders. The code automatically excludes time-varying confounders at the contemporaneous time point given that they cannot be decisively differentiated from mediators which should not be balanced on (Thoemmes & Ong, 2016), although this can be modified by the user if they have strong reason to believe a concurrent variable is not a mediator (see below).   
 
-If the user wishes to specify any interactions, they need to manually create them in the data before listing them here. Here, the user can also include any interaction terms between time invariant variables (e.g., “variable:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level. 
+If the user wishes to specify any interactions, they need to manually create them in the data before listing them here. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level.
   
-The required input to create full balancing formulas using the `createFormulas()` function are: MSM object (e.g., “obj”) and setting `type = “full”`.   
+The required input to create full balancing formulas using the `createFormulas()` function are: MSM object (e.g., “obj”) and setting `type` = “full”.   
 
 Optional inputs to create full balancing formulas using the `createFormulas()` function are as follows.  
   
-The user may specify a list of custom formulas by specifying to `custom` a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format. We recommend first running the `createFormulas()` function without custom formulas (`custom = NULL`) and using the output as a model of the required format for custom formulas. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating.  
+The user may specify a list of custom formulas by specifying to `custom` a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +...”) in formula format. We recommend first running the `createFormulas()` function without custom formulas (`custom` = NULL) and using the output as a model of the required format for custom formulas. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating.  
 
 Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html">Customize Balancing Formulas vignette</a> for more detail on how to customize formulas.  
   
-We chose not to create custom formulas and instead use `createFormulas()` to make them.  
+We chose not to create custom formulas and instead use `createFormulas()` to make them automatically.  
 ```{r}
 
 custom <- NULL 
@@ -206,6 +207,7 @@ custom <- NULL
 We create full formulas. 
 
 ```{r}
+
 type <- "full"
 
 full_formulas <- createFormulas(obj = obj, 
@@ -216,7 +218,9 @@ full_formulas <- createFormulas(obj = obj,
 The function returns a list of formulas, one for each exposure time point. We inspect them below. Each full formula contains all time invariant confounders as well as all lagged time-varying confounders at each time point. This is an important step, to verify that all appropriate confounders are present in each formula.  
 
 ```{r}
+
 full_formulas
+
 ```
 
 <br>
@@ -240,7 +244,8 @@ As recommended, below we provide two balancing thresholds and identify income an
 ```{r}
 balance_thresh <- c(0.05, 0.1) 
 
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58", "PmEd2") 
+imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", 
+              "InRatioCor.58", "PmEd2") 
 ```
 
 We create prebalance statistics below. 
@@ -283,12 +288,10 @@ print(prebalance_stats, t = 1)
 
 ```
 
-We can also summarize the `assessBalance()` output to view the average remaining relation between covariates and exposure as well as a summary table showing the total number of imbalanced covariates at each exposure time point. We can view this at one or all time points, in one imputed dataset or averaged across them.  
+We can also summarize the `assessBalance()` output to view the average remaining relation between confounders and exposure as well as a summary table showing the total number of imbalanced confounders at each exposure time point. We can view this at one or all time points, in one imputed dataset or averaged across them.  
 ```{r}
 
 summary(prebalance_stats)
-
-summary(prebalance_stats, t = 1)
 
 ```
 Averaging across imputed datasets, we see that xx confounders are imbalanced with respect to the economic strain exposure and their respective balance threshold. 
@@ -316,9 +319,9 @@ The goal of this second step is to create shortened, more parsimonious balancing
 <br>
 
 #### 2a. Create Simplified Balancing Formulas
-First, we create shorter, more parsimonious balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type = ”short”`). For each exposure time point, these formulas contain all time invariant confounders as well as time-varying confounders only at the *t*-1 lag. The logic here is that balancing on confounders at the most recent prior time point (*t*-1 only) may achieve balance on levels at more distal time points, given the stability of many confounders over time. Importantly, we will empirically assess and relax this assumption if needed at subsequent steps (Steps 3a-b). 
+First, we create shorter, more parsimonious balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type` = ”short”). For each exposure time point, these formulas contain all time invariant confounders as well as time-varying confounders only at the *t*-1 lag. The logic here is that balancing on confounders at the most recent prior time point (*t*-1 only) may achieve balance on levels at more distal time points, given the stability of many confounders over time. Importantly, we will empirically assess and relax this assumption if needed at subsequent steps (Steps 3a-b). 
 
-The required input to create shortened balancing formulas using the `createFormulas()` function are: a MSM object (e.g., 'obj') and setting `type = “short”`. 
+The required input to create shortened balancing formulas using the `createFormulas()` function are: a MSM object (e.g., 'obj') and setting `type` = “short”. 
 
 In addition to the optional input outlined in Step 1a, the user also has the option to specify in `keep_conf`, a list of any time-varying confounders (e.g., “variable.t”) to always retain as lagged confounders in these shortened formulas. The user may use this argument to retain specific time-varying confounders that would otherwise be excluded at this step if they occur at lags greater than *t*-1 for each formula. 
   
@@ -333,6 +336,7 @@ keep_conf  <-  NULL
   
 We create short formulas below.   
 ```{r}
+
 type <- "short" 
 
 short_formulas <- createFormulas(obj = obj, 
@@ -368,7 +372,7 @@ formulas <- short_formulas
 
 The optional inputs are as follows.  
   
-For `method`, provide one of the following methods for calculating balancing weights using `weightitMSM()` from the methods that have been validated for longitudinal exposures: "cbps" (Covariate Balancing Propensity Score weighting; default), “gbm” (generalized boosted model), “glm” (generalized linear model), "iptw" (inverse probability tilting) or “super” (SuperLearner via the *SuperLearner* package; Polley et al., 2013). More information can be found in the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a>.  
+For `method`, provide one of the following methods for calculating balancing weights using `weightitMSM()` from the methods that have been validated for longitudinal exposures: "cbps" (Covariate Balancing Propensity Score weighting; default), “gbm” (generalized boosted model), “glm” (generalized linear model), or “super” (SuperLearner via the *SuperLearner* package; Polley et al., 2013). More information can be found in the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a>.  
 
 We begin with specifying CBPS as a weighting method. 
 ```{r}
@@ -377,11 +381,11 @@ method <- "cbps"
 
 ```
 
-The `createWeights()` function can also take any number of additional arguments that will be passed to the `weightitMSM ()` function (e.g., ‘criterion’, distribution’, ‘SL.library’). If the user selects the SuperLearner (“super”) method, the default super learner library (‘SL.library’) is xx but an alternative library can be entered as an input to the `createWeights` function. For binary exposures, the “cbps” method allows you to specify `estimand` as either ATE, ATT, or ATC. With “glm”, “super”, and “bart” you can specify ATE, ATT, ATC, ATO, ATM, or ATOS. With “gbm”, you can specify ATE, ATT, ATC, ATO, or ATM. The default estimand for binary exposures is ATE. We advise the interested user to review the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a> for more information about the additional optional arguments available for each of the weighting methods. Users have the option to specify `verbose = TRUE` to view information about weights creation. 
+The `createWeights()` function can also take any number of additional arguments that will be passed to the `weightitMSM()` function (e.g., ‘criterion’, distribution’, ‘SL.library’). If the user selects the SuperLearner (“super”) method, the default super learner library (‘SL.library’) is xx but an alternative library can be entered as an input to the `createWeights` function. For binary exposures, the “cbps” method allows you to specify `estimand` as either ATE, ATT, or ATC. With “glm”, “super”, and “bart” you can specify ATE, ATT, ATC, ATO, ATM, or ATOS. With “gbm”, you can specify ATE, ATT, ATC, ATO, or ATM. The default estimand for binary exposures is ATE. We advise the interested user to review the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a> for more information about the additional optional arguments available for each of the weighting methods. Users have the option to specify `verbose` = TRUE to view information about weights creation. 
   
-The user can also specify `read_in_from_file = TRUE `if the user has previously created weights for these specific data, formula, and weight type using this function and wishes to read them in from a local file instead of recreating them. The `createWeights()` function automatically conducts some basic checks that the saved weights match the data type, weights method, and number of formulas provided. The user is responsible for making sure these weights were created appropriately.  
+The user can also specify `read_in_from_file` = TRUE if the user has previously created weights for these specific data, formula, and weight type using this function and wishes to read them in from a local file instead of recreating them. The `createWeights()` function automatically conducts some basic checks that the saved weights match the data type, weights method, and number of formulas provided. The user is responsible for making sure these weights were created appropriately.  
 
-The function returns a list of weights objects each in the form of WeightItMSM output in a single nested list (labeled “0” if data are in data frame format) or with nested lists for each imputed dataset (if data are imputed). 
+The function returns a list of weights objects each in the form of WeightItMSM output in a single nested list or with nested lists for each imputed dataset (if data are imputed). 
 
 ##### CBPS
 
@@ -391,7 +395,7 @@ weights.cbps <- createWeights(obj = obj,
                              data = data, 
                              method = method,
                              formulas = formulas,
-                             maxit = 1000, # getting warning about optimization failing to converge
+                             maxit = 1, # getting warning about optimization failing to converge
                              verbose = TRUE)
 ```
 
@@ -438,16 +442,16 @@ As shown above, the GLM method produces a similar distribution of weights.
 
 ##### GBM
 ```{r}
-method <- "gbm"
-
-weights.gbm <- createWeights(obj = obj, 
-                             data = data,
-                             method = method,
-                             formulas = formulas)
-
-print(weights.gbm, i = 1)
-
-plot(weights.gbm, i = 1)
+# method <- "gbm"
+# 
+# weights.gbm <- createWeights(obj = obj, 
+#                              data = data,
+#                              method = method,
+#                              formulas = formulas)
+# 
+# print(weights.gbm, i = 1)
+# 
+# plot(weights.gbm, i = 1)
 ```
   
 <br>
@@ -484,16 +488,16 @@ plot(weights.super, i = 1)
 
 ##### IPT *NOTE: error --says it cannot be used with continuous treatments 
 ```{r}
-method <- "ipt"
-
-weights.ipt <- createWeights(obj = obj, 
-                             data = data, 
-                             method = method,
-                             formulas = formulas)
-
-print(weights.ipt, i = 1)
-
-plot(weights.ipt, i = 1)
+# method <- "ipt"
+# 
+# weights.ipt <- createWeights(obj = obj, 
+#                              data = data, 
+#                              method = method,
+#                              formulas = formulas)
+# 
+# print(weights.ipt, i = 1)
+# 
+# plot(weights.ipt, i = 1)
 ```
 
 
@@ -525,12 +529,16 @@ balance_stats.cbps <- assessBalance(data = data,
                                     balance_thresh = balance_thresh,
                                     save.out = FALSE)
 balance_stats.cbps
+
+print(balance_stats.cbps, t = 1, i = 1)
 ```
   
 We then summarize the CBPS balance statistics across imputed datasets. 
 ```{r}
 
 summary(balance_stats.cbps)
+
+summary(balance_stats.cbps, i = 1)
 
 ```
 
@@ -561,18 +569,18 @@ For the GLM weighting method, the median absolute value correlation between expo
   
 <br>
 
-##### GLM
+##### GBM
 ```{r}
-weights <- weights.gbm
-
-balance_stats.gbm <- assessBalance(data = data, 
-                                   obj = obj, 
-                                   weights = weights,
-                                   imp_conf = imp_conf, 
-                                   balance_thresh = balance_thresh,
-                                   save.out = FALSE)
-
-summary(balance_stats.gbm)
+# weights <- weights.gbm
+# 
+# balance_stats.gbm <- assessBalance(data = data, 
+#                                    obj = obj, 
+#                                    weights = weights,
+#                                    imp_conf = imp_conf, 
+#                                    balance_thresh = balance_thresh,
+#                                    save.out = FALSE)
+# 
+# summary(balance_stats.gbm)
 ```
 
 For the GBM weighting method, the absolute median correlation between exposure and confounders is 0.02, with 9 confounders remaining imbalanced.  
@@ -646,9 +654,9 @@ From this, we can see that across all exposure time points, xx confounders remai
 <br> 
 
 #### Step 3b. Update Simplified Formulas  
-Subsequently, we update the shortened formulas to include any time-varying confounders (*t*-1 +) that were not successfully balanced by the full formulas, as shown above. To do this, we create a final round of balancing formulas using the `createFormulas()` function (setting `type = “update"` and providing the balance statistics of the `bal_stats` field). The `createFormulas()` function draws from user-provided balance statistics to automatically identify and add to the formulas at each exposure time point any time-varying confounders at lags greater than 1 that remain imbalanced after weighting. The function displays each balancing formula in the console with a message to the user about any time-varying confounders that were added. 
+Subsequently, we update the shortened formulas to include any time-varying confounders (*t*-1 +) that were not successfully balanced by the full formulas, as shown above. To do this, we create a final round of balancing formulas using the `createFormulas()` function (setting `type` = “update" and providing the balance statistics of the `bal_stats` field). The `createFormulas()` function draws from user-provided balance statistics to automatically identify and add to the formulas at each exposure time point any time-varying confounders at lags greater than 1 that remain imbalanced after weighting. The function displays each balancing formula in the console with a message to the user about any time-varying confounders that were added. 
   
-The required input to update the shortened balancing formulas using the `createFormulas()` function are: an MSM object (e.g., "obj"), setting `type = “update”`, and providing to `bal_stats` the balance statistics that were just created in Step 3a.
+The required input to update the shortened balancing formulas using the `createFormulas()` function are: an MSM object (e.g., "obj"), setting `type` = “update”, and providing to `bal_stats` the balance statistics that were just created in Step 3a.
   
 The optional input are detailed in Step 1a. 
   
@@ -659,7 +667,9 @@ Below, we update our short formulas using the balance statistics from the best-p
 
 type <- "update"
 
-bal_stats <- balance_stats.cbps
+bal_stats <- balance_stats.glm
+
+print(bal_stats, t = 4)
 
 updated_formulas <- createFormulas(obj = obj, 
                                    type = type,
@@ -682,7 +692,7 @@ The `createFormulas()` function saves out .csv and .rds files containing balanci
 <br>
 
 #### Step 3c. Create Final Balancing Weights
-Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the updated formulas from the previous step using the `createWeights()` function (`method = “super’`), with the SuperLearner method being the optimal weighting method identified in Step 2c. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as is recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016) and distributions are saved out in the home directory for inspection. 
+Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the updated formulas from the previous step using the `createWeights()` function (`method` = “super’), with the SuperLearner method being the optimal weighting method identified in Step 2c. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as is recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016) and distributions are saved out in the home directory for inspection. 
   
 The required inputs for using the `createWeights()` function to create the final round of IPTW balancing weights using the updated short balancing formulas are: complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), an MSM object (e.g., "obj"), the best-performing weights method, and the updated formulas (see Step 3a). 
   
@@ -695,7 +705,7 @@ Below, we use the updated formulas and the SuperLearner weighting method to crea
 
 formulas <- updated_formulas
 
-method <- "super"
+method <- "glm"
 
 final_weights <- createWeights(data = data, 
                                obj = obj, 
@@ -739,7 +749,8 @@ We trim the final weights below.
 
 weights <- final_weights
 
-trim_weights <- trimWeights(weights = weights, 
+trim_weights <- trimWeights(obj = obj,
+                            weights = weights, 
                             at = quantile, 
                             save.out = FALSE)
 
@@ -767,7 +778,8 @@ We first create weights at the 92nd quantile value.
 
 quantile <- 0.92 
 
-trim_weights.s1 <- trimWeights(weights = weights, 
+trim_weights.s1 <- trimWeights(obj = obj,
+                               weights = weights, 
                                at = quantile, 
                                save.out = FALSE)
 
@@ -781,7 +793,8 @@ And then at the 98th quantile value.
 
 quantile <- 0.98 
 
-trim_weights.s2 <- trimWeights(weights = weights, 
+trim_weights.s2 <- trimWeights(obj = obj,
+                               weights = weights, 
                                at = quantile, 
                                save.out = FALSE)
 
@@ -851,7 +864,7 @@ covariates <- c("PmEd2", "ESETA1.6", "InRatioCor.6")
 ##### Sensitvity Analyses
 Subsequently, we also assess balance for the weights trimmed at the two additional quantile values to assess whether the final balance assessment is sensitive to the trim value.  
    
-Importantly, if `save.out = TRUE`, running these analyses will overwrite the output from the main history comparison above if the main output is not renamed or relocated to a new folder first. Additionally, after running the first sensitivity check, the output from that check will be overwritten by the second sensitivity check if it is not renamed or re-located to a new folder first.  
+Importantly, if `save.out` = TRUE, running these analyses will overwrite the output from the main history comparison above if the main output is not renamed or relocated to a new folder first. Additionally, after running the first sensitivity check, the output from that check will be overwritten by the second sensitivity check if it is not renamed or re-located to a new folder first.  
   
 We first assess balance for the weights trimmed at the 93rd quantile value. 
  
@@ -991,7 +1004,7 @@ We find that the likerlihood ratio test is significant, indicating that we can p
 ##### Sensitvity Analyses
 We then conduct sensitivity analyses, fitting the same model with weights that were trimmed at two different values.   
   
-Of note, as described in Step 4, if `save.out = TRUE`, running these analyses will overwrite the output from the main model fitting above if the main output is not renamed or relocated to a new folder first. 
+Of note, as described in Step 4, if `save.out` = TRUE, running these analyses will overwrite the output from the main model fitting above if the main output is not renamed or relocated to a new folder first. 
 
 We first fit the same model to the weights trimmed at the 92nd quantile.  
   
@@ -1050,7 +1063,7 @@ The required inputs for using the `compareHistories()` function are: an MSM obje
 
 The optional inputs are as follows.  
   
-To create histories of high and low values with continuous exposures, to `hi_lo_cut` the user can specify a list of two quantile values (0-1; default is median split +/- 0.001) demarcating high and low levels of exposure, respectively. (Imputed data are stacked to calculate cutoff values.) We suggest drawing on existing hypotheses and examining the variability in the exposure variable to determine high and low cutoffs. We recommend users begin by specifying meaningful high and low percentile cutoffs and examining how many individuals in the sample fall into each of the user-specified exposure histories created by those percentile cutoffs (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps vignette</a>). While there are no gold standard recommendations for sufficient cell numbers per history, users should ensure that there is is reasonable coverage in all of their histories to avoid extrapolation and maximize precision.  
+To create histories of high and low values with continuous exposures, to `hi_lo_cut` the user can specify a list of two quantile values (0-1; default is median split +/- 0.001) demarcating high and low levels of exposure, respectively. (Imputed data are stacked to calculate cutoff values.) We suggest drawing on existing hypotheses and examining the variability in the exposure variable to determine high and low cutoffs. We recommend users begin by specifying meaningful high and low percentile cutoffs and examining how many individuals in the sample fall into each of the user-specified exposure histories created by those percentile cutoffs (see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs vignette</a>). While there are no gold standard recommendations for sufficient cell numbers per history, users should ensure that there is is reasonable coverage in all of their histories to avoid extrapolation and maximize precision.  
   
 Below, we specify that 60th and 30th percentile values to denote high and low levels of economic strain, respectively.  
 ```{r}

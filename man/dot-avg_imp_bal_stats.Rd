@@ -2,11 +2,13 @@
 % Please edit documentation in R/utils.R
 \name{.avg_imp_bal_stats}
 \alias{.avg_imp_bal_stats}
-\title{Averages balance stats across imputed datasets: df of all times}
+\title{Added by IS: averages balance stats across time points and recalculates balance:
+returns one bal stat per covar}
 \usage{
 .avg_imp_bal_stats(bal_stats)
 }
 \description{
-Averages balance stats across imputed datasets: df of all times
+Added by IS: averages balance stats across time points and recalculates balance:
+returns one bal stat per covar
 }
 \keyword{internal}

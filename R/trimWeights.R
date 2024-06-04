@@ -35,14 +35,14 @@
 #' f <- createFormulas(obj, type = "short")
 #' 
 #' w <- createWeights(data = data, obj = obj, formulas = f)
-#' tw <- trimWeights(w)
+#' tw <- trimWeights(obj, w)
 #' print(tw)
 #' plot(tw)
 #' 
-#' trimWeights(w, at = 0.975, lower = TRUE)
+#' trimWeights(obj, w, at = 0.975, lower = TRUE)
 #' 
 #' @export
-trimWeights <- function(weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE) {
+trimWeights <- function(obj, weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE) {
   ### Checks ----
   dreamerr::check_arg(verbose, save.out, "scalar logical")
   home_dir <- attr(obj, "home_dir")

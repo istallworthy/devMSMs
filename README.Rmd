@@ -47,16 +47,16 @@ Core features of *devMSMs* include:
 
 - an accompanying simulated longitudinal dataset, based on the real-world, Family Life Project (FLP) study of human development, for getting to know the package functions
 
-- an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of *devMSMs* (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary Steps vignette</a>)  
+- an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of *devMSMs*
    
-- executable, step-by-step user guidance for implementing the *deveMSMs* worflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> 
+- executable, step-by-step user guidance for implementing the *deveMSMs* worflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/exampleWorkflow.Rmd">R markdown template file</a> 
 
 - a brief conceptual introduction, example empirical application, and additional resources in the accompanying tutorial paper
 
 <br>
 
 ## Overview
-The package contains 6 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures.
+The package contains 7 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures.
 <br>  
 <img width="820" alt="devMSMs overview" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png">
 <br>  
@@ -110,7 +110,7 @@ library(devMSMsHelpers)
 <br> 
   
 ## Recommended Workflow
-We propose a recommended workflow for using *devMSMs* to answer causal questions with longituinal data. We suggest using the vignettes in the order they appear in the Articles tab. After reading the accompanying manuscript, We recommend first reviewing the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes as you begin preparing your data. We then recommend downloading the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R markdown template file</a> which contains all the code desribed in the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a>, and *Workflows* vignettes (for binary (TBA) or <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a> exposures) for implementing the steps below.
+We propose a recommended workflow for using *devMSMs* to answer causal questions with longituinal data. We suggest using the vignettes in the order they appear in the Articles tab. After reading the accompanying manuscript, We recommend first reviewing the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes as you begin preparing your data. We then recommend downloading the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">R markdown template file</a> which contains all the code described in the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a> and *Workflows* vignettes (for binary (TBA) or <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a> exposures) for implementing the steps below.
   
 <img width="800" alt="devMSMs schematic of workflow" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png">
 
@@ -119,7 +119,7 @@ We propose a recommended workflow for using *devMSMs* to answer causal questions
 ## Citation & Bug Reports
 Please cite your use *devMSMs* using the following citation: 
 <br> 
-Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Berry D (2023). *devMSMs*: Implementing Marginal Structural Models with Longitudinal Data. R package version 0.0.0.9000, https://istallworthy.github.io/devMSMs/.  
+Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Berry D (2024). *devMSMs*: Implementing Marginal Structural Models with Longitudinal Data. R package version 0.0.0.9000, https://istallworthy.github.io/devMSMs/.  
 
 <br>   
 
@@ -128,6 +128,8 @@ Please report any bugs at the following link: https://github.com/istallworthy/de
 <br> 
 
 ## Additional Resources
+Arel-Bundock, Diniz, M. A., Greifer, N., & Bacher, E. (2023). marginaleffects: Predictions, Comparisons, Slopes, Marginal Means, and Hypothesis Tests (0.12.0) [Computer software]. https://cran.r-project.org/web/packages/marginaleffects/index.html. 
+
 Austin, P. C. (2011). An Introduction to Propensity Score Methods for Reducing the Effects of Confounding in Observational Studies. Multivariate Behavioral Research, 46(3), 399–424. https://doi.org/10.1080/00273171.2011.568786  
 
 Blackwell, M. (2013). A Framework for Dynamic Causal Inference in Political Science. American Journal of Political Science, 57(2), 504–520. https://doi.org/10.1111/j.1540-5907.2012.00626.x  

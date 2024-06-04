@@ -70,10 +70,20 @@ perm2 <- function(r, v) {
 # Common functions ----
 #' Grabs trailing numbers after the last occurance of `sep` in `vars`
 #' @keywords internal
+# .extract_time_pts_from_vars <- function(vars, sep = "[\\._]") {
+#   regex_time_pts <- paste0(sep, "([0-9]+)$")
+#   sapply(vars, function(var) {
+#     as.numeric(regmatches(var, regexec(regex_time_pts, var))[[1]][2])
+#   })
+# }
+
+# IS: new one to ignore special chars (and anything following) after sep (e.g., RHasSO.6_1)
 .extract_time_pts_from_vars <- function(vars, sep = "[\\._]") {
-  regex_time_pts <- paste0(sep, "([0-9]+)$")
+  regex_time_pts <- paste0(sep, "([0-9]+(?:\\.[0-9]+)?)(?:[^0-9.]|$)")  
   sapply(vars, function(var) {
-    as.numeric(regmatches(var, regexec(regex_time_pts, var))[[1]][2])
+    match <- regmatches(var, regexec(regex_time_pts, var))
+    if(length(match[[1]]) == 0) return(NA) # return NA if no match found
+    as.numeric(match[[1]][2])
   })
 }
 
@@ -118,7 +128,8 @@ perm2 <- function(r, v) {
 
   var_tab <- data.frame(
     var = c(exposure, tv_conf, ti_conf),
-    type = c(rep("exposure", length(exposure)), rep("tv_conf", length(tv_conf)), rep("ti_conf", length(ti_conf))),
+    type = c(rep("exposure", length(exposure)), rep("tv_conf", length(tv_conf)), 
+             rep("ti_conf", length(ti_conf))),
     time = c(exposure_time_pts, tv_conf_time_pts, rep(-1, length(ti_conf)))
   )
   return(var_tab)
@@ -136,44 +147,54 @@ perm2 <- function(r, v) {
   do.call(function(...) paste(..., sep = "-"), res)
 }
 
-#' Averages balance stats across imputed datasets: df of all times
-#' 
+#' Added by IS: averages balance stats across time points and recalculates balance: 
+#' returns one bal stat per covar
+#'
 #' @keywords internal
 .avg_imp_bal_stats <- function(bal_stats) {
-
-  temp <- lapply(bal_stats, function(x){
-    b <- do.call(rbind, lapply(x, as.data.frame))
-  })
-  bal_stats <- do.call(rbind, lapply(bal_stats[[1]], as.data.frame))
-  bal_stats$std_bal_stats = rowMeans(do.call(cbind, 
-                                             lapply(temp, function(x) abs(x[["std_bal_stats"]]))))
-  bal_stats$balanced <- ifelse(bal_stats$std_bal_stats < 
-                                 bal_stats$bal_thresh, 1, 0) # recalc balanced
-
-  return(bal_stats)
+  
+  new <- as.data.frame(plyr::rbind.fill(bal_stats)) 
+  temp <- aggregate(abs(std_bal_stats) ~ covariate, data = new, 
+                    FUN = function(x) mean(x, na.rm = TRUE))
+  names(temp)[2] <- "std_bal_avg"
+  temp <- merge(new[, c("covariate", "bal_thresh", "covar_time")], temp, by = "covariate")
+  temp$balanced <- ifelse(temp$std_bal_avg < 
+                            temp$bal_thresh, 1, 0) # recalc balanced
+  temp
 }
 
-#' Averages balance stats across imputed datasets: list by time
+
+#' Added by IS: Averages balance stats across imputed datasets: list by time
 #' 
 #' @keywords internal
 .avg_imp_bal_stats_time <- function(bal_stats) {
-
-  avgs = lapply(1:5, function(y) {
-    rowMeans(do.call(cbind, 
-                     lapply(
-                       lapply(1:2, function(x){
-                         x <- bal_stats[[x]]
-                         out <- x[[y]]
-                         out
-                       }), function(x) abs(x[["std_bal_stats"]]))))
-  })
+  average_sub_lists <- function(lists) {
+    summed <- Reduce(`+`, lists)/length(lists)
+    summed
+  }
   
+  avgs = lapply(
+      lapply(1:length(bal_stats[[1]]), function(z){
+      lapply(
+        # for a single time point, gets all imps
+        lapply(1:length(bal_stats), function(y) {
+          x <- bal_stats[[y]]
+          out <- x[[z]]
+          out
+        }),
+        function(q) abs(q[["std_bal_stats"]]))
+    }), 
+    average_sub_lists)
+
   test <- bal_stats[[1]]
-  bal_stats <- lapply(1:5, function(x){
+  test <- lapply(1:length(test), function(x){
     test[[x]]$std_bal_stats <- avgs[[x]]
+    test[[x]]$balanced <- ifelse(test[[x]]$std_bal_stats < 
+                            test[[x]]$bal_thresh, 1, 0) # recalc balanced
     test[[x]]
   })
-  bal_stats
+  
+  test
 }
 
 

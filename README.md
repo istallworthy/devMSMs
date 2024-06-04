@@ -74,14 +74,12 @@ Core features of *devMSMs* include:
 - an accompanying suite of
   <a href="https://github.com/istallworthy/devMSMsHelpers">helper
   functions</a> to assist users in preparing and inspecting their data
-  prior to the implementation of *devMSMs* (see the
-  <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">
-  Preliminary Steps vignette</a>)
+  prior to the implementation of *devMSMs*
 
 - executable, step-by-step user guidance for implementing the *deveMSMs*
   worflow and preliminary steps in the form of vignettes geared toward
   users of all levels of R programming experience, along with a
-  <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R
+  <a href="https://github.com/istallworthy/devMSMs/blob/main/exampleWorkflow.Rmd">R
   markdown template file</a>
 
 - a brief conceptual introduction, example empirical application, and
@@ -91,7 +89,7 @@ Core features of *devMSMs* include:
 
 ## Overview
 
-The package contains 6 core functions for implementing the two phases of
+The package contains 7 core functions for implementing the two phases of
 the MSM process: longitudinal confounder adjustment and outcome modeling
 of longitudinal data with time-varying exposures. <br>  
 <img width="820" alt="devMSMs overview" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png">
@@ -155,12 +153,10 @@ and
 <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data
 Requirements</a> vignettes as you begin preparing your data. We then
 recommend downloading the
-<a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd">R
-markdown template file</a> which contains all the code desribed in the
+<a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">R
+markdown template file</a> which contains all the code described in the
 <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify
-Core Inputs</a>,
-<a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary
-Steps</a>, and *Workflows* vignettes (for binary (TBA) or
+Core Inputs</a> and *Workflows* vignettes (for binary (TBA) or
 <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a>
 exposures) for implementing the steps below.
 
@@ -171,7 +167,7 @@ exposures) for implementing the steps below.
 ## Citation & Bug Reports
 
 Please cite your use *devMSMs* using the following citation: <br>
-Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Berry D (2023).
+Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Berry D (2024).
 *devMSMs*: Implementing Marginal Structural Models with Longitudinal
 Data. R package version 0.0.0.9000,
 <https://istallworthy.github.io/devMSMs/>.
@@ -184,6 +180,11 @@ Please report any bugs at the following link:
 <br>
 
 ## Additional Resources
+
+Arel-Bundock, Diniz, M. A., Greifer, N., & Bacher, E. (2023).
+marginaleffects: Predictions, Comparisons, Slopes, Marginal Means, and
+Hypothesis Tests (0.12.0) \[Computer software\].
+<https://cran.r-project.org/web/packages/marginaleffects/index.html>.
 
 Austin, P. C. (2011). An Introduction to Propensity Score Methods for
 Reducing the Effects of Confounding in Observational Studies.

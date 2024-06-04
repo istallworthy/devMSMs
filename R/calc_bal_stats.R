@@ -181,7 +181,7 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
     bal_stats$exposure <- exposure_name
     bal_stats$exposure_time <- exposure_time_pt
     
-    # added by IS as covar_time is needed for "update" in createFormulas()
+    # added by IS as covar_time is needed for "update" in createFormulas() --how to deal w/ factors???
     bal_stats$covar_time <- NA
     bal_stats$covar_time <- as.numeric(.extract_time_pts_from_vars(bal_stats$covariate, sep = sep))
 
