@@ -156,22 +156,6 @@ assessBalance <- function(
 #' @export
 print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
   
-  # IS added 
-  data_type <- if (length(x) > 1) "imputed" else "data frame"
-  
-  if (is.na(i)) {
-    if (data_type == "imputed") {
-      i <- NA
-    } else {
-      i <- 1
-    }
-  } else {
-    if (data_type == "imputed"){
-      all_bal_stats <- .avg_imp_bal_stats_time(x) 
-    }
-  }
-  
-  
   if (identical(i, TRUE)) {
     lapply(seq_along(x), function(j) {
       print(x, i = j, t = t)
@@ -179,13 +163,16 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
     return(invisible(NULL))
   }
   
-  ## IS added to print avgs over impts for i = NA
+  data_type <- if (length(x) > 1) "imputed" else "data frame"
   if (is.na(i)) {
+    if (data_type == "imputed") {
     all_bal_stats <- .avg_imp_bal_stats_time(x) 
+    } else {
+      all_bal_stats <- x[[1]]
+    }
   } else {
     all_bal_stats <- x[[i]]
   }
-  
   
   # Process t
   exposure <- attr(x, "exposure")
@@ -196,7 +183,10 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
   } else if (identical(t, TRUE)) {
     t <- seq_len(length(all_bal_stats))
   }
-  if (rlang::is_integerish(t) && any(!(t %in% seq_len(length(all_bal_stats))))) {
+  if (
+    rlang::is_integerish(t) && 
+    any(!(t %in% seq_len(length(all_bal_stats))))
+  ) {
     stop(sprintf(
       "Argument `t` must be an integer(s) from 1 through %s",
       length(exposure)
@@ -227,28 +217,19 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
 #'
 #' @export
 summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
-  data_type<- attr(object, "data_type")
+  data_type <- attr(object, "data_type")
   weight_method <- attr(object, "weight_method")
   
+  data_type <- if (length(x) > 1) "imputed" else "data frame"
   if (is.na(i)) {
-    if (data_type == "mids" || data_type == "list") {
-      i <- NA
+    if (data_type == "imputed") {
+      all_bal_stats <- .avg_imp_bal_stats_time(x)
     } else {
-      i <- 1
-    }
-  }else {
-    if (data_type == "imputed"){
-      all_bal_stats <- .avg_imp_bal_stats_time(object) 
-    }
+      all_bal_stats <- x[[1]]
   }
-  
-  ## IS added to print avgs over impts for i = NA
-  if (is.na(i)) {
-    all_bal_stats <- .avg_imp_bal_stats_time(object) 
   } else {
-    all_bal_stats <- object[[i]]
+    all_bal_stats <- x[[i]]
   }
-  
   
   ### Summarizing balance ----
   vars <- unique(unlist(lapply(all_bal_stats, "[[", "covariate")))
@@ -299,6 +280,7 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
       )
     })
   )
+  colnames(tab_bal_summary) <- c("Exposure", "Total # of covariates", "# of imbalanced covariates")
   
   msg <- if (data_type == "list" || data_type == "mids") {
     if (!is.null(weight_method)) {
@@ -351,7 +333,6 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
       sprintf("Imbalanced covariates")
     }
   }
-  colnames(tab_bal_summary) <- c("Exposure", "Total # of covariates", "# of imbalanced covariates")
   t <- tinytable::tt(tab_bal_summary, caption = caption)
   
   cat(msg, main_msg)
@@ -375,7 +356,7 @@ plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
     } else {
       i <- 1
     }
-  }else {
+  } else {
     if (data_type == "imputed"){
       all_bal_stats <- .avg_imp_bal_stats_time(x) 
     }

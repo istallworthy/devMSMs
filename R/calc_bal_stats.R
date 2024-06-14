@@ -64,8 +64,16 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
       is.character(data[[v]]) || is.factor(data[[v]])
     })
     if (any(var_is_factorable)) {
-      # TODO: any options or leave default (dropping first level)?
       bal_vars <- cobalt::splitfactor(data[, vars, drop = FALSE])
+
+      orig_vars <- colnames(bal_vars)
+      for (j in seq_along(orig_vars)) {
+        orig_var_name = attr(bal_vars[, j], "split.var")
+        if (!is.null(orig_var_name)) {
+          orig_vars[j] = orig_var_name
+        }
+      } 
+
     } else {
       bal_vars <- data[, vars, drop = FALSE]
     }
@@ -82,9 +90,11 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
       )
       bal_stats <- data.frame(
         covariate = names(std_bal_stats),
+        orig_covariate = orig_vars,
         std_bal_stats = as.numeric(std_bal_stats)
       )
       prop_weights <- prop_sum <- NULL
+      omitted_histories <- c()
     }
 
     # GET BALANCE STATISTICS FOR T>1 (when there is a history to weight on)
@@ -103,23 +113,6 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
         omitted_histories <- as.character(
           prop_sum$history[prop_sum$Freq == 1 | prop_sum$Freq == 0]
         )
-
-        # TODO: move to print?
-        # if (verbose) {
-        #   if (data_type == "imputed") {
-        #     cat(sprintf(
-        #       "USER ALERT: the following history/histories, %s has/have been omitted from balance checking for exposure %s imputation %s at time point %s due to insufficient counts:",
-        #       omitted_histories, exposure, k, exposure_time_pt
-        #     ))
-        #     cat("\n")
-        #   } else {
-        #     cat(sprintf(
-        #       "USER ALERT: the following history/histories, %s has/have been omitted from balance checking for exposure %s at time point %s due to insufficient counts:",
-        #       omitted_histories, exposure, exposure_time_pt
-        #     ))
-        #     cat("\n")
-        #   }
-        # }
       } # ends hist exc
 
       # finding balance by history
@@ -160,6 +153,7 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
 
       bal_stats <- data.frame(
         covariate = rownames(std_bal_stats),
+        orig_covariate = orig_vars,
         std_bal_stats = as.numeric(std_bal_stats)
       )
     }
@@ -181,13 +175,12 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
     bal_stats$exposure <- exposure_name
     bal_stats$exposure_time <- exposure_time_pt
     
-    # added by IS as covar_time is needed for "update" in createFormulas() --how to deal w/ factors???
-    bal_stats$covar_time <- NA
-    bal_stats$covar_time <- as.numeric(.extract_time_pts_from_vars(bal_stats$covariate, sep = sep))
+    bal_stats$covar_time <- as.numeric(.extract_time_pts_from_vars(bal_stats$orig_covariate, sep = sep))
 
     # collect proportions for histories at this time point
     all_prop_weights <- c(all_prop_weights, list(prop_sum))
     all_bal_stats <- c(all_bal_stats, list(bal_stats))
+
   } # Ends exposure_time_pts loop
   
   
