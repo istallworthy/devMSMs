@@ -40,7 +40,6 @@
 #'   ti_conf = c("C"),
 #'   tv_conf = c("B.1", "B.2", "B.3", "D.3")
 #' )
-#' f <- createFormulas(obj, type = "short")
 #'
 #' # Prebalance
 #' b <- assessBalance(data = data, obj = obj)
@@ -53,6 +52,7 @@
 #' plot(b, t = 3)
 #'
 #' # Weighted
+#' f <- createFormulas(obj, type = "short")
 #' w <- createWeights(data = data, obj = obj, formulas = f)
 #' bw <- assessBalance(data = data, obj = obj, weights = w)
 #' print(bw)
@@ -63,10 +63,9 @@ assessBalance <- function(
     data, obj, weights = NULL, balance_thresh = NULL, imp_conf = NULL,
     verbose = FALSE, save.out = FALSE) {
   ### Checks ----
-  dreamerr::check_arg(verbose, save.out, "scalar logical")
-  if (save.out) {
-    dreamerr::check_arg_plus(home_dir, "path dir")
-  }
+  dreamerr::check_arg(verbose, "scalar logical")
+
+	dreamerr::check_arg(save.out, "scalar logical | scalar character")
   
   .check_data(data)
   if (!inherits(obj, "devMSM")) {
@@ -76,11 +75,11 @@ assessBalance <- function(
   
   if (is.null(weights)) {
     type <- "prebalance"
-    weights_method <- "no weights"
+    weight_method <- "no weights"
   } else {
     .check_weights(weights)
     type <- "weighted"
-    weights_method <- weights[[1]]$method
+    weight_method <- weights[[1]]$method
   }
   
   dreamerr::check_set_arg(
@@ -92,15 +91,6 @@ assessBalance <- function(
   }
   if (!is.null(imp_conf) && length(balance_thresh) == 1) {
     stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively", call. = FALSE)
-  }
-  
-  home_dir <- attr(obj, "home_dir")
-  if (is.null(home_dir) && save.out){
-    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
-  } else if (save.out) {
-    .create_dir_if_needed(file.path(home_dir, "balance"))
-    .create_dir_if_needed(file.path(home_dir, "balance", type))
-    .create_dir_if_needed(file.path(home_dir, "balance", type, "plots"))
   }
   
   ### START ----
@@ -117,6 +107,7 @@ assessBalance <- function(
   }
   
   # calcBalStats ----
+  list_of_omitted_histories = vector("list", m) # store omitted histories for each dataset 
   all_bal_stats <- lapply(seq_len(m), function(k) {
     if (data_type == "mids") {
       d <- as.data.frame(mice::complete(data, k))
@@ -126,16 +117,20 @@ assessBalance <- function(
     # `weightitMSM` object
     w <- weights[[k]]
     
-    return(calc_bal_stats(
+    res = calc_bal_stats(
       data = d, obj = obj, weights = w$weights,
       balance_thresh = balance_thresh, imp_conf = imp_conf
-    ))
+    )
+
+    if (!is.null(res$omitted_histories)) {
+      list_of_omitted_histories[[k]] = res$omitted_histories
+    }
+    return(res$all_bal_stats)
   })
   
   class(all_bal_stats) <- c("devMSM_bal_stats", "list")
-  attr(all_bal_stats, "data_type") <- data_type
-  attr(all_bal_stats, "exposure") <- attr(obj, "exposure")
-  attr(all_bal_stats, "exposure_type") <- attr(obj, "exposure_type")
+  attr(all_bal_stats, "obj") <- obj
+  attr(all_bal_stats, "list_of_omitted_histories") <- list_of_omitted_histories
   
   is_weighted <- !(is.null(weights))
   attr(all_bal_stats, "weighted") <- is_weighted
@@ -144,6 +139,35 @@ assessBalance <- function(
   }
   
   if (verbose) print(all_bal_stats, i = 1, t = TRUE)
+
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "balance"))
+    .create_dir_if_needed(out_dir)
+
+    if (is.character(save.out)) {
+      file_name <- save.out
+    } else {
+      if (is_weighted) { 
+        file_name <- sprintf(
+          "weighted-exposure_%s-method_%s.rds",
+          attr(obj, "exposure_root"), attr(weights, "method")
+        )
+      } else {
+        file_name <- sprintf(
+          "prebalance-exposure_%s.rds",
+          attr(obj, "exposure_root")
+        )
+      }
+    }
+
+    out <- fs::path_join(c(out_dir, file_name))
+    cat(sprintf(
+      '\nSaving balance statistics to `.rds` file. To load, call:\nreadRDS("%s")\n',
+      out
+    ))
+    saveRDS(all_bal_stats, out)
+  }
   return(all_bal_stats)
 }
 
@@ -154,23 +178,7 @@ assessBalance <- function(
 #' @param ... ignored
 #'
 #' @export
-print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
-  
-  # IS added 
-  data_type <- if (length(x) > 1) "imputed" else "data frame"
-  
-  if (is.na(i)) {
-    if (data_type == "imputed") {
-      i <- NA
-    } else {
-      i <- 1
-    }
-  } else {
-    if (data_type == "imputed"){
-      all_bal_stats <- .avg_imp_bal_stats_time(x) 
-    }
-  }
-  
+print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
   
   if (identical(i, TRUE)) {
     lapply(seq_along(x), function(j) {
@@ -178,32 +186,42 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
     })
     return(invisible(NULL))
   }
-  
-  ## IS added to print avgs over impts for i = NA
+
+  obj <- attr(x, "obj")
+  data_type <- attr(obj, "data_type")
+  exposure <- attr(obj, "exposure")
+  exposure_root <- attr(obj, "exposure_root")
+  is_weighted <- attr(x, "weighted")
+  weight_method <- attr(x, "weight_method")
+
   if (is.na(i)) {
-    all_bal_stats <- .avg_imp_bal_stats_time(x) 
+    if (data_type == "imputed") {
+      all_bal_stats <- .avg_imp_bal_stats_time(x)
+    } else {
+      all_bal_stats <- x[[1]]
+    }
   } else {
     all_bal_stats <- x[[i]]
   }
-  
-  
+
   # Process t
-  exposure <- attr(x, "exposure")
-  # all_bal_stats <- x[[i]]
   dreamerr::check_arg(t, "integer vector | logical scalar | character vector")
   if (all(t %in% exposure)) {
     t <- match(t, exposure)
   } else if (identical(t, TRUE)) {
     t <- seq_len(length(all_bal_stats))
   }
-  if (rlang::is_integerish(t) && any(!(t %in% seq_len(length(all_bal_stats))))) {
+  if (
+    rlang::is_integerish(t) && 
+    any(!(t %in% seq_len(length(all_bal_stats))))
+  ) {
     stop(sprintf(
       "Argument `t` must be an integer(s) from 1 through %s",
       length(exposure)
     ), call. = FALSE)
   }
   
-  if (data_type == "data frame") {
+  if (data_type == "data.frame") {
     tbl_caption <- "Balance Stats for all Exposure Time Periods"
   } else {
     if (!is.na(i)) {
@@ -216,7 +234,71 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
   balance_stats <- do.call(rbind, lapply(t, function(j) all_bal_stats[[j]]))
   balance_stats <- balance_stats[, c("exposure", "covariate", "std_bal_stats", "bal_thresh", "balanced")]
   t <- tinytable::tt(balance_stats, digits = 3, caption = tbl_caption)
+
   print(t, "markdown")
+
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "balance"))
+    .create_dir_if_needed(out_dir)
+
+    if (data_type == "data.frame") {
+      i_str <- ""
+    } else {
+      if (!is.na(i)) {
+        i_str <- sprintf("-imp_%s", i)
+      } else {
+        i_str <- "-imp_averaged"
+      }
+    }
+
+    if (is.character(save.out)) {
+      file_name <- save.out
+    } else {
+      if (is_weighted) { 
+        file_name <- sprintf(
+          "bal_stats_table_weighted-exposure_%s-method_%s%s.txt",
+          exposure_root, weight_method, i_str
+        )
+      } else {
+        file_name <- sprintf(
+          "bal_stats_table_prebalance-exposure_%s%s.txt",
+          exposure_root, i_str
+        )
+      }
+    }
+
+    out <- fs::path_join(c(out_dir, file_name))
+    cat(sprintf(
+      '\nSaving balance statistics table to file:\n%s\n',
+      out
+    ))
+    if (fs::path_ext(out) == "pdf") {
+      tinytable::save_tt(
+        tinytable::format_tt(t, escape = TRUE),
+        output = out, overwrite = TRUE
+      )
+    } else {
+      tinytable::save_tt(t, output = out, overwrite = TRUE)
+    }
+  }
+
+  # TODO: Print omitted histories?
+  # if (verbose) {
+  #   if (data_type == "imputed") {
+  #     cat(sprintf(
+  #       "USER ALERT: the following history/histories, %s has/have been omitted from balance checking for exposure %s imputation %s at time point %s due to insufficient counts:",
+  #       omitted_histories, exposure, k, exposure_time_pt
+  #     ))
+  #     cat("\n")
+  #   } else {
+  #     cat(sprintf(
+  #       "USER ALERT: the following history/histories, %s has/have been omitted from balance checking for exposure %s at time point %s due to insufficient counts:",
+  #       omitted_histories, exposure, exposure_time_pt
+  #     ))
+  #     cat("\n")
+  #   }
+  # }
 }
 
 #' @rdname assessBalance
@@ -226,29 +308,23 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
 #' @param ... ignored
 #'
 #' @export
-summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
-  data_type<- attr(object, "data_type")
+summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, save.out = FALSE, ...) {
+  obj <- attr(object, "obj")
+  data_type <- attr(obj, "data_type")
+  exposure_root <- attr(obj, "exposure_root")
+  
   weight_method <- attr(object, "weight_method")
-  
+  is_weighted <- attr(object, "weighted")
+
   if (is.na(i)) {
-    if (data_type == "mids" || data_type == "list") {
-      i <- NA
+    if (data_type == "imputed") {
+      all_bal_stats <- .avg_imp_bal_stats_time(object)
     } else {
-      i <- 1
+      all_bal_stats <- object[[1]]
     }
-  }else {
-    if (data_type == "imputed"){
-      all_bal_stats <- .avg_imp_bal_stats_time(object) 
-    }
-  }
-  
-  ## IS added to print avgs over impts for i = NA
-  if (is.na(i)) {
-    all_bal_stats <- .avg_imp_bal_stats_time(object) 
   } else {
     all_bal_stats <- object[[i]]
   }
-  
   
   ### Summarizing balance ----
   vars <- unique(unlist(lapply(all_bal_stats, "[[", "covariate")))
@@ -299,6 +375,7 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
       )
     })
   )
+  colnames(tab_bal_summary) <- c("Exposure", "Total # of covariates", "# of imbalanced covariates")
   
   msg <- if (data_type == "list" || data_type == "mids") {
     if (!is.null(weight_method)) {
@@ -351,11 +428,57 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
       sprintf("Imbalanced covariates")
     }
   }
-  colnames(tab_bal_summary) <- c("Exposure", "Total # of covariates", "# of imbalanced covariates")
   t <- tinytable::tt(tab_bal_summary, caption = caption)
   
   cat(msg, main_msg)
   print(t, output = "markdown")
+
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "balance"))
+    .create_dir_if_needed(out_dir)
+
+    if (data_type == "data.frame") {
+      i_str <- ""
+    } else {
+      if (!is.na(i)) {
+        i_str <- sprintf("-imp_%s", i)
+      } else {
+        i_str <- "-imp_averaged"
+      }
+    }
+
+    if (is.character(save.out)) {
+      file_name <- save.out
+    } else {
+      if (is_weighted) { 
+        file_name <- sprintf(
+          "summ_bal_stats_table_weighted-exposure_%s-method_%s%s.txt",
+          exposure_root, weight_method, i_str
+        )
+      } else {
+        file_name <- sprintf(
+          "summ_bal_stats_table_prebalance-exposure_%s%s.txt",
+          exposure_root, i_str
+        )
+      }
+    }
+
+    out <- fs::path_join(c(out_dir, file_name))
+    cat(sprintf(
+      '\nSaving balance statistics table to file:\n%s\n',
+      out
+    ))
+    if (fs::path_ext(out) == "pdf") {
+      tinytable::save_tt(
+        tinytable::format_tt(t, escape = TRUE),
+        output = out, overwrite = TRUE
+      )
+    } else {
+      tinytable::save_tt(t, output = out, overwrite = TRUE)
+    }
+  }
+
 }
 
 #' @rdname assessBalance
@@ -365,21 +488,27 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, ...) {
 #' @param ... ignored
 #'
 #' @export
-plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
-  data_type<- attr(x, "data_type")
+plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
+  
   weight_method <- attr(x, "weight_method")
+  is_weighted <- !is.null(weight_method)
+  
+  obj <- attr(x, "obj")
+  data_type<- attr(obj, "data_type")
 
-  if (is.na(i)) {
+  # dreamerr::check_arg(i, "NA | integer | TRUE")
+  if (identical(i, TRUE)) {
+    lapply(seq_len(length(x)), function(i) {
+      plot(x, i = i, t = t, save.out = save.out)
+    })
+  }
+  if (is.na(i) & data_type == "data.frame") {
     if (data_type == "mids" || data_type == "list") {
       i <- NA
     } else {
       i <- 1
     }
-  }else {
-    if (data_type == "imputed"){
-      all_bal_stats <- .avg_imp_bal_stats_time(x) 
-    }
-  }
+  } 
   
   ## IS added to print avgs over impts for i = NA
   if (is.na(i)) {
@@ -388,8 +517,13 @@ plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
     all_bal_stats <- x[[i]]
   }
 
-  exposure <- attr(x, "exposure")
-  exposure_type <- attr(x, "exposure_type")
+  obj <- attr(x, "obj")
+  exposure <- attr(obj, "exposure")
+  exposure_root <- attr(obj, "exposure_root")
+  exposure_type <- attr(obj, "exposure_type")
+  is_weighted <- attr(x, "weighted")
+  weight_method <- attr(x, "weight_method")
+
   x_lab <- if (exposure_type == "continuous") {
     "Correlation with Exposure"
   } else {
@@ -416,11 +550,52 @@ plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, ...) {
   
   # Loop through selected exposure variables
   lp <- make_love_plot(
+    obj = obj,
     balance_stats = balance_stats,
     exposure_type = exposure_type,
     k = k,
     weight_method = attr(x, "weight_method")
   )
+
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "weights", "plots"))
+    .create_dir_if_needed(out_dir)
+
+    if (data_type == "data.frame") {
+      i_str <- ""
+    } else {
+      if (!is.na(i)) {
+        i_str <- sprintf("-imp_%s", i)
+      } else {
+        i_str <- "-imp_averaged"
+      }
+    }
+
+    if (is.character(save.out)) {
+      file_name <- save.out
+    } else {
+      if (is_weighted) { 
+        file_names <- sprintf(
+          "weighted-exposure_%s-method_%s%s.png",
+          exposure_root, weight_method, i_str
+        )
+      } else {
+        file_names <- sprintf(
+          "prebalance-exposure_%s%s.png",
+          exposure_root, i_str
+        )
+      }
+    }
+    out <- fs::path_join(c(out_dir, file_names))
+    cat(sprintf(
+      "\nSaving love-plot of balance statistics:\n%s\n",
+      out
+    ))
+
+    ggplot2::ggsave(out, plot = lp, height = 8, width = 14)
+  }
+
   
   return(lp)
 }

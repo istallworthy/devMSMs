@@ -28,16 +28,17 @@ time-varying confounders at lags great than t-1)}
 \item{custom}{(optional) custom list of formulas at each exposure time point
 (default is to create automatically according to type)}
 
-\item{keep_conf}{(optional) list of variable names reflecting confounders to
-always retain in formulas (default depends on type)}
+\item{keep_conf}{(optional) For 'short' formulas only, list of variable names reflecting
+confounders that should be included always.}
 
 \item{bal_stats}{list of balance statistics from \code{\link[=assessBalance]{assessBalance()}}}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
 (default is FALSE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is FALSE)}
+\item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
+it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
 
 \item{x}{devMSM_formulas object from \code{\link[=createFormulas]{createFormulas()}}}
 

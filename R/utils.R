@@ -1,6 +1,8 @@
 # utils ----
 .create_dir_if_needed <- function(dir) {
-  if (!dir.exists(dir)) dir.create(dir)
+  if (!fs::dir_exists(dir)) {
+    fs::dir_create(dir, recurse = TRUE)
+  }
 }
 
 #' Adaptation of gtools::permutations(2, repeats.allowed = TRUE)
@@ -70,22 +72,22 @@ perm2 <- function(r, v) {
 # Common functions ----
 #' Grabs trailing numbers after the last occurance of `sep` in `vars`
 #' @keywords internal
-# .extract_time_pts_from_vars <- function(vars, sep = "[\\._]") {
-#   regex_time_pts <- paste0(sep, "([0-9]+)$")
-#   sapply(vars, function(var) {
-#     as.numeric(regmatches(var, regexec(regex_time_pts, var))[[1]][2])
-#   })
-# }
-
-# IS: new one to ignore special chars (and anything following) after sep (e.g., RHasSO.6_1)
 .extract_time_pts_from_vars <- function(vars, sep = "[\\._]") {
-  regex_time_pts <- paste0(sep, "([0-9]+(?:\\.[0-9]+)?)(?:[^0-9.]|$)")  
+  regex_time_pts <- paste0(sep, "([0-9]+)$")
   sapply(vars, function(var) {
-    match <- regmatches(var, regexec(regex_time_pts, var))
-    if(length(match[[1]]) == 0) return(NA) # return NA if no match found
-    as.numeric(match[[1]][2])
+    as.numeric(regmatches(var, regexec(regex_time_pts, var))[[1]][2])
   })
 }
+
+# IS: new one to ignore special chars (and anything following) after sep (e.g., RHasSO.6_1)
+# .extract_time_pts_from_vars <- function(vars, sep = "[\\._]") {
+#   regex_time_pts <- paste0(sep, "([0-9]+(?:\\.[0-9]+)?)(?:[^0-9.]|$)")  
+#   sapply(vars, function(var) {
+#     match <- regmatches(var, regexec(regex_time_pts, var))
+#     if(length(match[[1]]) == 0) return(NA) # return NA if no match found
+#     as.numeric(match[[1]][2])
+#   })
+# }
 
 #' Gets prefix of variable by numbers after last occurance of `sep` and optionally deleting `sep`
 #' @keywords internal
@@ -173,6 +175,7 @@ perm2 <- function(r, v) {
     summed
   }
   
+  # TODO: double check this and maybe cleanup?
   avgs = lapply(
       lapply(1:length(bal_stats[[1]]), function(z){
       lapply(

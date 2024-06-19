@@ -33,7 +33,7 @@ time-varying exposure variables required here)}
 \item{concur_conf}{(optional) list of variable names reflecting time-varying
 confounders to retain in formulas contemporaneously (default is none)}
 
-\item{home_dir}{(optional) directory for saving output}
+\item{home_dir}{(optional) directory for saving output. Either an absolute path or a relative path with respect to \code{getwd()}}
 
 \item{sep}{(optional) The seperator between the variable and the time period. The
 variable names will be split by the last occurance of \code{sep} with the
@@ -61,16 +61,16 @@ data <- data.frame(
   B.2 = rnorm(n = 50),
   B.3 = rnorm(n = 50),
   D.3 = rnorm(n = 50),
-  L.1 = sample(c(0,1), size = 50, replace = TRUE),
+  L.1 = sample(c(0, 1), size = 50, replace = TRUE),
   C   = rnorm(n = 50)
 )
 obj <- initMSM(
-  data = data, exposure = c("A.1", "A.2", "A.3"),
-  tv_conf = c("B.1", "B.2", "B.3", "D.3"), 
+  data = data,
+  exposure = c("A.1", "A.2", "A.3"),
+  tv_conf = c("B.1", "B.2", "B.3", "D.3"),
   ti_conf = "C"
 )
 
 obj
-
 
 }

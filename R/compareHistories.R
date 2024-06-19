@@ -4,8 +4,8 @@
 #' histories (pooling for imputed data), before conducting contrast comparisons
 #' (pooling for imputed data), correcting for multiple comparisons, and then
 #' plotting results.
-#' @seealso 
-#'  [marginaleffects::avg_predictions()], 
+#' @seealso
+#'  [marginaleffects::avg_predictions()],
 #'  <https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf>;
 #'  [marginaleffects::hypotheses()],
 #'  <https://cran.r-project.org/web/packages/marginaleffects/marginaleffects.pdf>;
@@ -13,10 +13,12 @@
 #'  <https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust>;
 #'
 #' @inheritParams devMSM_common_docs
-#' @param hi_lo_cut (optional) list of two numbers indicating quantile values
+#' @param hi_lo_cut list of two numbers indicating quantile values
 #'   that reflect high and low values, respectively, for continuous exposure
 #'   (default is median split)
-#' @param reference (optional) list sof one or more strings of "-"-separated "l"
+#' @param dose_level (optional) "l" or "h" indicating whether low or high doses
+#'   should be tallied in tables and plots (default is high "h")
+#' @param reference lists of one or more strings of "-"-separated "l"
 #'   and "h" values indicative of a reference exposure history to which to
 #'   compare comparison, required if comparison is supplied
 #' @param comparison (optional) list of one or more strings of "-"-separated "l"
@@ -25,8 +27,6 @@
 #' @param mc_comp_method (optional) character abbreviation for multiple
 #'   comparison correction method for stats::p.adjust, default is
 #'   Benjamini-Hochburg ("BH")
-#' @param dose_level (optional) "l" or "h" indicating whether low or high doses
-#'   should be tallied in tables and plots (default is high "h")
 #'
 #' @return list containing two dataframes: `preds` with predictions from
 #'  [marginaleffects::avg_predictions()] containing average expected outcome
@@ -55,24 +55,26 @@
 #' f <- createFormulas(obj, type = "short")
 #' w <- createWeights(data = data, obj = obj, formulas = f)
 #' fit <- fitModel(
-#'   data = data, obj = obj, weights = w, 
+#'   data = data, obj = obj, weights = w,
 #'   outcome = "D.3", model = "m0"
 #' )
-#' 
-#' comp = compareHistories(
-#'   obj, fit = fit,
+#'
+#' comp <- compareHistories(
+#'   obj,
+#'   fit = fit,
 #'   hi_lo_cut = c(0.3, 0.6)
 #' )
 #' print(comp)
 #' plot(comp)
 #' summary(comp, "preds")
 #' summary(comp, "comps")
-#' 
-#' comp2 = compareHistories(
-#'   obj, fit = fit, 
+#'
+#' comp2 <- compareHistories(
+#'   obj,
+#'   fit = fit,
 #'   reference = "l-l-l",
-#'   comparison = c("h-h-h", "h-h-l") 
-#' ) 
+#'   comparison = c("h-h-h", "h-h-l")
+#' )
 #' print(comp2)
 #' plot(comp2)
 #' summary(comp2, "preds")
@@ -81,34 +83,30 @@
 #' @export
 compareHistories <- function(
     obj, fit,
-    hi_lo_cut = c(0.3, 0.6), dose_level = c("h", "l"),
+    hi_lo_cut = c(0.4, 0.6),
+    dose_level = c("h", "l"),
     reference = NULL, comparison = NULL,
     mc_comp_method = stats::p.adjust.methods,
     verbose = FALSE, save.out = FALSE) {
   ### Checks ----
-  dreamerr::check_arg(verbose, save.out, "scalar logical")
-  if (save.out) {
-    dreamerr::check_arg_plus(home_dir, "path dir")
-    .create_dir_if_needed(file.path(home_dir, "histories"))
-    .create_dir_if_needed(file.path(home_dir, "plots"))
-  }
+  dreamerr::check_arg(verbose, "scalar logical")
+
+	dreamerr::check_arg(save.out, "scalar logical | scalar character")
   if (verbose) {
     rlang::check_installed("tinytable")
   }
 
   dreamerr::check_arg(fit, "class(devMSM_models)")
-  
-  home_dir <- attr(obj, "home_dir")
-  if (is.null(home_dir) && save.out){
-    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
-  }
 
   # Get objects from `obj`
   exposure <- attr(obj, "exposure")
   exposure_time_pts <- attr(obj, "exposure_time_pts")
   exposure_type <- attr(obj, "exposure_type")
+  exposure_root <- attr(obj, "exposure_root")
   epoch <- attr(obj, "epoch")
   sep <- attr(obj, "sep")
+  outcome <- attr(fit, "outcome")
+  model <- attr(fit, "model")
 
   n_epoch <- length(unique(epoch))
   exposure_levels <- apply(
@@ -152,8 +150,6 @@ compareHistories <- function(
 
   # STEP 1 ----
   # Define variables for average partial effects
-
-  # TODO: This uses a ton of data
   # getting data to use for determining hi/lo values: should have any epochs created / used in the model
   data <- do.call(rbind, lapply(fit, function(z) z[["data"]]))
 
@@ -162,7 +158,6 @@ compareHistories <- function(
     epoch_vars <- .get_epoch_var_names(exposure, epoch, sep = sep)
   }
 
-  # TODO: Error out if epoch_history has no values in `table(epoch_history)`?
   mat <- fit[[1]][["data"]][, epoch_vars]
   epoch_history <- .characterize_exposure(mat, exposure_type)
 
@@ -193,31 +188,49 @@ compareHistories <- function(
     p
   })
 
-
   # STEP 3 ----
   # Conduct history comparisons
-  # All pairwise comparisons if no ref/comparisons were specified by user
   if (is.null(reference) && is.null(comparison)) {
+    # All pairwise comparisons if no ref/comparisons were specified by user
     # Pairwise comparision, but we want term to be nicely labeled by histories
     comps <- lapply(preds, function(y) {
-      marginaleffects::hypotheses(
+      c <- marginaleffects::hypotheses(
         model = as.data.frame(y), vcov = vcov(y), hypothesis = "pairwise"
       )
+      class(c) <- c("comp_custom", class(c))
+      return(c)
     })
   } else {
     hypothesis <- .create_hypotheses_mat(preds[[1]]$term, reference, comparison)
     comps <- lapply(preds, function(y) {
-      marginaleffects::hypotheses(y, hypothesis = hypothesis)
+      c <- marginaleffects::hypotheses(y, hypothesis = hypothesis)
+      class(c) <- c("comp_custom", class(c))
+      return(c)
     })
   }
+
 
 
   # STEP 4 ----
   # pooling predicted values and contrasts for imputed data
   is_pooled <- length(preds) > 1
   if (is_pooled) { # IMPUTED DATA
+    # TODO: should be fixed by modelsummary: https://github.com/vincentarelbundock/modelsummary/commit/5f13fe03683016ae92e5ffdd4b8b6b402614409e
+    # 
+    # assign(
+    #   "glance_custom_internal.glm_weightit", 
+    #   function(model, vcov_type = vcov_type, gof = gof) {
+    #     out = NextMethod("glance", model)
+    #     if ("logLik" %in% colnames(out)) {
+    #       out$logLik = as.numeric(out$logLik)
+    #     }
+    #     return(out)
+    #   },
+    #   envir = globalenv()
+    # )
+    # on.exit({ rm(glance_custom_internal.glm_weightit, envir = globalenv()) })
+
     rlang::check_installed("mice")
-    # TODO: with multiply imputed data, broom::glimpse() is bugging out
     preds <- summary(mice::pool(preds), digits = 3)
     comps <- summary(mice::pool(comps))
   } else { # REGULAR DATA
@@ -244,13 +257,12 @@ compareHistories <- function(
 
   res <- list(preds = preds, comps = comps)
   class(res) <- c("devMSM_comparisons", "list")
-  attr(res, "outcome") <- attr(fit, "outcome")
+  attr(res, "obj") <- obj
+  attr(res, "outcome") <- outcome
   attr(res, "hi_lo_cut") <- hi_lo_cut
   attr(res, "is_pooled") <- is_pooled
   attr(res, "epoch_d") <- epoch_d
   attr(res, "epoch_history") <- epoch_history
-  attr(res, "exposure") <- exposure
-  attr(res, "epoch") <- epoch
   attr(res, "mc_comp_method") <- mc_comp_method
   attr(res, "exp_lab") <- exp_lab
   if (!is.null(reference) && !is.null(comparison)) {
@@ -259,6 +271,31 @@ compareHistories <- function(
   }
 
   if (verbose) print(res)
+
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "histories"))
+    .create_dir_if_needed(out_dir)
+
+    if (is.character(save.out)) {
+      file_name <- save.out
+    } else {
+      file_name <- sprintf(
+        "outcome_%s-exposure_%s-model_%s.rds",
+        gsub("\\.", "_", outcome), 
+        exposure_root, 
+        model
+      )
+    }
+
+    out <- fs::path_join(c(out_dir, file_name))
+    cat(sprintf(
+      '\nSaving model fits to `.rds` file. To load, call:\nreadRDS("%s")\n',
+      out
+    ))
+    saveRDS(res, out)
+  }
+
   return(res)
 }
 
@@ -269,13 +306,17 @@ compareHistories <- function(
 #' @param ... ignored
 #'
 #' @export
-print.devMSM_comparisons <- function(x, ...) {
+print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
   preds <- x$preds
   comps <- x$comps
-  epoch <- attr(x, "epoch")
   hi_lo_cut <- attr(x, "hi_lo_cut")
   epoch_history <- attr(x, "epoch_history")
   mc_comp_method <- attr(x, "mc_comp_method")
+  
+  outcome <- attr(x, "outcome")
+  obj <- attr(x, "obj")
+  epoch <- attr(obj, "epoch")
+  exposure_root <- attr(obj, "exposure_root")
 
   reference <- NULL
   comparison <- NULL
@@ -297,10 +338,39 @@ print.devMSM_comparisons <- function(x, ...) {
   print_eval_hist(epoch_history, epoch, hi_lo_cut, reference, comparison)
   cat("Below are the pooled average predictions by user-specified history:")
   print(preds_tab, "markdown")
-  cat("\n")
-  cat(sprintf("Conducting multiple comparison correction for all pairings between comparison histories and each refernece history using the %s method. \n", mc_comp_method))
+  cat(sprintf("\nConducting multiple comparison correction for all pairings between comparison histories and each refernece history using the %s method. \n", mc_comp_method))
   cat("\n")
   print(comps_tab, "markdown")
+
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "histories", "plots"))
+    .create_dir_if_needed(out_dir)
+
+    if (is.character(save.out)) {
+      file_name = save.out
+    } else {
+      file_name <- sprintf(
+        "comparisons_table-outcome_%s-exposure_%s.txt", 
+        gsub("\\.", "\\_", outcome), 
+        exposure_root
+      )
+    }
+    
+    out = fs::path_join(c(out_dir, file_name))
+    cat(sprintf(
+      '\nSaving comparisons table to file:\n%s\n',
+      out
+    ))
+    if (fs::path_ext(out) == "pdf") {
+      tinytable::save_tt(
+        tinytable::format_tt(comps_tab, escape = TRUE),
+        output = out, overwrite = TRUE
+      )
+    } else {
+      tinytable::save_tt(comps_tab, output = out, overwrite = TRUE)
+    }
+  }
 }
 
 
@@ -317,14 +387,16 @@ print.devMSM_comparisons <- function(x, ...) {
 #' @param ... ignored
 #'
 #' @export
-plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab = NULL, save.out = FALSE, home_dir = NULL, ...) {
+plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab = NULL, save.out = FALSE, ...) {
   dreamerr::check_arg(exp_lab, out_lab, "NULL | character scalar")
   if (is.null(out_lab)) out_lab <- attr(x, "outcome")
   if (is.null(exp_lab)) exp_lab <- attr(x, "exp_lab")
 
-  exposure <- attr(x, "exposure")
-  epoch <- attr(x, "epoch")
   outcome <- attr(x, "outcome")
+  obj <- attr(x, "obj")
+  exposure <- attr(obj, "exposure")
+  exposure_root <- attr(obj, "exposure_root")
+  epoch <- attr(obj, "epoch")
 
   n_epoch <- length(unique(epoch))
   dreamerr::check_arg(colors, "character vector")
@@ -387,19 +459,27 @@ plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab
       axis.line = ggplot2::element_line(colour = "black")
     )
 
-  if (save.out) {
-    ggplot2::ggsave(
-      file.path(
-        home_dir, "plots",
-        sprintf(
-          "%s-%s.jpeg",
-          exposure, outcome
-        )
-      ),
-      plot = p
-    )
-    cat("\n")
-    cat("See the '/plots/' folder for graphical representations of results.")
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "histories", "plots"))
+    .create_dir_if_needed(out_dir)
+
+    if (is.character(save.out)) {
+      file_name = save.out
+    } else {
+      file_name <- sprintf(
+        "comparisons_plot-outcome_%s-exposure_%s.jpeg", 
+        gsub("\\.", "\\_", outcome), 
+        exposure_root
+      )
+    }
+    
+    out = fs::path_join(c(out_dir, file_name))
+    cat(sprintf(
+      '\nSaving comparisons plot to `jpeg` file:\n%s\n',
+      out
+    ))
+    ggplot2::ggsave(out, plot = p, height = 8, width = 14)
   }
 
   return(p)

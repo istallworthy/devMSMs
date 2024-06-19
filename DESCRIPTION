@@ -38,7 +38,8 @@ Imports:
     survey,
     tinytable,
     WeightIt,
-    utils
+    utils,
+    fs
 Suggests: 
     CBPS,
     dbarts,

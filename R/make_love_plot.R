@@ -9,7 +9,7 @@
 #' print("tbd")
 #'
 #' @keywords internal
-make_love_plot <- function(balance_stats, exposure_type = c("continuous", "binary"), k = 0, weight_method = NULL) {
+make_love_plot <- function(obj, balance_stats, exposure_type = c("continuous", "binary"), k = 0, weight_method = NULL) {
   
   # exposure <- balance_stats$exposure[1]
   # exposure_time_pt <- balance_stats$exposure_time[1]
@@ -57,6 +57,13 @@ make_love_plot <- function(balance_stats, exposure_type = c("continuous", "binar
     ordered = TRUE
   )
   balance_stats$Exposure = balance_stats$exposure
+
+  exposure = attr(obj, "exposure")
+  balance_stats$Exposure <- factor(
+    balance_stats$Exposure, 
+    levels = exposure, 
+    ordered = TRUE
+  )
 
   # Make love plot per exposure time point
   lp <- ggplot2::ggplot(data = balance_stats) +

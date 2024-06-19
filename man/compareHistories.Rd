@@ -10,7 +10,7 @@
 compareHistories(
   obj,
   fit,
-  hi_lo_cut = c(0.3, 0.6),
+  hi_lo_cut = c(0.4, 0.6),
   dose_level = c("h", "l"),
   reference = NULL,
   comparison = NULL,
@@ -19,7 +19,7 @@ compareHistories(
   save.out = FALSE
 )
 
-\method{print}{devMSM_comparisons}(x, ...)
+\method{print}{devMSM_comparisons}(x, save.out = FALSE, ...)
 
 \method{plot}{devMSM_comparisons}(
   x,
@@ -27,7 +27,6 @@ compareHistories(
   exp_lab = NULL,
   out_lab = NULL,
   save.out = FALSE,
-  home_dir = NULL,
   ...
 )
 
@@ -38,14 +37,14 @@ compareHistories(
 
 \item{fit}{list of model outputs from \code{\link[=fitModel]{fitModel()}}}
 
-\item{hi_lo_cut}{(optional) list of two numbers indicating quantile values
+\item{hi_lo_cut}{list of two numbers indicating quantile values
 that reflect high and low values, respectively, for continuous exposure
 (default is median split)}
 
 \item{dose_level}{(optional) "l" or "h" indicating whether low or high doses
 should be tallied in tables and plots (default is high "h")}
 
-\item{reference}{(optional) list sof one or more strings of "-"-separated "l"
+\item{reference}{lists of one or more strings of "-"-separated "l"
 and "h" values indicative of a reference exposure history to which to
 compare comparison, required if comparison is supplied}
 
@@ -60,8 +59,9 @@ Benjamini-Hochburg ("BH")}
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
 (default is FALSE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is FALSE)}
+\item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
+it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
 
 \item{x}{devMSM_histories object from \code{\link[=compareHistories]{compareHistories()}}}
 
@@ -75,8 +75,6 @@ colors (n(epochs)+1) for plotting (default is "Dark2" palette)}
 
 \item{out_lab}{(optional) character label for outcome variable in plots
 (default is variable name)}
-
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
 
 \item{object}{devMSM_histories object from \code{\link[=compareHistories]{compareHistories()}}}
 
@@ -118,12 +116,13 @@ obj <- initMSM(
 f <- createFormulas(obj, type = "short")
 w <- createWeights(data = data, obj = obj, formulas = f)
 fit <- fitModel(
-  data = data, obj = obj, weights = w, 
+  data = data, obj = obj, weights = w,
   outcome = "D.3", model = "m0"
 )
 
-comp = compareHistories(
-  obj, fit = fit,
+comp <- compareHistories(
+  obj,
+  fit = fit,
   hi_lo_cut = c(0.3, 0.6)
 )
 print(comp)
@@ -131,11 +130,12 @@ plot(comp)
 summary(comp, "preds")
 summary(comp, "comps")
 
-comp2 = compareHistories(
-  obj, fit = fit, 
+comp2 <- compareHistories(
+  obj,
+  fit = fit,
   reference = "l-l-l",
-  comparison = c("h-h-h", "h-h-l") 
-) 
+  comparison = c("h-h-h", "h-h-l")
+)
 print(comp2)
 plot(comp2)
 summary(comp2, "preds")

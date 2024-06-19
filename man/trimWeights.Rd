@@ -30,8 +30,9 @@ trimming the top and bottom 3 weights). Default is \code{FALSE} to only trim the
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
 (default is FALSE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is FALSE)}
+\item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
+it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
 }
 \value{
 a list containing \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} output. It is the length
