@@ -58,6 +58,13 @@ make_love_plot <- function(balance_stats, exposure_type = c("continuous", "binar
   )
   balance_stats$Exposure = balance_stats$exposure
 
+  # TODO: order factor by exposure time points
+  balance_stats$Exposure <- factor(
+    balance_stats$Exposure, 
+    levels = unique(balance_stats$Exposure), 
+    ordered = TRUE
+  )
+
   # Make love plot per exposure time point
   lp <- ggplot2::ggplot(data = balance_stats) +
     ggplot2::geom_point(

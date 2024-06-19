@@ -18,7 +18,7 @@ createWeights(
 
 \method{print}{devMSM_weights}(x, i = 1, ...)
 
-\method{plot}{devMSM_weights}(x, i = 1, ...)
+\method{plot}{devMSM_weights}(x, i = 1, save.out = FALSE, ...)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
@@ -34,15 +34,16 @@ abbreviation (default is Covariate Balancing Propensity Score "cbps")}
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
 (default is FALSE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is FALSE)}
+\item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
+it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
 
 \item{...}{ignored}
 
 \item{x}{devMSM_weights object from \code{\link[=createWeights]{createWeights()}}}
 
 \item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
-Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over.}
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that.}
 }
 \value{
 a list containing \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} output. It is the length

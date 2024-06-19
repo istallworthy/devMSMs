@@ -18,11 +18,11 @@ each unit}
 
 \item{epoch}{character vector of epoch values}
 
-\item{hi_lo_cut}{(optional) list of two numbers indicating quantile values
+\item{hi_lo_cut}{list of two numbers indicating quantile values
 that reflect high and low values, respectively, for continuous exposure
 (default is median split)}
 
-\item{reference}{(optional) list sof one or more strings of "-"-separated "l"
+\item{reference}{lists of one or more strings of "-"-separated "l"
 and "h" values indicative of a reference exposure history to which to
 compare comparison, required if comparison is supplied}
 

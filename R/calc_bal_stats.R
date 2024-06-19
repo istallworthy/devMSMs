@@ -183,8 +183,13 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
 
   } # Ends exposure_time_pts loop
   
-  
-
-  
-  return(all_bal_stats)
+  if (length(omitted_histories) == 0) {
+    res = list(all_bal_stats = all_bal_stats, omitted_histories = NULL)
+  } else {
+    res = list(all_bal_stats = all_bal_stats, omitted_histories = omitted_histories)
+  }
+  return(res)
 }
+
+
+

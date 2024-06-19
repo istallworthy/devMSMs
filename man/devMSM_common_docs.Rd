@@ -35,13 +35,12 @@ frames, or \code{mids} object from the \code{mice} package}
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
 (default is FALSE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is FALSE)}
-
-\item{home_dir}{path to home directory (required if save.out = TRUE)}
+\item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
+it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
 
 \item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
-Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over.}
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that.}
 
 \item{t}{Which exposure variable to use. Can either be an index from 1, ..., num exposures or
 a string containing the exposure varaible name (e.g. \code{"A.3"}). With \code{t = TRUE}, all exposure

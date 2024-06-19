@@ -19,7 +19,7 @@ fitModel(
   save.out = FALSE
 )
 
-\method{print}{devMSM_models}(x, i = 1, ...)
+\method{print}{devMSM_models}(x, i = 1, save.out = FALSE, ...)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
@@ -53,13 +53,14 @@ required for covariate models ("m1", "m3")}
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
 (default is FALSE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is FALSE)}
+\item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
+it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
 
 \item{x}{devMSM_models object from \code{fitModel}}
 
 \item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
-Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over.}
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that.}
 
 \item{...}{ignored}
 }

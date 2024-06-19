@@ -44,31 +44,47 @@
 #' @export
 trimWeights <- function(obj, weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE) {
   ### Checks ----
-  dreamerr::check_arg(verbose, save.out, "scalar logical")
-  home_dir <- attr(obj, "home_dir")
-  if (is.null(home_dir) && save.out){
-    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
-  }
-  if (save.out) dreamerr::check_arg_plus(home_dir, "path dir")
-  
+  dreamerr::check_arg(verbose, "scalar logical")
+
+	dreamerr::check_arg(save.out, "scalar logical | scalar character")
   dreamerr::check_arg(at, "scalar numeric GT(0.5) LT(1) | scalar integer GT(1)")
   dreamerr::check_arg(lower, "scalar logical")
   
   if (!is.null(weights)) .check_weights(weights)
-  if (save.out) {
-    .create_dir_if_needed(file.path(home_dir, "weights"))
-    .create_dir_if_needed(file.path(home_dir, "weights", "values"))
-  }
 
   # No verbose?
   trim_weights <- lapply(weights, WeightIt::trim, at = at, lower = lower)
   
   class(trim_weights) <- c("devMSM_weights", "list")
-  attr(trim_weights, "data_type") <- attr(weights, "data_type")
+  # TODO: Do not need to pass `obj` since it's attached to `weights`
+  attr(trim_weights, "obj") <- obj
   attr(trim_weights, "method") <- attr(weights, "method")
+  attr(trim_weights, "form_type") <- attr(weights, "form_type")
   attr(trim_weights, "trim") <- attr(trim_weights[[1]][["weights"]], "trim")
-  attr(trim_weights, "trim.lower") <- attr(trim_weights[[1]][["weights"]], "trim.lower")
+  attr(trim_weights, "trim_lower") <- attr(trim_weights[[1]][["weights"]], "trim.lower")
 
   if (verbose) print(trim_weights)
+  
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "weights"))
+    .create_dir_if_needed(out_dir)
+
+    if (is.character(save.out)) {
+      file_name <- save.out
+    } else {
+      file_name <- sprintf(
+        "type_%s-exposure_%s-method_%s-trim_at_%s-lower_%s.rds",
+        attr(weights, "form_type"), attr(obj, "exposure_root"),  attr(weights, "method"), at, tolower(lower)
+      )
+    }
+    out <- fs::path_join(c(out_dir, file_name))
+    cat(sprintf(
+      '\nSaving (trimmed) weights to `.rds` file. To load, call:\nreadRDS("%s")\n',
+      out
+    ))
+    saveRDS(weights, out)
+  }
+
   return(trim_weights)
 }

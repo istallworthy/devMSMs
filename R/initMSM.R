@@ -11,7 +11,7 @@
 #' @param ti_conf list of time invariant confounders. Can be left as NULL for none.
 #' @param concur_conf (optional) list of variable names reflecting time-varying
 #'   confounders to retain in formulas contemporaneously (default is none)
-#' @param home_dir (optional) directory for saving output 
+#' @param home_dir (optional) directory for saving output. Either an absolute path or a relative path with respect to `getwd()`
 #' @param sep (optional) The seperator between the variable and the time period. The
 #'   variable names will be split by the last occurance of `sep` with the
 #'   second string containing the time. This uses regex notation, so `.` must
@@ -24,8 +24,8 @@
 #' create the formulae (omitting future mediators)
 #'
 #' @return object of class `devMSM` that contains the initialized information.
-#' 
-#' @examples 
+#'
+#' @examples
 #' data <- data.frame(
 #'   A.1 = rnorm(n = 50),
 #'   A.2 = rnorm(n = 50),
@@ -34,28 +34,30 @@
 #'   B.2 = rnorm(n = 50),
 #'   B.3 = rnorm(n = 50),
 #'   D.3 = rnorm(n = 50),
-#'   L.1 = sample(c(0,1), size = 50, replace = TRUE),
+#'   L.1 = sample(c(0, 1), size = 50, replace = TRUE),
 #'   C   = rnorm(n = 50)
 #' )
 #' obj <- initMSM(
-#'   data = data, exposure = c("A.1", "A.2", "A.3"),
-#'   tv_conf = c("B.1", "B.2", "B.3", "D.3"), 
+#'   data = data,
+#'   exposure = c("A.1", "A.2", "A.3"),
+#'   tv_conf = c("B.1", "B.2", "B.3", "D.3"),
 #'   ti_conf = "C"
 #' )
-#' 
+#'
 #' obj
 #'
-#'
 #' @export
-initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL, 
+initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL,
                     concur_conf = NULL, home_dir = NULL, sep = "[\\._]") {
-
   if (inherits(data, "mids")) {
     d <- data[[1]]
+    data_type <- "mids"
   } else if (inherits(data, "list")) {
     d <- data[[1]]
+    data_type <- "list"
   } else {
     d <- data
+    data_type <- "data.frame"
   }
 
   dreamerr::check_arg(exposure, "vector character len(1, )")
@@ -92,8 +94,17 @@ initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL,
   if (any(exposure %in% tv_conf)) {
     stop("`exposure` must not be in `tv_conf`.", call. = FALSE)
   }
-  
-  dreamerr::check_arg_plus(home_dir, "path dir")  
+
+  dreamerr::check_arg_plus(home_dir, "path dir | NULL")
+  # Make absolute path
+  cwd <- getwd()
+  if (is.null(home_dir)) {
+    home_dir <- cwd
+  } else if (!fs::is_absolute_path(home_dir)) {
+    home_dir <- fs::path_join(c(cwd, home_dir))
+  }
+  home_dir <- fs::path_norm(home_dir)
+  .create_dir_if_needed(home_dir)
 
   # checking exposure type
   lapply(seq_along(exposure), function(i) {
@@ -129,14 +140,16 @@ initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL,
   # return initialized object
   obj <- list()
   class(obj) <- c("devMSM", "list")
-  attr(obj, "var_tab") <- var_tab
+  attr(obj, "data_type") <- data_type
   attr(obj, "exposure") <- exposure
   attr(obj, "epoch") <- epoch
+  attr(obj, "exposure_root") <- .remove_time_pts_from_vars(exposure[1], sep = sep)
   attr(obj, "exposure_time_pts") <- exposure_time_pts
   attr(obj, "exposure_type") <- exposure_type
   attr(obj, "sep") <- sep
   attr(obj, "home_dir") <- home_dir
-  
+  attr(obj, "var_tab") <- var_tab
+
   return(obj)
 }
 

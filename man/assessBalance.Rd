@@ -17,11 +17,11 @@ assessBalance(
   save.out = FALSE
 )
 
-\method{print}{devMSM_bal_stats}(x, i = NA, t = TRUE, ...)
+\method{print}{devMSM_bal_stats}(x, i = NA, t = TRUE, save.out = FALSE, ...)
 
-\method{summary}{devMSM_bal_stats}(object, i = NA, t = TRUE, ...)
+\method{summary}{devMSM_bal_stats}(object, i = NA, t = TRUE, save.out = FALSE, ...)
 
-\method{plot}{devMSM_bal_stats}(x, i = NA, t = TRUE, ...)
+\method{plot}{devMSM_bal_stats}(x, i = NA, t = TRUE, save.out = FALSE, ...)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
@@ -41,13 +41,14 @@ confounders, required if two balance thresholds are supplied}
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
 (default is FALSE)}
 
-\item{save.out}{(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is FALSE)}
+\item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
+it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
 
 \item{x}{devMSM_bal_stats object from \code{assessBalance}}
 
 \item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
-Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over.}
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that.}
 
 \item{t}{Which exposure variable to use. Can either be an index from 1, ..., num exposures or
 a string containing the exposure varaible name (e.g. \code{"A.3"}). With \code{t = TRUE}, all exposure
@@ -86,7 +87,6 @@ obj <- initMSM(
   ti_conf = c("C"),
   tv_conf = c("B.1", "B.2", "B.3", "D.3")
 )
-f <- createFormulas(obj, type = "short")
 
 # Prebalance
 b <- assessBalance(data = data, obj = obj)
@@ -99,6 +99,7 @@ plot(b, t = "A.3")
 plot(b, t = 3)
 
 # Weighted
+f <- createFormulas(obj, type = "short")
 w <- createWeights(data = data, obj = obj, formulas = f)
 bw <- assessBalance(data = data, obj = obj, weights = w)
 print(bw)

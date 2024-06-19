@@ -1,6 +1,8 @@
 # utils ----
 .create_dir_if_needed <- function(dir) {
-  if (!dir.exists(dir)) dir.create(dir)
+  if (!fs::dir_exists(dir)) {
+    fs::dir_create(dir, recurse = TRUE)
+  }
 }
 
 #' Adaptation of gtools::permutations(2, repeats.allowed = TRUE)
@@ -173,6 +175,7 @@ perm2 <- function(r, v) {
     summed
   }
   
+  # TODO: cleanup
   avgs = lapply(
       lapply(1:length(bal_stats[[1]]), function(z){
       lapply(

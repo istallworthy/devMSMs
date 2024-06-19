@@ -80,16 +80,9 @@ fitModel <- function(
     family = NULL, link = NA,
     verbose = FALSE, save.out = FALSE) {
   ### Checks ----
-  dreamerr::check_arg(verbose, save.out, "scalar logical")
-  
-  home_dir <- attr(obj, "home_dir")
-  if (is.null(home_dir) && save.out){
-    stop("Please provide a home directory in the MSM object to save.", call. = FALSE)
-  }
-  if (save.out) {
-    dreamerr::check_arg_plus(home_dir, "path dir")
-    .create_dir_if_needed(file.path(home_dir, "models"))
-  }
+  dreamerr::check_arg(verbose, "scalar logical")
+
+	dreamerr::check_arg(save.out, "scalar logical | scalar character")
 
   .check_data(data)
   .check_weights(weights)
@@ -99,6 +92,7 @@ fitModel <- function(
 
   var_tab <- attr(obj, "var_tab")
   exposure <- attr(obj, "exposure")
+  exposure_root <- attr(obj, "exposure_root")
   exposure_time_pts <- attr(obj, "exposure_time_pts")
   epoch <- attr(obj, "epoch")
   sep <- attr(obj, "sep")
@@ -155,20 +149,11 @@ fitModel <- function(
   covars_time <- .extract_time_pts_from_vars(covariates, sep = attr(obj, "sep"))
   post_outcome_time = covars_time > outcome_time_pt
   if (any(!is.na(covars_time)) && any(post_outcome_time, na.rm = TRUE)) {
-    # TODO: warn or stop?
-    stop(sprintf(
-      "Covariates can not contain time-varying confounders measured after the exposure time point. Problematic covariates:",
+    warning(sprintf(
+      "Covariates can not contain time-varying confounders measured after the outcome time point. Problematic covariates:",
       paste(na.omit(covariates[post_outcome_time]), collapse = ", ")
     ), call. = FALSE)
   }
-  
-  # # TODO: Include this?
-  # miss <- !(covariates %in% var_tab$var[var_tab$type != "exposure"])
-  # if (any(miss)) {
-  #   warning(sprintf(
-  #     "Please make sure all variables in `covariates` are included as either exposure variables, time-varying confounders, or time invariant confounders.\nThe following variables are not: %s", paste(covariates[miss], sep = ", ")
-  #   ), call. = FALSE)
-  # }
 
   # getting null comparisons for LHT
   null_model <- if (model %in% c("m0", "m2")) {
@@ -236,11 +221,36 @@ fitModel <- function(
 
   class(all_fits) <- c("devMSM_models", "list")
   attr(all_fits, "outcome") <- outcome
-  attr(all_fits, "data_type") <- data_type
   attr(all_fits, "model") <- model
   attr(all_fits, "null_test") <- null_test
+  attr(all_fits, "obj") <- obj
 
   if (verbose) print(all_fits, i = 1)
+  
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "models"))
+    .create_dir_if_needed(out_dir)
+
+    if (is.character(save.out)) {
+      file_name <- save.out
+    } else {
+      file_name <- sprintf(
+        "outcome_%s-exposure_%s-model_%s.rds",
+        gsub("\\.", "_", outcome), 
+        exposure_root, 
+        model
+      )
+    }
+
+    out <- fs::path_join(c(out_dir, file_name))
+    cat(sprintf(
+      '\nSaving model fits to `.rds` file. To load, call:\nreadRDS("%s")\n',
+      out
+    ))
+    saveRDS(all_fits, out)
+  }
+
   return(all_fits)
 }
 
@@ -251,10 +261,13 @@ fitModel <- function(
 #' 
 #' @param ... ignored
 #' @export
-print.devMSM_models <- function(x, i = 1, ...) {
-  data_type <- attr(x, "data_type")
+print.devMSM_models <- function(x, i = 1, save.out = FALSE, ...) {
   model <- attr(x, "model")
+  outcome <- attr(x, "outcome")
   null_test <- attr(x, "null_test")
+  obj <- attr(x, "obj")
+  data_type <- attr(obj, "data_type")
+  exposure_root <- attr(obj, "exposure_root")
 
   msg_null_test <- c(
     "Please inspect the following likelihood ratio test to determine if the exposures collective predict significant variation in the outcome compared to a model without exposure terms.",
@@ -263,8 +276,18 @@ print.devMSM_models <- function(x, i = 1, ...) {
     "\n"
   )
 
+  if (identical(i, TRUE)) {
+    if (data_type %in% c("mids", "list")) {
+      lapply(seq_along(x), function(j) {
+        print(x, i = j, save.out = save.out)
+      })
+    } else {
+      i = 1
+    }
+  } 
+  
   xi <- x[[i]]
-  sum <- modelsummary::modelsummary(
+  t <- modelsummary::modelsummary(
     xi,
     statistic = c("CI" = "[{conf.low}, {conf.high}]", "p" = "{p.value}"),
     shape = term ~ model + statistic,
@@ -285,16 +308,42 @@ print.devMSM_models <- function(x, i = 1, ...) {
   message(msg_null_test)
   print(null_test)
   cat(msg_model_sum)
-  print(sum, "markdown")
+  print(t, "markdown")
 
-  # if (save.out) {
-  #   output_file <- file.path(
-  #     home_dir, "models",
-  #     sprintf(
-  #       "%s-%s_%s_table_mod_ev.html",
-  #       exposure, outcome, model
-  #     )
-  #   )
-  #   tinytable::save_tt(sum, output = output_file)
-  # }
+  if (save.out == TRUE || is.character(save.out)) {
+    home_dir <- attr(obj, "home_dir")
+    out_dir <- fs::path_join(c(home_dir, "models"))
+    .create_dir_if_needed(out_dir)
+
+    if (data_type == "data.frame") {
+      i_str <- ""
+    } else {
+      i_str <- sprintf("-imp_%s", i)
+    }
+
+    if (is.character(save.out)) {
+      file_name <- save.out
+    } else {
+      file_name <- sprintf(
+        "fit_model_summary-outcome_%s-exposure_%s-model_%s%s.txt",
+        gsub("\\.", "_", outcome), 
+        exposure_root, 
+        model, i_str
+      )
+    }
+
+    out <- fs::path_join(c(out_dir, file_name))
+    cat(sprintf(
+      '\nSaving model statistics table to file:\n%s\n',
+      out
+    ))
+    if (fs::path_ext(out) == "pdf") {
+      tinytable::save_tt(
+        tinytable::format_tt(t, escape = TRUE),
+        output = out, overwrite = TRUE
+      )
+    } else {
+      tinytable::save_tt(t, output = out, overwrite = TRUE)
+    }
+  }
 }
