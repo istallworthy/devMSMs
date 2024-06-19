@@ -2,7 +2,6 @@ library(devtools)
 devtools::load_all()
 
 # TODO: Is it better to return `ggplot` objects from `plot()` and `tinytable` objects from `print()` and tell users how to save?
-# TODO: Attach `obj` to every return object to simplify print and such
 
 data <- data.frame(
   A.1 = rnorm(n = 50),

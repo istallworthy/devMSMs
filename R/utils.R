@@ -175,7 +175,7 @@ perm2 <- function(r, v) {
     summed
   }
   
-  # TODO: cleanup
+  # TODO: double check this and maybe cleanup?
   avgs = lapply(
       lapply(1:length(bal_stats[[1]]), function(z){
       lapply(

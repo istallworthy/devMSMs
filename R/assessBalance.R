@@ -550,6 +550,7 @@ plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
   
   # Loop through selected exposure variables
   lp <- make_love_plot(
+    obj = obj,
     balance_stats = balance_stats,
     exposure_type = exposure_type,
     k = k,
