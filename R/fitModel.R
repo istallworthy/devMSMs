@@ -346,4 +346,6 @@ print.devMSM_models <- function(x, i = 1, save.out = FALSE, ...) {
       tinytable::save_tt(t, output = out, overwrite = TRUE)
     }
   }
+
+  return(invisible(t))
 }

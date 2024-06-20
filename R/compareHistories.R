@@ -373,6 +373,8 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
       tinytable::save_tt(comps_tab, output = out, overwrite = TRUE)
     }
   }
+
+  return(invisible(comps_tab))
 }
 
 

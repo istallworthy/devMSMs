@@ -50,6 +50,8 @@ print(f)
 f <- createFormulas(obj = obj, type = "short", save.out = TRUE)
 print(f)
 
+# f <- readRDS("/Users/kylebutts/Desktop/Work/Jobs/devMSM/temp-out/formulas/type_short-exposure_A.rds")
+
 f <- createFormulas(obj = obj, type = "short", save.out = "test_custom_name.rds")
 
 # Weights ----
