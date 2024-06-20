@@ -283,6 +283,8 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
     }
   }
 
+  return(invisible(t))
+
   # TODO: Print omitted histories?
   # if (verbose) {
   #   if (data_type == "imputed") {
@@ -357,8 +359,6 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, save.out = FALSE,
       }
     }
     message(msg)
-    
-    return(invisible())
   }
   
   imbalanced_std_bal_stats <- unlist(lapply(
@@ -479,6 +479,7 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, save.out = FALSE,
     }
   }
 
+  return(invisible(t))
 }
 
 #' @rdname assessBalance

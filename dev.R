@@ -50,6 +50,8 @@ print(f)
 f <- createFormulas(obj = obj, type = "short", save.out = TRUE)
 print(f)
 
+# f <- readRDS("/Users/kylebutts/Desktop/Work/Jobs/devMSM/temp-out/formulas/type_short-exposure_A.rds")
+
 f <- createFormulas(obj = obj, type = "short", save.out = "test_custom_name.rds")
 
 # Weights ----
@@ -67,8 +69,11 @@ w <- createWeights(
 )
 plot(w, i = 1, save.out = TRUE)
 plot(w, i = 2, save.out = TRUE)
-p <- plot(w, i = TRUE, save.out = TRUE)
-plot(p[[1]])
+p <- plot(w, i = TRUE)
+p[[1]] + ggplot2::labs(title = "hi!") + ggplot2::theme_bw()
+
+
+# Document `save.out`
 
 # TODO: Should we document that you can use WeightIt internal functions? Can think of: 
 # - plots with `i = TRUE`, (p[[i]] extracts `ggplot2` object)
@@ -79,8 +84,8 @@ plot(p[[1]])
 # here's an example of WeightIt functions being called:
 summary(w[[1]])
 plot(summary(w[[1]]))
-plot(summary(w[[1]]), time = 1)
-
+plot(summary(w[[1]]), time = 2)
+summary(w)
 
 # Trim weights ----
 t <- trimWeights(obj = obj, weights = w, at = 0.975, lower = FALSE, save.out = TRUE)
@@ -104,12 +109,15 @@ plot(b, t = 3)
 plot(b, t = c(1, 2, 3))
 plot(b, t = c("A.1", "A.2"))
 
-# b/c of tinytable, can use `.tex`/`.html`/`.png`/`.pdf`
+t <- summary(b)
+
+# b/c of tinytable, can use `.tex`/`.html`/`.pdf`
 summary(b, save.out = "summ_b.html") 
 summary(b, save.out = "summ_b.tex") 
 print(b, save.out = "print_b.html") 
 print(b, save.out = "print_b.tex") 
 print(b, save.out = "print_b.pdf") 
+print(b, save.out = "print_b.txt")
 
 
 bw <- assessBalance(data = data, obj = obj, weights = w)

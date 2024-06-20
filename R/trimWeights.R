@@ -56,7 +56,6 @@ trimWeights <- function(obj, weights, at = 0, lower = FALSE, verbose = FALSE, sa
   trim_weights <- lapply(weights, WeightIt::trim, at = at, lower = lower)
   
   class(trim_weights) <- c("devMSM_weights", "list")
-  # TODO: Do not need to pass `obj` since it's attached to `weights`
   attr(trim_weights, "obj") <- obj
   attr(trim_weights, "method") <- attr(weights, "method")
   attr(trim_weights, "form_type") <- attr(weights, "form_type")
@@ -75,7 +74,11 @@ trimWeights <- function(obj, weights, at = 0, lower = FALSE, verbose = FALSE, sa
     } else {
       file_name <- sprintf(
         "type_%s-exposure_%s-method_%s-trim_at_%s-lower_%s.rds",
-        attr(weights, "form_type"), attr(obj, "exposure_root"),  attr(weights, "method"), at, tolower(lower)
+        attr(weights, "form_type"), 
+        attr(obj, "exposure_root"),  
+        attr(weights, "method"), 
+        at, 
+        tolower(lower)
       )
     }
     out <- fs::path_join(c(out_dir, file_name))

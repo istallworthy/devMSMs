@@ -215,6 +215,8 @@ compareHistories <- function(
   # pooling predicted values and contrasts for imputed data
   is_pooled <- length(preds) > 1
   if (is_pooled) { # IMPUTED DATA
+    # TODO: Delete this code when `modelsummary` goes onto CRAN & require that version in DESCRIPTION 
+    # `modelsummary (>= 1.4.4),`
     # TODO: should be fixed by modelsummary: https://github.com/vincentarelbundock/modelsummary/commit/5f13fe03683016ae92e5ffdd4b8b6b402614409e
     # 
     # assign(
@@ -371,6 +373,8 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
       tinytable::save_tt(comps_tab, output = out, overwrite = TRUE)
     }
   }
+
+  return(invisible(comps_tab))
 }
 
 
