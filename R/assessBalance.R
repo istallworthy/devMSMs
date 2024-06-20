@@ -479,6 +479,7 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, save.out = FALSE,
     }
   }
 
+  return(invisible(t))
 }
 
 #' @rdname assessBalance

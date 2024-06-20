@@ -185,6 +185,7 @@ perm2 <- function(r, v) {
           out <- x[[z]]
           out
         }),
+        # TODO: Absolute value or not? 
         function(q) abs(q[["std_bal_stats"]]))
     }), 
     average_sub_lists)
