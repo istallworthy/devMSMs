@@ -56,12 +56,14 @@ reference, required if reference is supplied}
 comparison correction method for stats::p.adjust, default is
 Benjamini-Hochburg ("BH")}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
-(default is FALSE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console.
+default is FALSE.}
 
 \item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
 it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
-To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}.
+There might be naming conflicts where two objects get saved to the same file. In these cases, users should specify a custom name.
+default is FALSE.}
 
 \item{x}{devMSM_histories object from \code{\link[=compareHistories]{compareHistories()}}}
 

@@ -76,6 +76,7 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
 
     } else {
       bal_vars <- data[, vars, drop = FALSE]
+      orig_vars <- colnames(data[, vars, drop = FALSE]) # added by IS for case of no factors 
     }
 
     # Cacluate `bal_stats`

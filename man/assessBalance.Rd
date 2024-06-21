@@ -38,12 +38,14 @@ important confounders, respectively (default = 0.1)}
 \item{imp_conf}{(optional) list of variable names reflecting important
 confounders, required if two balance thresholds are supplied}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
-(default is FALSE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console.
+default is FALSE.}
 
 \item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
 it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
-To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}.
+There might be naming conflicts where two objects get saved to the same file. In these cases, users should specify a custom name.
+default is FALSE.}
 
 \item{x}{devMSM_bal_stats object from \code{assessBalance}}
 

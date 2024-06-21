@@ -49,6 +49,7 @@ Suggests:
     mitml,
     rmarkdown,
     SuperLearner,
+    webshot2,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://istallworthy.github.io/devMSMs/, https://github.com/istallworthy/devMSMs
