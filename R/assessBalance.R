@@ -193,10 +193,12 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
   exposure_root <- attr(obj, "exposure_root")
   is_weighted <- attr(x, "weighted")
   weight_method <- attr(x, "weight_method")
+  
+  if (data_type %in% c("mids", "list")) {data_type = "imputed"}
 
   if (is.na(i)) {
     if (data_type == "imputed") {
-      all_bal_stats <- .avg_imp_bal_stats_time(x)
+      all_bal_stats <- .avg_imp_bal_stats_time(x) # TODO: IS notes that this is giving different bal stats than the summary() method does averaging across imps
     } else {
       all_bal_stats <- x[[1]]
     }
@@ -317,6 +319,8 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, save.out = FALSE,
   
   weight_method <- attr(object, "weight_method")
   is_weighted <- attr(object, "weighted")
+  
+  if (data_type %in% c("mids", "list")) {data_type <- "imputed"}
 
   if (is.na(i)) {
     if (data_type == "imputed") {
@@ -336,7 +340,7 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, save.out = FALSE,
   
   # Early return, no imbalanced
   if (n_imbalanced_covars == 0) {
-    msg <- if (data_type == "mids" || data_type == "list") {
+    msg <- if (data_type == "imputed") {
       if (!is.null(weight_method)) {
         if (!is.na(i)) {
           sprintf("No covariates remain imbalaned for imputation %s using `%s` weighting method.", i, weight_method)
@@ -377,7 +381,7 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, save.out = FALSE,
   )
   colnames(tab_bal_summary) <- c("Exposure", "Total # of covariates", "# of imbalanced covariates")
   
-  msg <- if (data_type == "list" || data_type == "mids") {
+  msg <- if (data_type == "imputed") {
     if (!is.null(weight_method)) {
       if (!is.na(i)) {
         sprintf("USER ALERT: For imputation %s using `%s` weighting method:", i, weight_method)
@@ -407,7 +411,7 @@ summary.devMSM_bal_stats <- function(object, i = NA, t = TRUE, save.out = FALSE,
     max(abs(imbalanced_std_bal_stats))
   )
   
-  caption <- if (data_type == "list" || data_type == "mids") {
+  caption <- if (data_type == "imputed") {
     if (!is.null(weight_method)) {
       if (!is.na(i)) {
         sprintf("Imbalanced Covariates for imputation %s using `%s`", i, weight_method)

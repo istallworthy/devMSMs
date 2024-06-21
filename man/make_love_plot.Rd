@@ -5,6 +5,7 @@
 \title{Create love plots showing balancing statistics}
 \usage{
 make_love_plot(
+  obj,
   balance_stats,
   exposure_type = c("continuous", "binary"),
   k = 0,
