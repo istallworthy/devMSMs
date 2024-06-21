@@ -72,7 +72,7 @@ terms = data.frame(
   "Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome", 
   "Time points in development when the exposure was measured at which balancing formulas will be created", 
   "*(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories", 
-  "Sequences of relatively high (`'h'`) or low (`'p'`) levels of exposure at each exposure time point or exposure epoch", 
+  "Sequences of relatively high (`'h'`) or low (`'l'`) levels of exposure at each exposure time point or exposure epoch", 
   "Total cumulative exposure epochs during which an individual experienced high (or low) levels of exposure across an entire exposure history", 
   "Any alternative, non-causal way (other than the direct causal effects from exposure to outcome) that the exposure at a given time point associates with the outcome within a causal diagram, often via confounders", 
   "Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths", 

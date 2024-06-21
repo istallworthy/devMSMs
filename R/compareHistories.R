@@ -346,7 +346,7 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
 
   if (save.out == TRUE || is.character(save.out)) {
     home_dir <- attr(obj, "home_dir")
-    out_dir <- fs::path_join(c(home_dir, "histories", "plots"))
+    out_dir <- fs::path_join(c(home_dir, "histories"))
     .create_dir_if_needed(out_dir)
 
     if (is.character(save.out)) {

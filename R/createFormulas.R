@@ -160,6 +160,28 @@ createFormulas <- function(
     attr(forms, "msgs") <- sapply(processed, function(x) x$msg)
 
     if (verbose) print(forms)
+    
+    if (save.out == TRUE || is.character(save.out)) {
+      home_dir <- attr(obj, "home_dir")
+      out_dir <- fs::path_join(c(home_dir, "formulas"))
+      .create_dir_if_needed(out_dir)
+      
+      if (is.character(save.out)) {
+        file_name <- save.out
+      } else {
+        file_name <- sprintf(
+          "type_%s-exposure_%s.rds",
+          type, attr(obj, "exposure_root")
+        )
+      }
+      
+      out <- fs::path_join(c(out_dir, file_name))
+      cat(sprintf(
+        '\nSaving formulas to `.rds` file. To load, call:\nreadRDS("%s")\n',
+        out
+      ))
+      saveRDS(forms, out)
+    }
     return(forms)
   }
 

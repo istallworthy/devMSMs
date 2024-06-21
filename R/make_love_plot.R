@@ -14,7 +14,7 @@ make_love_plot <- function(obj, balance_stats, exposure_type = c("continuous", "
   # exposure <- balance_stats$exposure[1]
   # exposure_time_pt <- balance_stats$exposure_time[1]
   # exposure_type <- balance_stats$exposure_type[1]
-
+  
   # Symmetric
   balance_thresh <- unique(balance_stats$bal_thresh)
   xrange <- c(
@@ -23,7 +23,7 @@ make_love_plot <- function(obj, balance_stats, exposure_type = c("continuous", "
     -1 * balance_thresh
   )
   xrange <- c(-max(abs(xrange)), max(abs(xrange)))
-
+  
   # data.frame, list, mice
   if (is.na(k)) {
     title_imputation_note <- sprintf("Averaging Across Imputed Datasets ")
@@ -43,12 +43,12 @@ make_love_plot <- function(obj, balance_stats, exposure_type = c("continuous", "
   } else {
     "Standardized Mean Difference Between Exposures"
   }
-
+  
   y_scale <- ggplot2::scale_y_discrete()
   if (nrow(balance_stats) > 40) { # stagger covariate labels if there are many
     y_scale <- ggplot2::scale_y_discrete(guide = ggplot2::guide_axis(n.dodge = 2))
   }
-
+  
   # For correct y-axis ordering
   balance_stats <- balance_stats[order(balance_stats$std_bal_stats), , drop = FALSE]
   balance_stats$covariate <- factor(
@@ -57,23 +57,26 @@ make_love_plot <- function(obj, balance_stats, exposure_type = c("continuous", "
     ordered = TRUE
   )
   balance_stats$Exposure = balance_stats$exposure
-
+  
   exposure = attr(obj, "exposure")
   balance_stats$Exposure <- factor(
     balance_stats$Exposure, 
     levels = exposure, 
     ordered = TRUE
   )
-
+  
   # Make love plot per exposure time point
   lp <- ggplot2::ggplot(data = balance_stats) +
     ggplot2::geom_point(
       ggplot2::aes(
         y = .data$covariate,
-        x = .data$std_bal_stats
+        x = .data$std_bal_stats,
+        color = factor(.data$balanced == 0), #added 
+        fill = factor(.data$balanced == 0)  # added
       ),
-      fill = "white", alpha = 1, size = 1.2
+      # fill = "white", alpha = 1, size = 1.2
     ) +
+    ggplot2::scale_color_manual(values = c("FALSE" = "black", "TRUE" = "red")) +  
     ggplot2::facet_wrap(
       ~ .data$Exposure, 
       scales = "free_y",
@@ -100,7 +103,18 @@ make_love_plot <- function(obj, balance_stats, exposure_type = c("continuous", "
       legend.background = ggplot2::element_blank(),
       legend.key = ggplot2::element_blank(),
       legend.position = "none"
+    ) + # adding imbalanced labels
+    ggplot2::geom_text(
+      data = subset(balance_stats, balanced == 0),
+      ggplot2::aes(
+        y = .data$covariate,
+        x = .data$std_bal_stats,
+        label = .data$covariate
+      ),
+      color = "red",
+      vjust = 1,  
+      hjust = -0.2,
+      size = 1.5    
     )
-
   return(lp)
 }

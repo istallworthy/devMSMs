@@ -27,12 +27,14 @@ set to the 4th largest weight).}
 (e.g., for \code{at = .9}, trimming at both .1 and .9, or for \code{at = 3},
 trimming the top and bottom 3 weights). Default is \code{FALSE} to only trim the higher weights.}
 
-\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console
-(default is FALSE)}
+\item{verbose}{(optional) TRUE or FALSE indicator for printing output to console.
+default is FALSE.}
 
 \item{save.out}{(optional) Either logical or a character string. If \code{TRUE},
 it will output the result to a default file name within \code{home_dir} set in \code{initMSM()}. You can load the data with \code{x <- readRDS(file)}.
-To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}. (default is FALSE).}
+To use a non-default file name, specify a character string with the file name. It will save relative to \code{home_dir}.
+There might be naming conflicts where two objects get saved to the same file. In these cases, users should specify a custom name.
+default is FALSE.}
 }
 \value{
 a list containing \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} output. It is the length

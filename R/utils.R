@@ -178,22 +178,23 @@ perm2 <- function(r, v) {
   # TODO: double check this and maybe cleanup?
   avgs = lapply(
       lapply(1:length(bal_stats[[1]]), function(z){
-      lapply(
+      # lapply(
         # for a single time point, gets all imps
         lapply(1:length(bal_stats), function(y) {
           x <- bal_stats[[y]]
           out <- x[[z]]
-          out
-        }),
-        # TODO: Absolute value or not? 
-        function(q) abs(q[["std_bal_stats"]]))
+          # out 
+          out$std_bal_stats
+        }) # ,
+        # # TODO: Absolute value or not? 
+        # function(q) abs(q[["std_bal_stats"]]))
     }), 
     average_sub_lists)
 
   test <- bal_stats[[1]]
   test <- lapply(1:length(test), function(x){
     test[[x]]$std_bal_stats <- avgs[[x]]
-    test[[x]]$balanced <- ifelse(test[[x]]$std_bal_stats < 
+    test[[x]]$balanced <- ifelse(abs(test[[x]]$std_bal_stats) < 
                             test[[x]]$bal_thresh, 1, 0) # recalc balanced
     test[[x]]
   })
@@ -278,12 +279,15 @@ perm2 <- function(r, v) {
     n_cols <- length(comparison)
     cus_comps <- matrix(0, ncol = n_cols, nrow = length(histories))
     cus_comps[match(ref, histories), ] <- -1
-    cus_comps[cbind(match(comparison, histories), 1:n_cols)] <- 1
+    # cus_comps[match(comparison, histories), 1:n_cols] <- 1
+    cus_comps[cbind(match(comparison, histories), 1:n_cols)] <- 1 # changed by IS to appropriately assign 1 to comparison histories
     colnames(cus_comps) <- sprintf("(%s) - (%s)", comparison, ref)
     return(cus_comps)
   })
   do.call(cbind, sub_mats)
 }
+
+
 
 #' Add history labels and dose to table based on `epoch_vars`
 #'
