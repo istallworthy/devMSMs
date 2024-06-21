@@ -270,6 +270,11 @@ perm2 <- function(r, v) {
 #'
 #' @keywords internal
 .create_hypotheses_mat <- function(histories, reference, comparison) {
+  # Create a matrix with length(histories) rows.
+  # Each column sets the value -1 for the reference group row
+  # and the value 1 for the comparison group row. 
+  # When multiplied by the predicted values it does 
+  # R' b = b_comparison - b_reference
   sub_mats <- lapply(reference, function(ref) {
     n_cols <- length(comparison)
     cus_comps <- matrix(0, ncol = n_cols, nrow = length(histories))
