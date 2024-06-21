@@ -278,7 +278,7 @@ perm2 <- function(r, v) {
     n_cols <- length(comparison)
     cus_comps <- matrix(0, ncol = n_cols, nrow = length(histories))
     cus_comps[match(ref, histories), ] <- -1
-    cus_comps[match(comparison, histories), 1:n_cols] <- 1
+    cus_comps[cbind(match(comparison, histories), 1:n_cols)] <- 1
     colnames(cus_comps) <- sprintf("(%s) - (%s)", comparison, ref)
     return(cus_comps)
   })
