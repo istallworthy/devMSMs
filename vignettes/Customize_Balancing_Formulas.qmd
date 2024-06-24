@@ -27,7 +27,7 @@ The code contained in this vignette is also available, integrated code from the 
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # install.packages("devtools")
-require(devtools, quietly = TRUE)
+# require(devtools, quietly = TRUE)
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 require(devMSMs, quietly = TRUE)
@@ -72,6 +72,7 @@ obj <- devMSMs::initMSM(
   tv_conf = tv_conf, 
   ti_conf = ti_conf
 )
+
 ```
 <br> 
 
@@ -82,25 +83,40 @@ Below, we illustrate the customization options for each of the three modes of th
 <br> 
 
 ## Customize Full Balancing Formulas (Steps 1 & 4)
-The default use of `createFormulas()` with `type = "full"` creates balancing formulas at each exposure time point. Each formula contains all time invariant confounders as well as all time-varying confounders measured at time points prior to that exposure time point. For example, for the 24-month balancing formula, we would have time-varying confounders only at 6 and 15 months.  
-  
-However, if users wish to also include any time-varying confounders measured contemporaneously with the exposure time point (e.g., also include 24-month time-varying confounders in the 24-month balancing formula), they can specify those time-varying confounders in the optional argument to `createFormulas()`, `concur_conf`.   
+The default use of `createFormulas()` with `type` = "full" creates balancing formulas at each exposure time point. Each formula contains all time invariant confounders as well as all time-varying confounders measured at time points prior to that exposure time point. For example, for the 24-month balancing formula, we would have time-varying confounders only at 6 and 15 months.  
+
+### Time-Varying Confounders Measured Contemporaneously With Exposure Time Point
+However, if users wish to also include any time-varying confounders measured contemporaneously with the exposure time point (e.g., also include 24-month time-varying confounders in the 24-month balancing formula), they can specify those time-varying confounders in the optional argument to `initMSM()`, `concur_conf`.   
   
 For example, to include 24-month maternal depression in the 24-month balancing formula, we do the following:
 
+We first specify confounders to retain contemporaneously when creating our MSM object. 
+```{r}
+
+obj <- devMSMs::initMSM(
+  data = sim_data_wide, 
+  exposure = exposure, 
+  tv_conf = tv_conf, 
+  ti_conf = ti_conf,
+  concur_conf = "B18Raw.24"
+)
+
+```
+
+
 ```{r}
 full_formulas <- createFormulas(obj  = obj, 
-                                type = "full", 
-                                keep_conf = "B18Raw.24")
+                                type = "full")
 
 print(full_formulas)
 ```
 
 Now `B18Raw.24` is included in the 24-month balancing formula in addition to the 35-and 58-month formulas.  
 
+### Fully Custom Formulas
 Alternatively, a user could completely customize the full formulas by manually creating formulas for each exposure time point using the optional `custom` argument. 
   
-To create custom formulas, the user creates a list with an entry for each exposure time point, each of which contains the balancing formula for exposure at that time point. `createFormulas()` will conduct checks to ensure there is a formula for each time point and provides cautionary warnings for unusual variables (e.g., those measured after the exposure time point). However, the user is responsible for ensuring the validity of these formulas. Users may wish to make custom formulas if they want to include any confounder interactions or polynomials in their balancing formulas.  
+To create custom formulas, the user creates a list with an entry for each exposure time point, each of which contains the balancing formula for exposure at that time point. `createFormulas()` will conduct checks to ensure there is a formula for each time point and provides cautionary warnings for unusual variables (e.g., those measured after the exposure time point). However, the user is responsible for ensuring the validity of these formulas. 
 
 Of note, if the user creates a custom "full" formula, they will also have to create custom formulas when using `createFormulas()` to make "short" and "updated" formulas. 
   
@@ -127,9 +143,9 @@ print(full_formulas)
 <br>
 
 ## Customize Short Balancing Formulas (Step 2)
-The default use of `createFormulas()` with `type = "short"` creates shortened balancing formulas at each exposure time point. Each formula contains all time invariant confounders as well as only those time-varying confounders measured at the time point directly prior (*t*-1 lag) to that exposure time point. For example, for the 24-month balancing formula, we would only include time-varying confounders at 15 months. Please see the *Workflows* vignettes and accompanying manuscript for more detail. 
+The default use of `createFormulas()` with `type` = "short" creates shortened balancing formulas at each exposure time point. Each formula contains all time invariant confounders as well as only those time-varying confounders measured at the time point directly prior (*t*-1 lag) to that exposure time point. For example, for the 24-month balancing formula, we would only include time-varying confounders at 15 months. Please see the *Workflows* vignettes and accompanying manuscript for more detail. 
   
-When creating short formulas, the user can specify the optional `concur_conf` and `custom` arguments detailed above. Of note, `createFormulas()` does not check that formulas in the `custom` field meet criteria for the shortened formula, and the user is responsible for ensuring the validity of these formulas.  
+When creating short formulas, the user can specify the optional `concur_conf` and `custom` arguments detailed above. Of note, `createFormulas()` does not check that formulas in the `custom` field meet criteria for the shortened formula, and thus the user is responsible for ensuring the validity of these formulas.  
   
 When creating short formulas, the user can also specify an optional `keep_conf` argument. Users would specify this second argument with any time-varying confounders to always retain in the formulas, in lagged form, overriding the *t*-1 lag default. Users may wish to use this argument if they have time-varying confounders that are not highly consistent over time and have strong reasons to include them in the initial phase of selecting the optimal weighting method (see *Workflows* vignettes for more details). Note that unless these variables are also specified in `concuf_conf`, they will only be retained in lagged form. 
   

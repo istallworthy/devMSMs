@@ -174,7 +174,6 @@ type <- "full"
 
 full_formulas <- createFormulas(obj = obj, 
                                 type = type, 
-                                custom = custom, 
                                 save.out = TRUE)
 
 ```
