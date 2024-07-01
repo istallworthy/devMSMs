@@ -88,6 +88,10 @@ require(devtools, quietly = TRUE)
 require(tinytable, quietly = TRUE)
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+
+devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+library(devMSMsHelpers)
+
 ```
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
@@ -180,7 +184,7 @@ tinytable::tt(helper_functions, theme = "striped") |>
 We first install the *devMSMs* and *devMSMsHelpers* packages.
 
 ```{r, eval = FALSE}
-# install.packages("devtools")
+install.packages("devtools")
 require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
@@ -206,12 +210,7 @@ Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_
 ```{r}
 set.seed(1234)
 
-# required 
-
-exposure = c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") # wide format
-
-
-# required
+exposure = c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
 
 ti_conf =  c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
              "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
@@ -232,11 +231,9 @@ tv_conf = c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
             "StrDif_Tot.35", 
             "fscore.35", "fscore.58")
 
-home_dir = NA
+# home_dir = NA
 
-# required
 outcome <- "StrDif_Tot.58"
-
 
 ```
 
@@ -293,21 +290,22 @@ factor_confounders <- c("state", "TcBlac2", "BioDadInHH2", "HomeOwnd", "PmBlac2"
 integer_confounders <- c("KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", 
                          "caregiv_health", "gov_assist", "B18Raw", "EARS_TJo", "MDI")
 
-data_long_f <- formatLongData(
-  data = data_long, 
-  exposure = exposure,
-  outcome = outcome,
-  sep = "\\.",
-  time_var = "WAVE",
-  id_var = "ID",
-  missing = NA,
-  factor_confounders = factor_confounders,
-  integer_confounders = integer_confounders,
-  home_dir = home_dir,
-  save.out = save.out
-)
+# data_long_f <- formatLongData(
+#   data = data_long, 
+#   exposure = exposure,
+#   outcome = outcome,
+#   sep = "\\.",
+#   time_var = "WAVE",
+#   id_var = "ID",
+#   missing = NA,
+#   factor_confounders = factor_confounders,
+#   integer_confounders = integer_confounders,
+#   home_dir = home_dir,
+#   save.out = save.out
+# )
 
-head(data_long_f, n = c(5, 10))
+# head(data_long_f, n = c(5, 10))
+
 ```
 
 We get a descriptive statistics summary of the exposure, ESETA1, and the outcome, StrDif_Tot.58, for our visual inspections.
@@ -323,22 +321,22 @@ We then transform our newly formatted long data into wide format, specifying `id
 ```{r}
 require("stats", quietly = TRUE)
 
-sep <- "\\." 
-v <- sapply(strsplit(tv_conf[!grepl("\\:", tv_conf)], sep), head, 1)
-v <- c(v[!duplicated(v)], sapply(strsplit(exposure[1], sep), head, 1))
-
-data_wide_f <- stats::reshape(
-  data = data_long_f,
-  idvar = "ID",
-  v.names = v,
-  timevar = "WAVE",
-  times = c(6, 15, 24, 35, 58),
-  direction = "wide"
-)
-
-data_wide_f <- data_wide_f[, colSums(is.na(data_wide_f)) < nrow(data_wide_f)]
-
-head(data_wide_f, n = c(5, 10))
+# sep <- "\\." 
+# v <- sapply(strsplit(tv_conf[!grepl("\\:", tv_conf)], sep), head, 1)
+# v <- c(v[!duplicated(v)], sapply(strsplit(exposure[1], sep), head, 1))
+# 
+# data_wide_f <- stats::reshape(
+#   data = data_long_f,
+#   idvar = "ID",
+#   v.names = v,
+#   timevar = "WAVE",
+#   times = c(6, 15, 24, 35, 58),
+#   direction = "wide"
+# )
+# 
+# data_wide_f <- data_wide_f[, colSums(is.na(data_wide_f)) < nrow(data_wide_f)]
+# 
+# head(data_wide_f, n = c(5, 10))
 ```
 
 <br> <br>
