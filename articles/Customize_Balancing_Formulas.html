@@ -43,10 +43,11 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Dev.html">Dev</a>
     <a class="dropdown-item" href="../articles/Terminology.html">Terminology</a>
-    <a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements</a>
+    <a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements &amp; Preparation</a>
     <a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a>
-    <a class="dropdown-item" href="../articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>
+    <a class="dropdown-item" href="../articles/Workflow_Continuous_Exposure.html">Workflow: Continuous Exposure</a>
     <a class="dropdown-item" href="../articles/Customize_Balancing_Formulas.html">Customize Balancing Formulas</a>
+    <a class="dropdown-item" href="../articles/Assessing_Balance_Tv.html">Assessing Balance for Time-Varying Exposures</a>
   </div>
 </li>
       </ul>
@@ -75,6 +76,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Customize Balancing Formulas</h1>
             
+            <h4 data-toc-skip class="date">2024-07-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Customize_Balancing_Formulas.qmd" class="external-link"><code>vignettes/Customize_Balancing_Formulas.qmd</code></a></small>
       <div class="d-none name"><code>Customize_Balancing_Formulas.qmd</code></div>
@@ -87,26 +89,16 @@ formulas for use in <em>devMSMs</em>. Please first review the
 <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify
 Core Inputs</a> and any of the <em>Workflows</em> vignettes.</p>
 <p>The code contained in this vignette is also available, integrated
-code from the other vignettes, in the
-<a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd" class="external-link">examplePipeline.rmd
-file</a>.</p>
+code from the other vignettes, in the ExampleWorkflow.rmd.</p>
 <p><br></p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMs"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: usethis</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <div class="section level2">
 <h2 id="core-inputs">Core Inputs<a class="anchor" aria-label="anchor" href="#core-inputs"></a>
 </h2>
 <p>We specify core inputs to the <em>devMSMs</em> functions.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exposure</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ESETA1.6"</span>, <span class="st">"ESETA1.15"</span>, <span class="st">"ESETA1.24"</span>, <span class="st">"ESETA1.35"</span>, <span class="st">"ESETA1.58"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">tv_conf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"SAAmylase.6"</span>, <span class="st">"SAAmylase.15"</span>, <span class="st">"SAAmylase.24"</span>,</span>
 <span>  <span class="st">"MDI.6"</span>, <span class="st">"MDI.15"</span>,</span>
@@ -123,6 +115,7 @@ file</a>.</p>
 <span>  <span class="st">"StrDif_Tot.35"</span>, <span class="st">"StrDif_Tot.58"</span>,</span>
 <span>  <span class="st">"fscore.35"</span>, <span class="st">"fscore.58"</span></span>
 <span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">ti_conf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"state"</span>, <span class="st">"BioDadInHH2"</span>, <span class="st">"PmAge2"</span>, <span class="st">"PmBlac2"</span>, <span class="st">"TcBlac2"</span>, <span class="st">"PmMrSt2"</span>, <span class="st">"PmEd2"</span>, <span class="st">"KFASTScr"</span>,</span>
 <span>  <span class="st">"RMomAgeU"</span>, <span class="st">"RHealth"</span>, <span class="st">"HomeOwnd"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
@@ -130,8 +123,12 @@ file</a>.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim_data_wide</span>, package <span class="op">=</span> <span class="st">"devMSMs"</span><span class="op">)</span></span>
-<span><span class="va">obj</span> <span class="op">=</span> <span class="fu"><a href="../reference/initMSM.html">initMSM</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">sim_data_wide</span>, exposure <span class="op">=</span> <span class="va">exposure</span>, tv_conf <span class="op">=</span> <span class="va">tv_conf</span>, ti_conf <span class="op">=</span> <span class="va">ti_conf</span></span>
+<span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">devMSMs</span><span class="fu">::</span><span class="fu"><a href="../reference/initMSM.html">initMSM</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">sim_data_wide</span>, </span>
+<span>  exposure <span class="op">=</span> <span class="va">exposure</span>, </span>
+<span>  tv_conf <span class="op">=</span> <span class="va">tv_conf</span>, </span>
+<span>  ti_conf <span class="op">=</span> <span class="va">ti_conf</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>The <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function has 3 different modes:
@@ -158,57 +155,77 @@ problems (StrDif_Tot) measured at 58 months.</p>
 <h2 id="customize-full-balancing-formulas-steps-1-4">Customize Full Balancing Formulas (Steps 1 &amp; 4)<a class="anchor" aria-label="anchor" href="#customize-full-balancing-formulas-steps-1-4"></a>
 </h2>
 <p>The default use of <code><a href="../reference/createFormulas.html">createFormulas()</a></code> with
-<code>type = "full"</code> creates balancing formulas at each exposure
+<code>type</code> = “full” creates balancing formulas at each exposure
 time point. Each formula contains all time invariant confounders as well
 as all time-varying confounders measured at time points prior to that
 exposure time point. For example, for the 24-month balancing formula, we
 would have time-varying confounders only at 6 and 15 months.</p>
+<div class="section level3">
+<h3 id="time-varying-confounders-measured-contemporaneously-with-exposure-time-point">Time-Varying Confounders Measured Contemporaneously With Exposure
+Time Point<a class="anchor" aria-label="anchor" href="#time-varying-confounders-measured-contemporaneously-with-exposure-time-point"></a>
+</h3>
 <p>However, if users wish to also include any time-varying confounders
 measured contemporaneously with the exposure time point (e.g., also
 include 24-month time-varying confounders in the 24-month balancing
 formula), they can specify those time-varying confounders in the
-optional argument to <code><a href="../reference/createFormulas.html">createFormulas()</a></code>,
+optional argument to <code><a href="../reference/initMSM.html">initMSM()</a></code>,
 <code>concur_conf</code>.</p>
 <p>For example, to include 24-month maternal depression in the 24-month
 balancing formula, we do the following:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">full_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>obj  <span class="op">=</span> <span class="va">obj</span>, type <span class="op">=</span> <span class="st">"full"</span>, keep_conf <span class="op">=</span> <span class="st">"B18Raw.24"</span><span class="op">)</span></span>
+<p>We first specify confounders to retain contemporaneously when
+creating our MSM object.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">devMSMs</span><span class="fu">::</span><span class="fu"><a href="../reference/initMSM.html">initMSM</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">sim_data_wide</span>, </span>
+<span>  exposure <span class="op">=</span> <span class="va">exposure</span>, </span>
+<span>  tv_conf <span class="op">=</span> <span class="va">tv_conf</span>, </span>
+<span>  ti_conf <span class="op">=</span> <span class="va">ti_conf</span>,</span>
+<span>  concur_conf <span class="op">=</span> <span class="st">"B18Raw.24"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">full_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>obj  <span class="op">=</span> <span class="va">obj</span>, </span>
+<span>                                type <span class="op">=</span> <span class="st">"full"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">full_formulas</span><span class="op">)</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; At time point 6, the full formula for ESETA1.6 is: </span></span>
 <span><span class="co">#&gt; ESETA1.6 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; At time point 15, the full formula for ESETA1.15 is: </span></span>
-<span><span class="co">#&gt; ESETA1.15 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + ESETA1.6</span></span>
+<span><span class="co">#&gt; ESETA1.15 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + SAAmylase.6 + MDI.6 + RHasSO.6 + WndNbrhood.6 + IBRAttn.6 + B18Raw.6 + HOMEETA1.6 + InRatioCor.6 + CORTB.6 + ESETA1.6</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; At time point 24, the full formula for ESETA1.24 is: </span></span>
-<span><span class="co">#&gt; ESETA1.24 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + ESETA1.6 + ESETA1.15 + B18Raw.24</span></span>
+<span><span class="co">#&gt; ESETA1.24 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + SAAmylase.6 + SAAmylase.15 + MDI.6 + MDI.15 + RHasSO.6 + RHasSO.15 + WndNbrhood.6 + IBRAttn.6 + IBRAttn.15 + B18Raw.6 + B18Raw.15 + B18Raw.24 + HOMEETA1.6 + HOMEETA1.15 + InRatioCor.6 + InRatioCor.15 + CORTB.6 + CORTB.15 + ESETA1.6 + ESETA1.15</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; At time point 35, the full formula for ESETA1.35 is: </span></span>
-<span><span class="co">#&gt; ESETA1.35 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + ESETA1.6 + ESETA1.15 + ESETA1.24</span></span>
+<span><span class="co">#&gt; ESETA1.35 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + SAAmylase.6 + SAAmylase.15 + SAAmylase.24 + MDI.6 + MDI.15 + RHasSO.6 + RHasSO.15 + RHasSO.24 + WndNbrhood.6 + WndNbrhood.24 + IBRAttn.6 + IBRAttn.15 + IBRAttn.24 + B18Raw.6 + B18Raw.15 + B18Raw.24 + HOMEETA1.6 + HOMEETA1.15 + HOMEETA1.24 + InRatioCor.6 + InRatioCor.15 + InRatioCor.24 + CORTB.6 +      CORTB.15 + CORTB.24 + EARS_TJo.24 + LESMnPos.24 + LESMnNeg.24 + ESETA1.6 + ESETA1.15 + ESETA1.24</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the full balancing formula below:</span></span>
 <span><span class="co">#&gt; At time point 58, the full formula for ESETA1.58 is: </span></span>
-<span><span class="co">#&gt; ESETA1.58 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + ESETA1.6 + ESETA1.15 + ESETA1.24 + ESETA1.35</span></span></code></pre></div>
+<span><span class="co">#&gt; ESETA1.58 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + SAAmylase.6 + SAAmylase.15 + SAAmylase.24 + MDI.6 + MDI.15 + RHasSO.6 + RHasSO.15 + RHasSO.24 + RHasSO.35 + WndNbrhood.6 + WndNbrhood.24 + WndNbrhood.35 + IBRAttn.6 + IBRAttn.15 + IBRAttn.24 + B18Raw.6 + B18Raw.15 + B18Raw.24 + HOMEETA1.6 + HOMEETA1.15 + HOMEETA1.24 + HOMEETA1.35 + InRatioCor.6 +      InRatioCor.15 + InRatioCor.24 + InRatioCor.35 + CORTB.6 + CORTB.15 + CORTB.24 + EARS_TJo.24 + EARS_TJo.35 + LESMnPos.24 + LESMnPos.35 + LESMnNeg.24 + LESMnNeg.35 + StrDif_Tot.35 + fscore.35 + ESETA1.6 + ESETA1.15 + ESETA1.24 + ESETA1.35</span></span></code></pre></div>
 <p>Now <code>B18Raw.24</code> is included in the 24-month balancing
 formula in addition to the 35-and 58-month formulas.</p>
+</div>
+<div class="section level3">
+<h3 id="fully-custom-formulas">Fully Custom Formulas<a class="anchor" aria-label="anchor" href="#fully-custom-formulas"></a>
+</h3>
 <p>Alternatively, a user could completely customize the full formulas by
 manually creating formulas for each exposure time point using the
-optional <code>custom</code> argument. This argument must be formatted
-identically to the default output of the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
-function.</p>
+optional <code>custom</code> argument.</p>
 <p>To create custom formulas, the user creates a list with an entry for
-each exposure time point (labeled “full_form_t”), each of which contains
-the balancing formula for exposure at that time point.
-<code><a href="../reference/createFormulas.html">createFormulas()</a></code> will conduct checks to ensure there is a
-formula for each time point and provides cautionary warnings for unusual
-variables (e.g., those measured after the exposure time point). However,
-the user is responsible for ensuring the validity of these formulas.
-Users may wish to make custom formulas if they want to include any
-confounder interactions or polynomials in their balancing formulas.</p>
+each exposure time point, each of which contains the balancing formula
+for exposure at that time point. <code><a href="../reference/createFormulas.html">createFormulas()</a></code> will
+conduct checks to ensure there is a formula for each time point and
+provides cautionary warnings for unusual variables (e.g., those measured
+after the exposure time point). However, the user is responsible for
+ensuring the validity of these formulas.</p>
+<p>Of note, if the user creates a custom “full” formula, they will also
+have to create custom formulas when using <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
+to make “short” and “updated” formulas.</p>
 <p>Below, we illustrate an abridged example for specifying the
 <code>custom</code> arguments for the exposure, ESETA1, at 6-, 15-, 24-,
 35-, and 58-month time points.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  <span class="va">ESETA1.6</span> <span class="op">~</span> <span class="va">BioDadInHH2</span> <span class="op">+</span> <span class="va">DrnkFreq</span> <span class="op">+</span> <span class="va">gov_assist</span>,</span>
 <span>  <span class="va">ESETA1.15</span> <span class="op">~</span> <span class="va">BioDadInHH2</span> <span class="op">+</span> <span class="va">DrnkFreq</span> <span class="op">+</span> <span class="va">gov_assist</span>,</span>
@@ -218,8 +235,10 @@ confounder interactions or polynomials in their balancing formulas.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><code>customFormulas()</code> then checks and retains these formulas
 for further use with the package.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">full_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">obj</span>, custom <span class="op">=</span> <span class="va">custom</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">full_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">obj</span>, </span>
+<span>                                custom <span class="op">=</span> <span class="va">custom</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">full_formulas</span><span class="op">)</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the slightly cleaned custom formula below:</span></span>
 <span><span class="co">#&gt; At time point 6, the custom formula for ESETA1.6 is: </span></span>
@@ -238,11 +257,12 @@ for further use with the package.</p>
 <span><span class="co">#&gt; ESETA1.58 ~ BioDadInHH2 + DrnkFreq + gov_assist</span></span></code></pre></div>
 <p><br></p>
 </div>
+</div>
 <div class="section level2">
 <h2 id="customize-short-balancing-formulas-step-2">Customize Short Balancing Formulas (Step 2)<a class="anchor" aria-label="anchor" href="#customize-short-balancing-formulas-step-2"></a>
 </h2>
 <p>The default use of <code><a href="../reference/createFormulas.html">createFormulas()</a></code> with
-<code>type = "short"</code> creates shortened balancing formulas at each
+<code>type</code> = “short” creates shortened balancing formulas at each
 exposure time point. Each formula contains all time invariant
 confounders as well as only those time-varying confounders measured at
 the time point directly prior (<em>t</em>-1 lag) to that exposure time
@@ -254,8 +274,8 @@ detail.</p>
 <code>concur_conf</code> and <code>custom</code> arguments detailed
 above. Of note, <code><a href="../reference/createFormulas.html">createFormulas()</a></code> does not check that
 formulas in the <code>custom</code> field meet criteria for the
-shortened formula, and the user is responsible for ensuring the validity
-of these formulas.</p>
+shortened formula, and thus the user is responsible for ensuring the
+validity of these formulas.</p>
 <p>When creating short formulas, the user can also specify an optional
 <code>keep_conf</code> argument. Users would specify this second
 argument with any time-varying confounders to always retain in the
@@ -273,30 +293,32 @@ income at 6 months in all 15-, 24-, 35-, and 58-month formulas,
 overriding the <em>t</em>-1 lag rule for that variable. Without this
 specification, income at 6 months would have been omitted in formulas
 for exposure at 24, 35, and 58 months.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">short_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">obj</span>, type <span class="op">=</span> <span class="st">"short"</span>, keep_conf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"InRatioCor.6"</span><span class="op">)</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">short_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">obj</span>, </span>
+<span>                                 type <span class="op">=</span> <span class="st">"short"</span>, </span>
+<span>                                 keep_conf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"InRatioCor.6"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">short_formulas</span><span class="op">)</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; At time point 6, the short formula for ESETA1.6 is: </span></span>
-<span><span class="co">#&gt; ESETA1.6 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + InRatioCor.6</span></span>
+<span><span class="co">#&gt; ESETA1.6 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; At time point 15, the short formula for ESETA1.15 is: </span></span>
-<span><span class="co">#&gt; ESETA1.15 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + ESETA1.6</span></span>
+<span><span class="co">#&gt; ESETA1.15 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + SAAmylase.6 + MDI.6 + RHasSO.6 + WndNbrhood.6 + IBRAttn.6 + B18Raw.6 + HOMEETA1.6 + InRatioCor.6 + CORTB.6 + ESETA1.6</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; At time point 24, the short formula for ESETA1.24 is: </span></span>
-<span><span class="co">#&gt; ESETA1.24 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + ESETA1.15</span></span>
+<span><span class="co">#&gt; ESETA1.24 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + SAAmylase.15 + MDI.15 + RHasSO.15 + IBRAttn.15 + B18Raw.15 + B18Raw.24 + HOMEETA1.15 + InRatioCor.15 + CORTB.15 + ESETA1.15 + InRatioCor.6</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; At time point 35, the short formula for ESETA1.35 is: </span></span>
-<span><span class="co">#&gt; ESETA1.35 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + ESETA1.24</span></span>
+<span><span class="co">#&gt; ESETA1.35 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + SAAmylase.24 + RHasSO.24 + WndNbrhood.24 + IBRAttn.24 + HOMEETA1.24 + InRatioCor.24 + CORTB.24 + EARS_TJo.24 + LESMnPos.24 + LESMnNeg.24 + ESETA1.24 + InRatioCor.6</span></span>
 <span><span class="co">#&gt; USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:</span></span>
 <span><span class="co">#&gt; At time point 58, the short formula for ESETA1.58 is: </span></span>
-<span><span class="co">#&gt; ESETA1.58 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + ESETA1.35</span></span></code></pre></div>
+<span><span class="co">#&gt; ESETA1.58 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + RHasSO.35 + WndNbrhood.35 + HOMEETA1.35 + InRatioCor.35 + EARS_TJo.35 + LESMnPos.35 + LESMnNeg.35 + StrDif_Tot.35 + fscore.35 + ESETA1.35 + InRatioCor.6</span></span></code></pre></div>
 <p><br></p>
 <div class="section level3">
 <h3 id="customize-updated-balancing-formulas-step-3">Customize Updated Balancing Formulas (Step 3)<a class="anchor" aria-label="anchor" href="#customize-updated-balancing-formulas-step-3"></a>
 </h3>
 <p>The default use of <code><a href="../reference/createFormulas.html">createFormulas()</a></code> with
-<code>type = "update"</code> creates updated balancing formulas at each
+<code>type</code> = “update” creates updated balancing formulas at each
 exposure time point. Each formula contains all time invariant
 confounders; time-varying confounders measured at the time point
 directly prior (<em>t</em>-1 lag) to that exposure time point; as well

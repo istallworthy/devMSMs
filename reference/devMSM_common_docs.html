@@ -26,10 +26,11 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Dev.html">Dev</a>
     <a class="dropdown-item" href="../articles/Terminology.html">Terminology</a>
-    <a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements</a>
+    <a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements &amp; Preparation</a>
     <a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a>
-    <a class="dropdown-item" href="../articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>
+    <a class="dropdown-item" href="../articles/Workflow_Continuous_Exposure.html">Workflow: Continuous Exposure</a>
     <a class="dropdown-item" href="../articles/Customize_Balancing_Formulas.html">Customize Balancing Formulas</a>
+    <a class="dropdown-item" href="../articles/Assessing_Balance_Tv.html">Assessing Balance for Time-Varying Exposures</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -102,22 +103,21 @@ frames, or <code>mids</code> object from the <code>mice</code> package</p></dd>
 
 
 <dt>verbose</dt>
-<dd><p>(optional) TRUE or FALSE indicator for printing output to console
-(default is FALSE)</p></dd>
+<dd><p>(optional) TRUE or FALSE indicator for printing output to console.
+default is FALSE.</p></dd>
 
 
 <dt>save.out</dt>
-<dd><p>(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is FALSE)</p></dd>
-
-
-<dt>home_dir</dt>
-<dd><p>path to home directory (required if save.out = TRUE)</p></dd>
+<dd><p>(optional) Either logical or a character string. If <code>TRUE</code>,
+it will output the result to a default file name within <code>home_dir</code> set in <code><a href="initMSM.html">initMSM()</a></code>. You can load the data with <code>x &lt;- readRDS(file)</code>.
+To use a non-default file name, specify a character string with the file name. It will save relative to <code>home_dir</code>.
+There might be naming conflicts where two objects get saved to the same file. In these cases, users should specify a custom name.
+default is FALSE.</p></dd>
 
 
 <dt>i</dt>
 <dd><p>For multiply imputed datset, <code>i</code> selects which imputation to print results for.
-Default is <code>i = 1</code>. With <code>i = TRUE</code>, all imputed datasets will be looped over.</p></dd>
+Default is <code>i = 1</code>. With <code>i = TRUE</code>, all imputed datasets will be looped over. With <code>i = NULL</code>, will average over all imputed datasets and summarize that.</p></dd>
 
 
 <dt>t</dt>

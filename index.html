@@ -43,10 +43,11 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="articles/Dev.html">Dev</a>
     <a class="dropdown-item" href="articles/Terminology.html">Terminology</a>
-    <a class="dropdown-item" href="articles/Data_Requirements.html">Data Requirements</a>
+    <a class="dropdown-item" href="articles/Data_Requirements.html">Data Requirements &amp; Preparation</a>
     <a class="dropdown-item" href="articles/Specify_Core_Inputs.html">Specify Core Inputs</a>
-    <a class="dropdown-item" href="articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>
+    <a class="dropdown-item" href="articles/Workflow_Continuous_Exposure.html">Workflow: Continuous Exposure</a>
     <a class="dropdown-item" href="articles/Customize_Balancing_Formulas.html">Customize Balancing Formulas</a>
+    <a class="dropdown-item" href="articles/Assessing_Balance_Tv.html">Assessing Balance for Time-Varying Exposures</a>
   </div>
 </li>
       </ul>
@@ -87,8 +88,8 @@
 <li><p>functions that accept complete or imputed data to accommodate missingness often found in human studies</p></li>
 <li><p>a novel recommended workflow, based on expertise from several disciplines, for using the <em>devMSMs</em> functions with longitudinal data (see <em>Workflows</em> vignettes)</p></li>
 <li><p>an accompanying simulated longitudinal dataset, based on the real-world, Family Life Project (FLP) study of human development, for getting to know the package functions</p></li>
-<li><p>an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of <em>devMSMs</em> (see the <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html"> Preliminary Steps vignette</a>)</p></li>
-<li><p>executable, step-by-step user guidance for implementing the <em>deveMSMs</em> worflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd" class="external-link">R markdown template file</a></p></li>
+<li><p>an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of <em>devMSMs</em></p></li>
+<li><p>executable, step-by-step user guidance for implementing the <em>deveMSMs</em> worflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/exampleWorkflow.Rmd" class="external-link">R markdown template file</a></p></li>
 <li><p>a brief conceptual introduction, example empirical application, and additional resources in the accompanying tutorial paper</p></li>
 </ul>
 <p><br></p>
@@ -96,7 +97,7 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The package contains 6 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures. <br><br><img width="820" alt="devMSMs overview" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png"><br><br><br></p>
+<p>The package contains 7 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures. <br><br><img width="820" alt="devMSMs overview" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png"><br><br><br></p>
 <p>Below is a summary of the terms used in the <em>devMSMs</em> vignettes and functions. More details and examples can be found in the accompanying manuscript. <br></p>
 <table class="table">
 <colgroup>
@@ -127,7 +128,7 @@
 </tr>
 <tr class="odd">
 <td><strong>Exposure Histories</strong></td>
-<td>Sequences of relatively high (<code>'h'</code>) or low (<code>'p'</code>) levels of exposure at each exposure time point or exposure epoch</td>
+<td>Sequences of relatively high (<code>'h'</code>) or low (<code>'l'</code>) levels of exposure at each exposure time point or exposure epoch</td>
 </tr>
 <tr class="even">
 <td><strong>Exposure Dosage</strong></td>
@@ -176,14 +177,14 @@
 <div class="section level2">
 <h2 id="recommended-workflow">Recommended Workflow<a class="anchor" aria-label="anchor" href="#recommended-workflow"></a>
 </h2>
-<p>We propose a recommended workflow for using <em>devMSMs</em> to answer causal questions with longituinal data. We suggest using the vignettes in the order they appear in the Articles tab. After reading the accompanying manuscript, We recommend first reviewing the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes as you begin preparing your data. We then recommend downloading the <a href="https://github.com/istallworthy/devMSMs/blob/main/examplePipelineRevised.Rmd" class="external-link">R markdown template file</a> which contains all the code desribed in the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Preliminary Steps</a>, and <em>Workflows</em> vignettes (for binary (TBA) or <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a> exposures) for implementing the steps below.</p>
+<p>We propose a recommended workflow for using <em>devMSMs</em> to answer causal questions with longituinal data. We suggest using the vignettes in the order they appear in the Articles tab. After reading the accompanying manuscript, We recommend first reviewing the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes as you begin preparing your data. We then recommend downloading the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd" class="external-link">R markdown template file</a> which contains all the code described in the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a> and <em>Workflows</em> vignettes (for binary (TBA) or <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a> exposures) for implementing the steps below.</p>
 <p><img width="800" alt="devMSMs schematic of workflow" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png"></p>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="citation--bug-reports">Citation &amp; Bug Reports<a class="anchor" aria-label="anchor" href="#citation--bug-reports"></a>
 </h2>
-<p>Please cite your use <em>devMSMs</em> using the following citation: <br> Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Berry D (2023). <em>devMSMs</em>: Implementing Marginal Structural Models with Longitudinal Data. R package version 0.0.0.9000, <a href="https://istallworthy.github.io/devMSMs/" class="uri">https://istallworthy.github.io/devMSMs/</a>.</p>
+<p>Please cite your use <em>devMSMs</em> using the following citation: <br> Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Berry D (2024). <em>devMSMs</em>: Implementing Marginal Structural Models with Longitudinal Data. R package version 0.0.0.9000, <a href="https://istallworthy.github.io/devMSMs/" class="uri">https://istallworthy.github.io/devMSMs/</a>.</p>
 <p><br></p>
 <p>Please report any bugs at the following link: <a href="https://github.com/istallworthy/devMSMs/issues" class="external-link uri">https://github.com/istallworthy/devMSMs/issues</a></p>
 <p><br></p>
@@ -191,6 +192,7 @@
 <div class="section level2">
 <h2 id="additional-resources">Additional Resources<a class="anchor" aria-label="anchor" href="#additional-resources"></a>
 </h2>
+<p>Arel-Bundock, Diniz, M. A., Greifer, N., &amp; Bacher, E. (2023). marginaleffects: Predictions, Comparisons, Slopes, Marginal Means, and Hypothesis Tests (0.12.0) [Computer software]. <a href="https://cran.r-project.org/web/packages/marginaleffects/index.html" class="external-link uri">https://cran.r-project.org/web/packages/marginaleffects/index.html</a>.</p>
 <p>Austin, P. C. (2011). An Introduction to Propensity Score Methods for Reducing the Effects of Confounding in Observational Studies. Multivariate Behavioral Research, 46(3), 399–424. <a href="https://doi.org/10.1080/00273171.2011.568786" class="external-link uri">https://doi.org/10.1080/00273171.2011.568786</a></p>
 <p>Blackwell, M. (2013). A Framework for Dynamic Causal Inference in Political Science. American Journal of Political Science, 57(2), 504–520. <a href="https://doi.org/10.1111/j.1540-5907.2012.00626.x" class="external-link uri">https://doi.org/10.1111/j.1540-5907.2012.00626.x</a></p>
 <p>Cole, S. R., &amp; Hernán, M. A. (2008). Constructing Inverse Probability Weights for Marginal Structural Models. American Journal of Epidemiology, 168(6), 656–664. <a href="https://doi.org/10.1093/aje/kwn164" class="external-link uri">https://doi.org/10.1093/aje/kwn164</a></p>
@@ -236,6 +238,7 @@
 <li>Meriah DeJoseph <br><small class="roles"> Author </small>  </li>
 <li>Emily Padrutt <br><small class="roles"> Author </small>  </li>
 <li>Daniel Berry <br><small class="roles"> Author </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 

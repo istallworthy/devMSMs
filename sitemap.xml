@@ -4,6 +4,9 @@
     <loc>https://istallworthy.github.io/devMSMs/404.html</loc>
   </url>
   <url>
+    <loc>https://istallworthy.github.io/devMSMs/articles/Assessing_Balance_Tv.html</loc>
+  </url>
+  <url>
     <loc>https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html</loc>
   </url>
   <url>
@@ -13,13 +16,13 @@
     <loc>https://istallworthy.github.io/devMSMs/articles/Dev.html</loc>
   </url>
   <url>
-    <loc>https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html</loc>
-  </url>
-  <url>
     <loc>https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html</loc>
   </url>
   <url>
     <loc>https://istallworthy.github.io/devMSMs/articles/Terminology.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html</loc>
   </url>
   <url>
     <loc>https://istallworthy.github.io/devMSMs/articles/index.html</loc>
@@ -53,6 +56,12 @@
   </url>
   <url>
     <loc>https://istallworthy.github.io/devMSMs/reference/dot-add_histories.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/dot-avg_imp_bal_stats.html</loc>
+  </url>
+  <url>
+    <loc>https://istallworthy.github.io/devMSMs/reference/dot-avg_imp_bal_stats_time.html</loc>
   </url>
   <url>
     <loc>https://istallworthy.github.io/devMSMs/reference/dot-characterize_exposure.html</loc>

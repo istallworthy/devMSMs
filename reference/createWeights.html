@@ -30,10 +30,11 @@ relevant confounders."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Dev.html">Dev</a>
     <a class="dropdown-item" href="../articles/Terminology.html">Terminology</a>
-    <a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements</a>
+    <a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements &amp; Preparation</a>
     <a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a>
-    <a class="dropdown-item" href="../articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>
+    <a class="dropdown-item" href="../articles/Workflow_Continuous_Exposure.html">Workflow: Continuous Exposure</a>
     <a class="dropdown-item" href="../articles/Customize_Balancing_Formulas.html">Customize Balancing Formulas</a>
+    <a class="dropdown-item" href="../articles/Assessing_Balance_Tv.html">Assessing Balance for Time-Varying Exposures</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -69,10 +70,9 @@ relevant confounders.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">obj</span>,</span>
 <span>  <span class="va">formulas</span>,</span>
-<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"glm"</span>, <span class="st">"gbm"</span>, <span class="st">"bart"</span>, <span class="st">"super"</span>, <span class="st">"cbps"</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"glm"</span>, <span class="st">"gbm"</span>, <span class="st">"bart"</span>, <span class="st">"super"</span>, <span class="st">"cbps"</span>, <span class="st">"ipt"</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  save.out <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  home_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -80,7 +80,7 @@ relevant confounders.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, i <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for devMSM_weights</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, i <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, i <span class="op">=</span> <span class="fl">1</span>, save.out <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -104,17 +104,16 @@ abbreviation (default is Covariate Balancing Propensity Score "cbps")</p></dd>
 
 
 <dt>verbose</dt>
-<dd><p>(optional) TRUE or FALSE indicator for printing output to console
-(default is FALSE)</p></dd>
+<dd><p>(optional) TRUE or FALSE indicator for printing output to console.
+default is FALSE.</p></dd>
 
 
 <dt>save.out</dt>
-<dd><p>(optional) TRUE or FALSE indicator to save output and
-intermediary output locally (default is FALSE)</p></dd>
-
-
-<dt>home_dir</dt>
-<dd><p>path to home directory (required if save.out = TRUE)</p></dd>
+<dd><p>(optional) Either logical or a character string. If <code>TRUE</code>,
+it will output the result to a default file name within <code>home_dir</code> set in <code><a href="initMSM.html">initMSM()</a></code>. You can load the data with <code>x &lt;- readRDS(file)</code>.
+To use a non-default file name, specify a character string with the file name. It will save relative to <code>home_dir</code>.
+There might be naming conflicts where two objects get saved to the same file. In these cases, users should specify a custom name.
+default is FALSE.</p></dd>
 
 
 <dt>...</dt>
@@ -127,7 +126,7 @@ intermediary output locally (default is FALSE)</p></dd>
 
 <dt>i</dt>
 <dd><p>For multiply imputed datset, <code>i</code> selects which imputation to print results for.
-Default is <code>i = 1</code>. With <code>i = TRUE</code>, all imputed datasets will be looped over.</p></dd>
+Default is <code>i = 1</code>. With <code>i = TRUE</code>, all imputed datasets will be looped over. With <code>i = NULL</code>, will average over all imputed datasets and summarize that.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -167,7 +166,8 @@ of the number of datasets (1 for a data.frame or the number of imputed datasets)
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">createWeights</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, obj <span class="op">=</span> <span class="va">obj</span>, formulas <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the `glm` weighting method, the median weight value is 0.99 (SD = 0.17; range = 0.65-2).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the `glm` weighting method, the median weight value is 0.97 (SD = 0.25; range = 0.58-2).</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="createWeights-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
