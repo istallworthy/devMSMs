@@ -11,7 +11,7 @@
 Those who study and work with humans are fundamentally interested in
 questions of causation. More specifically, scientists, clinicians,
 educators, and policymakers alike are often interested in *causal
-processes* involving questions about when (timing) and to what extent
+processes* involving questions about when (timing) and at what levels
 (dose) different factors influence human functioning and development, in
 order to inform our scientific understanding and improve people’s lives.
 However, for many, conceptual, methodological, and practical barriers
@@ -76,10 +76,10 @@ Core features of *devMSMs* include:
   functions</a> to assist users in preparing and inspecting their data
   prior to the implementation of *devMSMs*
 
-- executable, step-by-step user guidance for implementing the *deveMSMs*
+- executable, step-by-step user guidance for implementing the *devMSMs*
   worflow and preliminary steps in the form of vignettes geared toward
   users of all levels of R programming experience, along with a
-  <a href="https://github.com/istallworthy/devMSMs/blob/main/exampleWorkflow.Rmd">R
+  <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">R
   markdown template file</a>
 
 - a brief conceptual introduction, example empirical application, and

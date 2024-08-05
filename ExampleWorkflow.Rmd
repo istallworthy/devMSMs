@@ -197,7 +197,7 @@ imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35",
               "InRatioCor.58", "PmEd2") # empirical example
 
 prebalance_stats <- assessBalance(obj = obj, 
-                                  data = data, # required
+                                  data = data,
                                   balance_thresh = balance_thresh, 
                                   imp_conf = imp_conf, 
                                   save.out = TRUE)
@@ -207,11 +207,20 @@ prebalance_stats <- assessBalance(obj = obj,
 Inspect
 ```{r}
 
-summary(prebalance_stats, i = 1, t = 1, save.out = TRUE)
+summary(prebalance_stats, 
+        i = 1, 
+        t = 1, 
+        save.out = TRUE)
 
-plot(prebalance_stats, i = 1, t = 1, save.out = TRUE)
+plot(prebalance_stats, 
+     i = 1, 
+     t = 1, 
+     save.out = TRUE)
 
-print(prebalance_stats, i = 2, t = 1, save.out = TRUE) # NOTE: "F_b" for one ti covar? covariate?
+print(prebalance_stats, 
+      i = 2, 
+      t = 1, 
+      sve.out = TRUE) # NOTE: "F_b" for one ti covar? covariate?
 ```
 
 
@@ -246,7 +255,7 @@ We recommend users use the short formulas to create IPTW weights using all the a
 
 formulas <- short_formulas
 
-method <- "cbps" # this takes some time to run 
+method <- "cbps" 
 
 weights.cbps <- createWeights(obj = obj, 
                               data = data, 
@@ -259,9 +268,12 @@ weights.cbps <- createWeights(obj = obj,
 Inspect
 ```{r}
 
-print(weights.cbps, i = 2)
+print(weights.cbps, 
+      i = 2)
 
-plot(weights.cbps, i = 1, save.out = TRUE)
+plot(weights.cbps, 
+     i = 1, s
+     ave.out = TRUE)
 
 summary(weights.cbps[[1]]) 
 
@@ -276,9 +288,11 @@ weights.glm <- createWeights(obj = obj,
                              formulas = formulas, 
                              method = method,
                              save.out = TRUE)
-print(weights.glm, i = 2)
+print(weights.glm, 
+      i = 2)
 
-plot(weights.glm, i = 2)
+plot(weights.glm, 
+     i = 2)
 
 method <- "gbm"
 
@@ -287,9 +301,11 @@ weights.gbm <- createWeights(obj = obj,
                              formulas = formulas, 
                              method = method,
                              save.out = TRUE)
-print(weights.gbm, i = 2)
+print(weights.gbm, 
+      i = 2)
 
-plot(weights.gbm, i = 2)
+plot(weights.gbm, 
+     i = 2)
 
 method <- "bart"
 
@@ -297,10 +313,12 @@ weights.bart <- createWeights(obj = obj,
                               data = data, 
                               formulas = formulas, 
                               method = method,
-                              save.out - TRUE)
-print(weights.bart, i = 2)
+                              save.out = TRUE)
+print(weights.bart, 
+      i = 2)
 
-plot(weights.bart, i = 2)
+plot(weights.bart, 
+     i = 2)
 
 method <- "super"
 
@@ -309,9 +327,11 @@ weights.super <- createWeights(obj = obj,
                                formulas = formulas, 
                                method = method,
                                save.out = TRUE)
-print(weights.super, i = 2)
+print(weights.super, 
+      i = 2)
 
-plot(weights.super, i = 2)
+plot(weights.super, 
+     i = 2)
 
 ```
 
@@ -418,7 +438,8 @@ First, assess how well each of the IPTW achieve balance for all measured confoun
 
 summary(balance_stats.cbps)
 
-plot(balance_stats.cbps, t = 1)
+plot(balance_stats.cbps, 
+     t = 1)
 
 print(balance_stats.cbps) 
 
@@ -468,11 +489,13 @@ final_weights <- createWeights(data = data,
 
 Inspect
 ```{r}
-print(final_weights, i = 1)
+print(final_weights, 
+      i = 1)
 
 summary(final_weights[[1]])
 
-plot(final_weights, i = 1)
+plot(final_weights, 
+     i = 1)
 ```
 
 
@@ -497,9 +520,12 @@ trim_weights <- trimWeights(obj = obj,
 
 Inspect
 ```{r}
-print(trim_weights, i = 1)
+print(trim_weights, 
+      i = 1)
 
-plot(trim_weights, i = 1, save.out = TRUE)
+plot(trim_weights, 
+     i = 1, 
+     save.out = TRUE)
 
 ```
 
@@ -551,11 +577,15 @@ final_balance_stats <- assessBalance(data = data,
 Inspect
 ```{r}
 
-summary(final_balance_stats, save.out = TRUE)
+summary(final_balance_stats, 
+        save.out = TRUE)
 
-plot(final_balance_stats, t = 1, save.out = TRUE)
+plot(final_balance_stats, 
+     t = 1, 
+     save.out = TRUE)
 
-print(final_balance_stats, save.out = TRUE)
+print(final_balance_stats, 
+      save.out = TRUE)
 
 
 # manually list remaining imbalanced covariates that are time-invariant or time-varying at t=1 for use in Step 5
@@ -625,7 +655,9 @@ models <- fitModel(data = data,
 Inspect
 ```{r}
 
-print(models, i = 1, save.out = TRUE)
+print(models, 
+      i = 1, 
+      save.out = TRUE)
 
 ```
 
@@ -684,7 +716,7 @@ out_lab <- "Behavior Problems" # empirical example
 
 colors <- c("Dark2") # empirical example
 
-model <- models # output from fitModel
+model <- models 
 
 results <- compareHistories(obj = obj, 
                             fit = model, 
@@ -698,11 +730,14 @@ results <- compareHistories(obj = obj,
 
 Inspect
 ```{r}
-print(results, save.out = TRUE)
+print(results, 
+      save.out = TRUE)
 
-summary(results, save.out = TRUE)
+summary(results, 
+        save.out = TRUE)
 
-plot(results, save.out = TRUE)
+plot(results, 
+     save.out = TRUE)
 ```
 
 
@@ -739,7 +774,8 @@ results.s2 <- compareHistories(obj = obj,
 We are grateful to the authors of many existing packages that *devMSMs* draws from!
 
 ```{r}
-grateful::cite_packages(out.dir = home_dir, omit = c("devMSMs", "devMSMsHelpers"), 
+grateful::cite_packages(out.dir = home_dir, 
+                        omit = c("devMSMs", "devMSMsHelpers"), 
                         out.format = "docx")
 ```
 

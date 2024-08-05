@@ -24,7 +24,7 @@ library(tinytable)
 
 <br>
 
-Those who study and work with humans are fundamentally interested in questions of causation. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in *causal processes* involving questions about when (timing) and to what extent (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people's lives. However, for many, conceptual, methodological, and practical barriers have prevented the use of methods for causal inference developed in other fields.
+Those who study and work with humans are fundamentally interested in questions of causation. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in *causal processes* involving questions about when (timing) and at what levels (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people's lives. However, for many, conceptual, methodological, and practical barriers have prevented the use of methods for causal inference developed in other fields.
 <br>
 
 The goal of this *devMSMs* package and accompanying tutorial paper, *Investigating Causal Questions in Human Development Using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R* (*insert preprint link here*), is to provide a set of tools for implementing marginal structural models (**MSMs**; Robins et al., 2000).   
@@ -49,7 +49,7 @@ Core features of *devMSMs* include:
 
 - an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of *devMSMs*
    
-- executable, step-by-step user guidance for implementing the *deveMSMs* worflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/exampleWorkflow.Rmd">R markdown template file</a> 
+- executable, step-by-step user guidance for implementing the *devMSMs* worflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">R markdown template file</a> 
 
 - a brief conceptual introduction, example empirical application, and additional resources in the accompanying tutorial paper
 
