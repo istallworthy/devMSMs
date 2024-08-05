@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 
 <br>
 
-This vignette guides users through the specification of the core inputs required by the *deMSMs* functions (and helper functions). Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the *devMSMs* package (see *Workflows* vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (`verbose = FALSE`) and elect not to save out locally any intermediate and final output (`save.out = FALSE`).
+This vignette guides users through the specification of the core inputs required by the *deMSMs* functions (and helper functions). Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the *devMSMs* package (see *Workflows* vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (`verbose` = FALSE) and elect not to save out locally any intermediate and final output (`save.out` = FALSE).
 
 Following completion of this vignette, the user should complete a *Workflow* vignette to implement *devMSMs* with their longitudinal data. Many of these core inputs will be specified at the beginning of the workflow in the MSM object.
 
@@ -22,12 +22,10 @@ The code contained in this vignette is also available, integrated code from the 
 
 # Recommended: Home Directory
 
-Users are required to specify home directory, or in quotations, a path to a designated folder for all output from the package (without the final forward slash), if they plan to save out intermediary and final outputs in the package (default) by setting `save.out = TRUE` for any of the functions. All sub directories will be created within this home directory by the *devMSMs* functions automatically when `save.out’ = TRUE`.
+Users are required to specify home directory, or in quotations, a path to a designated folder for all output from the package (without the final forward slash), if they plan to save out intermediary and final outputs in the package (default) by setting `save.out` = TRUE for any of the functions. All sub directories will be created within this home directory by the *devMSMs* functions automatically when `save.out` = TRUE.
 
 ```{r}
-
 home_dir <- NA
-
 # home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa'
 ```
 
@@ -42,9 +40,7 @@ Users can specify a different delimiter as a character string in regular express
 Below, we use the default period as a time delimiter.
 
 ```{r}
-
 sep <- "\\."
-
 ```
 
 <br>
@@ -64,25 +60,21 @@ The specification of exposure epochs should be kept consistent throughout the us
 For this example, we elected to create epochs of infancy (6 and 15 months), toddlerhood (24 and 35 months), and early childhood (58 months) so we include all exposure time points.
 
 ```{r}
-
 exposure = c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
-
 ```
 
 <br>
 
 # Required for Continuous Exposure: High and Low Cutoff Values
 
-If your exposure variable is continuously distributed (e.g., economic strain), there is not inherent demarcation of what is considered high versus low levels of exposure. Given that part of the MSM process involved examining how different exposure histories --that vary in dose and timing -- over development result in different outcome levels, we need to specify what is considered high versus low levels of exposure. For continuous exposures, this is required for the recommended preliminary step from *Workflows* vignette and the `compareHistories()`) *devMSMs* function (see *Workflows* vignettes).
+If your exposure variable is continuously distributed (e.g., economic strain), there is not inherent demarcation of what is considered high versus low levels of exposure. Given that part of the MSM process involved examining how different exposure histories --that vary in dose and timing -- over development result in different outcome levels, we need to specify what is considered high versus low levels of exposure. For continuous exposures, this is required for the recommended preliminary step from *Workflows* vignette and the `compareHistories()` *devMSMs* function (see *Workflows* vignettes).
 
 We specify to `hi_lo_cut`, a list of two quantile values (0-1): the first represents the value above which is considered high levels exposure and the second represents the followed below which is considered low levels of exposure. These values may have to be revised following inspection of the sample distribution across the resulting exposure histories in the recommended preliminary steps of the *Workflows* vignettes. These final values will be used in creating and modeling the effects of exposure histories in Step 5 of the *Workflows* vignettes.
 
 Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.
 
 ```{r}
-
 hi_lo_cut <- c(0.6, 0.3)
-
 ```
 
 <br>
@@ -98,9 +90,7 @@ The exposure epochs will be arguments in the `fitModel()` and `compareHistories(
 Below, we specify 'infancy' ("ESETA1.6", "ESETA1.15), 'toddlerhood' ("ESETA1.24", "ESETA1.35"), and 'childhood' ("ESETA1.58").
 
 ```{r}
-
 epoch <- c("Infancy", "Infancy", "Toddlerhood", "Toddlerhood", "Childhood") 
-
 ```
 
 <br>
@@ -116,14 +106,12 @@ These final reference and comparison values established at this step should be u
 Below, we specify low economic strain at all epochs ("l-l-l") as our reference event in comparison to high levels at all epochs ("h-h-h") as well as all histories that contain 1 dose of exposure to high economic strain at different epochs.
 
 ```{r}
-
 reference <- c("l-l-l")
 
 comparison <- c("h-h-h", 
                 "l-l-h", 
                 "h-l-l", 
                 "l-h-l")
-
 ```
 
 <br>
@@ -135,9 +123,7 @@ The outcome refers to the developmental construct that is hypothesized to be cau
 For this example, we specify behavior problems measured at 58 months as the outcome.
 
 ```{r}
-
 outcome <- "StrDif_Tot.58"
-
 ```
 
 <br>
@@ -155,11 +141,9 @@ If the user wishes to specify any interactions, they need to manually create the
 For `ti_conf`, as a list of character strings, provide the names of all confounders in your dataset that are time invariant. These should not have a time suffix. Below, we specify 18 time invariant confounders that were measured at the baseline study visit, prior to the first exposure time point.
 
 ```{r}
-
 ti_conf <- c( "state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
   "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
   "peri_health", "caregiv_health", "gov_assist")
-
 ```
 
 <br>
@@ -173,7 +157,6 @@ Note that time-varying confounders should also include any confounders measured 
 If the user wishes to specify any interactions, they need to manually create them in the data before listing them here. Here, the user can also include any interaction terms between time invariant variables (e.g., “variable:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level.
 
 ```{r}
-
 tv_conf <- c("SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
   "MDI.6", "MDI.15",
   "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58",
@@ -188,8 +171,8 @@ tv_conf <- c("SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
   "LESMnNeg.24", "LESMnNeg.35",
   "StrDif_Tot.35", 
   "fscore.35", "fscore.58")
-
 ```
+<br>  
 
 ## Optional: Concurrent Confounders
 
@@ -206,6 +189,8 @@ concur_conf <- "B18Raw.6"
 <br>
 
 The user can now proceed to the *Data Requirements* or *Workflows* vignettes.
+
+<b>  
 
 ## References
 

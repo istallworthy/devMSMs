@@ -14,7 +14,8 @@ library(tinytable)
 <br>
 
 This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and *Workflows* vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: *[insert link]*.  
-
+<br>  
+  
 ## Key Terminology
 
 ```{r}
@@ -40,7 +41,7 @@ terms <- data.frame(
 tt(terms, theme = "striped") |>
   format_tt(markdown = TRUE)
 ```
-
+<br>  
 
 ## Balancing Formula
 
@@ -70,7 +71,7 @@ balance_formula <- data.frame(
 tt(balance_formula) |>
   format_tt(markdown = TRUE)
 ```
-
+<br>  
 
 ## 6 core functions of *devMSMs*
 
@@ -83,6 +84,7 @@ There are 6 key functions that are used in the *devMSMs* workflow.
 
 main_functions <- data.frame(
   Function = c(
+    "[`initMSM()`](/reference/initMSM)",
     "[`createFormulas()`](/reference/createFormulas.html)",
     "[`assessBalance()`](/reference/assessBalance)",
     "[`createWeights()`](/reference/createWeights)",
@@ -91,6 +93,7 @@ main_functions <- data.frame(
     "[`compareHistories()`](/reference/compareHistories)"
   ),
   Purpose = c(
+    "Creates MSM object with core variables for use in all other functions.",
     "Creates balancing formulas at each exposure time point relating exposure to confounders.",
     "Assesses confounder balance at each exposure time point according to best practices (Jackson, 2016).",
     "Creates balancing weights for each person (wrapper for `weightit::weightitMSM`).",
@@ -99,20 +102,28 @@ main_functions <- data.frame(
     "Estimate, compare, & visualize model-predicted outcomes as a function of exposure history."
   ),
   `Required Input` = c(
-    "`exposure`, `exposure_time_pts`, `outcome`, `ti_conf`, `tv_conf`, `type` (`'full'`, `'short'`, `'update'`)",
-    "`data`, `exposure`, `exposure_time_pts`, `outcome`, `formulas`, `type` ('prebalance', 'weighted')",
-    "`data`, `exposure`, `outcome`, `formulas`",
-    "`exposure`, `outcome`, `weights`",
-    "`data`, `weights`, `exposure`, `exposure_time_pts`, `outcome`, `model` (`m0`-`m3`)",
-    "`exposure`, `exposure_time_pts`, `outcome`, `model`"
+    "`exposure`, `time invariant confounders`, `time-varying confounders`)",
+    "`msmObject`, `type` (`'full'`, `'short'`, `'update'`)",
+    "`data`, `msmObject`",
+    "`data`, `msmObject`",
+    "`data`, `msmObject`",
+    "`data`, `msmObject`, `weights`, `outcome`, `model` (`m0`-`m3`)",
+    "`data`, `msmObject`, `fitted model`"
   ),
   Output = c(
-    "List of balancing formulas for each exposure time point. \n\nFormulas saved as .csv",
-    "List of balance statistics\n\nTables & love plots displaying balance statistics at each exposure time point",
-    "Weights object \n\nHistogram & summary of balancing weights.",
-    "Trimmed weights object\n\nHistogram & summary of trimmed weights",
-    "Fitted object\n\nOmnibus test & table of model evidence.",
-    "Tables of estimated values and comparisons.\n\nBoxplot. "
+    "msmObject",
+    "List of balancing formulas for each exposure time point.",
+    "List of balance statistics. 
+     Tables & love plots displaying balance statistics at each exposure time point.",
+    "Weights object.
+     Histogram & summary of balancing weights.",
+    "Trimmed weights object.
+     Histogram & summary of trimmed weight.",
+    "Tables of estimated values and comparisons.\n\nBoxplot.",
+    "Fitted model object.
+     Omnibus test & table of model evidence.",
+    "Tables of estimated values and comparisons.
+     Boxplot."
   )
 )
 

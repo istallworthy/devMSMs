@@ -26,6 +26,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 This vignette guides a user through the process of using *devMSMs* to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.  
 
 The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript *[add link here]*. We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow.  
+<br>  
 
 # Installation
 Until *devMSMs* is available on CRAN, you will need to install it directly from Github (https://github.com/istallworthy/devMSMs), as shown below.  
@@ -47,9 +48,7 @@ Some functions output tables. These are all from the *tinytables* package and ca
 
 
 ```{r}
-
 save.out = FALSE
-
 ```
   
 <br>
@@ -71,13 +70,11 @@ See the Data Preparation vignette for more detail.
 We first load in imputed datasets as a mice object. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain ("ESETA1") measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems ("StrDif_Tot") measured at 58 months. (See <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements & Preparation vignette</a> for beginning with other data types, including missing data).  
   
 ```{r}
-
 data("sim_data_mice", package = "devMSMs")
 
 data <- sim_data_mice
 
 head(mice::complete(data, 1), n = c(5, 10))
-
 ```
   
 <br>
@@ -96,7 +93,6 @@ If the user wishes to save any outputs from the *devMSMs* functions, they must s
 We set a seed for reproducibility.  
 
 ```{r}
-
 set.seed(1234)
 
 obj <- initMSM(
@@ -130,20 +126,16 @@ obj <- initMSM(
 
 Inspect the msm object
 ```{r}
-
 print(obj)
-
 ```
-  
+<br>  
   
 ## P3. Required for Continuous Exposures: Identify High and Low Cutoff Values 
 See the Specify Core Inputs vignette for more information. 
 
 Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.  
 ```{r}
-
 hi_lo_cut <- c(0.6, 0.3)
-
 ```
 <br>
 
@@ -174,7 +166,6 @@ Optional inputs are a home directory (if `save.out` = TRUE), epochs, high/low cu
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
 
 ```{r, eval = FALSE}
-
 outcome <-  "StrDif_Tot.58"
 
 inspectData(data = data, 
@@ -197,7 +188,6 @@ The goal of this first phase is to minimize the associations between confounders
 <br>
 
 ### Step 1. Create Full Balancing Formulas & Conduct Pre-Balance Checking
-<br>
 
 #### Step 1a. Create Full Balancing Formulas at Each Exposure Time Point
 We first create comprehensive, full balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type` = “full”). This step creates full formulas containing all measured confounding variables at each exposure time point, including all time-invariant confounders and lagged time-varying confounders. The code automatically excludes time-varying confounders at the contemporaneous time point given that they cannot be decisively differentiated from mediators which should not be balanced on (Thoemmes & Ong, 2016), although this can be modified by the user if they have strong reason to believe a concurrent variable is not a mediator (see below).   
@@ -217,7 +207,6 @@ We chose not to create custom formulas and instead use `createFormulas()` to mak
 We first create full formulas. 
 
 ```{r}
-
 type <- "full"
 
 full_formulas <- createFormulas(obj = obj, 
@@ -228,9 +217,7 @@ full_formulas <- createFormulas(obj = obj,
 The function returns a list of formulas, one for each exposure time point. We inspect them below. Each full formula contains all time invariant confounders as well as all lagged time-varying confounders at each time point. This is an important step, to verify that all appropriate confounders are present in each formula. The user has the option to supply `save.out` = TRUE to save printed output to the home directory. 
 
 ```{r}
-
 print(full_formulas)
-
 ```
 
 <br>
@@ -244,25 +231,22 @@ The required inputs for using the `assessBalance()` function to conduct pre-bala
 
 The optional inputs are as follows.   
   
-The user may specify `balance_thresh`, or a threshold(s) for determining confounder balance, in one of two ways. 
-* First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced and above which they are considered imbalanced (default is 0.1; Stuart, 2010).   
+The user may specify `balance_thresh`, or a threshold(s) for determining confounder balance, in one of two ways.  
+* First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced and above which they are considered imbalanced (default is 0.1; Stuart, 2010).  
   
 * Second, users may make an a priori assertion that some confounders are more important than others based on theory and existing research. In this case, they can provide two numbers that represent the balance thresholds for important and less important confounders, respectively. If the user supplies two balance thresholds, they must also supply a list of important confounders (time-varying: “variable.t”, time invariant: “variable”) to the `imp_conf` field. The balance threshold specification should be kept consistent throughout the use of this workflow. 
 
-As recommended, below we provide two balancing thresholds and identify income and parent education as important confounders in the relation between economic strain and behavior problems. 
+Below, as recommended, we provide two balancing thresholds and identify income and parent education as important confounders in the relation between economic strain and behavior problems. 
 
 ```{r}
-
 balance_thresh <- c(0.05, 0.1) 
 
 imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", 
               "InRatioCor.58", "PmEd2") 
-
 ```
 
 We create prebalance statistics below. 
 ```{r}
-
 prebalance_stats <- assessBalance(obj = obj, 
                                   data = data, 
                                   balance_thresh = balance_thresh, 
@@ -280,36 +264,42 @@ With imputed data, each of these functions takes an option `i` field that can be
   
 We can view prebalance statistics for any single imputed dataset (e.g., first imputed dataset), using the `i` field. Note that we supply `t` as integers 1 through however number of time points at which exposure is measured. For example, my first time point measures ESETA1 at 6 months which corresponds to `t` = 1. 
 ```{r}
-
-print(prebalance_stats, i = 1, t = 1, save.out = save.out)
-
+print(prebalance_stats, 
+      i = 1, 
+      t = 1, 
+      save.out = save.out)
 ```
 
 Or, we can view prebalance statistics averaged across imputed data sets at different time points by not specifying `i`. This can also be used to view balance statistics when the data are not imputed. 
 ```{r}
-
-print(prebalance_stats, t = 1, save.out = save.out)
-
+print(prebalance_stats, 
+      t = 1, 
+      save.out = save.out)
 ```
 
-We can also summarize the `assessBalance()` output to view the average remaining relation between confounders and exposure as well as a summary table showing the total number of imbalanced confounders at each exposure time point. We can view this at one or all time points, in one imputed dataset or averaged across them.  
+We can also summarize the `assessBalance()` output to view the average remaining relation between confounders and exposure as well as a summary table showing the total number of imbalanced confounders at each exposure time point. We can view this in one imputed dataset or averaged across them.  
 ```{r}
+summary(prebalance_stats, 
+        i = 1, 
+        save.out = save.out)
 
-summary(prebalance_stats, i = 1, save.out = save.out)
-
-summary(prebalance_stats, save.out = save.out)
-
+summary(prebalance_stats, 
+        save.out = save.out)
 ```
 Averaging across imputed datasets, we see that xx confounders are imbalanced with respect to the economic strain exposure and their respective balance threshold. 
 
 Lastly, we can plot a balance summary at one or more time points, from one imputed dataset or averaged across them.
 ```{r}
+plot(prebalance_stats, 
+     i = 1, 
+     t = 1, 
+     save.out = save.out)
 
-plot(prebalance_stats, i = 1, t = 1, save.out = save.out)
-
-plot(prebalance_stats, t = 1, save.out = save.out)
-
+plot(prebalance_stats, 
+     t = 1, 
+     save.out = save.out)
 ```
+<br>  
 The love plots depict the standardized associations between confounder and exposure at each exposure time point, with the vertical red dashed lines indicating balance thresholds. Imbalanced confounders are shown in red with variable name labels. 
 
 
@@ -318,9 +308,7 @@ The love plots depict the standardized associations between confounder and expos
   
 ### Step 2. Create Simplified Balancing Formulas & Determine Optimal Weighting Method 
 The goal of this second step is to create shortened, more parsimonious balancing formulas for determining the optimal IPTW weighting method that most successfully reduces imbalance in the data.  
-  
 <br>
-
 #### 2a. Create Simplified Balancing Formulas
 First, we create shorter, more parsimonious balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type` = ”short”). For each exposure time point, these formulas contain all time invariant confounders as well as time-varying confounders only at the *t*-1 lag. The logic here is that balancing on confounders at the most recent prior time point (*t*-1 only) may achieve balance on levels at more distal time points, given the stability of many confounders over time. Importantly, we will empirically assess and relax this assumption if needed at subsequent steps (Steps 3a-b). 
 
@@ -328,29 +316,19 @@ The required input to create shortened balancing formulas using the `createFormu
 
 In addition to the optional input outlined in Step 1a, the user also has the option to specify in `keep_conf`, a list of any time-varying confounders (e.g., “variable.t”) to always retain as lagged confounders in these shortened formulas. The user may use this argument to retain specific time-varying confounders that would otherwise be excluded at this step if they occur at lags greater than *t*-1 for each formula. 
   
-Below, we choose not to specify any confounders to always retain at this step.  
-```{r}
-
-# keep_conf <- "CORTB.6"
-
-```
-  
 We create short formulas below.   
 ```{r}
-
 type <- "short" 
 
 short_formulas <- createFormulas(obj = obj, 
                                  type = type, 
-                                 # keep_conf = keep_conf,
                                  save.out = save.out) 
 ```
 
 And then inspect them to make sure they contain only time-varying covariates at a lag of one prior to the exposure time point. The user has the option to supply `save.out` to save printed output to the home directory. 
 ```{r}
-
-print(short_formulas, save.out = save.out)
-
+print(short_formulas, 
+      save.out = save.out)
 ```
 These formulas are considerably shorter than the full formulas. For instance, at the 58-month exposure time point, the formula contains all time invariant confounders and only time-varying confounders at the 35-month time point.   
   
@@ -363,9 +341,7 @@ The required inputs for using the `createWeights()` function to create the initi
 
 We specify the short formulas below. 
 ```{r}
-
 formulas <- short_formulas
-
 ```
 
 
@@ -375,9 +351,7 @@ For `method`, provide one of the following methods for calculating balancing wei
 
 We begin with specifying CBPS as a weighting method. 
 ```{r}
-
 method <- "cbps"
-
 ```
 
 The `createWeights()` function can also take any number of additional arguments that will be passed to the `weightitMSM()` function (e.g., ‘criterion’, distribution’, ‘SL.library’). If the user selects the SuperLearner (“super”) method, the default super learner library (‘SL.library’) is xx but an alternative library can be entered as an input to the `createWeights` function. For binary exposures, the “cbps” method allows you to specify `estimand` as either ATE, ATT, or ATC. With “glm”, “super”, and “bart” you can specify ATE, ATT, ATC, ATO, ATM, or ATOS. With “gbm”, you can specify ATE, ATT, ATC, ATO, or ATM. The default estimand for binary exposures is ATE. We advise the interested user to review the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a> for more information about the additional optional arguments available for each of the weighting methods. Users have the option to specify `verbose` = TRUE to view information about weights creation. 
@@ -389,7 +363,6 @@ The function returns a list of weights objects each in the form of WeightItMSM o
 
 Below, we create IPTW weights using the default CBPS method. 
 ```{r}
-
 weights.cbps <- createWeights(obj = obj, 
                              data = data, 
                              method = method,
@@ -403,40 +376,32 @@ These take a while to run. Note that if you save the weights (by supplying `save
 
 If we had previously saved out CBPS weights, we could read them in instead of re-creating them. 
 ```{r}
-
 # weights.cbps <- readRDS('file_path_to_saved_weights.rds')
-
 ```
 
 Given that a separate set of weights is created for each imputed dataset, we conduct our inspections on each imputed dataset. 
 
 First, we view the basic statistics of the CBPS weights for a given imputed dataset. 
 ```{r}
-
-print(weights.cbps, i = 1)
-
+print(weights.cbps, 
+      i = 1)
 ```
 
 Next, we look inside the output to summarize the weighting process (drawing on the summary method from *weightIt*, for any given imputed dataset. 
 
 ```{r}
-
 summary(weights.cbps[[1]])
-
 ```
 This summary also provides the effective sample size, or the sample size that results from applying the weights to the original sample size, for each time point. Weighting can often result is an effective or weighted sample size that is smaller than the orignal sample size and is something to keep in mind when evaluating weighting methods. In this example, we see that our original 1,292 sample is reduced to 566 upon weighting with the CBPS method. 
 
 We then view a distribution plot of the weights for any one imputed dataset. The user has the option to supply `save.out` to save plots to the home directory.
 ```{r}
-
-plot(weights.cbps, i = 1, save.out = save.out)
-
+plot(weights.cbps, 
+     i = 1, 
+     save.out = save.out)
 ```
 As shown above, the distribution has a heavy right tail (typical of real-world data). The right tail of the distribution represents individuals who experienced statistically unexpected levels of exposure given their levels of confounders.
-
-  
 <br>
-
 We then create and inspect IPTW balancing weights using all other available methods in order to evaluate and compare their performance in subsequent steps. Here, we summarize and plot averaging across all imputed datasets in order to get a sense for their overall performance. Example inspections are for the first imputed dataset.   
 <br>
 
@@ -451,9 +416,14 @@ weights.glm <- createWeights(obj = obj,
                              formulas = formulas, 
                              save.out = save.out)
 
-print(weights.glm, i = 1)
+print(weights.glm, 
+      i = 1)
+
 summary(weights.glm[[1]])
-plot(weights.glm, i = 1, save.out = save.out)
+
+plot(weights.glm, 
+     i = 1, 
+     save.out = save.out)
 
 ```
   
@@ -471,9 +441,14 @@ weights.gbm <- createWeights(obj = obj,
                              formulas = formulas, 
                              save.out = save.out)
 
-print(weights.gbm, i = 1)
+print(weights.gbm, 
+      i = 1)
+
 summary(weights.gbm[[1]])
-plot(weights.gbm, i = 1, save.out = save.out)
+
+plot(weights.gbm, 
+     i = 1, 
+     save.out = save.out)
 ```
   
 <br>
@@ -488,9 +463,14 @@ weights.bart <- createWeights(obj = obj,
                              formulas = formulas, 
                              save.out = save.out)
 
-print(weights.bart, i = 1)
+print(weights.bart, 
+      i = 1)
+
 summary(weights.bart[[1]])
-plot(weights.bart, i = 1, save.out = save.out)
+
+plot(weights.bart, 
+     i = 1, 
+     save.out = save.out)
 ```
 
 <br> 
@@ -505,9 +485,14 @@ weights.super <- createWeights(obj = obj,
                              formulas = formulas, 
                              save.out = save.out)
 
-print(weights.super, i = 1)
+print(weights.super, 
+      i = 1)
+
 summary(weights.super[[1]])
-plot(weights.super, i = 1, save.out = save.out)
+
+plot(weights.super, 
+     i = 1, 
+     save.out = save.out)
 ```
 
 
@@ -523,13 +508,12 @@ The optional inputs are described in Step 1b.
 The `assessBalance()` function returns a data frame (or list) of balance statistics, balance thresholds, and binary balanced tag (1 = balanced, 0 = imbalanced) for each confounder relevant to each exposure time point. The function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).  
 
 We retain the same optional important confounders (`imp_conf`) and balance threshold (`balance_thresh`) as we specified earlier.  
+<br>  
   
 ##### CBPS
 We first assess balance for the CBPS weighting method.  
 
 ```{r}
-type <- "weighted"
-
 weights <- weights.cbps 
 
 balance_stats.cbps <- assessBalance(data = data, 
@@ -545,37 +529,39 @@ For assessing balance using imputed data, we can average across imputed datasets
 We summarize the CBPS balance statistics across imputed datasets and examine balance for the first imputed dataset. The user has the option to supply `save.out` to save printed output to the home directory.
 
 ```{r}
+summary(balance_stats.cbps, 
+        save.out = save.out)
 
-summary(balance_stats.cbps, save.out = save.out)
-
-summary(balance_stats.cbps, i = 1, save.out = save.out)
-
+summary(balance_stats.cbps, 
+        i = 1, 
+        save.out = save.out)
 ```
 Averaging across imputed datasets, we find xx imbalanced confounders remaining... with a median (and maximum) remaining correlation between confounders and exposure of ..., which we find is similar for the individual imputed datasets. 
 
 We can then visualize the imbalance with love plots, averaging across imputed datasets, for each exposure time point (with the first time point shown here). We can also plot balance for any given imputed datset. 
 ```{r}
+plot(balance_stats.cbps, 
+     t = 1, 
+     save.out = save.out)
 
-plot(balance_stats.cbps, t = 1, save.out = save.out)
-
-plot(balance_stats.cbps, t = 1, i = 1, save.out = save.out)
-
+plot(balance_stats.cbps, 
+     t = 1, 
+     i = 1, 
+     save.out = save.out)
 ```
-
-
 
 We can then inspect the balance statistics for each confounder in relation to exposure at all time points or each one individually, either averaging across imputed datasets or for any one individually. The user has the option to supply `save.out` to save printed output to the home directory. Below, we show an example of balance statistics for the first time point, averaged across imputed datasets. 
 ```{r}
-
-print(balance_stats.cbps, t = 1, save.out = save.out)
-
+print(balance_stats.cbps, 
+      t = 1, 
+      save.out = save.out)
 ```
 As shown above, for the CBPS weighting method and short formulas, the median absolute value correlation between confounder and exposure is 0.03 and only 8 confounders remain imbalanced.  
   
-  
 Below, we assess balance for each weighting method. 
   
-<br>
+<br>  
+
 ##### GLM
 ```{r}
 weights <- weights.glm
@@ -586,7 +572,6 @@ balance_stats.glm <- assessBalance(data = data,
                                     imp_conf = imp_conf, 
                                     balance_thresh = balance_thresh,
                                     save.out = save.out)
-
 ```
 
 ##### GBM
@@ -599,7 +584,6 @@ balance_stats.gbm <- assessBalance(data = data,
                                    imp_conf = imp_conf,
                                    balance_thresh = balance_thresh,
                                    save.out = save.out)
-
 ```
 
 ##### Bart
@@ -614,7 +598,6 @@ balance_stats.bart <- assessBalance(data = data,
                                      save.out = save.out)
 
 ```
-
 
 ##### Super
 ```{r}
@@ -636,29 +619,31 @@ From these summaries, we identify the optimal weighting method for a dataset, or
 
 * Fewest imbalanced confounders remaining relative to the user-specified balance threshold(s) (from summary output); 
 * Lowest median absolute balance statistic, across all confounders and time points, reflecting the best overall attenuation of confounding (from summary output);
-* Lowest maximum absolute balance statistic, across all confounders and time points (and imputed datasets, where applicable), indicating weakest remaining relation between exposure and confounder for the least balanced confounder (from summary output). 
-* Reasonable effective sample size following weighting (for all imputed datasets, where applicable), indicating reasonable power to detect effects(from *weightiIt* summary output)
-
+* Lowest maximum absolute balance statistic, across all confounders and time points (and imputed datasets, where applicable), indicating weakest remaining relation between exposure and confounder for the least balanced confounder (from summary output);  
+* Reasonable effective sample size following weighting (for all imputed datasets, where applicable), indicating reasonable power to detect effects (from *weightiIt* summary output).
+<br>
 For the first three, we examine summaries for each of the weighting methods. 
 
 ```{r}
+summary(balance_stats.cbps, 
+        save.out = save.out)
 
-summary(balance_stats.cbps, save.out = save.out)
+summary(balance_stats.glm, 
+        save.out = save.out)
 
-summary(balance_stats.glm, save.out = save.out)
+summary(balance_stats.gbm, 
+        save.out = save.out)
 
-summary(balance_stats.gbm, save.out = save.out)
+summary(balance_stats.bart, 
+        save.out = save.out)
 
-summary(balance_stats.bart, save.out = save.out)
-
-summary(balance_stats.super, save.out = save.out)
-
+summary(balance_stats.super, 
+        save.out = save.out)
 ```
 From this, we find that xx method has the fewest imbalanced confounders, lowest median balance statistic, and lowest max balance statistic (tailor this statement more).  
 
 To examine the fourth criterion, we use the *weightIt* summary method to examine effective sample sizes across weighting methods. We do this just for the first imputed dataset. 
 ```{r}
-
 summary(balance_stats.cbps[[1]])
 
 summary(balance_stats.glm[[1]])
@@ -668,10 +653,8 @@ summary(balance_stats.gbm[[1]])
 summary(balance_stats.bart[[1]])
 
 summary(balance_stats.super[[1]])
-
 ```
 From this, we find .....
-
 
 
 From these inspections, we identify the best performing weighting method as ....
@@ -682,7 +665,6 @@ From these inspections, we identify the best performing weighting method as ....
 
 ### Step 3: Create Updated Formulas & Re-Specify Weights Using Optimal Weighting Method
 The goal of this next step is to more closely inspect the balance reults of the best-performing weights created by the shortened balancing formulas, and add to the shortened formulas any time-varying confounders at lags > *t*-1 that were not successfully balanced, to create a final round of weights.  
-  
 <br>
 
 #### 3a. Inspect Balance of Best-Performing Weighting Method
@@ -691,15 +673,14 @@ We next inspect the balance produced by the weights created in the previous step
 We more closely inspect the balance of the xx weights, averaged across imputed datasets. 
 
 ```{r}
-
 print(weights.cbps)
 
-plot(weights.cbps, t = 5, save.out = save.out)
-
+plot(weights.cbps, 
+     t = 5, 
+     save.out = save.out)
 ```
 
 From this, we can see that across all exposure time points, xx confounders remain imbalanced. This is unsurprising with real-world data, given that it can be difficult to fully balance many confounding variables, especially across time. If a user does find that no confounders remain imbalanced, they can skip to Step 3d. Given that we identified remaining imbalanced confounders, we proceed to Step 3b. 
-  
 <br> 
 
 #### Step 3b. Update Simplified Formulas  
@@ -713,7 +694,6 @@ The function returns a list of balancing formulas labeled by type, exposure, out
 
 Below, we update our short formulas using the balance statistics from the best-performing weights. 
 ```{r}
-
 type <- "update"
 
 bal_stats <- balance_stats.cbps
@@ -726,9 +706,8 @@ updated_formulas <- createFormulas(obj = obj,
 
 We then inspect these new formulas to make sure that the imbalanced covariates were added to the appropriate formulas. The user has the option to supply `save.out` to save printed output to the home directory.  
 ```{r}
-
-print(updated_formulas, save.out = save.out) 
-
+print(updated_formulas, 
+      save.out = save.out) 
 ```
 
 As shown above, several imbalanced confounders at lags greater than *t*-1 were added to the short formulas at exposure time points 35-58. For instance, at the 35-month time point, economic strain at 6 and 15 months as well as attention problems and income at 6 months were added to the balancing formula.  
@@ -746,7 +725,6 @@ The function returns a list of weights objects each in the form of WeightItMSM o
   
 Below, we use the updated formulas and the xx weighting method to create a final round of IPTW balancing weights.   
 ```{r}
-
 formulas <- updated_formulas
 
 method <- "cbps"
@@ -756,16 +734,16 @@ final_weights <- createWeights(data = data,
                                method = method, 
                                formulas = formulas,
                                save.out = save.out)
-
 ```
 
 We then inspect these final weights by imputed dataset. The user has the option to supply `save.out` to save printed or plot output to the home directory.
 ```{r}
+print(final_weights, 
+      i = 1)
 
-print(final_weights, i = 1)
-
-plot(final_weights, i = 1, save.out = save.out)
-
+plot(final_weights, 
+     i = 1, 
+     save.out = save.out)
 ```
 As shown above, these weights have a median value of 1 and a heavy right tail.  
   
@@ -780,33 +758,31 @@ The optional input allows the user to specify a quantile value (0-1; default is 
   
 Below, we use the default 95th percentile for trimming weights.  
 ```{r}
-
 quantile <- 0.95 
-
 ```
 
 The function returns a list of weights objects, containing trimmed weights, each in the form of weightitMSM output. 
   
 We trim the final weights below. 
 ```{r}
-
 weights <- final_weights
 
 trim_weights <- trimWeights(obj = obj,
                             weights = weights, 
                             at = quantile, 
                             save.out = save.out)
-
 ```
 
-We then inspect the trimmed weights from one of the imputed datasets below. The user has the option to supply `save.out` to save plot output to the home directory. 
+We then inspect the trimmed weights from one of the imputed datasets below. The user has the option to supply `save.out` to save plots to the home directory. 
 ```{r}
+print(trim_weights, 
+      i = 1)
 
-print(trim_weights, i = 1)
-
-plot(trim_weights, i = 1, save.out = save.out)
-
+plot(trim_weights, 
+     i = 1, 
+     save.out = save.out)
 ```
+<br>
 As shown above, the weights still have a median value of 1 but a much shorter right tail.  
 
 <br>
@@ -817,7 +793,6 @@ We then create trimmed weights using two other quantile values at + /- ~0.3 of t
 We first create weights at the 92nd quantile value. 
 
 ```{r}
-
 quantile <- 0.92 
 
 trim_weights.s1 <- trimWeights(obj = obj,
@@ -825,16 +800,17 @@ trim_weights.s1 <- trimWeights(obj = obj,
                                at = quantile, 
                                save.out = save.out)
 
-print(trim_weights.s1, i = 1)
+print(trim_weights.s1, 
+      i = 1)
 
-plot(trim_weights.s1, i = 1, save.out = save.out)
-
+plot(trim_weights.s1, 
+     i = 1, 
+     save.out = save.out)
 ```
 
 And then at the 98th quantile value. 
  
 ```{r}
-
 quantile <- 0.98 
 
 trim_weights.s2 <- trimWeights(obj = obj,
@@ -842,10 +818,12 @@ trim_weights.s2 <- trimWeights(obj = obj,
                                at = quantile, 
                                save.out = save.out)
 
-print(trim_weights.s2, i = 1)
+print(trim_weights.s2, 
+      i = 1)
 
-plot(trim_weights.s2, i = 1, save.out = save.out)
-
+plot(trim_weights.s2, 
+     i = 1, 
+     save.out = save.out)
 ```
   
 We find comparable descriptive statistics for all sets of weights, with the upper range value varying by quantile cutoff. We will assess the consequences of any differences (e.g., different ranges) in subsequent steps.    
@@ -863,7 +841,6 @@ The function returns a data frame (or list) of balance statistics, balance thres
   
 Below, we assess balance for our final, trimmed weights. 
 ```{r}
-
 type <- "weighted"
 
 weights <- trim_weights
@@ -874,23 +851,22 @@ final_balance_stats <- assessBalance(data = data,
                                    imp_conf = imp_conf, 
                                    balance_thresh = balance_thresh, 
                                    save.out = save.out)
-
 ```
 
 We then summarize the final balance statistics, averaging across imputed datasets. The user has the option to supply `save.out` to save plot output to the home directory.
 ```{r}
+summary(final_balance_stats, 
+        save.out = save.out)
 
-summary(final_balance_stats, save.out = save.out)
-
-plot(final_balance_stats, t = 2, save.out = save.out)
-
+plot(final_balance_stats, 
+     t = 2, 
+     save.out = save.out)
 ```
 
 Given that, as is common with real-world data, we find some confounder remain imbalanced, we conduct a closer inspection of which confounders remain imbalanced. The user has the option to supply `save.out` to save printed output to the home directory.
 ```{r}
-
-print(final_balance_stats, save.out = save.out)
-
+print(final_balance_stats, 
+      save.out = save.out)
 ```
 
 We find that confounders across 3 domains (economic strain, income-to-needs-ratio, and parental education --ones that we held to a more stringent balancing threshold due to their theoretical importance as confounders) remain imbalanced at several exposure time points with a median absolute value correlation of 0.07 (range = -0.09-0.16). The largest remaining correlations between exposure and confounder are for economic strain and lagged levels of economic strain, suggesting high stability in this construct over time.  
@@ -925,7 +901,8 @@ final_balance_stats.s1 <- assessBalance(data = data,
                                         balance_thresh = balance_thresh, 
                                         save.out = save.out)
 
-print(final_balance_stats.s1, save.out = save.out)
+print(final_balance_stats.s1, 
+      save.out = save.out)
 
 ```
 
@@ -946,7 +923,8 @@ final_balance_stats.s2 <- assessBalance(data = data,
                                         balance_thresh = balance_thresh, 
                                         save.out = save.out)
 
-print(final_balance_stats.s2, save.out = save.out)
+print(final_balance_stats.s2, 
+      save.out = save.out)
 
 ```
 
@@ -1039,7 +1017,9 @@ We then inspect the model output. The user has the option to supply `save.out` t
 We inspect the model for each imputed dataset.
 ```{r}
 
-print(models, i = 2, save.out = save.out)
+print(models, 
+      i = 2, 
+      save.out = save.out)
 
 ```
 
@@ -1069,7 +1049,9 @@ models.s1 <- fitModel(data = data,
                       int_order = int_order,
                       save.out = save.out) 
 
-print(models.s1, i = 1, save.out = save.out)
+print(models.s1, 
+      i = 1, 
+      save.out = save.out)
 
 ```
 
@@ -1092,7 +1074,9 @@ models.s2 <- fitModel(data = data,
                       int_order = int_order, 
                       save.out = save.out) 
 
-print(models.s2, i = 1, save.out = save.out)
+print(models.s2, 
+      i = 1, 
+      save.out = save.out)
 
 ```
 
@@ -1183,7 +1167,7 @@ results <- compareHistories(obj = obj,
 We then inspect the compared histories output (now averaged across all imputed datsets). The user has the option to supply `save.out` to save printed output to the home directory.
 ```{r}
 
-print(results) # NOTE: need to round p-values for imputed data
+print(results) 
 
 ```
 We first confirm the distribution of our sample across our exposure histories is reasonable. 
@@ -1191,7 +1175,8 @@ We first confirm the distribution of our sample across our exposure histories is
 We then summarize these results. 
 ```{r}
 
-summary(results, save.out = save.out)
+summary(results, 
+        save.out = save.out)
 
 ```
 
@@ -1200,7 +1185,8 @@ We then inspect the history comparison and conclude that there is no evidence th
 Lastly, we plot the results. The user has the option to supply `save.out` to save plot output to the home directory.
 ```{r}
 
-plot(results, save.out = save.out)
+plot(results, 
+     save.out = save.out)
 
 ```
 
