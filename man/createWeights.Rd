@@ -4,13 +4,13 @@
 \alias{createWeights}
 \alias{print.devMSM_weights}
 \alias{plot.devMSM_weights}
+\alias{summary.devMSM_weights}
 \title{Creates IPTW balancing weights}
 \usage{
 createWeights(
   data,
-  obj,
   formulas,
-  method = c("glm", "gbm", "bart", "super", "cbps", "ipt"),
+  method = "glm",
   verbose = FALSE,
   save.out = FALSE,
   ...
@@ -19,12 +19,12 @@ createWeights(
 \method{print}{devMSM_weights}(x, i = 1, ...)
 
 \method{plot}{devMSM_weights}(x, i = 1, save.out = FALSE, ...)
+
+\method{summary}{devMSM_weights}(object, i = 1, ...)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
 frames, or \code{mids} object from the \code{mice} package}
-
-\item{obj}{initialized MSM object from \code{\link[=initMSM]{initMSM()}}}
 
 \item{formulas}{list of balancing formulas at each time point output from \code{\link[=createFormulas]{createFormulas()}}}
 
@@ -40,12 +40,12 @@ To use a non-default file name, specify a character string with the file name. I
 There might be naming conflicts where two objects get saved to the same file. In these cases, users should specify a custom name.
 default is FALSE.}
 
-\item{...}{ignored}
+\item{\dots}{arguments passed to \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} or \code{\link[=summary.weightitMSM]{summary.weightitMSM()}}}
 
-\item{x}{devMSM_weights object from \code{\link[=createWeights]{createWeights()}}}
+\item{x, object}{devMSM_weights object from \code{createWeights()}}
 
-\item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
-Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that.}
+\item{i}{For multiply imputed datasets, \code{i} selects which imputation to print results for.
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that. Ignored for non-imputed data.}
 }
 \value{
 a list containing \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} output. It is the length
@@ -77,25 +77,29 @@ obj <- initMSM(
 )
 f <- createFormulas(obj, type = "short")
 
-w <- createWeights(data = data, obj = obj, formulas = f)
+w <- createWeights(data = data, formulas = f)
 print(w)
 plot(w)
 
 # Methods from `WeightIt::weightitMSM`
-\dontshow{if (requireNamespace("CBPS", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-w <- createWeights(data = data, obj = obj, formulas = f, method = "cbps")
-\dontshow{\}) # examplesIf}
+w <- createWeights(data = data, formulas = f,
+                   method = "glm")
+
+w <- createWeights(data = data, formulas = f,
+                   method = "cbps")
 \dontshow{if (requireNamespace("gbm", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-w <- createWeights(data = data, obj = obj, formulas = f, method = "gbm")
+w <- createWeights(data = data, formulas = f,
+                   method = "gbm")
 \dontshow{\}) # examplesIf}
 \dontshow{if (requireNamespace("dbarts", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-w <- createWeights(data = data, obj = obj, formulas = f, method = "bart")
+w <- createWeights(data = data, formulas = f,
+                   method = "bart")
 \dontshow{\}) # examplesIf}
 \dontshow{if (requireNamespace("SuperLearner", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-w <- createWeights(data = data, obj = obj, formulas = f, method = "super")
+w <- createWeights(data = data, formulas = f,
+                   method = "super")
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}},
-\url{https://ngreifer.github.io/WeightIt/reference/weightitMSM.html};
+\code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}}
 }

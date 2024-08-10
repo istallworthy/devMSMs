@@ -4,18 +4,9 @@
 \alias{trimWeights}
 \title{Trim IPTW balancing weights, if needed}
 \usage{
-trimWeights(
-  obj,
-  weights,
-  at = 0,
-  lower = FALSE,
-  verbose = FALSE,
-  save.out = FALSE
-)
+trimWeights(weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE)
 }
 \arguments{
-\item{obj}{initialized MSM object from \code{\link[=initMSM]{initMSM()}}}
-
 \item{weights}{list of IPTW weights output from \code{\link[=createWeights]{createWeights()}}}
 
 \item{at}{\code{numeric}; either the quantile of the weights above which
@@ -65,12 +56,12 @@ obj <- initMSM(
 )
 f <- createFormulas(obj, type = "short")
 
-w <- createWeights(data = data, obj = obj, formulas = f)
-tw <- trimWeights(obj, w)
+w <- createWeights(data = data, formulas = f)
+tw <- trimWeights(w, at = 0.975)
 print(tw)
 plot(tw)
 
-trimWeights(obj, w, at = 0.975, lower = TRUE)
+trimWeights(w, at = 0.975, lower = TRUE)
 
 }
 \seealso{

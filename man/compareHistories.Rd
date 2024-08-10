@@ -8,13 +8,12 @@
 \title{Estimate, compare, and visualize exposure histories}
 \usage{
 compareHistories(
-  obj,
   fit,
   hi_lo_cut = c(0.4, 0.6),
-  dose_level = c("h", "l"),
+  dose_level = "h",
   reference = NULL,
   comparison = NULL,
-  mc_comp_method = stats::p.adjust.methods,
+  mc_comp_method = "BH",
   verbose = FALSE,
   save.out = FALSE
 )
@@ -30,11 +29,9 @@ compareHistories(
   ...
 )
 
-\method{summary}{devMSM_comparisons}(object, type = c("preds", "comps"), ...)
+\method{summary}{devMSM_comparisons}(object, type = "comps", ...)
 }
 \arguments{
-\item{obj}{initialized MSM object from \code{\link[=initMSM]{initMSM()}}}
-
 \item{fit}{list of model outputs from \code{\link[=fitModel]{fitModel()}}}
 
 \item{hi_lo_cut}{list of two numbers indicating quantile values
@@ -82,7 +79,7 @@ colors (n(epochs)+1) for plotting (default is "Dark2" palette)}
 
 \item{type}{Either "preds" or "comps" corresponding to the
 results of \code{\link[marginaleffects:predictions]{marginaleffects::avg_predictions()}} at low and high dosages or
-\code{\link[marginaleffects:comparisons]{marginaleffects::comparisons()}} respectively}
+\code{\link[marginaleffects:comparisons]{marginaleffects::avg_comparisons()}} respectively}
 }
 \value{
 list containing two dataframes: \code{preds} with predictions from
@@ -116,14 +113,13 @@ obj <- initMSM(
   tv_conf = c("B.1", "B.2", "B.3", "D.3")
 )
 f <- createFormulas(obj, type = "short")
-w <- createWeights(data = data, obj = obj, formulas = f)
+w <- createWeights(data = data, formulas = f)
 fit <- fitModel(
-  data = data, obj = obj, weights = w,
+  data = data, weights = w,
   outcome = "D.3", model = "m0"
 )
 
 comp <- compareHistories(
-  obj,
   fit = fit,
   hi_lo_cut = c(0.3, 0.6)
 )
@@ -133,7 +129,6 @@ summary(comp, "preds")
 summary(comp, "comps")
 
 comp2 <- compareHistories(
-  obj,
   fit = fit,
   reference = "l-l-l",
   comparison = c("h-h-h", "h-h-l")
