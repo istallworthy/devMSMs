@@ -53,14 +53,13 @@
 #'   tv_conf = c("B.1", "B.2", "B.3", "D.3")
 #' )
 #' f <- createFormulas(obj, type = "short")
-#' w <- createWeights(data = data, obj = obj, formulas = f)
+#' w <- createWeights(data = data, formulas = f)
 #' fit <- fitModel(
-#'   data = data, obj = obj, weights = w,
+#'   data = data, weights = w,
 #'   outcome = "D.3", model = "m0"
 #' )
 #'
 #' comp <- compareHistories(
-#'   obj,
 #'   fit = fit,
 #'   hi_lo_cut = c(0.3, 0.6)
 #' )
@@ -70,7 +69,6 @@
 #' summary(comp, "comps")
 #'
 #' comp2 <- compareHistories(
-#'   obj,
 #'   fit = fit,
 #'   reference = "l-l-l",
 #'   comparison = c("h-h-h", "h-h-l")
@@ -82,11 +80,11 @@
 #'
 #' @export
 compareHistories <- function(
-    obj, fit,
+    fit,
     hi_lo_cut = c(0.4, 0.6),
-    dose_level = c("h", "l"),
+    dose_level = "h",
     reference = NULL, comparison = NULL,
-    mc_comp_method = stats::p.adjust.methods,
+    mc_comp_method = "BH",
     verbose = FALSE, save.out = FALSE) {
   ### Checks ----
   dreamerr::check_arg(verbose, "scalar logical")
@@ -99,12 +97,13 @@ compareHistories <- function(
   dreamerr::check_arg(fit, "class(devMSM_models)")
 
   # Get objects from `obj`
-  exposure <- attr(obj, "exposure")
-  exposure_time_pts <- attr(obj, "exposure_time_pts")
-  exposure_type <- attr(obj, "exposure_type")
-  exposure_root <- attr(obj, "exposure_root")
-  epoch <- attr(obj, "epoch")
-  sep <- attr(obj, "sep")
+  obj <- attr(fit, "obj")
+  exposure <- obj[["exposure"]]
+  exposure_time_pts <- obj[["exposure_time_pts"]]
+  exposure_type <- obj[["exposure_type"]]
+  exposure_root <- obj[["exposure_root"]]
+  epoch <- obj[["epoch"]]
+  sep <- obj[["sep"]]
   outcome <- attr(fit, "outcome")
   model <- attr(fit, "model")
 
@@ -119,42 +118,42 @@ compareHistories <- function(
 
   dreamerr::check_arg(reference, "character vector | NULL")
   dreamerr::check_arg(comparison, "character vector | NULL")
-  if ((is.null(comparison) && !is.null(reference)) || (!is.null(comparison) && is.null(reference) == 1)) {
+  if ((is.null(comparison) && !is.null(reference)) || (!is.null(comparison) && is.null(reference))) {
     stop("If either comparison or reference is specified, then both must be specified", call. = FALSE)
   }
+  
   is_invalid_comparison <- !(comparison %in% exposure_levels)
   if (any(is_invalid_comparison)) {
     stop(sprintf("The following elements of `comparison` are invalid: %s", paste0(comparison[is_invalid_comparison], collapse = ", ")), call. = FALSE)
   }
+  
   is_invalid_reference <- !(reference %in% exposure_levels)
   if (any(is_invalid_reference)) {
     stop(sprintf("The following elements of `reference` are invalid: %s", paste0(reference[is_invalid_reference], collapse = ", ")), call. = FALSE)
   }
 
   # Multiple comparison methods
-  mc_comp_method <- match.arg(mc_comp_method)
-  dreamerr::check_arg(mc_comp_method, "scalar character | NULL")
-  if (is.null(mc_comp_method)) {
-    mc_comp_method <- "BH"
-  }
-  if (!(mc_comp_method %in% stats::p.adjust.methods)) {
-    stop("Please provide a single valid character string abbreviation for a multiple comparison method compatible with the stats::p.adjust() function.", call. = FALSE)
-  }
+  dreamerr::check_arg(mc_comp_method, "scalar character")
+  mc_comp_method <- match.arg(mc_comp_method, stats::p.adjust.methods)
 
-  dreamerr::check_arg(hi_lo_cut, "NULL | vector numeric len(2) GE{0} LE{1}")
-  hi_lo_cut <- c(min(hi_lo_cut), max(hi_lo_cut)) # sort
+  if (exposure_type == "continuous") {
+    dreamerr::check_arg(hi_lo_cut, "vector numeric len(2) GE{0} LE{1}")
+    hi_lo_cut <- c(min(hi_lo_cut), max(hi_lo_cut)) # sort
+  }
+  else {
+    hi_lo_cut <- NULL
+  }
 
   # Dose_level
   dose_level <- match.arg(dose_level, c("h", "l"))
 
-
   # STEP 1 ----
   # Define variables for average partial effects
   # getting data to use for determining hi/lo values: should have any epochs created / used in the model
-  data <- do.call(rbind, lapply(fit, function(z) z[["data"]]))
+  data <- do.call("rbind", lapply(fit, function(z) z[["data"]]))
 
   epoch_vars <- exposure
-  if (any(exposure != epoch)) {
+  if (!all(exposure == epoch)) {
     epoch_vars <- .get_epoch_var_names(exposure, epoch, sep = sep)
   }
 
@@ -178,14 +177,14 @@ compareHistories <- function(
   # Estimated marginal predictions for each history
   preds <- lapply(fit, function(m) { # Goes through different fitted model
     d <- m$data
-    w <- m$weights
 
     p <- marginaleffects::avg_predictions(
       m,
-      newdata = d, variables = prediction_vars, wts = w
+      newdata = d, variables = prediction_vars,
+      type = "response"
     )
-    p <- .add_histories(p, epoch_vars)
-    p
+    
+    .add_histories(p, epoch_vars)
   })
 
   # STEP 3 ----
@@ -233,8 +232,9 @@ compareHistories <- function(
     # on.exit({ rm(glance_custom_internal.glm_weightit, envir = globalenv()) })
 
     rlang::check_installed("mice")
-    preds <- summary(mice::pool(preds), digits = 3)
-    comps <- summary(mice::pool(comps))
+    preds <- summary(mice::pool(preds, dfcom = Inf), conf.int = TRUE)
+    comps <- summary(mice::pool(comps, dfcom = Inf), conf.int = TRUE)
+    names(preds)[7:8] <- names(comps)[7:8] <- c("conf.low", "conf.high")
   } else { # REGULAR DATA
     comps <- as.data.frame(comps[[1]])
     preds <- as.data.frame(preds[[1]])
@@ -258,7 +258,7 @@ compareHistories <- function(
   exp_lab <- .remove_time_pts_from_vars(exposure[1], sep = sep)
 
   res <- list(preds = preds, comps = comps)
-  class(res) <- c("devMSM_comparisons", "list")
+  class(res) <- "devMSM_comparisons"
   attr(res, "obj") <- obj
   attr(res, "outcome") <- outcome
   attr(res, "hi_lo_cut") <- hi_lo_cut
@@ -274,8 +274,8 @@ compareHistories <- function(
 
   if (verbose) print(res)
 
-  if (save.out == TRUE || is.character(save.out)) {
-    home_dir <- attr(obj, "home_dir")
+  if (isTRUE(save.out) || is.character(save.out)) {
+    home_dir <- obj[["home_dir"]]
     out_dir <- fs::path_join(c(home_dir, "histories"))
     .create_dir_if_needed(out_dir)
 
@@ -317,8 +317,8 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
   
   outcome <- attr(x, "outcome")
   obj <- attr(x, "obj")
-  epoch <- attr(obj, "epoch")
-  exposure_root <- attr(obj, "exposure_root")
+  epoch <- obj[["epoch"]]
+  exposure_root <- obj[["exposure_root"]]
 
   reference <- NULL
   comparison <- NULL
@@ -329,23 +329,23 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
     comparison <- attr(x, "comparison")
   }
 
-  columns_to_drop <- c("statistic", "s.value", "conf.low", "conf.high", "dose")
+  columns_to_drop <- c("statistic", "s.value", "df", "p.value", "dose")
   preds_tab <- tinytable::tt(preds[, setdiff(colnames(preds), columns_to_drop)])
   preds_tab <- tinytable::format_tt(preds_tab, digits = 2)
 
-  columns_to_drop <- c("statistic", "s.value", "conf.low", "conf.high", "dose")
+  columns_to_drop <- c("statistic", "s.value", "df", "dose")
   comps_tab <- tinytable::tt(comps[, setdiff(colnames(comps), columns_to_drop)])
 
   cat("Summary of Exposure Main Effects:\n")
-  print_eval_hist(epoch_history, epoch, hi_lo_cut, reference, comparison)
+  .print_eval_hist(epoch_history, epoch, hi_lo_cut, reference, comparison)
   cat("Below are the pooled average predictions by user-specified history:")
   print(preds_tab, "markdown")
   cat(sprintf("\nConducting multiple comparison correction for all pairings between comparison histories and each refernece history using the %s method. \n", mc_comp_method))
   cat("\n")
   print(comps_tab, "markdown")
 
-  if (save.out == TRUE || is.character(save.out)) {
-    home_dir <- attr(obj, "home_dir")
+  if (isTRUE(save.out) || is.character(save.out)) {
+    home_dir <- obj[["home_dir"]]
     out_dir <- fs::path_join(c(home_dir, "histories"))
     .create_dir_if_needed(out_dir)
 
@@ -359,7 +359,7 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
       )
     }
     
-    out = fs::path_join(c(out_dir, file_name))
+    out <- fs::path_join(c(out_dir, file_name))
     cat(sprintf(
       '\nSaving comparisons table to file:\n%s\n',
       out
@@ -398,9 +398,9 @@ plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab
 
   outcome <- attr(x, "outcome")
   obj <- attr(x, "obj")
-  exposure <- attr(obj, "exposure")
-  exposure_root <- attr(obj, "exposure_root")
-  epoch <- attr(obj, "epoch")
+  exposure <- obj[["exposure"]]
+  exposure_root <- obj[["exposure_root"]]
+  epoch <- obj[["epoch"]]
 
   n_epoch <- length(unique(epoch))
   dreamerr::check_arg(colors, "character vector")
@@ -416,8 +416,8 @@ plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab
 
   preds <- x$preds
   preds$history <- preds$term
-  preds$low_ci <- preds$estimate - (1.96 * preds$std.error)
-  preds$high_ci <- preds$estimate + (1.96 * preds$std.error)
+  preds$low_ci <- preds$estimate + (qnorm(.025) * preds$std.error)
+  preds$high_ci <- preds$estimate + (qnorm(.975) * preds$std.error)
   preds <- preds[order(preds$dose), , drop = FALSE]
   preds$dose <- as.factor(preds$dose)
 
@@ -463,8 +463,8 @@ plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab
       axis.line = ggplot2::element_line(colour = "black")
     )
 
-  if (save.out == TRUE || is.character(save.out)) {
-    home_dir <- attr(obj, "home_dir")
+  if (isTRUE(save.out) || is.character(save.out)) {
+    home_dir <- obj[["home_dir"]]
     out_dir <- fs::path_join(c(home_dir, "histories", "plots"))
     .create_dir_if_needed(out_dir)
 
@@ -478,7 +478,7 @@ plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab
       )
     }
     
-    out = fs::path_join(c(out_dir, file_name))
+    out <- fs::path_join(c(out_dir, file_name))
     cat(sprintf(
       '\nSaving comparisons plot to `jpeg` file:\n%s\n',
       out
@@ -494,11 +494,63 @@ plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab
 #' @param object devMSM_histories object from [compareHistories()]
 #' @param type Either "preds" or "comps" corresponding to the
 #'  results of [marginaleffects::avg_predictions()] at low and high dosages or
-#'  [marginaleffects::comparisons()] respectively
+#'  [marginaleffects::avg_comparisons()] respectively
 #' @param ... ignored
 #'
 #' @export
-summary.devMSM_comparisons <- function(object, type = c("preds", "comps"), ...) {
-  type <- match.arg(type)
+summary.devMSM_comparisons <- function(object, type = "comps", ...) {
+  dreamerr::check_arg(type, "scalar character")
+  type <- match.arg(type, c("preds", "comps"))
   return(object[[type]])
+}
+
+#' Visualize distribution of sample across exposure histories
+#'
+#' Create customized, user-specified exposure histories and tables displaying
+#' sample distribution across them for user inspection.
+#'
+#' @param epoch_history character vector of length `nrow(data)` containing epochi histories for 
+#'  each unit 
+#' @param epoch character vector of epoch values
+#' 
+#' @noRd
+.print_eval_hist <- function(epoch_history, epoch, hi_lo_cut, reference = NULL, comparison = NULL) {
+  
+  if (length(hi_lo_cut) == 1L) hi_lo_cut <- c(hi_lo_cut, hi_lo_cut)
+  
+  epoch_history_tab <- data.frame(table(epoch_history, useNA = "ifany"))
+  colnames(epoch_history_tab) <- c("epoch_history", "n")
+  n_total <- sum(epoch_history_tab$n)
+  n_total_hist <- nrow(epoch_history_tab)
+  
+  if (!is.null(reference) && !is.null(comparison)) {
+    keep_idx <- epoch_history_tab$epoch_history %in% c(reference, comparison)
+    epoch_history_tab <- epoch_history_tab[keep_idx, , drop = FALSE]
+  }
+  n_included <- sum(epoch_history_tab$n)
+  n_included_hist <- nrow(epoch_history_tab)
+  
+  message(sprintf(
+    "USER ALERT: Out of the total of %s individuals in the sample, below is the distribution of the %s (%.0f%%) individuals that fall into %s user-selected exposure histories (out of the %s total) created from %sth and %sth percentile values for low and high levels of exposure-epoch %s. \n",
+    n_total,
+    n_included,
+    n_included / n_total * 100,
+    n_included_hist,
+    n_total_hist,
+    hi_lo_cut[2] * 100,
+    hi_lo_cut[1] * 100,
+    paste(unique(epoch), collapse = ", ")
+  ))
+  
+  message("USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision:\n")
+  
+  tab_caption <- sprintf(
+    "Summary of user-selected exposure histories based on exposure main effects %s:",
+    paste(unique(epoch), collapse = ", ")
+  )
+  tab <- tinytable::tt(epoch_history_tab, caption = tab_caption)  
+  print(tab, "markdown")
+  cat("\n")
+  
+  return(invisible(NULL))
 }

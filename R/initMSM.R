@@ -88,7 +88,8 @@ initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL,
     )
     concur_in_tv <- concur_conf %in% tv_conf
     if (!all(concur_in_tv)) {
-      stop("The following `concur_conf` do not show up in `tv_conf` but need to:%s", paste(concur_conf[!concur_in_tv], collapse = ", "), call. = FALSE)
+      stop(sprintf("The following `concur_conf` do not show up in `tv_conf` but need to:%s",
+                   paste(concur_conf[!concur_in_tv], collapse = ", ")), call. = FALSE)
     }
   }
   if (any(exposure %in% tv_conf)) {
@@ -117,10 +118,7 @@ initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL,
     }
   })
   exp1 <- d[[exposure[1]]]
-  exposure_type <- ifelse(
-    is.logical(exp1) || all(exp1 %in% c(0, 1), na.rm = TRUE),
-    "binary", "continuous"
-  )
+  exposure_type <- if (is.logical(exp1) || all(exp1 %in% c(0, 1), na.rm = TRUE)) "binary" else "continuous"
 
   # Create var_tab containing all the information needed
   var_tab <- .create_var_tab(exposure = exposure, ti_conf = ti_conf, tv_conf = tv_conf, sep = sep)
@@ -138,28 +136,30 @@ initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL,
   }
 
   # return initialized object
-  obj <- list()
-  class(obj) <- c("devMSM", "list")
-  attr(obj, "data_type") <- data_type
-  attr(obj, "exposure") <- exposure
-  attr(obj, "epoch") <- epoch
-  attr(obj, "exposure_root") <- .remove_time_pts_from_vars(exposure[1], sep = sep)
-  attr(obj, "exposure_time_pts") <- exposure_time_pts
-  attr(obj, "exposure_type") <- exposure_type
-  attr(obj, "sep") <- sep
-  attr(obj, "home_dir") <- home_dir
-  attr(obj, "var_tab") <- var_tab
+  obj <- list(
+    data_type = data_type,
+    exposure = exposure,
+    epoch = epoch,
+    exposure_root = .remove_time_pts_from_vars(exposure[1], sep = sep),
+    exposure_time_pts = exposure_time_pts,
+    exposure_type = exposure_type,
+    sep = sep,
+    home_dir = home_dir,
+    var_tab = var_tab
+  )
+  
+  class(obj) <- "devMSM"
 
   return(obj)
 }
 
 #' @export
 print.devMSM <- function(x, ...) {
-  exposure <- attr(x, "exposure")
-  epoch <- attr(x, "epoch")
+  exposure <- x[["exposure"]]
+  epoch <- x[["epoch"]]
   cat(sprintf(
     "Exposure (%s): %s\n",
-    attr(x, "exposure_type"),
+    x[["exposure_type"]],
     paste(exposure, collapse = ", ")
   ))
   if (!all(exposure == epoch)) {
@@ -169,5 +169,7 @@ print.devMSM <- function(x, ...) {
     ))
   }
   cat(sprintf("Variable and their encodings:\n"))
-  print(attr(x, "var_tab"), row.names = FALSE)
+  print(x[["var_tab"]], row.names = FALSE)
+  
+  invisible(x)
 }

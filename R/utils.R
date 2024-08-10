@@ -5,10 +5,9 @@
   }
 }
 
-#' Adaptation of gtools::permutations(2, repeats.allowed = TRUE)
-#' @keywords internal
+# Adaptation of gtools::permutations(2, repeats.allowed = TRUE)
 perm2 <- function(r, v) {
-  if (mode(r) != "numeric" || length(r) != 1 || r < 1 || (r %% 1) != 0) {
+  if (!is.numeric(r) || length(r) != 1 || r < 1 || (r %% 1) != 0) {
     stop("bad value of r")
   }
   if (!is.atomic(v)) {
@@ -33,8 +32,7 @@ perm2 <- function(r, v) {
   sub(r, v)
 }
 
-#' Base R rewrite of stringr::str_count(); pattern can only be length 1
-#' @keywords internal
+# Base R rewrite of stringr::str_count(); pattern can only be length 1
 .string_count <- function(string, pattern = "") {
   lengths(regmatches(string, gregexpr(pattern, string)))
 }
@@ -43,35 +41,37 @@ perm2 <- function(r, v) {
 .check_data <- function(data) {
   is_mids <- inherits(data, "mids")
   is_df <- is.data.frame(data)
-  is_list_of_df <- is.list(data) && all(sapply(data, is.data.frame))
-  if (!(is_mids | is_df | is_list_of_df)) {
+  is_list_of_df <- is.list(data) && all(vapply(data, is.data.frame, logical(1L)))
+  if (!(is_mids || is_df || is_list_of_df)) {
     stop(
       "Please provide either a 'mids' object, a data frame, or a list of imputed datasets in the `data` argument.",
       call. = FALSE
     )
   }
   if (is_mids) {
-    rlang::check_installed("mice", "mitml")
+    rlang::check_installed("mice")
   }
   return(invisible(NULL))
 }
-.check_weights <- function(weights) {
-  dreamerr::check_arg(weights, "class(devMSM_weights) | list", .message = "The 'weighted' mode of this function requires weights be supplied in the form of output from createWeights.")
 
-  lapply(seq_along(weights), function(i) {
+.check_weights <- function(weights) {
+  dreamerr::check_arg(weights, "class(devMSM_weights) | list", .message = "The 'weighted' mode of this function requires weights be supplied in the form of output from `createWeights()`.")
+
+  for (i in seq_along(weights)) {
     w <- weights[[i]]
     dreamerr::check_value(
       w, "class(weightitMSM)",
       .arg_name = paste0("weights[[", i, "]]"),
-      .message = "Please supply a list of weights output from the createWeights function."
+      .message = "Please supply a list of weights output from the `createWeights()` function."
     )
-  })
+  }
+
   return(invisible(NULL))
 }
 
 # Common functions ----
 #' Grabs trailing numbers after the last occurance of `sep` in `vars`
-#' @keywords internal
+#' @noRd
 .extract_time_pts_from_vars <- function(vars, sep = "[\\._]") {
   regex_time_pts <- paste0(sep, "([0-9]+)$")
   sapply(vars, function(var) {
@@ -90,7 +90,7 @@ perm2 <- function(r, v) {
 # }
 
 #' Gets prefix of variable by numbers after last occurance of `sep` and optionally deleting `sep`
-#' @keywords internal
+#' @noRd
 .remove_time_pts_from_vars <- function(vars, sep = "[\\._]", keep_sep = FALSE) {
   regex_time_pts <- paste0("(", sep, ")", "([0-9]+)$")
   replace <- if (keep_sep) "\\1" else ""
@@ -108,12 +108,12 @@ perm2 <- function(r, v) {
   regex_time_pts <- paste0(sep, "([0-9]+)$")
 
   exposure_time_pts <- .extract_time_pts_from_vars(exposure, sep = sep)
-  if (any(is.na(exposure_time_pts))) {
+  if (anyNA(exposure_time_pts)) {
     stop("Please supply exposure variables with a '.time' suffix with the outcome time point", call. = FALSE)
   }
 
   tv_conf_time_pts <- .extract_time_pts_from_vars(tv_conf, sep = sep)
-  if (any(is.na(tv_conf_time_pts))) {
+  if (anyNA(tv_conf_time_pts)) {
     stop("Please supply tv_conf variables with a '.time' suffix with the outcome time point", call. = FALSE)
   }
 
@@ -128,18 +128,17 @@ perm2 <- function(r, v) {
     }
   }
 
-  var_tab <- data.frame(
+  data.frame(
     var = c(exposure, tv_conf, ti_conf),
     type = c(rep("exposure", length(exposure)), rep("tv_conf", length(tv_conf)), 
              rep("ti_conf", length(ti_conf))),
     time = c(exposure_time_pts, tv_conf_time_pts, rep(-1, length(ti_conf)))
   )
-  return(var_tab)
 }
 
 # assessBalance ----
 #' Used in `assessBalance` to define history
-#' @keywords internal
+#' @noRd
 .characterize_exposure <- function(mat, exposure_type) {
   if (exposure_type == "continuous") {
     res <- lapply(mat, function(x) ifelse(x <= median(x), "l", "h"))
@@ -149,26 +148,9 @@ perm2 <- function(r, v) {
   do.call(function(...) paste(..., sep = "-"), res)
 }
 
-#' Added by IS: averages balance stats across time points and recalculates balance: 
-#' returns one bal stat per covar
-#'
-#' @keywords internal
-.avg_imp_bal_stats <- function(bal_stats) {
-  
-  new <- as.data.frame(plyr::rbind.fill(bal_stats)) 
-  temp <- aggregate(abs(std_bal_stats) ~ covariate, data = new, 
-                    FUN = function(x) mean(x, na.rm = TRUE))
-  names(temp)[2] <- "std_bal_avg"
-  temp <- merge(new[, c("covariate", "bal_thresh", "covar_time")], temp, by = "covariate")
-  temp$balanced <- ifelse(temp$std_bal_avg < 
-                            temp$bal_thresh, 1, 0) # recalc balanced
-  temp
-}
-
-
 #' Added by IS: Averages balance stats across imputed datasets: list by time
 #' 
-#' @keywords internal
+#' @noRd
 .avg_imp_bal_stats_time <- function(bal_stats) {
   average_sub_lists <- function(lists) {
     summed <- Reduce(`+`, lists)/length(lists)
@@ -176,15 +158,12 @@ perm2 <- function(r, v) {
   }
   
   # TODO: double check this and maybe cleanup?
-  avgs = lapply(
-      lapply(1:length(bal_stats[[1]]), function(z){
+  avgs <- lapply(
+      lapply(seq_along(bal_stats[[1]]), function(z) {
       # lapply(
         # for a single time point, gets all imps
-        lapply(1:length(bal_stats), function(y) {
-          x <- bal_stats[[y]]
-          out <- x[[z]]
-          # out 
-          out$std_bal_stats
+        lapply(seq_along(bal_stats), function(y) {
+          bal_stats[[y]][[z]]$std_bal_stats
         }) # ,
         # # TODO: Absolute value or not? 
         # function(q) abs(q[["std_bal_stats"]]))
@@ -192,13 +171,11 @@ perm2 <- function(r, v) {
     average_sub_lists)
 
   test <- bal_stats[[1]]
-  test <- lapply(1:length(test), function(x){
-    test[[x]]$std_bal_stats <- avgs[[x]]
-    test[[x]]$balanced <- ifelse(abs(test[[x]]$std_bal_stats) < 
-                            test[[x]]$bal_thresh, 1, 0) # recalc balanced
-    test[[x]]
-  })
-  
+  for (i in seq_along(test)) {
+    test[[i]]$std_bal_stats <- avgs[[i]]
+    test[[i]]$balanced <- ifelse(abs(test[[i]]$std_bal_stats) < test[[i]]$bal_thresh, 1, 0) # recalc balanced
+  }
+
   test
 }
 
@@ -206,14 +183,14 @@ perm2 <- function(r, v) {
 # fitModel ----
 #' Takes row means of eposure variables in the same epoch
 #' 
-#' @keywords internal
+#' @noRd
 .generate_epoch_exposures <- function(data, exposure, epoch, sep) {
   prefix <- .remove_time_pts_from_vars(exposure[1], sep = sep, keep_sep = TRUE)
   sp <- split(exposure, epoch)
   res <- lapply(sp, function(epoch_cols) {
     rowMeans(data[, epoch_cols, drop = FALSE], na.rm = TRUE)
   })
-  res <- do.call(cbind, res)
+  res <- do.call("cbind", res)
   colnames(res) <- paste0(prefix, names(sp))
   return(res)
 }
@@ -221,19 +198,18 @@ perm2 <- function(r, v) {
 #' Return interactions up to order n of variables in `x`
 #' @param x character vector of variable names
 #' @param n order of interaction
-#' @keywords internal
+#' @noRd
 .get_interaction_terms <- function(x, n = 2) {
-  x = sprintf("`%s`", x)
-  x = attr(terms(reformulate(x)), "term.labels")
-  str = sprintf("~ (%s)^%s", paste(unique(x), collapse = " + "), n)
-  interactions <- attr(terms(as.formula(str)), "term.labels")
-  return(interactions)
+  x <- sprintf("`%s`", x)
+  x <- attr(terms(reformulate(x)), "term.labels")
+  str <- sprintf("~ (%s)^%s", paste(unique(x), collapse = " + "), n)
+  
+  attr(terms(as.formula(str)), "term.labels")
 }
 
 # compareHistories ----
 #' Simple function to get the variable names associated with epochs 
-#' 
-#' @keywords internal
+#' @noRd
 .get_epoch_var_names <- function(exposure, epoch, sep) {
   prefix <- .remove_time_pts_from_vars(exposure[1], sep = sep, keep_sep = TRUE)
   paste0(prefix, unique(epoch))
@@ -241,34 +217,30 @@ perm2 <- function(r, v) {
 
 #' Grab values of epoch variables to evaluate in `marginaleffects::predictions`
 #' 
-#' @description
 #' For continuous variables, grab quantiles of the epoch variables based on hi_lo_cut
 #' For binary variables, use 0 and 1.
-#' 
-#' @keywords internal
-.get_avg_predictions_variables <- function(data, epoch_vars, exposure_type, hi_lo_cut = NULL) {
-  if (is.null(hi_lo_cut)) hi_lo_cut = c(0.25, 0.75)
+#' @noRd
+.get_avg_predictions_variables <- function(data, epoch_vars, exposure_type, hi_lo_cut) {
+  
   if (exposure_type == "continuous") {
-    res = lapply(epoch_vars, function(var_name) {
-      qs = quantile(data[[var_name]], probs = hi_lo_cut, na.rm = TRUE)
-      if (length(qs) == 1) qs = c(qs - 0.0001, qs + 0.0001)
+    res <- lapply(epoch_vars, function(var_name) {
+      qs <- quantile(data[[var_name]], probs = hi_lo_cut, na.rm = TRUE)
+      if (length(qs) == 1L) qs <- c(qs - 0.0001, qs + 0.0001)
       return(unname(qs))
     })
-    names(res) = epoch_vars
-    return(res)
   } else {
-    res = lapply(epoch_vars, function(var_name) c(0, 1))
-    names(res) = epoch_vars
-    return(res)
+    res <- lapply(epoch_vars, function(var_name) c(0, 1))
   }
+  
+  names(res) <- epoch_vars
+  res
 }
 
 #' Create contrast map using comparison and reference
 #' @param histories character vector (from preds$term corresponding to average predictions)
 #' @param reference character vector of exposure histories
 #' @param comparison character vector of exposure histories
-#'
-#' @keywords internal
+#' @noRd
 .create_hypotheses_mat <- function(histories, reference, comparison) {
   # Create a matrix with length(histories) rows.
   # Each column sets the value -1 for the reference group row
@@ -280,22 +252,20 @@ perm2 <- function(r, v) {
     cus_comps <- matrix(0, ncol = n_cols, nrow = length(histories))
     cus_comps[match(ref, histories), ] <- -1
     # cus_comps[match(comparison, histories), 1:n_cols] <- 1
-    cus_comps[cbind(match(comparison, histories), 1:n_cols)] <- 1 # changed by IS to appropriately assign 1 to comparison histories
+    cus_comps[cbind(match(comparison, histories), seq_len(n_cols))] <- 1 # changed by IS to appropriately assign 1 to comparison histories
     colnames(cus_comps) <- sprintf("(%s) - (%s)", comparison, ref)
     return(cus_comps)
   })
-  do.call(cbind, sub_mats)
+  
+  do.call("cbind", sub_mats)
 }
-
-
 
 #' Add history labels and dose to table based on `epoch_vars`
 #'
 #' @param p table output from marginaleffects::avg_predictions() or hypotheses()
 #' @param epoch_vars variable names of exposure epoch (in time order)
 #' @return table with histories labeled
-#'
-#' @keywords internal
+#' @noRd
 .add_histories <- function(p, epoch_vars) {
   # NOTE:
   # 1. This function is based on the observation that there is a low and a high exposure value, so you can classify "h"/"l" by just comparing to the min of a column from `p`
@@ -317,8 +287,7 @@ perm2 <- function(r, v) {
 #' library(devMSMs)
 #' devMSMs:::.dose_from_history(c("l-l-l-h", "l-l-l-l"), dose_level = "h")
 #' devMSMs:::.dose_from_history(c("l-l-l-h", "l-l-l-l"), dose_level = "l")
-#' 
-#' @keywords internal
+#' @noRd
 .dose_from_history <- function(history, dose_level = "h") {
   .string_count(history, dose_level)
 }
@@ -329,47 +298,17 @@ perm2 <- function(r, v) {
 #' library(devMSMs)
 #' devMSMs:::.dose_from_history_contrast(c("(h-h-h) - (l-l-l)"), dose_level = "h")
 #' devMSMs:::.dose_from_history_contrast(c("(h-h-h) - (l-l-l)"), dose_level = "l")
-#' 
-#' @keywords internal
+#' @noRd
 .dose_from_history_contrast <- function(history, dose_level = "h") {
-  sapply(
+  vapply(
     strsplit(history, " - "),
     function(hist) {
       counts <- .string_count(hist, dose_level)
       sprintf("%s - %s", counts[1], counts[2])
-    }
+    },
+    character(1L)
   )
 }
-
-
-#' Finds custom reference values (currently unused)
-#'
-#' @param epoch_d data frame of high and low values per exposure main effect
-#' @param exp_history sequence of "h" and/or "l" (e.g., "h-h-h")
-#' @return exposure history values
-#'
-#' @examples
-#' epoch_d <- data.frame(
-#'   e = c("A.1", "A.2", "A.3"),
-#'   l = c(0, 0, 0),
-#'   h = c(1, 1, 1)
-#' )
-#' r <- devMSMs:::.get_history_values(
-#'   epoch_d = epoch_d,
-#'   exp_history = "l-l-l"
-#' )
-#' r <- devMSMs:::.get_history_values(
-#'   epoch_d = epoch_d,
-#'   exp_history = "h-h-h"
-#' )
-#'
-#' @keywords internal
-.get_history_values <- function(epoch_d, exp_history) {
-  sapply(exp_history, function(hist) {
-    ifelse(strsplit(hist, "-")[[1]] == "l", epoch_d$l, epoch_d$h)
-  })
-}
-
 
 
 
