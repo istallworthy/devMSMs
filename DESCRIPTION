@@ -26,15 +26,8 @@ Imports:
     rlang,
     stats,
     tinytable,
-<<<<<<< Updated upstream
     WeightIt (>= 1.2.0),
     utils
-=======
-    WeightIt,
-    utils,
-    fs,
-    quarto
->>>>>>> Stashed changes
 Suggests: 
     dbarts,
     gbm,
