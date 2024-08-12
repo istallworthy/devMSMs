@@ -4,12 +4,11 @@
 ## usethis namespace: start
 #' @import stats
 #' @import utils
-#' @import ggplot2
-#' @importFrom survey svyglm
+#' @importFrom ggplot2 .data
 ## usethis namespace: end
 NULL
 
-#' Common documentation for devMSMs functions
+#' @name devMSM_common_docs
 #' 
 #' @param data data in wide format as: a data frame, list of imputed data
 #'  frames, or `mids` object from the `mice` package
@@ -27,12 +26,11 @@ NULL
 #' There might be naming conflicts where two objects get saved to the same file. In these cases, users should specify a custom name.
 #' default is FALSE. 
 #' 
-#' @param i For multiply imputed datset, `i` selects which imputation to print results for.
-#'  Default is `i = 1`. With `i = TRUE`, all imputed datasets will be looped over. With `i = NULL`, will average over all imputed datasets and summarize that. 
-#' @param t Which exposure variable to use. Can either be an index from 1, ..., num exposures or 
-#'  a string containing the exposure varaible name (e.g. `"A.3"`). With `t = TRUE`, all exposure 
+#' @param i For multiply imputed datasets, `i` selects which imputation to print results for.
+#'  Default is `i = 1`. With `i = TRUE`, all imputed datasets will be looped over. With `i = NULL`, will average over all imputed datasets and summarize that. Ignored for non-imputed data.
+#' @param t Which exposure variable to use. Can either be an index from 1 to the number of exposures or 
+#'  a string containing the exposure variable name (e.g. `"A.3"`). With `t = TRUE`, all exposure 
 #'  variables will be looped over.
-#' 
-#' @keywords internal
-devMSM_common_docs <- function(data, obj, formulas, weights, fit, bal_stats, verbose, save.out, home_dir, i, t) {}
+NULL
+#Note: see https://github.com/r-lib/roxygen2/issues/1159#issuecomment-708231897 for how this is used
 

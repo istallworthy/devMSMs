@@ -16,7 +16,7 @@
 #'   confounders (required if two balance thresholds are provided)
 #' @return data frame of balance statistics
 #'
-#' @keywords internal
+#' @noRd
 calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp_conf = NULL) {
   # NOTE:
   # 1. Checks are already done in assessBalance
@@ -24,28 +24,27 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
 
   # TODO: Calculate effective sample size with `cobalt:ESS`
   ### Calculate balance stats ----
-  exposure <- attr(obj, "exposure")
-  exposure_time_pts <- attr(obj, "exposure_time_pts")
-  exposure_type <- attr(obj, "exposure_type")
+  exposure <- obj[["exposure"]]
+  exposure_time_pts <- obj[["exposure_time_pts"]]
+  exposure_type <- obj[["exposure_type"]]
   cobalt_cov_fun <- switch(exposure_type,
     "continuous" = cobalt::col_w_cov,
     "binary" = cobalt::col_w_smd
   )
   is_weighted <- !is.null(weights)
 
-  var_tab <- attr(obj, "var_tab")
+  var_tab <- obj[["var_tab"]]
   ti_conf <- var_tab$var[var_tab$type == "ti_conf"]
   ti_conf_time <- var_tab$time[var_tab$type == "ti_conf"]
   tv_conf <- var_tab$var[var_tab$type == "tv_conf"]
   tv_conf_time <- var_tab$time[var_tab$type == "tv_conf"]
   exposure <- var_tab$var[var_tab$type == "exposure"]
   exposure_time <- var_tab$time[var_tab$type == "exposure"]
-  sep <- attr(obj, "sep") 
+  sep <- obj[["sep"]]
 
   # creating initial data frames
   # data frame with all sampling weights for all exposures at all exposure time points for all histories
-  all_prop_weights <- list()
-  all_bal_stats <- list()
+  all_prop_weights <- all_bal_stats <- vector("list", length(exposure_time_pts))
 
   for (z in seq_along(exposure_time_pts)) {
     exposure_name <- exposure[z]
@@ -60,9 +59,10 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
       exposure[exposure_time_pts < exposure_time_pt]
     )
 
-    var_is_factorable <- sapply(vars, function(v) {
+    var_is_factorable <- vapply(vars, function(v) {
       is.character(data[[v]]) || is.factor(data[[v]])
-    })
+    }, logical(1L))
+    
     if (any(var_is_factorable)) {
       bal_vars <- cobalt::splitfactor(data[, vars, drop = FALSE])
 
@@ -179,16 +179,17 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
     bal_stats$covar_time <- as.numeric(.extract_time_pts_from_vars(bal_stats$orig_covariate, sep = sep))
 
     # collect proportions for histories at this time point
-    all_prop_weights <- c(all_prop_weights, list(prop_sum))
-    all_bal_stats <- c(all_bal_stats, list(bal_stats))
+    all_prop_weights[[z]] <- prop_sum
+    all_bal_stats[[z]] <- bal_stats
 
   } # Ends exposure_time_pts loop
   
   if (length(omitted_histories) == 0) {
-    res = list(all_bal_stats = all_bal_stats, omitted_histories = NULL)
+    res <- list(all_bal_stats = all_bal_stats, omitted_histories = NULL)
   } else {
-    res = list(all_bal_stats = all_bal_stats, omitted_histories = omitted_histories)
+    res <- list(all_bal_stats = all_bal_stats, omitted_histories = omitted_histories)
   }
+  
   return(res)
 }
 

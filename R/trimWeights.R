@@ -34,38 +34,40 @@
 #' )
 #' f <- createFormulas(obj, type = "short")
 #' 
-#' w <- createWeights(data = data, obj = obj, formulas = f)
-#' tw <- trimWeights(obj, w)
+#' w <- createWeights(data = data, formulas = f)
+#' tw <- trimWeights(w, at = 0.975)
 #' print(tw)
 #' plot(tw)
 #' 
-#' trimWeights(obj, w, at = 0.975, lower = TRUE)
+#' trimWeights(w, at = 0.975, lower = TRUE)
 #' 
 #' @export
-trimWeights <- function(obj, weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE) {
+trimWeights <- function(weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE) {
   ### Checks ----
+  dreamerr::check_arg(weights, "class(devMSM_weights) MBT")
   dreamerr::check_arg(verbose, "scalar logical")
 
 	dreamerr::check_arg(save.out, "scalar logical | scalar character")
   dreamerr::check_arg(at, "scalar numeric GT(0.5) LT(1) | scalar integer GT(1)")
   dreamerr::check_arg(lower, "scalar logical")
   
-  if (!is.null(weights)) .check_weights(weights)
-
-  # No verbose?
-  trim_weights <- lapply(weights, WeightIt::trim, at = at, lower = lower)
+  .check_weights(weights)
   
-  class(trim_weights) <- c("devMSM_weights", "list")
-  attr(trim_weights, "obj") <- obj
-  attr(trim_weights, "method") <- attr(weights, "method")
-  attr(trim_weights, "form_type") <- attr(weights, "form_type")
-  attr(trim_weights, "trim") <- attr(trim_weights[[1]][["weights"]], "trim")
-  attr(trim_weights, "trim_lower") <- attr(trim_weights[[1]][["weights"]], "trim.lower")
-
-  if (verbose) print(trim_weights)
+  obj <- attr(weights, "obj")
   
-  if (save.out == TRUE || is.character(save.out)) {
-    home_dir <- attr(obj, "home_dir")
+  v <- if (verbose) function(x) x else function(x) suppressMessages(x)
+
+  for (i in seq_along(weights)) {
+    weights[[i]] <- v(WeightIt::trim(weights[[i]], at = at, lower = lower))
+  }
+
+  attr(weights, "trim") <- attr(weights[[1]][["weights"]], "trim")
+  attr(weights, "trim_lower") <- attr(weights[[1]][["weights"]], "trim.lower")
+
+  if (verbose) print(weights)
+  
+  if (isTRUE(save.out) || is.character(save.out)) {
+    home_dir <- obj[["home_dir"]]
     out_dir <- fs::path_join(c(home_dir, "weights"))
     .create_dir_if_needed(out_dir)
 
@@ -75,7 +77,7 @@ trimWeights <- function(obj, weights, at = 0, lower = FALSE, verbose = FALSE, sa
       file_name <- sprintf(
         "type_%s-exposure_%s-method_%s-trim_at_%s-lower_%s.rds",
         attr(weights, "form_type"), 
-        attr(obj, "exposure_root"),  
+        obj[["exposure_root"]],  
         attr(weights, "method"), 
         at, 
         tolower(lower)
@@ -89,5 +91,5 @@ trimWeights <- function(obj, weights, at = 0, lower = FALSE, verbose = FALSE, sa
     saveRDS(weights, out)
   }
 
-  return(trim_weights)
+  return(weights)
 }

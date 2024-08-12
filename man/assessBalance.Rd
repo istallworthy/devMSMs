@@ -19,7 +19,7 @@ assessBalance(
 
 \method{print}{devMSM_bal_stats}(x, i = NA, t = TRUE, save.out = FALSE, ...)
 
-\method{summary}{devMSM_bal_stats}(object, i = NA, t = TRUE, save.out = FALSE, ...)
+\method{summary}{devMSM_bal_stats}(object, i = NA, save.out = FALSE, ...)
 
 \method{plot}{devMSM_bal_stats}(x, i = NA, t = TRUE, save.out = FALSE, ...)
 }
@@ -49,11 +49,11 @@ default is FALSE.}
 
 \item{x}{devMSM_bal_stats object from \code{assessBalance}}
 
-\item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
-Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that.}
+\item{i}{For multiply imputed datasets, \code{i} selects which imputation to print results for.
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that. Ignored for non-imputed data.}
 
-\item{t}{Which exposure variable to use. Can either be an index from 1, ..., num exposures or
-a string containing the exposure varaible name (e.g. \code{"A.3"}). With \code{t = TRUE}, all exposure
+\item{t}{Which exposure variable to use. Can either be an index from 1 to the number of exposures or
+a string containing the exposure variable name (e.g. \code{"A.3"}). With \code{t = TRUE}, all exposure
 variables will be looped over.}
 
 \item{...}{ignored}
@@ -102,8 +102,8 @@ plot(b, t = 3)
 
 # Weighted
 f <- createFormulas(obj, type = "short")
-w <- createWeights(data = data, obj = obj, formulas = f)
-bw <- assessBalance(data = data, obj = obj, weights = w)
+w <- createWeights(data = data, formulas = f)
+bw <- assessBalance(data = data, weights = w)
 print(bw)
 plot(bw)
 

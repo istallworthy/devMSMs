@@ -8,18 +8,17 @@
 fitModel(
   data,
   obj,
-  weights,
+  weights = NULL,
   outcome,
-  model = c("m0", "m1", "m2", "m3"),
+  model = "m0",
   int_order = NA,
   covariates = NULL,
-  family = NULL,
-  link = NA,
+  family = gaussian(),
   verbose = FALSE,
   save.out = FALSE
 )
 
-\method{print}{devMSM_models}(x, i = 1, save.out = FALSE, ...)
+\method{print}{devMSM_models}(x, i = NA, save.out = FALSE, ...)
 }
 \arguments{
 \item{data}{data in wide format as: a data frame, list of imputed data
@@ -46,9 +45,7 @@ interaction, required for interaction models ("m2", "m3")}
 \item{covariates}{list of characters reflecting variable names of covariates,
 required for covariate models ("m1", "m3")}
 
-\item{family}{(optional) family function specification for \code{\link[WeightIt:glm_weightit]{WeightIt::glm_weightit()}} model}
-
-\item{link}{(optional) character link function specification for \code{\link[WeightIt:glm_weightit]{WeightIt::glm_weightit()}} model}
+\item{family}{(optional) family function specification for \code{\link[WeightIt:glm_weightit]{WeightIt::glm_weightit()}} model.}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console.
 default is FALSE.}
@@ -61,8 +58,8 @@ default is FALSE.}
 
 \item{x}{devMSM_models object from \code{fitModel}}
 
-\item{i}{For multiply imputed datset, \code{i} selects which imputation to print results for.
-Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that.}
+\item{i}{For multiply imputed datasets, \code{i} selects which imputation to print results for.
+Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that. Ignored for non-imputed data.}
 
 \item{...}{ignored}
 }
@@ -95,30 +92,30 @@ obj <- initMSM(
   tv_conf = c("B.1", "B.2", "B.3", "D.3")
 )
 f <- createFormulas(obj, type = "short")
-w <- createWeights(data = data, obj = obj, formulas = f)
+w <- createWeights(data = data, formulas = f)
 
 fit_m0 <- fitModel(
-  data = data, obj = obj, weights = w, 
+  data = data, weights = w, 
   outcome = "D.3", model = "m0"
 )
 print(fit_m0)
 
 fit_m1 <- fitModel(
-  data = data, obj = obj, weights = w, 
+  data = data, weights = w, 
   outcome = "D.3", model = "m1", 
   covariates = c("C")
 )
 print(fit_m1)
 
 fit_m2 <- fitModel(
-  data = data, obj = obj, weights = w, 
+  data = data, weights = w, 
   outcome = "D.3", model = "m2", 
   int_order = 2
 )
 print(fit_m2)
 
 fit_m3 <- fitModel(
-  data = data, obj = obj, weights = w, 
+  data = data, weights = w, 
   outcome = "D.3", model = "m3",
   int_order = 2, covariates = c("C")
 )

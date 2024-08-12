@@ -45,8 +45,8 @@
 #' print(f)
 #'
 #' # Update Formulas
-#' w <- createWeights(data = data, obj = obj, formulas = f)
-#' b <- assessBalance(data = data, obj = obj, weights = w)
+#' w <- createWeights(data = data, formulas = f)
+#' b <- assessBalance(data = data, weights = w)
 #' f <- createFormulas(obj, type = "update", bal_stats = b)
 #' print(f)
 #'
@@ -61,7 +61,7 @@ createFormulas <- function(
 	dreamerr::check_arg(save.out, "scalar logical | scalar character")
 
   # Extract var_tab and get variables
-  var_tab <- attr(obj, "var_tab")
+  var_tab <- obj[["var_tab"]]
   ti_conf <- var_tab$var[var_tab$type == "ti_conf"]
   ti_conf_time <- var_tab$time[var_tab$type == "ti_conf"]
   tv_conf <- var_tab$var[var_tab$type == "tv_conf"]
@@ -73,7 +73,7 @@ createFormulas <- function(
   exposure <- var_tab$var[var_tab$type == "exposure"]
   exposure_time <- var_tab$time[var_tab$type == "exposure"]
 
-  data_type <- attr(obj, "data_type")
+  data_type <- obj[["data_type"]]
 
 
   # Check keep_conf
@@ -85,18 +85,21 @@ createFormulas <- function(
     stop("Do not include the exposure concurrently as a confounder. Please revise the keep_conf field.", call. = FALSE)
   }
 
-  type <- match.arg(type, several.ok = FALSE)
-  if (type != "update" && !is.null(bal_stats)) {
-    stop("Please only provide balance statistics for the type 'update'.", call. = FALSE)
-  }
-  if (type == "update" & is.null(bal_stats)) {
-    stop("You set the `type` argument to `'update'`, but did not provide `bal_stats`.", call. = FALSE)
-  }
+  type <- match.arg(type)
+
   if (type == "update") {
+    if (is.null(bal_stats)) {
+      stop("You set the `type` argument to `'update'`, but did not provide `bal_stats`.", call. = FALSE)
+    }
+    
     dreamerr::check_arg(
       bal_stats, "class(devMSM_bal_stats)",
       .message = "Please provide a data frame of balance statistics from the assessBalance function."
     )
+  } else {
+    if (!is.null(bal_stats)) {
+      stop("Please only provide balance statistics for the type 'update'.", call. = FALSE)
+    }
   }
 
   ### For custom formulas, check and then pass through ----
@@ -117,7 +120,7 @@ createFormulas <- function(
 
       ## Check exposure variable (LHS)
       exposure_var <- rlang::expr_text(rlang::f_lhs(form))
-      if (!(exposure_var == exposure[i])) {
+      if (exposure_var != exposure[i]) {
         stop(sprintf(
           "%s\nThe LHS of the formula is not the correct exposure var: %s.",
           deparse1(form), paste(exposure[[i]], sep = ",")
@@ -126,7 +129,7 @@ createFormulas <- function(
 
       ## Check covariates
       included_covs <- all.vars(form)
-      covars_time <- .extract_time_pts_from_vars(included_covs, sep = attr(obj, "sep"))
+      covars_time <- .extract_time_pts_from_vars(included_covs, sep = obj[["sep"]])
       if (any(!is.na(covars_time)) && any(covars_time > exposure_time[i], na.rm = TRUE)) {
         warning(sprintf(
           "%s\nBalancing formula cannot contain time-varying confounders measured after the exposure time point for that formula.",
@@ -153,7 +156,7 @@ createFormulas <- function(
     })
 
     forms <- lapply(processed, function(x) x$formula)
-    class(forms) <- c("devMSM_formulas", "list")
+    class(forms) <- "devMSM_formulas"
     attr(forms, "type") <- "custom"
     attr(forms, "exposure_times") <- sapply(processed, function(x) x$exposure_time)
     attr(forms, "exposure_vars") <- sapply(processed, function(x) x$exposure_var)
@@ -161,8 +164,8 @@ createFormulas <- function(
 
     if (verbose) print(forms)
     
-    if (save.out == TRUE || is.character(save.out)) {
-      home_dir <- attr(obj, "home_dir")
+    if (isTRUE(save.out) || is.character(save.out)) {
+      home_dir <- obj[["home_dir"]]
       out_dir <- fs::path_join(c(home_dir, "formulas"))
       .create_dir_if_needed(out_dir)
       
@@ -171,7 +174,7 @@ createFormulas <- function(
       } else {
         file_name <- sprintf(
           "type_%s-exposure_%s.rds",
-          type, attr(obj, "exposure_root")
+          type, obj[["exposure_root"]]
         )
       }
       
@@ -200,8 +203,8 @@ createFormulas <- function(
     ## IS added
     if (data_type == "data.frame") { # non-imputed data
       all_bal_stats <- bal_stats[[1]]
-      # all_bal_stats <- do.call(rbind, lapply(bal_stats, as.data.frame))
-    } else if (data_type == "list" || data_type == "mids") { # imputed data -- needs averaging
+      # all_bal_stats <- do.call("rbind", lapply(bal_stats, as.data.frame))
+    } else if (data_type %in% c("mids", "list")) { # imputed data -- needs averaging
       all_bal_stats <- .avg_imp_bal_stats_time(bal_stats)
     }
   }
@@ -215,7 +218,7 @@ createFormulas <- function(
     if (type == "full") {
       tv_include <- tv_conf[tv_conf_time < i_time]
       tv_include <- c(tv_include, exposure[exposure_time < i_time])
-    } else if (type == "short" | type == "update") {
+    } else if (type == "short" || type == "update") {
       tv_include <- tv_conf[tv_conf_time >= im1_time & tv_conf_time < i_time]
       tv_include <- c(tv_include, exposure[exposure_time >= im1_time & exposure_time < i_time])
     }
@@ -234,7 +237,7 @@ createFormulas <- function(
     }
 
     # adding in any user-specified concurrent confounders (default is only lagged)
-    keep_time <- .extract_time_pts_from_vars(keep_conf, sep = attr(obj, "sep"))
+    keep_time <- .extract_time_pts_from_vars(keep_conf, sep = obj[["sep"]])
     keep_include <- keep_conf[keep_time < i_time]
 
     vars_to_include <- unique(c(ti_include, tv_include, keep_include))
@@ -259,7 +262,7 @@ createFormulas <- function(
   }
 
   ### Output ----
-  class(forms) <- c("devMSM_formulas", "list")
+  class(forms) <- "devMSM_formulas"
   attr(forms, "type") <- type
   attr(forms, "msgs") <- msgs
   attr(forms, "update_msgs") <- update_msgs
@@ -267,8 +270,8 @@ createFormulas <- function(
 
   if (verbose) print(forms)
 
-  if (save.out == TRUE || is.character(save.out)) {
-    home_dir <- attr(obj, "home_dir")
+  if (isTRUE(save.out) || is.character(save.out)) {
+    home_dir <- obj[["home_dir"]]
     out_dir <- fs::path_join(c(home_dir, "formulas"))
     .create_dir_if_needed(out_dir)
 
@@ -277,7 +280,7 @@ createFormulas <- function(
     } else {
       file_name <- sprintf(
         "type_%s-exposure_%s.rds",
-        type, attr(obj, "exposure_root")
+        type, obj[["exposure_root"]]
       )
     }
     
@@ -305,14 +308,13 @@ print.devMSM_formulas <- function(x, ...) {
     "custom" = "USER ALERT: Please manually inspect the slightly cleaned custom formula below: "
   )
 
-  lapply(seq_along(x), function(i) {
+  for (i in seq_along(x)) {
     msg <- attr(x, "msgs")[[i]]
     message(user_alert)
-
+    
     if (i < length(x)) msg <- paste0(msg, "\n\n")
     cat(msg)
+  }
 
-    return(NULL)
-  })
-  return(invisible(NULL))
+  return(invisible(x))
 }

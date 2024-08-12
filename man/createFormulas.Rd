@@ -83,8 +83,8 @@ f <- createFormulas(obj, type = "short")
 print(f)
 
 # Update Formulas
-w <- createWeights(data = data, obj = obj, formulas = f)
-b <- assessBalance(data = data, obj = obj, weights = w)
+w <- createWeights(data = data, formulas = f)
+b <- assessBalance(data = data, weights = w)
 f <- createFormulas(obj, type = "update", bal_stats = b)
 print(f)
 
