@@ -38,8 +38,8 @@ terms <- data.frame(
   )
 )
 
-tt(terms, theme = "striped") |>
-  format_tt(markdown = TRUE)
+tinytable::tt(terms, theme = "striped") |>
+  tinytable::format_tt(markdown = TRUE)
 ```
 <br>  
 
@@ -68,8 +68,8 @@ balance_formula <- data.frame(
   )
 )
 
-tt(balance_formula) |>
-  format_tt(markdown = TRUE)
+tinytable::tt(balance_formula) |>
+  tinytable::format_tt(markdown = TRUE)
 ```
 <br>  
 
@@ -79,7 +79,7 @@ There are 6 key functions that are used in the *devMSMs* workflow.
 
 ```{r}
 #| echo: false
-#| tbl-cap: "Summary of the 6 core functions of the *devMSMs* package."
+#| tbl-cap: "Summary of the 7 core functions of the *devMSMs* package."
 #| results: asis
 
 main_functions <- data.frame(
@@ -119,7 +119,6 @@ main_functions <- data.frame(
      Histogram & summary of balancing weights.",
     "Trimmed weights object.
      Histogram & summary of trimmed weight.",
-    "Tables of estimated values and comparisons.\n\nBoxplot.",
     "Fitted model object.
      Omnibus test & table of model evidence.",
     "Tables of estimated values and comparisons.
@@ -127,8 +126,8 @@ main_functions <- data.frame(
   )
 )
 
-tt(main_functions, theme = "striped") |>
-  format_tt(markdown = TRUE)
+tinytable::tt(main_functions, theme = "striped") |>
+  tinytable::format_tt(markdown = TRUE)
 ```
 
 
