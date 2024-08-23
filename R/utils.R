@@ -139,9 +139,25 @@ perm2 <- function(r, v) {
 # assessBalance ----
 #' Used in `assessBalance` to define history
 #' @noRd
-.characterize_exposure <- function(mat, exposure_type) {
+.characterize_exposure <- function(mat, exposure_type, hi_lo_cut = NULL) {
+  
+  if (!is.null(hi_lo_cut)){
+    if (length(hi_lo_cut) == 1) hi_lo_cut = c(hi_lo_cut, hi_lo_cut)
+    hi <- lapply(mat, function(x) quantile(x, hi_lo_cut[1])) #IS amended to use hi_lo_cut instead of median
+    lo <- lapply(mat, function(x) quantile(x, hi_lo_cut[2]))
+  }
+  
   if (exposure_type == "continuous") {
-    res <- lapply(mat, function(x) ifelse(x <= median(x), "l", "h"))
+    if (!is.null(hi_lo_cut)){
+      res <- lapply(1:ncol(mat), function(x) {
+        ifelse(mat[, x] <= lo[x], "l", 
+               ifelse(mat[, x] > hi[x], "h", NA))
+      })
+      names(res) <- colnames(mat)
+    } else{
+      
+      res <- lapply(mat, function(x) ifelse(x <= median(x), "l", "h"))
+    }
   } else {
     res <- lapply(mat, function(x) ifelse(x == 0, "l", "h"))
   }

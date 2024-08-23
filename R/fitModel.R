@@ -86,8 +86,10 @@ fitModel <- function(
 	if (!is.null(weights)) {
 	  .check_weights(weights)
 	  obj <- attr(weights, "obj")
+	} else if (is.null(weights)) {
+	  warning("ALERT: You are fitting an unweighted model that does not use IPTW to adjust for confounding!", call. = FALSE)
 	}
-	else if (missing(obj) || !inherits(obj, "devMSM")) {
+	if (missing(obj) || !inherits(obj, "devMSM")) {
     stop("`obj` must be output from `initMSM()`.", call. = FALSE)
   }
 
@@ -185,7 +187,7 @@ fitModel <- function(
     }
     # `weightitMSM` object
     w <- weights[[k]]
-    
+
     all_fits[[k]] <- .fit_glm(
       data = d, weights = w,
       outcome = outcome, exposure = exposure, epoch = epoch,
@@ -327,7 +329,10 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
     .create_dir_if_needed(out_dir)
 
     if (data_type == "imputed") {
-      i_str <- sprintf("-imp_%s", i)
+      if (is.na(i)){
+        i_str <- sprintf("-all_avg")
+      } else{
+      i_str <- sprintf("-imp_%s", i)}
     } else {
       i_str <- ""
     }
@@ -336,7 +341,7 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
       file_name <- save.out
     } else {
       file_name <- sprintf(
-        "fit_model_summary-outcome_%s-exposure_%s-model_%s%s.txt",
+        "fit_model_summary-outcome_%s-exposure_%s-model_%s%s.docx",
         gsub("\\.", "_", outcome), 
         exposure_root, 
         model, i_str
@@ -375,8 +380,14 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
     missing_columns <- !(colnames(epoch_df) %in% colnames(data))
     data <- cbind(data, epoch_df[, missing_columns])
   }
-  if (model %in% c("m2", "m3")) {
+  if (model == "m2") {
     interactions <- .get_interaction_terms(epoch_vars, int_order)
+  } else {
+    if (model == "m3"){ # added to interact exp w/ covars
+      interactions<- lapply(covariates, function(x) 
+        .get_interaction_terms(c(epoch_vars, x), int_order))
+      interactions <- unique(unlist(interactions))
+    }
   }
   
   covs <- switch(model,
@@ -385,12 +396,22 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
                  "m0" = epoch_vars,
                  "m1" = c(epoch_vars, covariates),
                  "m2" = c(epoch_vars, interactions),
-                 "m3" = c(epoch_vars, interactions, covariates))
+                 "m3" = c(epoch_vars, interactions)) #, covariates))
   
+  # fit unweighted model for comparison
+  if (is.null(weights)) {
+      WeightIt::glm_weightit(
+        formula = reformulate(covs, response = outcome),
+        data = data,
+        family = family
+      )
+  } else {
+    
   WeightIt::glm_weightit(
     formula = reformulate(covs, response = outcome),
     data = data,
     family = family,
     weightit = weights
   )
+  }
 }

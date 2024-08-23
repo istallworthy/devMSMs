@@ -9,10 +9,11 @@
 #' print("tbd")
 #'
 #' @noRd
-make_love_plot <- function(obj, balance_stats, k = 0, weight_method = NULL) {
+make_love_plot <- function(obj, balance_stats, k = 0, t, weight_method = NULL) {
   
   exposure <- obj[["exposure"]]
   exposure_type <- obj[["exposure_type"]]
+  exposure_time <- obj[["exposure_time_pts"]]
   # exposure <- balance_stats$exposure[1]
   # exposure_time_pt <- balance_stats$exposure_time[1]
   # exposure_type <- balance_stats$exposure_type[1]
@@ -26,6 +27,13 @@ make_love_plot <- function(obj, balance_stats, k = 0, weight_method = NULL) {
   )
   xrange <- c(-max(abs(xrange)), max(abs(xrange)))
   
+  # timing title
+  if (length(t) > 1){
+    t_t <- " For all Exposure Timepoints"
+  } else {
+    t_t <- sprintf(" For Exposure Timepoint %s", exposure_time[t])
+  }
+  
   # data.frame, list, mice
   if (is.na(k)) {
     title_imputation_note <- sprintf(" Averaging Across Imputed Datasets")
@@ -36,9 +44,9 @@ make_love_plot <- function(obj, balance_stats, k = 0, weight_method = NULL) {
   }
   
   if (is.null(weight_method)) {
-    title <- sprintf("Covariate Balance%s", title_imputation_note)
+    title <- sprintf("Covariate Balance%s%s", title_imputation_note, t_t)
   } else {
-    title <- sprintf("Covariate Balance%s using `%s` weights ", title_imputation_note, weight_method)
+    title <- sprintf("Covariate Balance%s%s using `%s` weights ", title_imputation_note, t_t, weight_method)
   }
   
   x_lab <- if (exposure_type == "continuous") {

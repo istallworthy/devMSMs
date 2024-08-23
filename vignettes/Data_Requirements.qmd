@@ -219,23 +219,22 @@ ti_conf =  c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", 
 
 tv_conf = c("SAAmylase.6","SAAmylase.15", "SAAmylase.24", 
             "MDI.6", "MDI.15",                                            
-            "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
-            "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
+            "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35",                                       
+            "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35",                                     
             "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
-            "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
-            "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
-            "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
+            "B18Raw.6", "B18Raw.15", "B18Raw.24",                                           
+            "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35",                            
+            "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35",                         
             "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
             "EARS_TJo.24", "EARS_TJo.35",                                        
             "LESMnPos.24", "LESMnPos.35",                                  
             "LESMnNeg.24", "LESMnNeg.35",       
             "StrDif_Tot.35", 
-            "fscore.35", "fscore.58")
+            "fscore.35")
 
 # home_dir = NA
 
 outcome <- "StrDif_Tot.58"
-
 ```
 
 Some helper functions have optional arguments to suppress saving output locally (`save.out` = FALSE) and printing it to the console ( `verbose` = FALSE). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out` = TRUE.
@@ -306,7 +305,6 @@ data_long_f <- formatLongData(
 )
 
 head(data_long_f, n = c(5, 10))
-
 ```
 
 We get a descriptive statistics summary of the exposure, ESETA1, and the outcome, StrDif_Tot.58, for our visual inspections.
@@ -380,12 +378,12 @@ Below, we format the simulated wide FLP data by listing out variables to make in
 factor_confounders <- c(
   "state", "TcBlac2", "BioDadInHH2", "HomeOwnd", "PmBlac2",
   "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
-  "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58"
+  "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35"
 )
 
 integer_confounders <- c(
   "KFASTScr", "PmEd2", "RMomAgeU", "SWghtLB", "peri_health", "caregiv_health",
-  "gov_assist", "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",
+  "gov_assist", "B18Raw.6", "B18Raw.15", "B18Raw.24",
   "EARS_TJo.24", "EARS_TJo.35", "MDI.6", "MDI.15"
 )
 
@@ -463,11 +461,6 @@ imputed_data <- imputeData(
 head(mice::complete(imputed_data, 1), n = c(5, 10))
 
 data <- imputed_data
-
-# testing
-lapply(1:imputed_data$m, function(x) {
-  summary(mice::complete(imputed_data, x)$SmokTot)
-})
 ```
 
 We inspect the output to the console for any warnings from `mice()`.

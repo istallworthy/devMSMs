@@ -135,11 +135,14 @@ assessBalance <- function(
   class(all_bal_stats) <- "devMSM_bal_stats"
   attr(all_bal_stats, "obj") <- obj
   attr(all_bal_stats, "list_of_omitted_histories") <- list_of_omitted_histories
+
   
   is_weighted <- !(is.null(weights))
   attr(all_bal_stats, "weighted") <- is_weighted
   if (is_weighted) {
+    formula_type <- attr(weights, "form_type")
     attr(all_bal_stats, "weight_method") <- attr(weights, "method")
+    attr(all_bal_stats, "form_type") <- formula_type
   }
   
   if (verbose) print(all_bal_stats, i = 1, t = TRUE)
@@ -148,14 +151,20 @@ assessBalance <- function(
     home_dir <- obj[["home_dir"]]
     out_dir <- fs::path_join(c(home_dir, "balance"))
     .create_dir_if_needed(out_dir)
+    
+    if (is_weighted){
+      ft_str <- sprintf("form_%s", formula_type)
+    } else {
+      ft_str <- ""
+    }
 
     if (is.character(save.out)) {
       file_name <- save.out
     } else {
       if (is_weighted) { 
         file_name <- sprintf(
-          "weighted-exposure_%s-method_%s.rds",
-          obj[["exposure_root"]], attr(weights, "method")
+          "balance-weighted-exposure_%s-method_%s-%s.rds",
+          obj[["exposure_root"]], attr(weights, "method"), ft_str
         )
       } else {
         file_name <- sprintf(
@@ -190,6 +199,7 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
   exposure_root <- obj[["exposure_root"]]
   is_weighted <- attr(x, "weighted")
   weight_method <- attr(x, "weight_method")
+  formula_type <- attr(x, "form_type")
   
   if (data_type %in% c("mids", "list")) data_type <- "imputed"
   else i <- 1L
@@ -218,11 +228,14 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
   dreamerr::check_arg(t, "integer vector | logical scalar | character vector")
   if (isTRUE(t)) {
     t <- seq_along(all_bal_stats)
+    t_str <- "All Exposure Time Points"
   } else if (is.character(t)) {
     t <- match(t, exposure)
+    t_str = sprintf("Exposure Time %s", t)
   }
   else {
     t <- match(t, seq_along(exposure))
+    t_str = sprintf("Exposure Time %s", t)
   }
   
   if (anyNA(t)) {
@@ -230,11 +243,11 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
   }
   
   if (data_type == "data.frame") {
-    tbl_caption <- "Balance Stats for all Exposure Time Periods"
+    tbl_caption <- sprintf("Balance Stats for %s", t_str)
   } else if (!is.na(i)) {
-    tbl_caption <- sprintf("Balance Stats for all Exposure Time Periods for imputation (%s)", i)
+    tbl_caption <- sprintf("Balance Stats for %s for imputation (%s)", t_str, i)
   } else {
-    tbl_caption <- sprintf("Balance Stats for all Exposure Time Periods Averaging Across Imputed Datasets")
+    tbl_caption <- sprintf("Balance Stats for %s Averaging Across Imputed Datasets", t_str)
   }
   
   balance_stats <- do.call("rbind", all_bal_stats[t])
@@ -244,6 +257,7 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
   print(b, "markdown")
 
   if (isTRUE(save.out) || is.character(save.out)) {
+    rlang::check_installed("pandoc")
     home_dir <- obj[["home_dir"]]
     out_dir <- fs::path_join(c(home_dir, "balance"))
     .create_dir_if_needed(out_dir)
@@ -256,17 +270,23 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
       i_str <- "-imp_averaged"
     }
 
+    if (is_weighted){
+      ft_str <- sprintf("form_%s", formula_type)
+    } else {
+      ft_str <- ""
+    }
+    
     if (is.character(save.out)) {
       file_name <- save.out
     } else if (is_weighted) { 
       file_name <- sprintf(
-        "bal_stats_table_weighted-exposure_%s-method_%s%s.txt",
-        exposure_root, weight_method, i_str
+        "bal_stats_table_weighted-exposure_%s-method_%s-form_%s%s-%s.docx",
+        exposure_root, weight_method, ft_str, i_str, gsub(" ", "_", t_str)
       )
     } else {
       file_name <- sprintf(
-        "bal_stats_table_prebalance-exposure_%s%s.txt",
-        exposure_root, i_str
+        "bal_stats_table_prebalance-exposure_%s%s-%s.docx",
+        exposure_root, i_str, gsub(" ", "_", t_str)
       )
     }
 
@@ -316,9 +336,9 @@ summary.devMSM_bal_stats <- function(object, i = NA, save.out = FALSE, ...) {
   obj <- attr(object, "obj")
   data_type <- obj[["data_type"]]
   exposure_root <- obj[["exposure_root"]]
-  
   weight_method <- attr(object, "weight_method")
   is_weighted <- attr(object, "weighted")
+  formula_type <- attr(object, "form_type")
   
   if (data_type %in% c("mids", "list")) data_type <- "imputed"
   else i <- 1L
@@ -336,7 +356,9 @@ summary.devMSM_bal_stats <- function(object, i = NA, save.out = FALSE, ...) {
   } else {
     all_bal_stats <- object[[i]]
   }
-
+  
+  
+  
   ### Summarizing balance ----
   n_covars <- Reduce(`+`, lapply(all_bal_stats, nrow))
   imbalanced_covars <- unlist(lapply(all_bal_stats, function(object) object$covariate[object$balanced == 0]))
@@ -459,12 +481,13 @@ summary.devMSM_bal_stats <- function(object, i = NA, save.out = FALSE, ...) {
   
   cat(msg, main_msg)
   print(t, output = "markdown")
-
+  
   if (isTRUE(save.out) || is.character(save.out)) {
+    rlang::check_installed("pandoc")
     home_dir <- obj[["home_dir"]]
     out_dir <- fs::path_join(c(home_dir, "balance"))
     .create_dir_if_needed(out_dir)
-
+    
     if (data_type == "data.frame") {
       i_str <- ""
     } else if (!is.na(i)) {
@@ -472,21 +495,27 @@ summary.devMSM_bal_stats <- function(object, i = NA, save.out = FALSE, ...) {
     } else {
       i_str <- "-imp_averaged"
     }
-
+    
+    if (is_weighted){
+      ft_str <- sprintf("form_%s", formula_type)
+    } else {
+      ft_str <- ""
+    }
+    
     if (is.character(save.out)) {
       file_name <- save.out
     } else if (is_weighted) { 
       file_name <- sprintf(
-        "summ_bal_stats_table_weighted-exposure_%s-method_%s%s.txt",
-        exposure_root, weight_method, i_str
+        "summ_bal_stats_table_weighted-exposure_%s-method_%s-%s%s.docx",
+        exposure_root, weight_method, ft_str, i_str
       )
     } else {
       file_name <- sprintf(
-        "summ_bal_stats_table_prebalance-exposure_%s%s.txt",
+        "summ_bal_stats_table_prebalance-exposure_%s%s.docx",
         exposure_root, i_str
       )
     }
-
+    
     out <- fs::path_join(c(out_dir, file_name))
     cat(sprintf(
       '\nSaving balance statistics table to file:\n%s\n',
@@ -501,9 +530,10 @@ summary.devMSM_bal_stats <- function(object, i = NA, save.out = FALSE, ...) {
       tinytable::save_tt(t, output = out, overwrite = TRUE)
     }
   }
-
+  
   return(invisible(t))
 }
+
 
 #' @rdname assessBalance
 #'
@@ -519,9 +549,12 @@ plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
   exposure <- obj[["exposure"]]
   exposure_root <- obj[["exposure_root"]]
   exposure_type <- obj[["exposure_type"]]
+  exposure_time <- obj[["exposure_time_pts"]]
   is_weighted <- obj[["weighted"]]
   weight_method <- attr(x, "weight_method")
   is_weighted <- !is.null(weight_method)
+  formula_type <- attr(x, "form_type")
+  
   
   if (data_type %in% c("mids", "list")) data_type <- "imputed"
   else i <- 1L
@@ -571,13 +604,27 @@ plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
     obj = obj,
     balance_stats = balance_stats,
     k = k,
+    t = t,
     weight_method = attr(x, "weight_method")
   )
 
   if (isTRUE(save.out) || is.character(save.out)) {
     home_dir <- obj[["home_dir"]]
-    out_dir <- fs::path_join(c(home_dir, "weights", "plots"))
+    out_dir <- fs::path_join(c(home_dir, "balance", "plots"))
     .create_dir_if_needed(out_dir)
+    
+    # timing title
+    if (length(t) > 1){
+      t_t <- "t=all"
+    } else {
+      t_t <- sprintf("t=%s", exposure_time[t])
+    }
+    
+    if (is_weighted){
+      ft_str <- sprintf("form_%s", formula_type)
+    } else {
+      ft_str <- ""
+    }
 
     if (data_type == "data.frame") {
       i_str <- ""
@@ -591,13 +638,13 @@ plot.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
       file_names <- save.out
     } else if (is_weighted) { 
       file_names <- sprintf(
-        "weighted-exposure_%s-method_%s%s.png",
-        exposure_root, weight_method, i_str
+        "weighted-exposure_%s-method_%s-%s%s-%s.png",
+        exposure_root, weight_method, ft_str, i_str, t_t
       )
     } else {
       file_names <- sprintf(
-        "prebalance-exposure_%s%s.png",
-        exposure_root, i_str
+        "prebalance-exposure_%s%s-%s.png",
+        exposure_root, i_str, t_t
       )
     }
     
