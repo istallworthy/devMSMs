@@ -15,7 +15,6 @@
 #' @inheritParams devMSM_common_docs
 #' @param hi_lo_cut list of two numbers indicating quantile values
 #'   that reflect high and low values, respectively, for continuous exposure
-#'   (default is median split)
 #' @param dose_level (optional) "l" or "h" indicating whether low or high doses
 #'   should be tallied in tables and plots (default is high "h")
 #' @param reference lists of one or more strings of "-"-separated "l"
@@ -70,6 +69,7 @@
 #'
 #' comp2 <- compareHistories(
 #'   fit = fit,
+#'   hi_lo_cut = c(0.3, 0.6),
 #'   reference = "l-l-l",
 #'   comparison = c("h-h-h", "h-h-l")
 #' )
@@ -81,7 +81,7 @@
 #' @export
 compareHistories <- function(
     fit,
-    hi_lo_cut = c(0.4, 0.6),
+    hi_lo_cut,
     dose_level = "h",
     reference = NULL, comparison = NULL,
     mc_comp_method = "BH",
@@ -124,12 +124,14 @@ compareHistories <- function(
   
   is_invalid_comparison <- !(comparison %in% exposure_levels)
   if (any(is_invalid_comparison)) {
-    stop(sprintf("The following elements of `comparison` are invalid: %s", paste0(comparison[is_invalid_comparison], collapse = ", ")), call. = FALSE)
+    stop(sprintf("The following elements of `comparison` are invalid: %s", 
+                 paste0(comparison[is_invalid_comparison], collapse = ", ")), call. = FALSE)
   }
   
   is_invalid_reference <- !(reference %in% exposure_levels)
   if (any(is_invalid_reference)) {
-    stop(sprintf("The following elements of `reference` are invalid: %s", paste0(reference[is_invalid_reference], collapse = ", ")), call. = FALSE)
+    stop(sprintf("The following elements of `reference` are invalid: %s", 
+                 paste0(reference[is_invalid_reference], collapse = ", ")), call. = FALSE)
   }
 
   # Multiple comparison methods
@@ -158,7 +160,7 @@ compareHistories <- function(
   }
 
   mat <- fit[[1]][["data"]][, epoch_vars]
-  epoch_history <- .characterize_exposure(mat, exposure_type)
+  epoch_history <- .characterize_exposure(mat, exposure_type, hi_lo_cut)
 
   prediction_vars <- .get_avg_predictions_variables(
     data = data, epoch_vars = epoch_vars,
@@ -201,11 +203,36 @@ compareHistories <- function(
     })
   } else {
     hypothesis <- .create_hypotheses_mat(preds[[1]]$term, reference, comparison)
+    
+    # IS added to remove same-same history comparisons 
+    nonid <- colnames(hypothesis)[sapply(strsplit(colnames(hypothesis), " - "), "[", 1) != 
+                                    sapply(strsplit(colnames(hypothesis), " - "), "[", 2)]
+    hypothesis <- hypothesis[, nonid, drop = FALSE]
+    
+    if (length(hypothesis) == 0){
+      stop("Please a comparison history that differs from the reference history.", .call = FALSE)
+    }
+
     comps <- lapply(preds, function(y) {
       c <- marginaleffects::hypotheses(y, hypothesis = hypothesis)
       class(c) <- c("comp_custom", class(c))
       return(c)
     })
+    
+    # # IS testing equality tests
+    # eqs <- lapply(preds, function(y) {
+    #   
+    # test <-   marginaleffects::hypotheses(preds[[1]],
+    #                   # by = "am",
+    #                   # hypothesis = hypothesis,
+    #                   # equivalence = c(-1, 1))
+    #                   hypothesis = "b2 - b1 + b3 + b5 = 0") # correspond to rows
+    # # marginaleffects::comparisons(preds[[1]])
+    #   
+    #   class(c) <- c("comp_custom", class(c))
+    #   return(c)
+    # })
+    # 
   }
 
 
@@ -345,6 +372,7 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
   print(comps_tab, "markdown")
 
   if (isTRUE(save.out) || is.character(save.out)) {
+    rlang::check_installed("pandoc")
     home_dir <- obj[["home_dir"]]
     out_dir <- fs::path_join(c(home_dir, "histories"))
     .create_dir_if_needed(out_dir)
@@ -353,7 +381,7 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
       file_name = save.out
     } else {
       file_name <- sprintf(
-        "comparisons_table-outcome_%s-exposure_%s.txt", 
+        "comparisons_table-outcome_%s-exposure_%s.docx", 
         gsub("\\.", "\\_", outcome), 
         exposure_root
       )
@@ -456,7 +484,7 @@ plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab
       y = paste0(exp_lab, " Exposure History")
     ) +
     ggplot2::theme(
-      text = ggplot2::element_text(size = 14),
+      text = ggplot2::element_text(size = 18),
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
       panel.background = ggplot2::element_blank(),
@@ -525,7 +553,16 @@ summary.devMSM_comparisons <- function(object, type = "comps", ...) {
   
   if (!is.null(reference) && !is.null(comparison)) {
     keep_idx <- epoch_history_tab$epoch_history %in% c(reference, comparison)
+    if (!any(keep_idx)){
+      stop("There are no participants in your sample with the reference/comparison histories you specified, using high/low cutoff (if applicable).", .call = FALSE)
+    }
     epoch_history_tab <- epoch_history_tab[keep_idx, , drop = FALSE]
+    if (any(!c(reference, comparison) %in% epoch_history_tab$epoch_history)){
+      stop(sprintf("There are no participants in your sample in the following histories: %s. 
+                   Please revise your reference/comparison histories and/or the high/low cutoffs, if applicable.",
+                   paste(c(reference, comparison)[!c(reference,comparison) %in% epoch_history_tab$epoch_history], collapse = ", ")),
+           .call = FALSE)
+    }
   }
   n_included <- sum(epoch_history_tab$n)
   n_included_hist <- nrow(epoch_history_tab)

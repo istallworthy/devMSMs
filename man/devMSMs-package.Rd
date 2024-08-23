@@ -21,7 +21,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Noah Greifer \email{ngreifer@iq.harvard.edu} [contributor]
+  \item Noah Greifer \email{noah.greifer@gmail.com} (\href{https://orcid.org/0000-0003-3067-7154}{ORCID}) [contributor]
   \item Meriah DeJoseph \email{meriahd@stanford.edu}
   \item Emily Padrutt \email{padru004@umn.edu}
   \item Daniel Berry \email{dberry@umn.edu}

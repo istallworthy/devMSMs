@@ -80,7 +80,7 @@ head(mice::complete(data, 1), n = c(5, 10))
 <br>
 
 ## P2. Create MSM Object
-The first step is to create an initial object by specifying the core variables and data for use with the package. Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a> for more detail on the following core inputs.  
+The first step is to create an initial MSM object by specifying the core variables and data for use with the package. Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a> for more detail on the following core inputs.  
 
 Below, we specify data, exposure, time invariant and time-varying confounders, as well as exposure epochs. 
 
@@ -105,18 +105,18 @@ obj <- initMSM(
                "peri_health", "caregiv_health", "gov_assist"),
   tv_conf = c("SAAmylase.6","SAAmylase.15", "SAAmylase.24", 
               "MDI.6", "MDI.15",                                            
-              "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35", "RHasSO.58",                                         
-              "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",                                       
+              "RHasSO.6", "RHasSO.15", "RHasSO.24","RHasSO.35",                                       
+              "WndNbrhood.6","WndNbrhood.24", "WndNbrhood.35",                                      
               "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",                                   
-              "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",                                           
-              "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",                               
-              "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",                         
+              "B18Raw.6", "B18Raw.15", "B18Raw.24",                                           
+              "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35",                            
+              "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35",                         
               "CORTB.6", "CORTB.15", "CORTB.24",                                                                  
               "EARS_TJo.24", "EARS_TJo.35",                                        
               "LESMnPos.24", "LESMnPos.35",                                  
               "LESMnNeg.24", "LESMnNeg.35",       
               "StrDif_Tot.35", 
-              "fscore.35", "fscore.58"),
+              "fscore.35"),
   epoch <- c("Infancy", "Infancy", "Toddlerhood", "Toddlerhood", "Childhood"),
   sep = "\\."
   # concur_conf = c("InRatioCor.6"),
@@ -124,7 +124,7 @@ obj <- initMSM(
 )
 ```
 
-Inspect the msm object
+Below, we inspect the MSMS object to view and confirm how variables are categorized. 
 ```{r}
 print(obj)
 ```
@@ -159,7 +159,7 @@ For all users, we highly recommend use of the helper `inspectData()` function (w
 
 We strongly suggest visually inspecting this table and revising the designation of epochs and/or high and low quantile values (for continuous exposures) until each history contains a reasonable number of participants. While there is no gold standard required number per history cell, users should guard against extrapolation beyond the scope of the data. For example, in our data, when using 75th and 25th percentile cutoffs, there were histories that represented less than two cases and thus we re-evaluated our cutoffs. Users may wish to revise any epoch designation and high and low cutoff values, where applicable. The function conducts summaries and history distribution inspection for each imputed dataset if imputed data are supplied.   
 
-The required inputs for `inspectData()` are: complete data (as a data frame in wide or long format, a list of imputed data frames in wide format, or a mids object), exposure (e.g., “variable”), and outcome (e.g., “variable.t”).   
+The required inputs for `inspectData()` are: complete data (as a data frame in wide or long format, a list of imputed data frames in wide format, or a mids object), exposure (e.g., “variable”), and outcome (e.g., “variable.t”). If the exposure is continuously distributed, the user is required to supply to `hi_lo_cut` values demarcating high and low levels.  
 
 Optional inputs are a home directory (if `save.out` = TRUE), epochs, high/low cutoff values for continuous exposures, and specification of reference and comparison histories. 
 
@@ -171,6 +171,7 @@ outcome <-  "StrDif_Tot.58"
 inspectData(data = data, 
             obj = obj, 
             outcome = outcome, 
+            hi_lo_cut = hi_lo_cut,
             reference = reference, 
             comparison = comparison, 
             verbose = TRUE,
@@ -216,6 +217,7 @@ full_formulas <- createFormulas(obj = obj,
   
 The function returns a list of formulas, one for each exposure time point. We inspect them below. Each full formula contains all time invariant confounders as well as all lagged time-varying confounders at each time point. This is an important step, to verify that all appropriate confounders are present in each formula. The user has the option to supply `save.out` = TRUE to save printed output to the home directory. 
 
+We inspect the formulas below. 
 ```{r}
 print(full_formulas)
 ```
@@ -232,7 +234,7 @@ The required inputs for using the `assessBalance()` function to conduct pre-bala
 The optional inputs are as follows.   
   
 The user may specify `balance_thresh`, or a threshold(s) for determining confounder balance, in one of two ways.  
-* First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced and above which they are considered imbalanced (default is 0.1; Stuart, 2010).  
+* First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced, and above which they are considered imbalanced (default is 0.1; Stuart, 2010).  
   
 * Second, users may make an a priori assertion that some confounders are more important than others based on theory and existing research. In this case, they can provide two numbers that represent the balance thresholds for important and less important confounders, respectively. If the user supplies two balance thresholds, they must also supply a list of important confounders (time-varying: “variable.t”, time invariant: “variable”) to the `imp_conf` field. The balance threshold specification should be kept consistent throughout the use of this workflow. 
 
@@ -242,7 +244,7 @@ Below, as recommended, we provide two balancing thresholds and identify income a
 balance_thresh <- c(0.05, 0.1) 
 
 imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", 
-              "InRatioCor.58", "PmEd2") 
+              "PmEd2") 
 ```
 
 We create prebalance statistics below. 
@@ -288,7 +290,7 @@ summary(prebalance_stats,
 ```
 Averaging across imputed datasets, we see that xx confounders are imbalanced with respect to the economic strain exposure and their respective balance threshold. 
 
-Lastly, we can plot a balance summary at one or more time points, from one imputed dataset or averaged across them.
+Lastly, we can plot a balance summary at one or more time points, from one imputed dataset or averaged across them. The dotted red lines denote our balance thresholds and the points colored and labeled in red denote confounders that are imbalanced in relation to their respective balance thresholds. 
 ```{r}
 plot(prebalance_stats, 
      i = 1, 
@@ -310,7 +312,7 @@ The love plots depict the standardized associations between confounder and expos
 The goal of this second step is to create shortened, more parsimonious balancing formulas for determining the optimal IPTW weighting method that most successfully reduces imbalance in the data.  
 <br>
 #### 2a. Create Simplified Balancing Formulas
-First, we create shorter, more parsimonious balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type` = ”short”). For each exposure time point, these formulas contain all time invariant confounders as well as time-varying confounders only at the *t*-1 lag. The logic here is that balancing on confounders at the most recent prior time point (*t*-1 only) may achieve balance on levels at more distal time points, given the stability of many confounders over time. Importantly, we will empirically assess and relax this assumption if needed at subsequent steps (Steps 3a-b). 
+First, we create shorter, more parsimonious balancing formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type` = "short”). For each exposure time point, these formulas contain all time invariant confounders as well as time-varying confounders only at the *t*-1 lag. The logic here is that balancing on confounders at the most recent prior time point (*t*-1 only) may achieve balance on levels at more distal time points, given the stability of many confounders over time. Importantly, we will empirically assess and relax this assumption if needed at subsequent steps (Steps 3a-b). 
 
 The required input to create shortened balancing formulas using the `createFormulas()` function are: a MSM object (e.g., 'obj') and setting `type` = “short”. 
 
@@ -325,10 +327,9 @@ short_formulas <- createFormulas(obj = obj,
                                  save.out = save.out) 
 ```
 
-And then inspect them to make sure they contain only time-varying covariates at a lag of one prior to the exposure time point. The user has the option to supply `save.out` to save printed output to the home directory. 
+And then inspect them to make sure they contain only time-varying covariates at a lag of one prior to the exposure time point.
 ```{r}
-print(short_formulas, 
-      save.out = save.out)
+print(short_formulas)
 ```
 These formulas are considerably shorter than the full formulas. For instance, at the 58-month exposure time point, the formula contains all time invariant confounders and only time-varying confounders at the 35-month time point.   
   
@@ -354,7 +355,7 @@ We begin with specifying CBPS as a weighting method.
 method <- "cbps"
 ```
 
-The `createWeights()` function can also take any number of additional arguments that will be passed to the `weightitMSM()` function (e.g., ‘criterion’, distribution’, ‘SL.library’). If the user selects the SuperLearner (“super”) method, the default super learner library (‘SL.library’) is xx but an alternative library can be entered as an input to the `createWeights` function. For binary exposures, the “cbps” method allows you to specify `estimand` as either ATE, ATT, or ATC. With “glm”, “super”, and “bart” you can specify ATE, ATT, ATC, ATO, ATM, or ATOS. With “gbm”, you can specify ATE, ATT, ATC, ATO, or ATM. The default estimand for binary exposures is ATE. We advise the interested user to review the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a> for more information about the additional optional arguments available for each of the weighting methods. Users have the option to specify `verbose` = TRUE to view information about weights creation. 
+The `createWeights()` function can also take any number of additional arguments that are accapted by the `weightitMSM()` function (e.g., ‘criterion’, distribution’, ‘SL.library’). The package defaults correspond to the *weightIt* defaults. If the user selects the SuperLearner (“super”) method, the default super learner libraries (‘SL.library’) are "SL.glm" and "SL.glm.interaction" but an alternative library can be entered as an input to the `createWeights` function. For binary exposures, the “cbps” method allows you to specify `estimand` as either ATE, ATT, or ATC. With “glm”, “super”, and “bart” you can specify ATE, ATT, ATC, ATO, ATM, or ATOS. With “gbm”, you can specify ATE, ATT, ATC, ATO, or ATM. The default estimand for binary exposures is ATE. We advise the interested user to review the <a href="(https://ngreifer.github.io/WeightIt/reference/weightitMSM.html">*WeightIt* documentation</a> for more information about the additional optional arguments available for each of the weighting methods. Users have the option to specify `verbose` = TRUE to view information about weights creation. 
 
 The function returns a list of weights objects each in the form of WeightItMSM output in a single nested list or with nested lists for each imputed dataset (if data are imputed). 
 <br>
@@ -362,13 +363,13 @@ The function returns a list of weights objects each in the form of WeightItMSM o
 ##### CBPS
 
 Below, we create IPTW weights using the default CBPS method. 
-```{r}
+```{r cache = TRUE}
 weights.cbps <- createWeights(obj = obj, 
                              data = data, 
                              method = method,
                              formulas = formulas,
                              verbose = TRUE,
-                             maxit = 1, # just for testing 
+                             # maxit = 1, # just for testing 
                              save.out = save.out)
 ```
  
@@ -407,9 +408,7 @@ We then create and inspect IPTW balancing weights using all other available meth
 
 ##### GLM
 ```{r}
-
 method <- "glm"
-
 weights.glm <- createWeights(obj = obj, 
                              data = data, 
                              method = method,
@@ -424,7 +423,6 @@ summary(weights.glm[[1]])
 plot(weights.glm, 
      i = 1, 
      save.out = save.out)
-
 ```
   
 As shown above, the GLM method produces a similar distribution of weights.  
@@ -434,7 +432,6 @@ As shown above, the GLM method produces a similar distribution of weights.
 ##### GBM
 ```{r}
 method <- "gbm"
-
 weights.gbm <- createWeights(obj = obj,
                              data = data,
                              method = method,
@@ -456,7 +453,6 @@ plot(weights.gbm,
 ##### Bart
 ```{r}
 method <- "bart"
-
 weights.bart <- createWeights(obj = obj, 
                              data = data, 
                              method = method,
@@ -478,7 +474,6 @@ plot(weights.bart,
 ##### Super
 ```{r}
 method <- "super"
-
 weights.super <- createWeights(obj = obj, 
                              data = data, 
                              method = method,
@@ -596,7 +591,6 @@ balance_stats.bart <- assessBalance(data = data,
                                      imp_conf = imp_conf, 
                                      balance_thresh = balance_thresh,
                                      save.out = save.out)
-
 ```
 
 ##### Super
@@ -609,7 +603,6 @@ balance_stats.super <- assessBalance(data = data,
                                      imp_conf = imp_conf, 
                                      balance_thresh = balance_thresh,
                                      save.out = save.out)
-
 ```
 
 
@@ -644,15 +637,15 @@ From this, we find that xx method has the fewest imbalanced confounders, lowest 
 
 To examine the fourth criterion, we use the *weightIt* summary method to examine effective sample sizes across weighting methods. We do this just for the first imputed dataset. 
 ```{r}
-summary(balance_stats.cbps[[1]])
+summary(weights.cbps[[1]])
 
-summary(balance_stats.glm[[1]])
+summary(weights.glm[[1]])
 
-summary(balance_stats.gbm[[1]])
+summary(weights.gbm[[1]])
 
-summary(balance_stats.bart[[1]])
+summary(weights.bart[[1]])
 
-summary(balance_stats.super[[1]])
+summary(weights.super[[1]])
 ```
 From this, we find .....
 
@@ -767,8 +760,7 @@ We trim the final weights below.
 ```{r}
 weights <- final_weights
 
-trim_weights <- trimWeights(obj = obj,
-                            weights = weights, 
+trim_weights <- trimWeights(weights = weights, 
                             at = quantile, 
                             save.out = save.out)
 ```
@@ -795,8 +787,7 @@ We first create weights at the 92nd quantile value.
 ```{r}
 quantile <- 0.92 
 
-trim_weights.s1 <- trimWeights(obj = obj,
-                               weights = weights, 
+trim_weights.s1 <- trimWeights(weights = weights, 
                                at = quantile, 
                                save.out = save.out)
 
@@ -813,8 +804,7 @@ And then at the 98th quantile value.
 ```{r}
 quantile <- 0.98 
 
-trim_weights.s2 <- trimWeights(obj = obj,
-                               weights = weights, 
+trim_weights.s2 <- trimWeights(weights = weights, 
                                at = quantile, 
                                save.out = save.out)
 
@@ -877,7 +867,7 @@ We inspect the table above and manually list out these imbalanced confounders th
 
 ```{r}
 
-covariates <- c("PmEd2", "ESETA1.6", "InRatioCor.6")
+covariates <- c("InRatioCor.6")
 
 ```
 
@@ -950,9 +940,7 @@ The required inputs for using the `fitModel()` function are: complete data (data
 We first specify an outcome variable.
 
 ```{r}
-
 outcome <- "StrDif_Tot.58"
-
 ```
 
 We then inspect the following list of models. 
@@ -967,9 +955,7 @@ We then inspect the following list of models.
   
 Below, we specify the xx model given that we have baseline/time-invariant confounders that remain imbalanced from Step 4 and the possiblity of non-linear effects of economic strain on behavior problems.  
 ```{r}
-
-model <- "m3"
-
+m <- "m3"
 ```
 
 If the user selects a covariate model (“m1” or “m3”), they are required to supply a list to `covariates` that corresponds to covariates in the wide data (see Step 4).   
@@ -980,20 +966,16 @@ If the user selects an interaction model (“m2” or “m3”), they are requir
   
 We specify fitting all 3-way (and constituent) interactions between exposure main effects.    
 ```{r}
-
 int_order <- 3
-
 ```
   
 The user can also specify a `family` (as a function, not in quotations; e.g., gaussian) and `link` (in quotations, e.g., “identity”) functions for the generalized linear model (defaults are gaussian and “link”, respectively). The possible families are: binomial, gaussian, Gama, inverse.gaussian, poisson, quasi, quasibinomial, and quasipoisson. For binomial and Poisson families, set family to quasibinomial and quasipoisson, respectively, to avoid a warning about non-integer numbers of successes. The `quasi' versions of the family objects give the same point estimates and standard errors and do not give the warning. The gaussian family accepts the links: “identity”, “log” and “inverse”; the binomial family the links “logit”, “probit”, “cauchit”, (corresponding to logistic, normal and Cauchy CDFs respectively) “log” and “cloglog” (complementary log-log); the Gamma family the links “inverse”, “identity”, and “log”; the poisson family the links “log”, “identity”, and “sqrt”; and the inverse.gaussian family the links 1/mu^2, inverse, identity and log. The quasi family accepts the links “logit”, “probit”, “cloglog”, “identity”, “inverse”, “log”, “1/mu^2”, and “sqrt”, and the function power can be used to create a power link function. 
   
 Below, we retain the default family and link functions. 
 ```{r}
-
 family <- gaussian
 
 link <- "identity" 
-
 ```
   
 This function returns a list of fitted model objects, each as glm output. 	
@@ -1006,7 +988,7 @@ models <- fitModel(data = data,
                    obj = obj, 
                    weights = weights, 
                    outcome = outcome, 
-                   model = model,
+                   model = m,
                    covariates = covariates, 
                    int_order = int_order, 
                    save.out = save.out) 
@@ -1016,11 +998,9 @@ We then inspect the model output. The user has the option to supply `save.out` t
 
 We inspect the model for each imputed dataset.
 ```{r}
-
 print(models, 
       i = 2, 
       save.out = save.out)
-
 ```
 
 Importantly, we first examine the results of the likelihood ratio test at the top of the output. In the case of imputed data, the likelihood ratio test is done by pooling parameters via Rubin's Rules. This test compares the user-specified model to a nested version of that model that omits all exposure variables to test whether exposure predicts variation in the outcome. If this test is not significant and there is no evidence that exposure predicts outcome, we do not advise proceeding to the subsequent history comparison step. (Models are pooled prior to conducting the likelihood ratio test for imputed data.)  
@@ -1037,14 +1017,13 @@ Of note if `save.out` = TRUE using the default file naming, saving the model out
 We first fit the same model to the weights trimmed at the 92nd quantile.  
   
 ```{r}
-
 weights <- trim_weights.s1
 
 models.s1 <- fitModel(data = data, 
                       obj = obj, 
                       weights = weights, 
                       outcome = outcome, 
-                      model = model,
+                      model = m,
                       covariates = covariates, 
                       int_order = int_order,
                       save.out = save.out) 
@@ -1052,7 +1031,6 @@ models.s1 <- fitModel(data = data,
 print(models.s1, 
       i = 1, 
       save.out = save.out)
-
 ```
 
 We similarly find a significant likelihoood ratio test.  
@@ -1062,14 +1040,13 @@ We similarly find a significant likelihoood ratio test.
 We then fit the same model with the weights trimmed at the 98th quantile.  
 
 ```{r}
-
 weights <- trim_weights.s2
 
 models.s2 <- fitModel(data = data, 
                       obj = obj, 
                       weights = weights, 
                       outcome = outcome, 
-                      model = model,
+                      model = m,
                       covariates = covariates, 
                       int_order = int_order, 
                       save.out = save.out) 
@@ -1077,7 +1054,6 @@ models.s2 <- fitModel(data = data,
 print(models.s2, 
       i = 1, 
       save.out = save.out)
-
 ```
 
 With a comparable result.  
@@ -1099,9 +1075,7 @@ To create histories of high and low values with continuous exposures, to `hi_lo_
   
 Below, we specify that 60th and 30th percentile values to denote high and low levels of economic strain, respectively.  
 ```{r}
-
 hi_lo_cut <- c(0.6, 0.3) 
-
 ```
   
 The user also has the option to estimate and compare only a custom subset of user-specified exposure histories (i.e., sequences of high and low levels of exposure at each epoch or time point) using the `reference` and `comparison` fields. To conduct these recommended customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels (“low” or “high”, respectively). If the user supplies a reference history, they are required to provide at least one unique and valid history for comparison by, in quotations, providing to `comparison` a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference. If the user supplies one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be subject to multiple comparison correction. 
@@ -1110,48 +1084,39 @@ If no reference or comparison is specified, all histories will be compared to ea
   
 Below, we specify one reference and two comparison histories.  
 ```{r}
-
 reference <- "l-l-l" 
 
 comparison <- c("h-h-h", "l-l-h", "h-l-l", "l-h-l") 
-
 ```
   
 The user can also specify a multiple comparison method in `mc_method` by in quotations, providing the shorthand for the method ("holm", "hochberg","hommel", "bonferroni", "BH" (default), "BY", "fdr", or "n" (see stats::p.adjust documentation; R Core Team) for multiple comparison correction to be applied to the final (pooled across imputed datasets when applicable) contrasts comparing effects of different exposure histories on outcome (default is Benjamini-Hochburg). Each code run is considered a family. If the user iterates through this function specifying different comparisons each time, we strongly recommend interpreting the outcome of the most inclusive set of comparisons to avoid false discovery.  
   
 Below, we retain the default Benjamini-Hochburg method for multiple comparison.  
 ```{r}
-
 mc_comp_method <- "BH"
-
 ```
 
 Based on their substantive interests, the user also has the option to choose which level of dosage (“h” or “l”) is tallied in labels of dose counts in the tables and figures (`dose_level`; default is “h”). For example, if the exposure variable was coded in such a way that lower levels are conceptualized as the exposure (e.g., lower income), the user may wish to choose dosage level “l”.   
   
 Below, given our interest in histories of high economic strain, we specify that we wish to tally high doses of exposure.  
 ```{r}
-
 dose_level <- "h"
-
 ```
 
 Lastly, the user can provide alternate plotting labels for exposure and outcome in the `exp_lab` and `out_lab` fields (defaults are variable names), as well as a list (equal to number of exposure main effects +1) of colors or a Brewer color palette (colors; default is “Dark2”). See RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).  
   
 Below, we specify plotting labels and 4 colors.  
 ```{r}
-
 exp_lab <- "Economic Strain" 
 
 out_lab <- "Behavior Problems" 
 
 colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2")
-
 ```
   
 The function returns a data frame of user-specified history comparisons containing contrast estimates, standard errors, statistics, p-values, low and high confidence intervals, and corrected p-values, labeled by history and dose.   
 
 ```{r}
-
 model <- models 
 
 results <- compareHistories(obj = obj, 
@@ -1159,35 +1124,28 @@ results <- compareHistories(obj = obj,
                             comparison = comparison, 
                             reference = reference, 
                             mc_comp_method = mc_comp_method, 
-                            dose = "l",
+                            dose = "h",
                             save.out = save.out)
-
 ```
   
 We then inspect the compared histories output (now averaged across all imputed datsets). The user has the option to supply `save.out` to save printed output to the home directory.
 ```{r}
-
 print(results) 
-
 ```
 We first confirm the distribution of our sample across our exposure histories is reasonable. 
 
 We then summarize these results. 
 ```{r}
-
 summary(results, 
         save.out = save.out)
-
 ```
 
 We then inspect the history comparison and conclude that there is no evidence that children who experienced different histories of exposure to economic strain over infancy, toddlerhood, and early childhood differ in their behavioral problems in early childhood. 
 
 Lastly, we plot the results. The user has the option to supply `save.out` to save plot output to the home directory.
 ```{r}
-
 plot(results, 
      save.out = save.out)
-
 ```
 
 
@@ -1200,7 +1158,6 @@ We then conduct sensitivity analyses by assessing and comparing histories drawin
 We first compare the same histories using the model fit with weights trimmed at the 92nd quantile value.  
 
 ```{r}
-
 model <- models.s1 
 
 results.s1 <- compareHistories(obj = obj, 
@@ -1208,9 +1165,8 @@ results.s1 <- compareHistories(obj = obj,
                             comparison = comparison, 
                             reference = reference, 
                             mc_comp_method = mc_comp_method, 
-                            dose = "l",
+                            dose = "h",
                             save.out = save.out)
-
 ```
   
 As shown above, results indicate a marginal but non-significant contrast between "l-l-l" and "h-h-h" histories of economic strain exposure in relation to behavior problems in early childhood.  
@@ -1227,9 +1183,8 @@ results.s2 <- compareHistories(obj = obj,
                             comparison = comparison, 
                             reference = reference, 
                             mc_comp_method = mc_comp_method, 
-                            dose = "l",
+                            dose = "h",
                             save.out = save.out)
-
 ```
   
 Similarly, we find no evidence for differences in behavioral problems as function of history of exposure to economic strain.  

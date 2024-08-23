@@ -94,15 +94,16 @@ createWeights <- function(
       # stabilize = TRUE,
     )
 
-    # TODO: Isa and Noah to discuss defaults
+    # TODO: Isa and Noah to discuss defaults; keeping weightIt defaults 
     custom_args <- switch(method,
       "super" = list(SL.library = c("SL.glm", "SL.glm.interaction")),
-      "glm" = list(density = "kernel"),
+      "glm" = list(), # list(density = "dnorm"), # default is blank (calls dnorm)
       "gbm" = list(density = "kernel", criterion = "p.mean"), # required? even tho doc says there is default
-      "cbps" = list(over = FALSE),
-      "bart" = list(density = "kernel"),
+      "cbps" =  list(), #list(over = FALSE),
+      "bart" = list(), #list(density = "kernel"),
       "ipt" = list()
     )
+    
     args <- utils::modifyList(args, custom_args)
 
     # overwrite options with captured `...` from `createWeights`
@@ -130,7 +131,8 @@ createWeights <- function(
     } else {
       d <- data[[k]]
     }
-    calculate_weights(formulas = formulas, data = d, method = method, verbose = verbose, dots = dots)
+    calculate_weights(formulas = formulas, data = d, method = method, 
+                      verbose = verbose, dots = dots)
   })
 
   ### Output ----
@@ -269,7 +271,8 @@ plot.devMSM_weights <- function(x, i = 1, save.out = FALSE, ...) {
     ggplot2::geom_histogram(ggplot2::aes(x = w), color = "black", bins = 15) +
     ggplot2::labs(
       title = title, x = "Weights"
-    )
+    ) +
+    ggplot2::theme_classic()
 
   if (isTRUE(save.out) || is.character(save.out)) {
     home_dir <- obj[["home_dir"]]
@@ -351,9 +354,11 @@ summary.devMSM_weights <- function(object, i = 1, ...) {
     }
   } else {
     if (isTRUE(trim_lower)) {
-      trim_str <- sprintf("after trimming between %sth and %sth quantiles", round((1 - trim) * 1000) / 10, round(trim * 1000) / 10)
+      trim_str <- sprintf("after trimming between %sth and %sth quantiles", 
+                          round((1 - trim) * 1000) / 10, round(trim * 1000) / 10)
     } else {
-      trim_str <- sprintf("after trimming at %sth quantile", round(trim * 1000) / 10)
+      trim_str <- sprintf("after trimming at %sth quantile", 
+                          round(trim * 1000) / 10)
     }
   }
   

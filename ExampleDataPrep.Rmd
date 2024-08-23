@@ -154,7 +154,7 @@ head(data_wide_f)
 
 
 
-# D2. Startingn with a Single Wide Data Frame
+# D2. Starting with a Single Wide Data Frame
 Alternatively, we could start with a single data frame of wide data (with or without missingness).  
 
 ## D2a. Format Wide Data

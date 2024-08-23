@@ -9,7 +9,7 @@
 \usage{
 compareHistories(
   fit,
-  hi_lo_cut = c(0.4, 0.6),
+  hi_lo_cut,
   dose_level = "h",
   reference = NULL,
   comparison = NULL,
@@ -35,8 +35,7 @@ compareHistories(
 \item{fit}{list of model outputs from \code{\link[=fitModel]{fitModel()}}}
 
 \item{hi_lo_cut}{list of two numbers indicating quantile values
-that reflect high and low values, respectively, for continuous exposure
-(default is median split)}
+that reflect high and low values, respectively, for continuous exposure}
 
 \item{dose_level}{(optional) "l" or "h" indicating whether low or high doses
 should be tallied in tables and plots (default is high "h")}
@@ -130,6 +129,7 @@ summary(comp, "comps")
 
 comp2 <- compareHistories(
   fit = fit,
+  hi_lo_cut = c(0.3, 0.6),
   reference = "l-l-l",
   comparison = c("h-h-h", "h-h-l")
 )
