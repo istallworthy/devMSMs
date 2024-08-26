@@ -140,27 +140,33 @@ perm2 <- function(r, v) {
 #' Used in `assessBalance` to define history
 #' @noRd
 .characterize_exposure <- function(mat, exposure_type, hi_lo_cut = NULL) {
-  
-  if (!is.null(hi_lo_cut)){
-    if (length(hi_lo_cut) == 1) hi_lo_cut = c(hi_lo_cut, hi_lo_cut)
-    hi <- lapply(mat, function(x) quantile(x, hi_lo_cut[1])) #IS amended to use hi_lo_cut instead of median
-    lo <- lapply(mat, function(x) quantile(x, hi_lo_cut[2]))
-  }
-  
+
   if (exposure_type == "continuous") {
-    if (!is.null(hi_lo_cut)){
-      res <- lapply(1:ncol(mat), function(x) {
-        ifelse(mat[, x] <= lo[x], "l", 
-               ifelse(mat[, x] > hi[x], "h", NA))
-      })
-      names(res) <- colnames(mat)
-    } else{
+    if (is.null(hi_lo_cut)) {
+      lo <- hi <- lapply(mat, median)
+    } else {
+      if (length(hi_lo_cut) == 1L) {
+        hi_lo_cut <- c(hi_lo_cut, hi_lo_cut)
+      } else {
+        hi_lo_cut <- sort(hi_lo_cut)
+      }
       
-      res <- lapply(mat, function(x) ifelse(x <= median(x), "l", "h"))
+      lo <- lapply(mat, function(x) quantile(x, hi_lo_cut[1])) #IS amended to use hi_lo_cut instead of median
+      hi <- lapply(mat, function(x) quantile(x, hi_lo_cut[2]))
     }
+    
+    res <- lapply(seq_len(ncol(mat)), function(x) {
+      out <- rep(NA_character_, nrow(mat))
+      out[mat[[x]] <= lo[[x]]] <- "l"
+      out[mat[[x]] > hi[[x]]] <- "h"
+      out
+    })
+    names(res) <- colnames(mat)
+    
   } else {
     res <- lapply(mat, function(x) ifelse(x == 0, "l", "h"))
   }
+  browser()
   do.call(function(...) paste(..., sep = "-"), res)
 }
 

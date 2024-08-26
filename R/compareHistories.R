@@ -34,6 +34,7 @@
 #'
 #' @examples
 #' library(devMSMs)
+#' set.seed(123)
 #' data <- data.frame(
 #'   ID = 1:50,
 #'   A.1 = rnorm(n = 50),
@@ -57,7 +58,7 @@
 #'   data = data, weights = w,
 #'   outcome = "D.3", model = "m0"
 #' )
-#'
+#' 
 #' comp <- compareHistories(
 #'   fit = fit,
 #'   hi_lo_cut = c(0.3, 0.6)
@@ -66,7 +67,7 @@
 #' plot(comp)
 #' summary(comp, "preds")
 #' summary(comp, "comps")
-#'
+#' 
 #' comp2 <- compareHistories(
 #'   fit = fit,
 #'   hi_lo_cut = c(0.3, 0.6),
@@ -140,9 +141,8 @@ compareHistories <- function(
 
   if (exposure_type == "continuous") {
     dreamerr::check_arg(hi_lo_cut, "vector numeric len(2) GE{0} LE{1}")
-    hi_lo_cut <- c(min(hi_lo_cut), max(hi_lo_cut)) # sort
-  }
-  else {
+    hi_lo_cut <- sort(hi_lo_cut)
+  } else {
     hi_lo_cut <- NULL
   }
 
@@ -159,7 +159,7 @@ compareHistories <- function(
     epoch_vars <- .get_epoch_var_names(exposure, epoch, sep = sep)
   }
 
-  mat <- fit[[1]][["data"]][, epoch_vars]
+  mat <- fit[[1]][["data"]][, epoch_vars, drop = FALSE]
   epoch_history <- .characterize_exposure(mat, exposure_type, hi_lo_cut)
 
   prediction_vars <- .get_avg_predictions_variables(
@@ -195,11 +195,11 @@ compareHistories <- function(
     # All pairwise comparisons if no ref/comparisons were specified by user
     # Pairwise comparision, but we want term to be nicely labeled by histories
     comps <- lapply(preds, function(y) {
-      c <- marginaleffects::hypotheses(
+      h <- marginaleffects::hypotheses(
         model = as.data.frame(y), vcov = vcov(y), hypothesis = "pairwise"
       )
-      class(c) <- c("comp_custom", class(c))
-      return(c)
+      class(h) <- c("comp_custom", class(h))
+      return(h)
     })
   } else {
     hypothesis <- .create_hypotheses_mat(preds[[1]]$term, reference, comparison)
@@ -209,14 +209,14 @@ compareHistories <- function(
                                     sapply(strsplit(colnames(hypothesis), " - "), "[", 2)]
     hypothesis <- hypothesis[, nonid, drop = FALSE]
     
-    if (length(hypothesis) == 0){
-      stop("Please a comparison history that differs from the reference history.", .call = FALSE)
+    if (length(hypothesis) == 0L){
+      stop("Please a comparison history that differs from the reference history.", call. = FALSE)
     }
 
     comps <- lapply(preds, function(y) {
-      c <- marginaleffects::hypotheses(y, hypothesis = hypothesis)
-      class(c) <- c("comp_custom", class(c))
-      return(c)
+      h <- marginaleffects::hypotheses(y, hypothesis = hypothesis)
+      class(h) <- c("comp_custom", class(h))
+      return(h)
     })
     
     # # IS testing equality tests
@@ -234,8 +234,6 @@ compareHistories <- function(
     # })
     # 
   }
-
-
 
   # STEP 4 ----
   # pooling predicted values and contrasts for imputed data
@@ -294,6 +292,7 @@ compareHistories <- function(
   attr(res, "epoch_history") <- epoch_history
   attr(res, "mc_comp_method") <- mc_comp_method
   attr(res, "exp_lab") <- exp_lab
+  
   if (!is.null(reference) && !is.null(comparison)) {
     attr(res, "reference") <- reference
     attr(res, "comparison") <- comparison
@@ -545,6 +544,7 @@ summary.devMSM_comparisons <- function(object, type = "comps", ...) {
 .print_eval_hist <- function(epoch_history, epoch, hi_lo_cut, reference = NULL, comparison = NULL) {
   
   if (length(hi_lo_cut) == 1L) hi_lo_cut <- c(hi_lo_cut, hi_lo_cut)
+  else hi_lo_cut <- sort(hi_lo_cut)
   
   epoch_history_tab <- data.frame(table(epoch_history, useNA = "ifany"))
   colnames(epoch_history_tab) <- c("epoch_history", "n")
@@ -553,15 +553,17 @@ summary.devMSM_comparisons <- function(object, type = "comps", ...) {
   
   if (!is.null(reference) && !is.null(comparison)) {
     keep_idx <- epoch_history_tab$epoch_history %in% c(reference, comparison)
-    if (!any(keep_idx)){
-      stop("There are no participants in your sample with the reference/comparison histories you specified, using high/low cutoff (if applicable).", .call = FALSE)
+    if (!any(keep_idx)) {
+      #NG: maybe should be a warning?
+      stop("There are no participants in your sample with the reference/comparison histories you specified, using high/low cutoff (if applicable).", call. = FALSE)
     }
     epoch_history_tab <- epoch_history_tab[keep_idx, , drop = FALSE]
     if (any(!c(reference, comparison) %in% epoch_history_tab$epoch_history)){
+      #NG: maybe should be a warning?
       stop(sprintf("There are no participants in your sample in the following histories: %s. 
                    Please revise your reference/comparison histories and/or the high/low cutoffs, if applicable.",
                    paste(c(reference, comparison)[!c(reference,comparison) %in% epoch_history_tab$epoch_history], collapse = ", ")),
-           .call = FALSE)
+           call. = FALSE)
     }
   }
   n_included <- sum(epoch_history_tab$n)
@@ -574,8 +576,8 @@ summary.devMSM_comparisons <- function(object, type = "comps", ...) {
     n_included / n_total * 100,
     n_included_hist,
     n_total_hist,
-    hi_lo_cut[2] * 100,
     hi_lo_cut[1] * 100,
+    hi_lo_cut[2] * 100,
     paste(unique(epoch), collapse = ", ")
   ))
   
