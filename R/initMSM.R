@@ -52,12 +52,16 @@ initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL,
   if (inherits(data, "mids")) {
     d <- data[[1]]
     data_type <- "mids"
-  } else if (inherits(data, "list")) {
-    d <- data[[1]]
-    data_type <- "list"
-  } else {
+  } else if (is.data.frame(data)) {
     d <- data
     data_type <- "data.frame"
+  } else if (is.list(data)) {
+    d <- data[[1]]
+    data_type <- "list"
+  }
+  else {
+    stop("`data` must be a data.frame, a list of data.frames, or a `mids` object (from `mice::mice()`).",
+         call. = FALSE)
   }
 
   dreamerr::check_arg(exposure, "vector character len(1, )")
@@ -108,15 +112,15 @@ initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL,
   .create_dir_if_needed(home_dir)
 
   # checking exposure type
-  lapply(seq_along(exposure), function(i) {
-    x <- d[[exposure[i]]]
+  for (e in exposure) {
+    x <- d[[e]]
     if (is.integer(x) && !all(na.omit(unique(x)) %in% c(1, 0))) {
       stop("Please make sure your exposure levels are 1s and 0s for integer exposures.", call. = FALSE)
     }
     if (!is.numeric(x) && !is.integer(x)) {
       stop("Please provide an exposure in numeric or integer form.", call. = FALSE)
     }
-  })
+  }
   exp1 <- d[[exposure[1]]]
   exposure_type <- if (is.logical(exp1) || all(exp1 %in% c(0, 1), na.rm = TRUE)) "binary" else "continuous"
 

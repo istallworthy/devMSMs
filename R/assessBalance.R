@@ -88,10 +88,10 @@ assessBalance <- function(
     balance_thresh, "numeric vector len(1,2) GT{0} LT{1} NULL{0.1}"
   )
   dreamerr::check_arg(imp_conf, "character vector NULL")
-  if (length(balance_thresh) == 2 && is.null(imp_conf)) {
+  if (length(balance_thresh) == 2L && is.null(imp_conf)) {
     stop("If you wish to provide different balance threshold for important and less important confounders, please provide a list of important confounders in the 'imp_conf' field.", call. = FALSE)
   }
-  if (!is.null(imp_conf) && length(balance_thresh) == 1) {
+  if (!is.null(imp_conf) && length(balance_thresh) == 1L) {
     stop("If you provide a list of important confounders, please provide a list of two balance thresholds for important and less important confounders, respectively", call. = FALSE)
   }
   
@@ -99,14 +99,14 @@ assessBalance <- function(
   if (inherits(data, "mids")) {
     data_type <- "mids"
     m <- data$m
-  } else if (inherits(data, "list")) {
-    data_type <- "list"
-    m <- length(data)
-  } else {
+  } else if (is.data.frame(data)){
     data_type <- "data.frame"
     data <- list(data)
     m <- 1
-  }
+  } else {
+    data_type <- "list"
+    m <- length(data)
+  } 
   
   # calcBalStats ----
   all_bal_stats <- list_of_omitted_histories <- vector("list", m) # store omitted histories for each dataset 

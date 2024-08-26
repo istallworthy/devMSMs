@@ -82,7 +82,7 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
     # Cacluate `bal_stats`
 
     # GET BALANCE STATISTICS FOR T=1 (when there is no history to weight on)
-    if (length(lagged_time_pts) == 0) {
+    if (length(lagged_time_pts) == 0L) {
       # GETTING BALANCE STATS FOR T=1 W/ NO EXPOSURE HISTORY
       # (ok to standardize immediately)
       std_bal_stats <- cobalt_cov_fun(
@@ -99,7 +99,7 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
     }
 
     # GET BALANCE STATISTICS FOR T>1 (when there is a history to weight on)
-    if (length(lagged_time_pts) > 0) {
+    if (length(lagged_time_pts) > 0L) {
       # ASSIGNING HISTORIES FOR EXP TIME POINTS T>1
       # creating proportion weights based on proportion of individuals in a given exposure history
       history <- .characterize_exposure(
@@ -184,7 +184,7 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
 
   } # Ends exposure_time_pts loop
   
-  if (length(omitted_histories) == 0) {
+  if (length(omitted_histories) == 0L) {
     res <- list(all_bal_stats = all_bal_stats, omitted_histories = NULL)
   } else {
     res <- list(all_bal_stats = all_bal_stats, omitted_histories = omitted_histories)
