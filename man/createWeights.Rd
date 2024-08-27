@@ -28,8 +28,8 @@ frames, or \code{mids} object from the \code{mice} package}
 
 \item{formulas}{list of balancing formulas at each time point output from \code{\link[=createFormulas]{createFormulas()}}}
 
-\item{method}{(optional) character string of weightitMSM() balancing method
-abbreviation (default is Covariate Balancing Propensity Score "cbps")}
+\item{method}{character string of \code{weightitMSM()} balancing method
+abbreviation (default is generalized linear models propensity score weighting \code{"glm"})}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console.
 default is FALSE.}
@@ -42,7 +42,7 @@ default is FALSE.}
 
 \item{\dots}{arguments passed to \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} or \code{\link[=summary.weightitMSM]{summary.weightitMSM()}}}
 
-\item{x, object}{devMSM_weights object from \code{createWeights()}}
+\item{x, object}{\code{devMSM_weights} object from \code{createWeights()}}
 
 \item{i}{For multiply imputed datasets, \code{i} selects which imputation to print results for.
 Default is \code{i = 1}. With \code{i = TRUE}, all imputed datasets will be looped over. With \code{i = NULL}, will average over all imputed datasets and summarize that. Ignored for non-imputed data.}

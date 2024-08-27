@@ -115,7 +115,7 @@ createFormulas <- function(
       form <- custom[[i]]
       dreamerr::check_value(
         form, "ts formula",
-        .arg_name = paste0("custom[[", i, "]]")
+        .arg_name = sprintf("custom[[%s]]", i)
       )
 
       ## Check exposure variable (LHS)

@@ -38,8 +38,8 @@ terms <- data.frame(
   )
 )
 
-tt(terms, theme = "striped") |>
-  format_tt(markdown = TRUE)
+tinytable::tt(terms, theme = "striped") |>
+  tinytable::format_tt(markdown = TRUE)
 ```
 <br>  
 
@@ -68,8 +68,8 @@ balance_formula <- data.frame(
   )
 )
 
-tt(balance_formula) |>
-  format_tt(markdown = TRUE)
+tinytable::tt(balance_formula) |>
+  tinytable::format_tt(markdown = TRUE)
 ```
 <br>  
 
@@ -113,16 +113,18 @@ main_functions <- data.frame(
   Output = c(
     "msmObject",
     "List of balancing formulas for each exposure time point.",
+
     "List of balance statistics. Tables & love plots displaying balance statistics at each exposure time point.",
     "Weights object. Histogram & summary of balancing weights.",
     "Trimmed weights object.Histogram & summary of trimmed weight.",
     "Fitted model object. Omnibus test & table of model evidence.",
     "Tables of estimated values and comparisons. Boxplot."
+
   )
 )
 
-tt(main_functions, theme = "striped") |>
-  format_tt(markdown = TRUE)
+tinytable::tt(main_functions, theme = "striped") |>
+  tinytable::format_tt(markdown = TRUE)
 ```
 
 

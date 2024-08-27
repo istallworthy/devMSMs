@@ -4,15 +4,14 @@
 #' using balancing formulas that relate exposure at each time point to all
 #' relevant confounders.
 #'
-#' @export
 #' @seealso
 #'  [WeightIt::weightitMSM()]
 #'
 #' @inheritParams devMSM_common_docs
-#' @param method (optional) character string of weightitMSM() balancing method
-#'   abbreviation (default is Covariate Balancing Propensity Score "cbps")
+#' @param method character string of `weightitMSM()` balancing method
+#'   abbreviation (default is generalized linear models propensity score weighting `"glm"`)
 #' @param \dots arguments passed to [WeightIt::weightitMSM()] or [summary.weightitMSM()]
-#' @param x,object devMSM_weights object from `createWeights()`
+#' @param x,object `devMSM_weights` object from `createWeights()`
 #' @return a list containing [WeightIt::weightitMSM()] output. It is the length
 #'  of the number of datasets (1 for a data.frame or the number of imputed datasets).
 #'
@@ -71,7 +70,11 @@ createWeights <- function(
 
   .check_data(data)
   dreamerr::check_arg(formulas, "class(devMSM_formulas)")
-  method <- match.arg(method, c("glm", "gbm", "bart", "super", "cbps", "ipt"))
+  
+  dreamerr::check_arg(method, "scalar character")
+  allowable_methods <- names(WeightIt::.weightit_methods)[vapply(WeightIt::.weightit_methods, function(m) m[["msm_valid"]], logical(1L))]
+  method <- match.arg(method, allowable_methods)
+  
   form_type <- attr(formulas, "type")
   obj <- attr(formulas, "obj")
 
@@ -80,8 +83,7 @@ createWeights <- function(
 
   # data is a single data.frame in this function
   calculate_weights <- function(formulas, data, method, verbose, dots) {
-    vars <- unique(unlist(lapply(formulas, function(f) c(all.vars(f)))))
-    if (anyNA(data[, vars])) {
+    if (any(vapply(formulas, function(f) anyNA(model.frame(f, data = data, na.action = na.pass)), logical(1L)))) {
       stop("This code requires complete data. Consider imputation if missingness < 20% and is reasonably Missing at Random (MAR).", call. = FALSE)
     }
 
@@ -97,11 +99,8 @@ createWeights <- function(
     # TODO: Isa and Noah to discuss defaults; keeping weightIt defaults 
     custom_args <- switch(method,
       "super" = list(SL.library = c("SL.glm", "SL.glm.interaction")),
-      "glm" = list(), # list(density = "dnorm"), # default is blank (calls dnorm)
-      "gbm" = list(density = "kernel", criterion = "p.mean"), # required? even tho doc says there is default
-      "cbps" =  list(), #list(over = FALSE),
-      "bart" = list(), #list(density = "kernel"),
-      "ipt" = list()
+      "gbm" = list(criterion = "p.mean"), # required? even tho doc says there is default
+      list()
     )
     
     args <- utils::modifyList(args, custom_args)
@@ -109,28 +108,27 @@ createWeights <- function(
     # overwrite options with captured `...` from `createWeights`
     args <- utils::modifyList(args, dots, keep.null = TRUE)
 
-    # do.call(WeightIt::weightitMSM, args)
     do.call(WeightIt::weightitMSM, args = args)
   }
 
   if (inherits(data, "mids")) {
     data_type <- "mids"
     m <- data$m
-  } else if (inherits(data, "list")) {
-    data_type <- "list"
-    m <- length(data)
-  } else {
+  } else if (is.data.frame(data)) {
     data_type <- "data.frame"
     data <- list(data)
     m <- 1
+  } else {
+    data_type <- "list"
+    m <- length(data)
   }
 
   weights <- lapply(seq_len(m), function(k) {
-    if (data_type == "mids") {
-      d <- as.data.frame(mice::complete(data, k))
-    } else {
-      d <- data[[k]]
+    d <- {
+      if (data_type != "mids") data[[k]]
+      else as.data.frame(mice::complete(data, k))
     }
+    
     calculate_weights(formulas = formulas, data = d, method = method, 
                       verbose = verbose, dots = dots)
   })
