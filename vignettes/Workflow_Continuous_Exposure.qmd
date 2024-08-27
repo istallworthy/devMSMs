@@ -361,7 +361,6 @@ The function returns a list of weights objects each in the form of WeightItMSM o
 <br>
 
 ##### CBPS
-
 Below, we create IPTW weights using the default CBPS method. 
 ```{r cache = TRUE}
 weights.cbps <- createWeights(obj = obj, 
@@ -369,7 +368,7 @@ weights.cbps <- createWeights(obj = obj,
                              method = method,
                              formulas = formulas,
                              verbose = TRUE,
-                             # maxit = 1, # just for testing 
+                             maxit = 1, # just for testing 
                              save.out = save.out)
 ```
  
@@ -866,9 +865,7 @@ In the outcome modeling step (Step 5), we will have the option to include any an
 We inspect the table above and manually list out these imbalanced confounders that are time invariant and assign them to `covariates`.  
 
 ```{r}
-
 covariates <- c("InRatioCor.6")
-
 ```
 
 <br>  
@@ -881,7 +878,6 @@ Importantly, if `save.out` = TRUE, running these analyses will overwrite the out
 We first assess balance for the weights trimmed at the 93rd quantile value. 
  
 ```{r}
-
 weights <- trim_weights.s1
 
 final_balance_stats.s1 <- assessBalance(data = data, 
@@ -893,7 +889,6 @@ final_balance_stats.s1 <- assessBalance(data = data,
 
 print(final_balance_stats.s1, 
       save.out = save.out)
-
 ```
 
 From this, we find that the same constructs remain imbalanced to a similar degree. 
@@ -903,7 +898,6 @@ From this, we find that the same constructs remain imbalanced to a similar degre
 We next assess balance for the weights trimmed at the 98th quantile value. 
   
 ```{r}
-
 weights <- trim_weights.s2
 
 final_balance_stats.s2 <- assessBalance(data = data, 
@@ -915,7 +909,6 @@ final_balance_stats.s2 <- assessBalance(data = data,
 
 print(final_balance_stats.s2, 
       save.out = save.out)
-
 ```
 
 From this, we also find a similar level of imbalance from the same constructs.   
@@ -949,9 +942,9 @@ We then inspect the following list of models.
   
 * *M1*: Covariate model regressing the outcome on the main effects of exposure as well as user-specified covariates (e.g., confounders measured at baseline or the first time point that remained imbalanced after weighting in Step 4). 
   
-* *M2*: Interaction model regressing the outcome on the main effects of exposure as well as all user-specified interactions between exposure main effects (e.g., infancy:toddlerhood)   
+* *M2*: Interaction model regressing the outcome on the main effects of exposure as well as all interactions between exposure main effects (e.g., infancy:toddlerhood) of the user-specified interaction order   
   
-* *M3*: Full model regressing the outcome on the main effects of exposure, user-specified covariates, as well as all user-specified exposure main effect interactions. 
+* *M3*: Full model regressing the outcome on the main effects of exposure, user-specified covariates, as well as all exposure main effect interactions and exposure-covariate interactions of the user-specified interaction order 
   
 Below, we specify the xx model given that we have baseline/time-invariant confounders that remain imbalanced from Step 4 and the possiblity of non-linear effects of economic strain on behavior problems.  
 ```{r}
@@ -1119,10 +1112,10 @@ The function returns a data frame of user-specified history comparisons containi
 ```{r}
 model <- models 
 
-results <- compareHistories(obj = obj, 
-                            fit = model, 
+results <- compareHistories(fit = model, 
                             comparison = comparison, 
                             reference = reference, 
+                            hi_lo_cut = hi_lo_cut,
                             mc_comp_method = mc_comp_method, 
                             dose = "h",
                             save.out = save.out)
@@ -1160,10 +1153,10 @@ We first compare the same histories using the model fit with weights trimmed at 
 ```{r}
 model <- models.s1 
 
-results.s1 <- compareHistories(obj = obj, 
-                            fit = model, 
+results.s1 <- compareHistories(fit = model, 
                             comparison = comparison, 
                             reference = reference, 
+                            hi_lo_cut = hi_lo_cut,
                             mc_comp_method = mc_comp_method, 
                             dose = "h",
                             save.out = save.out)
@@ -1178,10 +1171,10 @@ We then compare the same histories usign the model fit with weights trimmed at t
 ```{r}
 model <- models.s2 
 
-results.s2 <- compareHistories(obj = obj, 
-                            fit = model, 
+results.s2 <- compareHistories(fit = model, 
                             comparison = comparison, 
                             reference = reference, 
+                            hi_lo_cut = hi_lo_cut,
                             mc_comp_method = mc_comp_method, 
                             dose = "h",
                             save.out = save.out)
