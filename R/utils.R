@@ -79,15 +79,7 @@ perm2 <- function(r, v) {
   })
 }
 
-# IS: new one to ignore special chars (and anything following) after sep (e.g., RHasSO.6_1)
-# .extract_time_pts_from_vars <- function(vars, sep = "[\\._]") {
-#   regex_time_pts <- paste0(sep, "([0-9]+(?:\\.[0-9]+)?)(?:[^0-9.]|$)")  
-#   sapply(vars, function(var) {
-#     match <- regmatches(var, regexec(regex_time_pts, var))
-#     if(length(match[[1]]) == 0) return(NA) # return NA if no match found
-#     as.numeric(match[[1]][2])
-#   })
-# }
+
 
 #' Gets prefix of variable by numbers after last occurance of `sep` and optionally deleting `sep`
 #' @noRd

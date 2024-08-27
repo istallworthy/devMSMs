@@ -65,7 +65,6 @@ articles:
   - title: Articles
     navbar: ~
     contents:
-    - Dev
     - Terminology
     - Data_Requirements
     - Specify_Core_Inputs

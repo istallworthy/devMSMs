@@ -32,7 +32,7 @@ terms <- data.frame(
     "Total cumulative exposure epochs during which an individual experienced high (or low) levels of exposure across an entire exposure history",
     "Any alternative, non-causal way (other than the direct causal effects from exposure to outcome) that the exposure at a given time point associates with the outcome within a causal diagram, often via confounders",
     "Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths",
-    "A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time (exposure and outcome variables).",
+    "A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time.",
     "A confounder measured at a single time point prior to the exposure time point which reflects a construct that is stable over time.",
     "A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which opens a backdoor path"
   )
@@ -48,7 +48,7 @@ tinytable::tt(terms, theme = "striped") |>
 Balancing formula are formula created at each exposure time point, regressing exposure on confounders, for the purpose of creating and/or assessing balancing weights. The general form is given by:
 <pre><code>ESETA1.t ~ <span style='color: darkred'>time-invariant</span> confounders + <span style='color: blue'>time-varying</span> confounders + <i>lagged</i> <span style='color: seagreen;'>outcomes</span> + <i>lagged</i> <span style='color: purple;'>outcomes</span></code></pre>
 
-Below is a table that summarizes the three formula `type`s that will be used.
+Below is a table that summarizes the three formula `type`'s that will be used.
 
 Table 2. 
 
@@ -113,16 +113,13 @@ main_functions <- data.frame(
   Output = c(
     "msmObject",
     "List of balancing formulas for each exposure time point.",
-    "List of balance statistics. 
-     Tables & love plots displaying balance statistics at each exposure time point.",
-    "Weights object.
-     Histogram & summary of balancing weights.",
-    "Trimmed weights object.
-     Histogram & summary of trimmed weight.",
-    "Fitted model object.
-     Omnibus test & table of model evidence.",
-    "Tables of estimated values and comparisons.
-     Boxplot."
+
+    "List of balance statistics. Tables & love plots displaying balance statistics at each exposure time point.",
+    "Weights object. Histogram & summary of balancing weights.",
+    "Trimmed weights object.Histogram & summary of trimmed weight.",
+    "Fitted model object. Omnibus test & table of model evidence.",
+    "Tables of estimated values and comparisons. Boxplot."
+
   )
 )
 
