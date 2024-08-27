@@ -94,6 +94,7 @@ plotting results.
 }
 \examples{
 library(devMSMs)
+set.seed(123)
 data <- data.frame(
   ID = 1:50,
   A.1 = rnorm(n = 50),
