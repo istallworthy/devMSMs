@@ -158,11 +158,11 @@ perm2 <- function(r, v) {
   } else {
     res <- lapply(mat, function(x) ifelse(x == 0, "l", "h"))
   }
-  browser()
+  # browser()
   do.call(function(...) paste(..., sep = "-"), res)
 }
 
-#' Added by IS: Averages balance stats across imputed datasets: list by time
+#' Averages balance stats across imputed datasets: list by time
 #' 
 #' @noRd
 .avg_imp_bal_stats_time <- function(bal_stats) {

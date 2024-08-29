@@ -20,8 +20,7 @@ The code contained in this vignette is also available, integrated code from the 
 
 <br>
 
-# Recommended: Home Directory
-
+# P3.1 Recommended: Home Directory
 Users are required to specify home directory, or in quotations, a path to a designated folder for all output from the package (without the final forward slash), if they plan to save out intermediary and final outputs in the package (default) by setting `save.out` = TRUE for any of the functions. All sub directories will be created within this home directory by the *devMSMs* functions automatically when `save.out` = TRUE.
 
 ```{r}
@@ -31,7 +30,7 @@ home_dir <- NA
 
 <br>
 
-# Recommended: Time Point Delimiter
+# P3.2 Recommended: Time Point Delimiter
 
 Users are required to use a consistent delimiter for parsing the names of their time-varying variables (i.e., exposure, time-varying confounders, outcome) into the name of the construct and the time point at which it was measured. The default is a period but the user can specify any delimiter. *devMSMs* will assume the integer after the final instance of the delimiter wihin the variable name corresponds to the time point at which it was measured. The same delimiter shoudl be used for all time-varying variables.
 
@@ -45,7 +44,7 @@ sep <- "\\."
 
 <br>
 
-# Required: Exposure Variable
+# P3.3 Required: Exposure Variable
 
 The exposure refers to the developmental construct that is hypothesized to cause the outcome. Users are required to specify an exposure variable for use in all functions in *devMSMs*. The exposure can be either continuously distributed or binary, which the package automatically detects. The user must specify exposure, or a list of character strings corresponding to the exposure variable in wide format, as it appears in your dataset. The time at which the exposure was measured should appear as a suffix with a delimiter of the user's choosing (that should be the same for time-varying confounders).
 
@@ -65,7 +64,7 @@ exposure = c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58")
 
 <br>
 
-# Required for Continuous Exposure: High and Low Cutoff Values
+# P3.4 Required for Continuous Exposure: High and Low Cutoff Values
 
 If your exposure variable is continuously distributed (e.g., economic strain), there is not inherent demarcation of what is considered high versus low levels of exposure. Given that part of the MSM process involved examining how different exposure histories --that vary in dose and timing -- over development result in different outcome levels, we need to specify what is considered high versus low levels of exposure. For continuous exposures, this is required for the recommended preliminary step from *Workflows* vignette and the `compareHistories()` *devMSMs* function (see *Workflows* vignettes).
 
@@ -79,7 +78,7 @@ hi_lo_cut <- c(0.6, 0.3)
 
 <br>
 
-# Optional: Exposure Epochs
+# P3.5 Optional: Exposure Epochs
 
 When modeling the effect of exposure on outcome in the MSM process, the user has the option to specify epochs of exposure, grouping the time points at which the exposure into more meaningful categories. This may be useful in cases when the user wishes to establish balance using all time points at which exposure was measured, but has substantive hypotheses at coarser timescales (e.g., infancy). If no epochs are specified, the time points at which exposure was measured will be used in the creation of exposure histories in the final step of the process. Each specified epoch must have a corresponding value (but the values can differ in number of entries as shown below).
 
@@ -95,7 +94,7 @@ epoch <- c("Infancy", "Infancy", "Toddlerhood", "Toddlerhood", "Childhood")
 
 <br>
 
-# Recommended: Hypotheses-Relevant Exposure Histories
+# P3.6 Recommended: Hypotheses-Relevant Exposure Histories
 
 We strongly recommend users be selective about which histories, or developmental sequences of high and low exposure (at exposure time points or epochs), are vital for testing their hypotheses. We recommend that the user estimates and compares only a subset of all possible exposure histories using the `reference` and `comparison` fields (rather than comparing all possible exposure histories). The user can specify a custom subset of exposure histories using the `reference` and `comparison` fields as optional inputs to the `compareHistories()` *devMSMs* function (see *Workflows* vignettes). To conduct these customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by providing a character string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or exposure time point), that signify the sequence of exposure levels (“low” or “high”, respectively).
 
@@ -116,7 +115,7 @@ comparison <- c("h-h-h",
 
 <br>
 
-# Required: Outcome Variable
+# P3.7 Required: Outcome Variable
 
 The outcome refers to the developmental construct that is hypothesized to be caused by the exposure. Users are also required to specify an outcome variable at a designated final time point, as required input to the `fitModel()` and `compareHistories()` functions in the *devMSMs* package. This final time point should be equal to (or, ideally greater than) the final exposure time point. Note that instances of the outcome variable measured at any prior time points should be included as time-varying confounders for balancing purposes. Users must specify an outcome, as a character string with a suffix of time point at which it was collected, corresponding to the variable name in the wide data. Any outcome variables measured at prior time points should be included as time-varying confounders.
 
@@ -128,11 +127,11 @@ outcome <- "StrDif_Tot.58"
 
 <br>
 
-# Recommended: Confounders
+# P3.8 Recommended: Confounders
 
 Specifying confounders is critical to the successful implmentation of MSMs. Confounders refer to variables that could cause either or both exposure and outcome, and thus could cause a spurious relation between exposure and outcome. MSMs assume that all possible confounders are measured.
 
-## Recommended: Time Invariant Confounders
+## P3.8a Recommended: Time Invariant Confounders
 
 Time invariant confounders are those that are considered to be stable across the developmental period you are studying. Specifying time invariant confounders in `ti_conf` is recommended in the use of this package as input for the `createFormulas()` function in *devMSMS*. Time invariant confounders could include core demographic or birth characteristics (e.g., sex, racial group membership, birth complications) that might cause either the exposure or outcome, either directly or as a proxy, as suggested by theory and/or evidenced by strong associations in the existing literature.
 
@@ -148,7 +147,7 @@ ti_conf <- c( "state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2",
 
 <br>
 
-## Recommended: Time-varying Confounders
+## P3.8b Recommended: Time-varying Confounders
 
 Time-varying confounders are those that are considered to vary over development, regardless of how many times they are measured in your dataset. Specifying time-varying confounders is recommended for the use of this package as input for the `createFormulas()` *devMSMs* function (see *Workflows* vignettes). In `tv_conf`, as a list of character strings, provide the names of all variables in wide format (e.g., “variable.t”) in your dataset that are time-varying, including any exposure and outcome variables not specified in their respective fields (see above). They should have a time suffix following a delimiter.
 
@@ -174,7 +173,7 @@ tv_conf <- c("SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
 ```
 <br>  
 
-## Optional: Concurrent Confounders
+## P3.8c Optional: Concurrent Confounders
 
 When creating balancing formula at each exposure time point, the default of *devMSMs* is to only include time-varying confounders measured before the exposure time point. This is because it is often difficult to differentiate confounders measured contemporaneously from mediators, and balancing on a mediator is ill-advised. However, sometimes a user may have good evidence to know that a given time-varying confounder is not a mediator of exposure even when measured contemporaneously. If this is the case, they may specify to override the package default an retain a given variable/set of time-varying confoudners in the formulas of the exposure measured contemporaneously.
 
@@ -192,6 +191,6 @@ The user can now proceed to the *Data Requirements* or *Workflows* vignettes.
 
 <b>  
 
-## References
+# References
 
 Arel-Bundock, Vincent. 2023. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means, and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.

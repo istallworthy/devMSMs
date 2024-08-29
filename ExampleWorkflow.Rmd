@@ -4,17 +4,17 @@ author: "Isabella C. Stallworthy", "Meriah L. DeJoseph", "Emily R. Padrutt", "No
 date: "`r Sys.Date()`"
 output: html_document
 ---
-This example workflow provides more detail on the application of *devMSMs* to the empirical example in the manuscript, xxxx, which can be found here: 
+This example workflow provides more detail on the application of *devMSMs* to the empirical example in the manuscript, xxxx, which can be found here: xx.
 
 Please review the accompanying manuscript for a full conceptual and practical introduction to MSMs in the context of developmental data. Please also see the vignettes on the *devMSMs* website for step-by-step guidance on the use of this code: https://istallworthy.github.io/devMSMs/index.html. 
 
 We highly recommend first implementing the *Data Requirements* and *Specify Core Inputs* Vignettes prior to using this workflow. 
 
-Headings denote accompanying website sections and steps. We suggest using the interactive outline tool (located above the Console) for ease of navigation.
+Headings denote accompanying website vignettes and steps that correspond to the manuscript Section 7. We suggest using the interactive outline tool (located above the Console) for ease of navigation.
 
-The code in each code chunk is set up to showcase all possible inputs to each function (both required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function, including a NULL/NA option if the user does not wish to specify an optional input. The user should select one of each optional input values. Alternatively, the user could modify the call to the function and remove the optional input argument(s) entirely. 
+The code in each code chunk is set up to showcase all possible inputs to each function (both required and optional) to aid the user's use of the full range of package functionality. Example possible values for the optional input are shown for each function.
 
-Please see the website vignettes and/or type `?functionName` into the console for more guidance on the arguments for each function. These two sources should match but let me know if you see discrepancies. 
+Please see the website vignettes and/or type `?functionName` into the console for more guidance on the arguments for each function. 
 
 Functions from devMSMs: https://github.com/istallworthy/devMSMs
 
@@ -34,40 +34,73 @@ library(devMSMs)
 install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 library(devMSMsHelpers)
 ```
+<br>
 
+# *Specify Core Inputs* and *Data Requirements & Inspection* Vignettes
+## Phase 0: Preliminary Conceptual & Data Preparation
+Please see the accompanying manuscript for steps P1 (creating hypotheses) and P2 (creating a DAG).
 
-# PRELIMINARY SETUP PHASE: Specify & Inspect Core Package Inputs
+### STEP P3. Specify Core Inputs
+The first step is to specify core inputs for use with the package. 
 
-## P1. Read in Wide Data
-We highly recommend first implementing the *Data Preparation Vignette* https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html before assigning to the variable, `data`, one of the following wide data formats (see Figure 1) for use in the package:  
+In addition to the core inputs supplied directly to `initMSM()` in Step P4.4, we specify the following (See the Specify Core Inputs vignette for more information including guidance on specifying other core inputs (P3.1-P3.8)) : 
+
+#### P3.4. Required for Continuous Exposures: Identify High and Low Cutoff Values 
+See the Specify Core Inputs vignette for more information. 
+
+Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.  
+```{r}
+hi_lo_cut <- c(0.6, 0.3)
+```
+
+#### P3.6. Recommended: Specify Hypotheses-Relevant Exposure Histories 
+See the Specify Core Inputs vignette for more information. 
+
+Below, we specify all reference histories and all comparison histories associated with our two hypotheses. We will specify more specific reference and comparison histories corresponding to each hypothesis in Step 5.   
+```{r}
+reference <- c("h-l-l", "l-h-h", "l-l-l", "l-h-l", "l-l-h", "h-h-h")
+
+comparison <- c("l-l-h", "l-h-l", "l-l-l", "h-l-h", "h-h-l", "h-l-l", "l-h-h")
+```
+
+#### P3.7 Required: Specify Outcome
+```{r}
+outcome <-  "StrDif_Tot.58"
+```
+<br>
+
+### STEP P4. Data Preparation & Inspection
+We highly recommend first implementing the *Data Preparation Vignette* https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html for preparing data starting in different formats (P4.1 - P4.3a).
+
+#### P4.3b. Required: Read in Wide Data  
+Please see the *Data Requirements* vignette for guidance on preparing complete data in wide format 
+  
+*devMSMs* requires data in one of the following wide data formats (see Figure 1) for use in the package:  
 
 * a single data frame of data in wide format with no missing data  
 
 * a mids object (output from mice::mice()) of data imputed in wide format  
 
 * a list of data imputed in wide format as data frames  
+<br>
 
-See the Data Preparation vignette for more detail.
-  
-    
-We first read in data that has been multiply imputed 5 times using the *mice* package using the random forest technique. 
+We first read in data that has been formatted and multiply imputed 5 times using the *mice* package using the random forest imputation technique. 
 ```{r}
 data <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa/imputations/ESETA1-StrDif_Tot.58_all_imp.rds") 
 ```
+<br>
 
-
-## P2. Create MSM Object
-The first step is to create an initial object by specifying the core variables and data for use with the package. See the Specify Core Inputs vignette for more information. 
-
-Below, we specify data, exposure, time invariatn and time-varying confounders, as well as exposure epochs. 
+#### P4.4 Required: Create MSM Object
+Below, we create an MSM object by supplying our imputed data, exposure, time invariant and time-varying confounders, exposure epochs, the separator preceding the time point for time-varying variables, and an optional home directory for saving output. 
 ```{r}
 set.seed(1234)
 
 obj <- initMSM(
   data,
   exposure = c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58"), 
-  ti_conf =  c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
-               "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
+  ti_conf =  c("state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", 
+               "PmEd2", "KFASTScr", "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", 
+               "SurpPreg", "SmokTotl", "DrnkFreq",
                "peri_health", "caregiv_health", "gov_assist"),
   tv_conf = c("SAAmylase.6","SAAmylase.15", "SAAmylase.24", 
               "MDI.6", "MDI.15",                                            
@@ -90,41 +123,16 @@ obj <- initMSM(
 )
 ```
 
-Inspect the msm object
+View the msm object.
 ```{r}
 print(obj)
 ```
 
 
-## P3. Required for Continuous Exposures: Identify High and Low Cutoff Values 
-See the Specify Core Inputs vignette for more information. 
-
-Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.  
-```{r}
-hi_lo_cut <- c(0.6, 0.3)
-```
-<br>
-
-
-## P4. Recommended: Specify Hypotheses-Relevant Exposure Histories 
-See the Specify Core Inputs vignette for more information. 
-
-Below, we specify all reference histories and all comparison histories associated with our two hypotheses.  
-```{r}
-reference <- c("h-l-l", "l-h-h", "l-l-l", "l-h-l", "l-l-h", "h-h-h")
-
-comparison <- c("l-l-h", "l-h-l", "l-l-l", "h-l-h", "h-h-l", "h-l-l", "l-h-h")
-```
-
-<br>
-
-## P5. Recommended: Inspect Exposure Histories and Data
-
+#### P4.5 Recommended: Inspect Inspect Exposure Histories and Data
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
 
 ```{r, eval = FALSE}
-outcome <-  "StrDif_Tot.58"
-
 inspectData(data = data, 
             obj = obj, 
             outcome = outcome, 
@@ -135,11 +143,10 @@ inspectData(data = data,
             save.out = TRUE)
 ```
 Here, we see summaries of the data types as well as reasonable cell counts in each of our specified histories, for each imputed dataset. 
-
 <br>
 <br>
 
-# *Workflow: Continuous Exposure Vignette*
+# *Workflow: Continuous Exposure* Vignette
 https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html
 
 ## PHASE 1: Confounder Adjustment
@@ -172,10 +179,10 @@ print(full_formulas)
 The next step is to examine initial imbalance between confounders and exposure prior to IPTW weighting. Users have the option to specify balance threshold(s), which we recommend doing consistently throughout this workflow.  
 
 ```{r}
-balance_thresh <- c(0.05, 0.1) # empirical example 
+balance_thresh <- c(0.05, 0.1) 
 
 imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35",
-              "PmEd2") # empirical example
+              "PmEd2") 
 
 prebalance_stats <- assessBalance(obj = obj, 
                                   data = data,
@@ -574,7 +581,7 @@ Next, trim the final balancing weights to reduce the heavy right tail.
 First, trim the main weights.  
 
 ```{r}
-quantile <- 0.95 # empirical example 
+quantile <- 0.95 
 
 weights <- final_weights
 trim_weights <- trimWeights(weights = weights, 
@@ -705,12 +712,12 @@ models <- fitModel(data = data,
                    model = m,
                    save.out = TRUE) 
 
-models_unweighted <- fitModel(data = data, 
-                   obj = obj, 
+models_unweighted <- fitModel(data = data,
+                   obj = obj,
                    weights = NULL,
-                   outcome = outcome, 
+                   outcome = outcome,
                    model = m,
-                   save.out = TRUE) 
+                   save.out = TRUE)
 ```
 
 Inspect
@@ -723,9 +730,9 @@ print(models,
       save.out = TRUE)
 
 
-# unweighted
-print(models_unweighted, 
-      save.out = "fit_model_summary-outcome_StrDif_Tot_58-exposure_ESETA1-model_m0-all_avg_UNWEIGHTED.docx")
+# # unweighted
+# print(models_unweighted, 
+#       save.out = "fit_model_summary-outcome_StrDif_Tot_58-exposure_ESETA1-model_m0-all_avg_UNWEIGHTED.docx")
 ```
 
 
@@ -780,7 +787,7 @@ model <- models
 ##### Timing hypotheses
 Assess timing hypotheses about the role of exposure during infancy.  
 
-1 dose timing
+##### 1 dose timing
 ```{r}
 reference_t1 <- "h-l-l" 
 comparison_t1 <- c("l-l-h", "l-h-l", "l-l-l")
@@ -801,23 +808,23 @@ plot(results_t1,
 
 
 # 
-# # unweighted
-# results_t1_uw <- compareHistories(fit = models_unweighted, 
-#                             comparison = comparison_t1,
-#                             reference = reference_t1,
-#                             hi_lo_cut = hi_lo_cut,
-#                             mc_comp_method = mc_comp_method, 
-#                             dose = dose_level,
-#                             save.out = TRUE)
-# summary(results_t1_uw)
-# 
-# print(results_t1, 
-#       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-t1-uw.docx")
-# plot(results_t1,
-#      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-t1-uw.jpeg")
+# unweighted
+results_t1_uw <- compareHistories(fit = models_unweighted,
+                            comparison = comparison_t1,
+                            reference = reference_t1,
+                            hi_lo_cut = hi_lo_cut,
+                            mc_comp_method = mc_comp_method,
+                            dose = dose_level,
+                            save.out = TRUE)
+summary(results_t1_uw)
+
+print(results_t1,
+      save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-t1-uw.docx")
+plot(results_t1,
+     save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-t1-uw.jpeg")
 ```
 
-2 dose timing
+##### 2 dose timing
 ```{r}
 reference_t2 <- "l-h-h" 
 comparison_t2 <- c("h-l-h", "h-h-l") 
@@ -838,27 +845,27 @@ plot(results_t2,
 
 
 
-# # unweighted
-# results_t2_uw <- compareHistories(fit = models_unweighted, 
-#                             comparison = comparison_t2,
-#                             reference = reference_t2,
-#                             hi_lo_cut = hi_lo_cut,
-#                             mc_comp_method = mc_comp_method, 
-#                             dose = dose_level,
-#                             save.out = FALSE)
-# summary(results_t2_uw)
-# 
-# print(results_t2_uw, 
-#       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-t2-uw.docx")
-# plot(results_t2_uw,
-#      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-t2-uw.jpeg")
+# unweighted
+results_t2_uw <- compareHistories(fit = models_unweighted,
+                            comparison = comparison_t2,
+                            reference = reference_t2,
+                            hi_lo_cut = hi_lo_cut,
+                            mc_comp_method = mc_comp_method,
+                            dose = dose_level,
+                            save.out = FALSE)
+summary(results_t2_uw)
+
+print(results_t2_uw,
+      save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-t2-uw.docx")
+plot(results_t2_uw,
+     save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-t2-uw.jpeg")
 ```
 
 
 ##### Dose hypotheses
 Assess dose hypotheses.
 
-0 vs 1
+##### 0 vs 1
 ```{r}
 reference_d0 <- "l-l-l"
 comparison_d0 <- c("h-l-l", "l-h-l", "l-l-h")
@@ -879,23 +886,23 @@ plot(results_d0,
 
 
 
-# # unweighted
-# results_d0_uw <- compareHistories(fit = models_unweighted, 
-#                             comparison = comparison_d0,
-#                             reference = reference_d0,
-#                             hi_lo_cut = hi_lo_cut,
-#                             mc_comp_method = mc_comp_method, 
-#                             dose = dose_level,
-#                             save.out = TRUE)
-# summary(results_d0_uw)
-# 
-# print(results_d0_uw, 
-#       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d0-uw.docx")
-# plot(results_d0_uw,
-#      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d0-uw.jpeg")
+# unweighted
+results_d0_uw <- compareHistories(fit = models_unweighted,
+                            comparison = comparison_d0,
+                            reference = reference_d0,
+                            hi_lo_cut = hi_lo_cut,
+                            mc_comp_method = mc_comp_method,
+                            dose = dose_level,
+                            save.out = TRUE)
+summary(results_d0_uw)
+
+print(results_d0_uw,
+      save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d0-uw.docx")
+plot(results_d0_uw,
+     save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d0-uw.jpeg")
 ```
 
-1 vs 2
+##### 1 vs 2
 ```{r}
 reference_d1 <- c("h-l-l", "l-h-l", "l-l-h")
 comparison_d1 <- c("h-h-l", "l-h-h", "h-l-h")
@@ -916,23 +923,23 @@ plot(results_d1,
 
 
 
-# # unweightdd
-# results_d1_uw <- compareHistories(fit = models_unweighted, 
-#                             comparison = comparison_d1,
-#                             reference = reference_d1,
-#                             hi_lo_cut = hi_lo_cut,
-#                             mc_comp_method = mc_comp_method, 
-#                             dose = dose_level,
-#                             save.out = TRUE)
-# summary(results_d1_uw)
-# 
-# print(results_d1_uw, 
-#       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d1-uw.docx")
-# plot(results_d1_uw,
-#      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d1-uw.jpeg")
+# unweighted
+results_d1_uw <- compareHistories(fit = models_unweighted,
+                            comparison = comparison_d1,
+                            reference = reference_d1,
+                            hi_lo_cut = hi_lo_cut,
+                            mc_comp_method = mc_comp_method,
+                            dose = dose_level,
+                            save.out = TRUE)
+summary(results_d1_uw)
+
+print(results_d1_uw,
+      save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d1-uw.docx")
+plot(results_d1_uw,
+     save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d1-uw.jpeg")
 ```
 
-2 vs 3
+##### 2 vs 3
 ```{r}
 reference_d2 <- "h-h-h"
 comparison_d2 <- c("h-h-l", "l-h-h", "h-l-h")
@@ -952,24 +959,24 @@ plot(results_d2,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d2.jpeg")
 
 
-# 
-# # unweighted
-# results_d2_uw <- compareHistories(fit = models_unweighted, 
-#                             comparison = comparison_d2,
-#                             reference = reference_d2,
-#                             hi_lo_cut = hi_lo_cut,
-#                             mc_comp_method = mc_comp_method, 
-#                             dose = dose_level,
-#                             save.out = TRUE)
-# summary(results_d2_uw)
-# 
-# print(results_d2_uw, 
-#       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d2-uw.docx")
-# plot(results_d2_uw,
-#      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d2-uw.jpeg")
+
+# unweighted
+results_d2_uw <- compareHistories(fit = models_unweighted,
+                            comparison = comparison_d2,
+                            reference = reference_d2,
+                            hi_lo_cut = hi_lo_cut,
+                            mc_comp_method = mc_comp_method,
+                            dose = dose_level,
+                            save.out = TRUE)
+summary(results_d2_uw)
+
+print(results_d2_uw,
+      save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d2-uw.docx")
+plot(results_d2_uw,
+     save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d2-uw.jpeg")
 ```
 
-3 vs 1
+##### 3 vs 1
 ```{r}
 reference_d3 <- "h-h-h"
 comparison_d3 <- c("h-l-l", "l-h-l", "l-l-h")
@@ -1025,25 +1032,25 @@ plot(results_d3.s2,
 
 
 
-# # unweighted
-# results_d3_uw <- compareHistories(fit = models_unweighted, 
-#                             comparison = comparison_d3,
-#                             reference = reference_d3,
-#                             hi_lo_cut = hi_lo_cut,
-#                             mc_comp_method = mc_comp_method, 
-#                             dose = dose_level,
-#                             save.out = FALSE)
-# 
-# summary(results_d3_uw)
-# 
-# print(results_d3_uw, 
-#       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d3-uw.docx")
-# plot(results_d3_uw,
-#      colors = c("#7570B3", "#D95F02", "#D95F02", "#D95F02"),
-#      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d3-uw.jpeg")
+# unweighted
+results_d3_uw <- compareHistories(fit = models_unweighted,
+                            comparison = comparison_d3,
+                            reference = reference_d3,
+                            hi_lo_cut = hi_lo_cut,
+                            mc_comp_method = mc_comp_method,
+                            dose = dose_level,
+                            save.out = FALSE)
+
+summary(results_d3_uw)
+
+print(results_d3_uw,
+      save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d3-uw.docx")
+plot(results_d3_uw,
+     colors = c("#7570B3", "#D95F02", "#D95F02", "#D95F02"),
+     save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d3-uw.jpeg")
 ```
 
-3 vs 0
+##### 3 vs 0
 ```{r}
 reference_d4 <- "h-h-h"
 comparison_d4 <- "l-l-l"
@@ -1096,23 +1103,66 @@ plot(results_d4.s2,
 
 
 
-# # unweighted
-# results_d4_uw <- compareHistories(fit = models_unweighted, 
-#                             comparison = comparison_d4,
-#                             reference = reference_d4,
-#                             hi_lo_cut = hi_lo_cut,
-#                             mc_comp_method = mc_comp_method, 
-#                             dose = dose_level,
-#                             save.out = TRUE)
-# summary(results_d4_uw)
-# 
-# print(results_d4_uw, 
-#       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d4-uw.docx")
-# plot(results_d4,
-#      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d4-uw.jpeg")
+# unweighted
+results_d4_uw <- compareHistories(fit = models_unweighted,
+                            comparison = comparison_d4,
+                            reference = reference_d4,
+                            hi_lo_cut = hi_lo_cut,
+                            mc_comp_method = mc_comp_method,
+                            dose = dose_level,
+                            save.out = TRUE)
+summary(results_d4_uw)
+
+print(results_d4_uw,
+      save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d4-uw.docx")
+plot(results_d4,
+     save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d4-uw.jpeg")
 ```
 
-More stringent p-value correction considering all comparisons as one family. 
+
+##### 2 vs 0
+```{r}
+reference_d5 <- "l-l-l"
+comparison_d5 <- c("h-h-l", "l-h-h", "h-l-h")
+
+results_d5 <- compareHistories(fit = model, 
+                            comparison = comparison_d5,
+                            reference = reference_d5,
+                            hi_lo_cut = hi_lo_cut,
+                            mc_comp_method = mc_comp_method, 
+                            dose = dose_level,
+                            save.out = TRUE)
+summary(results_d5)
+
+print(results_d5, 
+      save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d5.docx")
+plot(results_d5,
+     save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d5.jpeg")
+
+
+
+# unweighted
+results_d5_uw <- compareHistories(fit = models_unweighted,
+                            comparison = comparison_d5,
+                            reference = reference_d5,
+                            hi_lo_cut = hi_lo_cut,
+                            mc_comp_method = mc_comp_method,
+                            dose = dose_level,
+                            save.out = TRUE)
+summary(results_d5_uw)
+
+print(results_d5_uw,
+      save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d5-uw.docx")
+plot(results_d5_uw,
+     save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d5-uw.jpeg")
+```
+
+
+
+
+
+
+##### More stringent p-value correction considering all comparisons as one family. 
 ```{r}
 all_results <- rbind(results_t1$comps,
                      results_t2$comps,
@@ -1120,7 +1170,8 @@ all_results <- rbind(results_t1$comps,
                      results_d1$comps,
                      results_d2$comps,
                      results_d3$comps,
-                     results_d4$comps)
+                     results_d4$comps,
+                     results_d5$comps)
 all_results$p_corr_all <- p.adjust(all_results$p.value, method = mc_comp_method)
 all_results[] <- lapply(all_results, function(x) if(is.numeric(x)) round(x, 3) else x)
 
@@ -1129,20 +1180,21 @@ tinytable::tt(all_results) |>
                                overwrite = TRUE)
 
 
-# # unweighted
-# all_results_uw <- rbind(results_t1_uw$comps,
-#                      results_t2_uw$comps,
-#                      results_d0_uw$comps,
-#                      results_d1_uw$comps,
-#                      results_d2_uw$comps,
-#                      results_d3_uw$comps,
-#                      results_d4_uw$comps)
-# all_results_uw$p_corr_all <- p.adjust(all_results_uw$p.value, method = mc_comp_method)
-# all_results_uw[] <- lapply(all_results_uw, function(x) if(is.numeric(x)) round(x, 3) else x)
-# 
-# tinytable::tt(all_results_uw) |> 
-#   tinytable::save_tt(file.path(obj[["home_dir"]], "/histories/all_comps_uw.html"), 
-#                                overwrite = TRUE)
+# unweighted
+all_results_uw <- rbind(results_t1_uw$comps,
+                     results_t2_uw$comps,
+                     results_d0_uw$comps,
+                     results_d1_uw$comps,
+                     results_d2_uw$comps,
+                     results_d3_uw$comps,
+                     results_d4_uw$comps,
+                     results_d5_uw$comps)
+all_results_uw$p_corr_all <- p.adjust(all_results_uw$p.value, method = mc_comp_method)
+all_results_uw[] <- lapply(all_results_uw, function(x) if(is.numeric(x)) round(x, 3) else x)
+
+tinytable::tt(all_results_uw) |>
+  tinytable::save_tt(file.path(obj[["home_dir"]], "/histories/all_comps_uw.html"),
+                               overwrite = TRUE)
 ```
 
 
