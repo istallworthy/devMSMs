@@ -80,7 +80,7 @@ tinytable::tt(example_df) |>
 
 <br>
 
-## Loading packages
+# Loading packages
 
 ```{r, eval = FALSE}
 # install.packages("devtools")
@@ -100,7 +100,7 @@ if (!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet 
 ```
 <br>  
 
-## Exploring Data
+# Exploring *devMSMs* Package Data
 
 The following longitudinal data that accompany *devMSMs* are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain (ESETA1) measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems (StrDif_Tot) measured at 58 months.
 
@@ -140,11 +140,10 @@ head(sim_data_imp_list[[1]], n = c(5, 10))
 
 <br>
 
-# Data Preparation
 
 The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a>. Of note, *devMSMs* must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).
 
-These five recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package.
+Preliminary steps P1 (formulate hypotheses) and P2 (create a DAG) are detailed further in the accompanying manuscript. These following recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package.
 
 <br>
 
@@ -204,7 +203,7 @@ library(devMSMsHelpers)
 
 <br>
 
-## Specify Core Inputs
+# P3. Specify Core Inputs
 
 Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a> for more detail on the following core inputs. Here, we use ESETA1, a measure of economic strain experienced by the family, as the exposure and StrDif_Tot, or behavior problems measured by the SDQ, as the outcome.
 
@@ -236,7 +235,9 @@ tv_conf = c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
 
 outcome <- "StrDif_Tot.58"
 ```
+<br>
 
+# P.4 Data Preparation & Inspection
 Some helper functions have optional arguments to suppress saving output locally (`save.out` = FALSE) and printing it to the console ( `verbose` = FALSE). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out` = TRUE.
 
 ```{r}
@@ -247,12 +248,13 @@ verbose <- TRUE
 
 <br>
 
+
 As shown in Figure 2, users have several options for reading in data. They can begin this workflow with the following options:\
 <br>
 
--   (D1) long data: complete or with missingness that can be formatted and converted to wide data and (P3) imputed as needed
--   (D2) wide data: complete or missingness that can be formatted and (P3) imputed as needed\
--   (D3) data already imputed in wide format can be read in as a list
+-   (P4.1) long data: complete or with missingness that can be formatted and converted to wide data and (P4.3) imputed as needed
+-   (P4.2) wide data: complete or missingness that can be formatted and (P4.3) imputed as needed\
+-   (P4.3) data already imputed in wide format can be read in as a list
 
 <br>
 
@@ -260,7 +262,7 @@ As shown in Figure 2, users have several options for reading in data. They can b
 
 <br> <br>
 
-## D1. Single Long Data Frame
+## P4.1. Single Long Data Frame
 
 Users beginning with a single data frame in long format (with or without missingness) can utilize a helper function `formatLongData()` to summarize exposure and outcome data and convert to required variable names.
 
@@ -276,7 +278,7 @@ head(data_long, n = c(5, 10))
 
 <br>
 
-### D1a. Format Long Data
+### P4.1a. Format Long Data
 
 For long data that is not correctly formatted, `formatLongData()` allows the users to supply existing variables for time (`time_var`), ID (`id_var`), and missing data (`missing`) for re-naming according to what is required by the package. It also allows the user to submit variables that should be factors and integers, and the function classes any factor confounders (`factor_confounders`) as factors, integer confounders (`integer_confounders`) as integers in the data, and all others as numeric. The `sep` field allows you to specify a delimeter for the integer that indicates time point in the variable names.
 
@@ -311,7 +313,7 @@ We get a descriptive statistics summary of the exposure, ESETA1, and the outcome
 
 <br>
 
-### D1b. Tranform Formatted Long Data to Wide
+### P4.1b. Tranform Formatted Long Data to Wide
 
 Users with correctly formatted data in long format have the option of using the following code to transform their data into wide format, to proceed to using the package (if there is no missing data) or imputing (with \< 20% missing data MAR).
 
@@ -340,7 +342,7 @@ head(data_wide_f, n = c(5, 10))
 
 <br> <br>
 
-## D2. Single Wide Data Frame
+## P4.2. Single Wide Data Frame
 
 Alternatively, users could start with a single data frame of wide data (with or without missingness).
 
@@ -368,7 +370,7 @@ head(data_wide, n = c(5, 10))
 
 <br>
 
-### D2a. Format Wide Data
+### P4.2a. Format Wide Data
 
 Users beginning with a single unformatted data frame in long format can utilize a helper function `formatWideData()` to summarize exposure and outcome data and convert to required variable names. `formatWideData()` allows the users to supply existing variables for ID (`id_var`) and missing data (`missing`) for re-naming according to what is required by the package. It also allows the user to submit variables that should be factors and integers, and the function classes any factor confounders (`factor_confounders`) as factors, integer confounders (`integer_confounders`) as integers in the data, and all others as numeric. The user can also specify a time point delimeter (`sep`). 
 
@@ -405,7 +407,7 @@ head(data_wide_f, n = c(5, 10))
 
 <br> <br>
 
-## D3. Formatted Wide Data with Missingness
+## P4.3. Formatted Wide Data with Missingness
 
 The functions of the *devMSMs* package accept data in the form of a single data frame with no missing values or *m* imputed datasets in the form of either a mids object (output from the mice package or via `imputeData()`) or a list of imputed datasets. Most developmental data from humans will have some amount of missing data. Given that the creation of IPTW balancing weights requires complete data, we recommend imputing data. Imputation assumes a missing data mechanism of missing at random (MAR) and no more than 20% missing data in total (Leyrat et al., 2021). Given existing work demonstrating its superiority, *devMSMS* implements the ‘within’ approach for imputed data, conducting all steps on each imputed dataset before pooling estimates using Rubin’s rules to create final average predictions and contrast comparisons in *Worfklows* vignettes Step 5 (Leyrat et al, 2021; Granger et al., 2019).
 
@@ -413,7 +415,7 @@ As shown below, users can use a helper function to impute their wide data or imp
 
 <br>
 
-### D3a. Multiply Impute Formatted, Wide Data Frame using MICE
+### P4.3a. Multiply Impute Formatted, Wide Data Frame using MICE
 
 Users have the option of using the helper `imputeData()` function to impute their correctly formatted wide data. This step can take a while to run. The user can specify how many imputed datasets to create (default m = 5). `imputeData()` draws on the `mice()` function from the *mice* package (van Buuren & Oudshoorn, 2011) to conduct multiple imputation by chained equations (mice). All other variables present in the dataset are used to impute missing data in each column.
 
@@ -469,7 +471,7 @@ The mice object can now be assigned to `data` for use in the *deveMSMs* package 
 
 <br>
 
-### D3b. Read in as a List of Wide Imputed Data Saved Locally
+### P4.3b. Read in as a List of Wide Imputed Data Saved Locally
 
 Alternatively, if a user has imputed datasets already created from wide, formatted data using a program other than *mice*, they can read in, as a list, files saved locally as .csv files in a single folder. This list can be assigned to `data` for use in the *deveMSMs* package (see *Workflows* vignettes).
 

@@ -554,13 +554,12 @@ summary.devMSM_comparisons <- function(object, type = "comps", ...) {
   if (!is.null(reference) && !is.null(comparison)) {
     keep_idx <- epoch_history_tab$epoch_history %in% c(reference, comparison)
     if (!any(keep_idx)) {
-      #NG: maybe should be a warning?
-      stop("There are no participants in your sample with the reference/comparison histories you specified, using high/low cutoff (if applicable).", call. = FALSE)
+      warning("There are no participants in your sample with the reference/comparison histories you specified, using high/low cutoff (if applicable).", call. = FALSE)
     }
     epoch_history_tab <- epoch_history_tab[keep_idx, , drop = FALSE]
     if (any(!c(reference, comparison) %in% epoch_history_tab$epoch_history)){
       #NG: maybe should be a warning?
-      stop(sprintf("There are no participants in your sample in the following histories: %s. 
+      warning(sprintf("There are no participants in your sample in the following histories: %s. 
                    Please revise your reference/comparison histories and/or the high/low cutoffs, if applicable.",
                    paste(c(reference, comparison)[!c(reference,comparison) %in% epoch_history_tab$epoch_history], collapse = ", ")),
            call. = FALSE)
