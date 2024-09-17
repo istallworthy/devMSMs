@@ -152,13 +152,13 @@ https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.htm
 ## PHASE 1: Confounder Adjustment
 The first phase of the MSM process is focused on eliminating confounding of the relation between exposure and outcome.  
 
-### STEP 1: Create Full Balancing Formulas & Conduct Pre-Balance Checking
-The first step is to create full balancing formulas that reflect all measured confounders at each exposure time point.  
+### STEP 1: Create Full Weights Formulas & Conduct Pre-Balance Checking
+The first step is to create full weights formulas that reflect all measured confounders at each exposure time point.  
 
-#### 1a. Create Full Balancing Formulas at each Exposure Time Point
+#### 1a. Create Full Weights Formulas at each Exposure Time Point
 Users have the option to specify concurrent confounders to retain and we recommend doing so consistently throughout this workflow. 
 
-Please see the Customize Balancing Formulas Vignette at the link below for more detail on custom formulas. 
+Please see the *Customize Weights Formulas* Vignette at the link below for more detail on custom formulas. 
 https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html  
 
 ```{r}
@@ -178,12 +178,16 @@ print(full_formulas)
 #### 1b. Conduct Exploratory Pre-Balance Assessment
 The next step is to examine initial imbalance between confounders and exposure prior to IPTW weighting. Users have the option to specify balance threshold(s), which we recommend doing consistently throughout this workflow.  
 
+We first specify two balance thresholds and a list of important confounders, which will be held to the higher (first) balancing threshold. These specifications will be used for all balance assessment. 
 ```{r}
 balance_thresh <- c(0.05, 0.1) 
 
 imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35",
               "PmEd2") 
+```
 
+
+```{r}
 prebalance_stats <- assessBalance(obj = obj, 
                                   data = data,
                                   balance_thresh = balance_thresh, 
@@ -220,11 +224,11 @@ for (i in 1:5){
 ```
 
 
-### STEP 2: Create Simplified Balancing Formulas & Determine Optimal Weighting Method
-The next step is to specify shorter, simplified balancing formula for the purposes of determining the weighting method optimal for the data.   
+### STEP 2: Create Simplified weights formulas & Determine Optimal Weighting Method
+The next step is to specify shorter, simplified weights formula for the purposes of determining the weighting method optimal for the data.   
 
-#### 2a. Create Simplified Balancing Formulas
-First, create shorter, simplified balancing formulas at each exposure time point.  
+#### 2a. Create Simplified weights formulas
+First, create shorter, simplified weights formulas at each exposure time point.  
 
 ```{r}
 type <- "short" 
@@ -254,7 +258,7 @@ weights.cbps <- createWeights(obj = obj,
                               method = method, 
                               # maxit = 1, # for testing purposes only; makes it run faster 
                               save.out = TRUE)
-# 
+# Read in if you've run them already:
 # weights.cbps <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa/weights/type_short-exposure_ESETA1-method_cbps.rds")
 ```
 
@@ -291,11 +295,15 @@ weights.gbm <- createWeights(obj = obj,
                              formulas = formulas, 
                              method = method,
                              save.out = TRUE)
+# Read in if you've run already:
+# weights.gbm <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa/weights/type_short-exposure_ESETA1-method_gbm.rds")
+
 print(weights.gbm, 
       i = 2)
 plot(weights.gbm, 
      i = 1, 
      save.out = TRUE)
+summary(weights.gbm[[1]]) 
 
 
 method <- "bart"
@@ -418,7 +426,7 @@ We identify CBPS as the weighting method that most successfully reduces imbalanc
 
 
 ### STEP 3: Create Updated Formulas & Re-Specify Weights Using Optimal Weighting Method
-The next step is to update the short balancing formulas with any imbalanced confounders, and re-specify the IPTW weights.  
+The next step is to update the short weights formulas with any imbalanced confounders, and re-specify the IPTW weights.  
 
 #### 3a. Inspect Balance of Best-Performing Weighting Method
 First, assess how well each of the IPTW achieve balance for all measured confounders. 
@@ -545,7 +553,7 @@ print(updated_formulas)
 
 
 #### 3c. Create Final Balancing Weights
-Next, create final balancing weights using the optimal weighting method and updated balancing formulas.  
+Next, create final balancing weights using the optimal weighting method and updated weights formulas.  
 
 ```{r}
 formulas <- updated_formulas
@@ -566,7 +574,7 @@ Inspect
 print(final_weights, 
       i = 1)
 
-summary(final_weights[[3]])
+summary(final_weights[[1]])
 
 plot(final_weights, 
      i = 1,
@@ -600,6 +608,7 @@ plot(trim_weights,
 ```
 
 
+
 ##### Sensitvity Analyses
 Next, conduct sensitivity analyses using two other quantile values.  
 
@@ -625,10 +634,10 @@ plot(trim_weights.s2,
 
 
 ### STEP 4: Conduct Final Balance Assessment
-Next, conduct a final balance assessment using all measured confounders (i.e., the full balancing formulas).  
+Next, conduct a final balance assessment using all measured confounders (i.e., the full weights formulas).  
 
-#### Main
-First, conduct the main balance assessment.  
+#### Trimmed
+Assess balance of trimmed weights 
 
 ```{r}
 balance_thresh <- c(0.05, 0.1) 
@@ -637,7 +646,7 @@ imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24",
               "InRatioCor.35", "PmEd2") 
 
 weights <- trim_weights
-final_balance_stats <- assessBalance(data = data, 
+final_balance_stats_trim <- assessBalance(data = data, 
                                      obj = obj, 
                                      balance_thresh = balance_thresh,
                                      imp_conf = imp_conf,
@@ -645,19 +654,60 @@ final_balance_stats <- assessBalance(data = data,
                                      save.out = TRUE)
 ```
 
-Inspect
+Summarize and inspect
 ```{r}
-summary(final_balance_stats, 
+summary(final_balance_stats_trim, 
         save.out = TRUE)
 
-plot(final_balance_stats, 
-     t = 2, 
-     save.out = TRUE)
+summary(trim_weights[[1]])
 
-print(final_balance_stats, 
-      save.out = TRUE)
+
+# average ESS
+mean(summary(trim_weights[[1]])$ESETA1.6$effective.sample.size$Total[2],
+     summary(trim_weights[[2]])$ESETA1.6$effective.sample.size$Total[2],
+     summary(trim_weights[[3]])$ESETA1.6$effective.sample.size$Total[2],
+     summary(trim_weights[[4]])$ESETA1.6$effective.sample.size$Total[2],
+     summary(trim_weights[[5]])$ESETA1.6$effective.sample.size$Total[2]
+)
+
+
+
+
+# plot(final_balance_stats_trim, 
+#      t = 2, 
+#      save.out = TRUE)
+# 
+# print(final_balance_stats_trim, 
+#       save.out = TRUE)
 ```
 
+#### Untrimmed
+Assess balance of untrimmed weights 
+
+```{r}
+
+weights <- final_weights
+final_balance_stats_untrim <- assessBalance(data = data, 
+                                     obj = obj, 
+                                     balance_thresh = balance_thresh,
+                                     imp_conf = imp_conf,
+                                     weights = weights,
+                                     save.out = TRUE)
+```
+
+Summarize and inspect
+```{r}
+summary(final_balance_stats_untrim, 
+        save.out = TRUE)
+summary(final_weights[[1]])
+
+# plot(final_balance_stats_untrim, 
+#      t = 2, 
+#      save.out = TRUE)
+# 
+# print(final_balance_stats_untrim, 
+#       save.out = TRUE)
+```
 
 #### Sensitvity Analyses
 Next, conduct the recommended specifying sensitivity analyses to match the main analyses above.  
@@ -670,6 +720,7 @@ final_balance_stats.s1 <- assessBalance(data = data,
                                         save.out = "balance-weighted-exposure_ESETA1-method_cbps-form_update-s1.rds")
 summary(final_balance_stats.s1, 
         save.out = TRUE)
+summary(trim_weights.s1[[1]])
 
 
 weights <- trim_weights.s2
@@ -679,6 +730,8 @@ final_balance_stats.s2 <- assessBalance(data = data,
                                         save.out = "balance-weighted-exposure_ESETA1-method_cbp-form_update-s2.rds")
 summary(final_balance_stats.s2, 
         save.out = TRUE)
+summary(trim_weights.s2[[1]])
+
 ```
 
 
@@ -822,6 +875,14 @@ print(results_t1,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-t1-uw.docx")
 plot(results_t1,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-t1-uw.jpeg")
+
+d1 = mice::complete(data, 1)
+d2 = mice::complete(data, 2)
+d3 = mice::complete(data, 3)
+d4 = mice::complete(data, 4)
+d5 = mice::complete(data, 5)
+
+mean(sd(d1$StrDif_Tot.58), sd(d2$StrDif_Tot.58), sd(d3$StrDif_Tot.58), sd(d4$StrDif_Tot.58), sd(d5$StrDif_Tot.58))
 ```
 
 ##### 2 dose timing
