@@ -59,7 +59,7 @@ The specification of exposure epochs should be kept consistent throughout the us
 For this example, we elected to create epochs of infancy (6 and 15 months), toddlerhood (24 and 35 months), and early childhood (58 months) so we include all exposure time points.
 
 ```{r}
-exposure = c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
+exposure <- c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
 ```
 
 <br>
@@ -158,18 +158,18 @@ If the user wishes to specify any interactions, they need to manually create the
 ```{r}
 tv_conf <- c("SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
   "MDI.6", "MDI.15",
-  "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", "RHasSO.58",
-  "WndNbrhood.6", "WndNbrhood.24", "WndNbrhood.35", "WndNbrhood.58",
+  "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", 
+  "WndNbrhood.6", "WndNbrhood.24", "WndNbrhood.35",
   "IBRAttn.6", "IBRAttn.15", "IBRAttn.24",
-  "B18Raw.6", "B18Raw.15", "B18Raw.24", "B18Raw.58",
-  "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", "HOMEETA1.58",
-  "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", "InRatioCor.58",
+  "B18Raw.6", "B18Raw.15", "B18Raw.24", 
+  "HOMEETA1.6", "HOMEETA1.15", "HOMEETA1.24", "HOMEETA1.35", 
+  "InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35",
   "CORTB.6", "CORTB.15", "CORTB.24",
   "EARS_TJo.24", "EARS_TJo.35",
   "LESMnPos.24", "LESMnPos.35",
   "LESMnNeg.24", "LESMnNeg.35",
   "StrDif_Tot.35", 
-  "fscore.35", "fscore.58")
+  "fscore.35")
 ```
 <br>  
 
@@ -180,9 +180,7 @@ When creating balancing formula at each exposure time point, the default of *dev
 For `concur_conf`: as a list of character strings, provide the names of any time-varying confounders (in wide format) that you wish to be included contemporaneously in the balancing formulas (overriding the default which is to only include lagged confounders).
 
 ```{r}
-
 concur_conf <- "B18Raw.6"
-
 ```
 
 <br>
