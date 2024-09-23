@@ -1,6 +1,15 @@
 ---
 title: "Specify Core Inputs"
-format: html
+author: "Isabella Stallworthy"
+date: "`r Sys.Date()`"
+output:
+    html_vignette:
+        df_print: kable
+        toc: false
+vignette: >
+  %\VignetteIndexEntry{Specify_Core_Inputs}
+  %\VignetteEncoding{UTF-8}s
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r, include = FALSE}
