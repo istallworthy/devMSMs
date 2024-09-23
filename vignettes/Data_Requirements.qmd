@@ -143,7 +143,6 @@ head(sim_data_imp_list[[1]], n = c(5, 10))
 
 The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a>. Of note, *devMSMs* must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).
 
-Preliminary steps P1 (formulate hypotheses) and P2 (create a DAG) are detailed further in the accompanying manuscript. These following recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package.
 
 <br>
 
@@ -202,6 +201,8 @@ library(devMSMsHelpers)
 ```
 
 <br>
+
+Preliminary steps P1 (formulate hypotheses) and P2 (create a DAG) are detailed further in the accompanying manuscript. These following recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package.
 
 # P3. Specify Core Inputs
 

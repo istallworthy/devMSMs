@@ -18,6 +18,7 @@ Please see the website vignettes and/or type `?functionName` into the console fo
 
 Functions from devMSMs: https://github.com/istallworthy/devMSMs
 
+<br>
 
 # *Installation*
 https://istallworthy.github.io/devMSMs/index.html 
@@ -43,7 +44,7 @@ Please see the accompanying manuscript for steps P1 (creating hypotheses) and P2
 ### STEP P3. Specify Core Inputs
 The first step is to specify core inputs for use with the package. 
 
-In addition to the core inputs supplied directly to `initMSM()` in Step P4.4, we specify the following (See the Specify Core Inputs vignette for more information including guidance on specifying other core inputs (P3.1-P3.8)) : 
+In addition to the core inputs supplied directly to `initMSM()` in Step P4.4 (See the Specify Core Inputs vignette for more information including guidance on specifying core inputs P3.1-3 & P3.5), we specify the following additional inputs: 
 
 #### P3.4. Required for Continuous Exposures: Identify High and Low Cutoff Values 
 See the Specify Core Inputs vignette for more information. 
@@ -70,7 +71,7 @@ outcome <-  "StrDif_Tot.58"
 <br>
 
 ### STEP P4. Data Preparation & Inspection
-We highly recommend first implementing the *Data Preparation Vignette* https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html for preparing data starting in different formats (P4.1 - P4.3a).
+Please see the ExampleDataPrep.rmd file for more details on data preparation for this empirical example. We also highly recommend first implementing the *Data Preparation Vignette* https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html for preparing data starting in different formats (P4.1 - P4.3a).
 
 #### P4.3b. Required: Read in Wide Data  
 Please see the *Data Requirements* vignette for guidance on preparing complete data in wide format 
@@ -117,17 +118,16 @@ obj <- initMSM(
               "StrDif_Tot.35", 
               "fscore.35"
               ),
-  epoch = c("Infancy", "Infancy", "Toddlerhood", "Toddlerhood", "Childhood"),
+  epoch = epochs,
   sep = "\\.",
   home_dir = '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' 
 )
 ```
 
-View the msm object.
+View the msm object
 ```{r}
 print(obj)
 ```
-
 
 #### P4.5 Recommended: Inspect Inspect Exposure Histories and Data
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
@@ -186,7 +186,6 @@ imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35",
               "PmEd2") 
 ```
 
-
 ```{r}
 prebalance_stats <- assessBalance(obj = obj, 
                                   data = data,
@@ -222,12 +221,12 @@ for (i in 1:5){
           save.out = TRUE) 
 }
 ```
+<br>
 
-
-### STEP 2: Create Simplified weights formulas & Determine Optimal Weighting Method
+### STEP 2: Create Simplified Weights Formulas & Determine Optimal Weighting Method
 The next step is to specify shorter, simplified weights formula for the purposes of determining the weighting method optimal for the data.   
 
-#### 2a. Create Simplified weights formulas
+#### 2a. Create Simplified Wights Formulas
 First, create shorter, simplified weights formulas at each exposure time point.  
 
 ```{r}
@@ -242,7 +241,6 @@ Inspect
 ```{r}
 print(short_formulas)
 ```
-
 
 #### 2b. Create IPTW Balancing Weights Using Multiple Weighting Methods
 We recommend users use the short formulas to create IPTW weights using all the available weighting methods: "glm", "gbm", "bart", "super", and "cbps." 
@@ -287,8 +285,9 @@ print(weights.glm,
 plot(weights.glm, 
      i = 1,
      save.out = TRUE)
+```
 
-
+```{r}
 method <- "gbm"
 weights.gbm <- createWeights(obj = obj, 
                              data = data, 
@@ -304,8 +303,9 @@ plot(weights.gbm,
      i = 1, 
      save.out = TRUE)
 summary(weights.gbm[[1]]) 
+```
 
-
+```{r}
 method <- "bart"
 weights.bart <- createWeights(obj = obj, 
                               data = data, 
@@ -317,9 +317,9 @@ print(weights.bart,
 plot(weights.bart, 
      i = 1, 
      save.out = TRUE)
+```
 
-
-
+```{r}
 method <- "super"
 weights.super <- createWeights(obj = obj, 
                                data = data, 
@@ -338,11 +338,6 @@ plot(weights.super,
 The next step is to assess balance for each weighting method and for the user to determine the optimal weighting method.  
 
 ```{r}
-balance_thresh <- c(0.05, 0.1) 
-
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", 
-              "InRatioCor.35", "PmEd2") 
-
 weights <- weights.cbps 
 
 balance_stats.cbps <- assessBalance(data = data, 
@@ -354,7 +349,9 @@ balance_stats.cbps <- assessBalance(data = data,
 
 # to load in from file (output from saving above!)
 # balance_stats.cbps <- readRDS("/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa/balance/weighted-exposure_A-method_cbps.rds")
+```
 
+```{r}
 weights <- weights.glm
 balance_stats.glm <- assessBalance(data = data, 
                                    obj = obj, 
@@ -362,7 +359,9 @@ balance_stats.glm <- assessBalance(data = data,
                                    imp_conf = imp_conf, 
                                    balance_thresh = balance_thresh,
                                    save.out = TRUE)
+```
 
+```{r}
 weights <- weights.gbm
 balance_stats.gbm <- assessBalance(data = data, 
                                    obj = obj, 
@@ -370,8 +369,9 @@ balance_stats.gbm <- assessBalance(data = data,
                                    imp_conf = imp_conf, 
                                    balance_thresh = balance_thresh,
                                    save.out = TRUE)
+```
 
-
+```{r}
 weights <- weights.bart
 balance_stats.bart <- assessBalance(data = data, 
                                     obj = obj, 
@@ -379,8 +379,9 @@ balance_stats.bart <- assessBalance(data = data,
                                     imp_conf = imp_conf, 
                                     balance_thresh = balance_thresh,
                                     save.out = TRUE)
+```
 
-
+```{r}
 weights <- weights.super 
 balance_stats.super <- assessBalance(data = data, 
                                      obj = obj, 
@@ -420,15 +421,14 @@ print(balance_stats.super,
 ```
 
 
-
 We identify CBPS as the weighting method that most successfully reduces imbalance. 
 
-
+<br>
 
 ### STEP 3: Create Updated Formulas & Re-Specify Weights Using Optimal Weighting Method
 The next step is to update the short weights formulas with any imbalanced confounders, and re-specify the IPTW weights.  
 
-#### 3a. Inspect Balance of Best-Performing Weighting Method
+#### 3a. Examine Balance of Optimal Weighting Method
 First, assess how well each of the IPTW achieve balance for all measured confounders. 
 
 ```{r}
@@ -608,21 +608,23 @@ plot(trim_weights,
 ```
 
 
-
 ##### Sensitvity Analyses
 Next, conduct sensitivity analyses using two other quantile values.  
 
 ```{r}
 quantile <- 0.92 
+
 trim_weights.s1 <- trimWeights(weights = weights, 
                                at = quantile,
                                save.out = TRUE)
 plot(trim_weights.s1, 
      i = 1, 
      save.out = TRUE)
+```
 
-
+```{r}
 quantile <- 0.98
+
 trim_weights.s2 <- trimWeights(weights = weights, 
                                at = quantile,
                                save.out = TRUE)
@@ -631,7 +633,7 @@ plot(trim_weights.s2,
      save.out = TRUE)
 ```
 
-
+<br>
 
 ### STEP 4: Conduct Final Balance Assessment
 Next, conduct a final balance assessment using all measured confounders (i.e., the full weights formulas).  
@@ -640,12 +642,8 @@ Next, conduct a final balance assessment using all measured confounders (i.e., t
 Assess balance of trimmed weights 
 
 ```{r}
-balance_thresh <- c(0.05, 0.1) 
-
-imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", 
-              "InRatioCor.35", "PmEd2") 
-
 weights <- trim_weights
+
 final_balance_stats_trim <- assessBalance(data = data, 
                                      obj = obj, 
                                      balance_thresh = balance_thresh,
@@ -671,8 +669,6 @@ mean(summary(trim_weights[[1]])$ESETA1.6$effective.sample.size$Total[2],
 )
 
 
-
-
 # plot(final_balance_stats_trim, 
 #      t = 2, 
 #      save.out = TRUE)
@@ -685,8 +681,8 @@ mean(summary(trim_weights[[1]])$ESETA1.6$effective.sample.size$Total[2],
 Assess balance of untrimmed weights 
 
 ```{r}
-
 weights <- final_weights
+
 final_balance_stats_untrim <- assessBalance(data = data, 
                                      obj = obj, 
                                      balance_thresh = balance_thresh,
@@ -709,44 +705,52 @@ summary(final_weights[[1]])
 #       save.out = TRUE)
 ```
 
+
 #### Sensitvity Analyses
 Next, conduct the recommended specifying sensitivity analyses to match the main analyses above.  
 
 ```{r}
 weights <- trim_weights.s1
+
 final_balance_stats.s1 <- assessBalance(data = data, 
                                         obj = obj,
                                         weights = weights,
+                                        balance_thresh = balance_thresh, 
+                                        imp_conf = imp_conf,
                                         save.out = "balance-weighted-exposure_ESETA1-method_cbps-form_update-s1.rds")
 summary(final_balance_stats.s1, 
         save.out = TRUE)
 summary(trim_weights.s1[[1]])
+```
 
-
+```{r}
 weights <- trim_weights.s2
+
 final_balance_stats.s2 <- assessBalance(data = data, 
                                         obj = obj, 
                                         weights = weights,
+                                        balance_thresh = balance_thresh, 
+                                        imp_conf = imp_conf,
                                         save.out = "balance-weighted-exposure_ESETA1-method_cbp-form_update-s2.rds")
 summary(final_balance_stats.s2, 
         save.out = TRUE)
 summary(trim_weights.s2[[1]])
 
 ```
-
-
+<br>
+<br>
 
 ## PHASE 2: Assess Substantive Associations between Exposure and Outcome
 Lastly, having attenuated confounder associations, we model substantive associations.  
 
-### STEP 5: Fit Weighted Model & Summarize & Visualize Results
-
+### STEP 5: Fit Weighted Outcome Model & Summarize & Visualize Results
 #### 5a. Select and Fit a Weighted Outcome Model
 First, select and fit a marginal outcome model.  
 
 ##### Main
 First, fit the main model.  
 
+Set parameters 
 ```{r}
 family <- gaussian
 
@@ -757,14 +761,20 @@ weights <- trim_weights
 m <- "m0"
 
 outcome <- "StrDif_Tot.58"
+```
 
+Fit weighted model
+```{r}
 models <- fitModel(data = data, 
                    obj = obj, 
                    weights = weights, 
                    outcome = outcome, 
                    model = m,
                    save.out = TRUE) 
+```
 
+(Fit unweighted model for illustration purposes only)
+```{r}
 models_unweighted <- fitModel(data = data,
                    obj = obj,
                    weights = NULL,
@@ -789,12 +799,12 @@ print(models,
 ```
 
 
-
 ##### Sensitvity Analyses
 Next, fit the recommended  specifying sensitivity analyses to match the main analyses above.   
 
 ```{r}
 weights <- trim_weights.s1
+
 models.s1 <- fitModel(data = data, 
                       obj = obj, 
                       weights = weights, 
@@ -803,23 +813,27 @@ models.s1 <- fitModel(data = data,
                       save.out = sprintf("outcome_StrDif_Tot-exposure_ESETA1-model_%s_s1.rds", m))
 print(models.s1, 
       save.out = sprintf("fit_model_summary-outcome_StrDif_Tot_58-exposure_ESETA1-model_%s-all_avg_s1.docx", m))
+```
 
-
+```{r}
 weights <- trim_weights.s2
+
 models.s2 <- fitModel(data = data, 
                       obj = obj, 
                       weights = weights, 
                       outcome = outcome, 
                       model = m,
                       save.out = sprintf("outcome_StrDif_Tot-exposure_ESETA1-model_%s_s2.rds", m))
+
 print(models.s2,
       save.out = sprintf("fit_model_summary-outcome_StrDif_Tot_58-exposure_ESETA1-model_%s-all_avg_s2.docx", m))
 ```
 
 
-#### 5b. Estimate, Compare, & Visualize Model-Predicted Outcome as a Function of History
+#### 5b. Estimate, Compare, & Visualize Model-Predicted Outcome as a Function of Exposure History
 Lastly, estimate and compare user-specified exposure histories.   
 
+Set parameters 
 ```{r}
 hi_lo_cut <- c(0.6, 0.3) 
 
@@ -841,6 +855,7 @@ model <- models
 Assess timing hypotheses about the role of exposure during infancy.  
 
 ##### 1 dose timing
+weighted
 ```{r}
 reference_t1 <- "h-l-l" 
 comparison_t1 <- c("l-l-h", "l-h-l", "l-l-l")
@@ -858,10 +873,10 @@ print(results_t1,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-t1.docx")
 plot(results_t1,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-t1.jpeg")
+```
 
-
-# 
-# unweighted
+(Unweighted for illustrative purposes only)
+```{r}
 results_t1_uw <- compareHistories(fit = models_unweighted,
                             comparison = comparison_t1,
                             reference = reference_t1,
@@ -875,17 +890,11 @@ print(results_t1,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-t1-uw.docx")
 plot(results_t1,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-t1-uw.jpeg")
-
-d1 = mice::complete(data, 1)
-d2 = mice::complete(data, 2)
-d3 = mice::complete(data, 3)
-d4 = mice::complete(data, 4)
-d5 = mice::complete(data, 5)
-
-mean(sd(d1$StrDif_Tot.58), sd(d2$StrDif_Tot.58), sd(d3$StrDif_Tot.58), sd(d4$StrDif_Tot.58), sd(d5$StrDif_Tot.58))
 ```
 
+
 ##### 2 dose timing
+weighted
 ```{r}
 reference_t2 <- "l-h-h" 
 comparison_t2 <- c("h-l-h", "h-h-l") 
@@ -903,10 +912,10 @@ print(results_t2,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-t2.docx")
 plot(results_t2,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-t2.jpeg")
+```
 
-
-
-# unweighted
+(Unweighted for illustrative purposes only)
+```{r}
 results_t2_uw <- compareHistories(fit = models_unweighted,
                             comparison = comparison_t2,
                             reference = reference_t2,
@@ -927,8 +936,10 @@ plot(results_t2_uw,
 Assess dose hypotheses.
 
 ##### 0 vs 1
+weighted
 ```{r}
 reference_d0 <- "l-l-l"
+
 comparison_d0 <- c("h-l-l", "l-h-l", "l-l-h")
 
 results_d0 <- compareHistories(fit = model, 
@@ -944,10 +955,10 @@ print(results_d0,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d0.docx")
 plot(results_d0,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d0.jpeg")
+```
 
-
-
-# unweighted
+(Unweighted for illustrative purposes only)
+```{r}
 results_d0_uw <- compareHistories(fit = models_unweighted,
                             comparison = comparison_d0,
                             reference = reference_d0,
@@ -963,9 +974,12 @@ plot(results_d0_uw,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d0-uw.jpeg")
 ```
 
+
 ##### 1 vs 2
+weighted
 ```{r}
 reference_d1 <- c("h-l-l", "l-h-l", "l-l-h")
+
 comparison_d1 <- c("h-h-l", "l-h-h", "h-l-h")
 
 results_d1 <- compareHistories(fit = model, 
@@ -981,10 +995,10 @@ print(results_d1,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d1.docx")
 plot(results_d1,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d1.jpeg")
+```
 
-
-
-# unweighted
+(Unweighted for illustrative purposes only)
+```{r}
 results_d1_uw <- compareHistories(fit = models_unweighted,
                             comparison = comparison_d1,
                             reference = reference_d1,
@@ -1000,9 +1014,12 @@ plot(results_d1_uw,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d1-uw.jpeg")
 ```
 
+
 ##### 2 vs 3
+weighted
 ```{r}
 reference_d2 <- "h-h-h"
+
 comparison_d2 <- c("h-h-l", "l-h-h", "h-l-h")
 
 results_d2 <- compareHistories(fit = model, 
@@ -1018,10 +1035,10 @@ print(results_d2,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d2.docx")
 plot(results_d2,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d2.jpeg")
+```
 
-
-
-# unweighted
+(Unweighted for illustrative purposes only)
+```{r}
 results_d2_uw <- compareHistories(fit = models_unweighted,
                             comparison = comparison_d2,
                             reference = reference_d2,
@@ -1037,9 +1054,12 @@ plot(results_d2_uw,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d2-uw.jpeg")
 ```
 
+
 ##### 3 vs 1
+weighted
 ```{r}
 reference_d3 <- "h-h-h"
+
 comparison_d3 <- c("h-l-l", "l-h-l", "l-l-h")
 
 results_d3 <- compareHistories(fit = model, 
@@ -1057,9 +1077,10 @@ print(results_d3,
 plot(results_d3,
      colors = c("#7570B3", "#D95F02", "#D95F02", "#D95F02"),
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d3.jpeg")
+```
 
-
-# sensiivity analyses
+example sensitivity analyses
+```{r}
 results_d3.s1 <- compareHistories(fit = models.s1, 
                             comparison = comparison_d3,
                             reference = reference_d3,
@@ -1090,10 +1111,10 @@ print(results_d3.s2,
 plot(results_d3.s2,
      colors = c("#7570B3", "#D95F02", "#D95F02", "#D95F02"),
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d3.s2.jpeg")
+```
 
-
-
-# unweighted
+(Unweighted for illustrative purposes only)
+```{r}
 results_d3_uw <- compareHistories(fit = models_unweighted,
                             comparison = comparison_d3,
                             reference = reference_d3,
@@ -1111,9 +1132,12 @@ plot(results_d3_uw,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d3-uw.jpeg")
 ```
 
+
 ##### 3 vs 0
+weighted
 ```{r}
 reference_d4 <- "h-h-h"
+
 comparison_d4 <- "l-l-l"
 
 results_d4 <- compareHistories(fit = model, 
@@ -1130,9 +1154,10 @@ print(results_d4,
 plot(results_d4,
      colors = c("#1B9E77", "#E7298A","#66A61E", "#E6AB02") ,#"#A6761D" "#666666"
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d4.jpeg")
+```
 
-
-# sensitivity analyses
+Example sensitivity analyses
+```{r}
 results_d4.s1 <- compareHistories(fit = models.s1, 
                             comparison = comparison_d4,
                             reference = reference_d4,
@@ -1146,8 +1171,9 @@ print(results_d4.s1,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d4.s1.docx")
 plot(results_d4.s1,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d4.s1.jpeg")
+```
 
-
+```{r}
 results_d4.s2 <- compareHistories(fit = models.s2, 
                             comparison = comparison_d4,
                             reference = reference_d4,
@@ -1161,10 +1187,10 @@ print(results_d4.s2,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d4.s2.docx")
 plot(results_d4.s2,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d4.s2.jpeg")
+```
 
-
-
-# unweighted
+(Unweighted for illustrative purposes only)
+```{r}
 results_d4_uw <- compareHistories(fit = models_unweighted,
                             comparison = comparison_d4,
                             reference = reference_d4,
@@ -1182,6 +1208,7 @@ plot(results_d4,
 
 
 ##### 2 vs 0
+weighted
 ```{r}
 reference_d5 <- "l-l-l"
 comparison_d5 <- c("h-h-l", "l-h-h", "h-l-h")
@@ -1199,10 +1226,10 @@ print(results_d5,
       save.out = "comparisons_table-outcome_StrDif_Tot_58-exposure_ESETA1-d5.docx")
 plot(results_d5,
      save.out = "comparisons_plot-outcome_StrDif_Tot_58-exposure_ESETA1-d5.jpeg")
+```
 
-
-
-# unweighted
+(Unweighted for illustrative purposes only)
+```{r}
 results_d5_uw <- compareHistories(fit = models_unweighted,
                             comparison = comparison_d5,
                             reference = reference_d5,
@@ -1219,11 +1246,8 @@ plot(results_d5_uw,
 ```
 
 
-
-
-
-
-##### More stringent p-value correction considering all comparisons as one family. 
+##### More stringent p-value correction considering all comparisons as one family
+weighted
 ```{r}
 all_results <- rbind(results_t1$comps,
                      results_t2$comps,
@@ -1239,9 +1263,10 @@ all_results[] <- lapply(all_results, function(x) if(is.numeric(x)) round(x, 3) e
 tinytable::tt(all_results) |> 
   tinytable::save_tt(file.path(obj[["home_dir"]], "histories/all_comps.html"), 
                                overwrite = TRUE)
+```
 
-
-# unweighted
+(Unweighted for illustrative purposes only)
+```{r}
 all_results_uw <- rbind(results_t1_uw$comps,
                      results_t2_uw$comps,
                      results_d0_uw$comps,
@@ -1258,6 +1283,9 @@ tinytable::tt(all_results_uw) |>
                                overwrite = TRUE)
 ```
 
+<br>
+<br>
+<br>
 
 # Package Citations
 We are grateful to the authors of many existing packages that *devMSMs* draws from!

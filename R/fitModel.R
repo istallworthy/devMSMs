@@ -17,6 +17,7 @@
 #' @param covariates list of characters reflecting variable names of covariates,
 #'   required for covariate models ("m1", "m3")
 #' @param family (optional) family function specification for [WeightIt::glm_weightit()] model.
+#' @param link (optional) link function specification for [WeightIt::glm_weightit()] model.
 #'
 #' @return list containing [WeightIt::glm_weightit()] model output. It is the length 
 #'  of the number of datasets (1 for a data.frame or the number of imputed datasets)
@@ -76,7 +77,7 @@
 fitModel <- function(
     data, obj, weights = NULL, outcome,
     model = "m0", int_order = NA, covariates = NULL,
-    family = gaussian(),
+    family = gaussian(), link = "identity",
     verbose = FALSE, save.out = FALSE) {
   ### Checks ----
   dreamerr::check_arg(verbose, "scalar logical")
@@ -193,14 +194,14 @@ fitModel <- function(
       data = d, weights = w,
       outcome = outcome, exposure = exposure, epoch = epoch,
       model = model, int_order = int_order, covariates = covariates,
-      family = family, sep = sep
+      family = family, link = link, sep = sep
     )
     
     all_fits_null[[k]] <- .fit_glm(
       data = d, weights = w,
       outcome = outcome, exposure = exposure, epoch = epoch,
       model = null_model, int_order = int_order, covariates = covariates,
-      family = family, sep = sep
+      family = family, link = link, sep = sep
     )
   }
   
@@ -370,7 +371,7 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
 # Internal call
 .fit_glm <- function(
     data, weights = NULL, outcome, exposure, epoch,
-    model, int_order, family, covariates, sep) {
+    model, int_order, family, link, covariates, sep) {
   
   # Create epoch-averages of exposure variables
   epoch_vars <- exposure
@@ -402,6 +403,7 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
     formula = reformulate(covs, response = outcome),
     data = data,
     family = family,
+    link = link,
     weightit = weights
   )
 }

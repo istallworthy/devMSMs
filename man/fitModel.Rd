@@ -14,6 +14,7 @@ fitModel(
   int_order = NA,
   covariates = NULL,
   family = gaussian(),
+  link = "identity",
   verbose = FALSE,
   save.out = FALSE
 )
@@ -46,6 +47,8 @@ interaction, required for interaction models ("m2", "m3")}
 required for covariate models ("m1", "m3")}
 
 \item{family}{(optional) family function specification for \code{\link[WeightIt:glm_weightit]{WeightIt::glm_weightit()}} model.}
+
+\item{link}{(optional) link function specification for \code{\link[WeightIt:glm_weightit]{WeightIt::glm_weightit()}} model.}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console.
 default is FALSE.}
