@@ -34,11 +34,12 @@ jobs:
         with:
           extra-packages: any::pkgdown, local::.
           needs: website
-          # IS added
+
       - name: Install dependencies
         run: |
-          install.packages('pkgdown')
-          install.packages('quarto')
+          Rscript -e 'install.packages("remotes")'
+          Rscript -e 'remotes::install_cran("pkgdown")'
+          Rscript -e 'remotes::install_cran("quarto")'
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
