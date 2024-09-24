@@ -455,7 +455,7 @@ weights.cbps <- createWeights(obj = obj,
                              method = method,
                              formulas = formulas,
                              verbose = TRUE,
-                             # maxit = 1, # just for testing to speed up --will remove
+                             maxit = 1, # just for testing to speed up --will remove
                              save.out = save.out)
 ```
 
@@ -527,22 +527,22 @@ As shown above, the GLM method produces a higher median of 1.27 and a much great
 #### GBM
 
 ```{r}
-method <- "gbm"
-
-weights.gbm <- createWeights(obj = obj,
-                             data = data,
-                             method = method,
-                             formulas = formulas, 
-                             save.out = save.out)
-
-print(weights.gbm, 
-      i = 1)
-
-summary(weights.gbm[[1]])
-
-plot(weights.gbm, 
-     i = 1, 
-     save.out = save.out)
+# method <- "gbm"
+# 
+# weights.gbm <- createWeights(obj = obj,
+#                              data = data,
+#                              method = method,
+#                              formulas = formulas, 
+#                              save.out = save.out)
+# 
+# print(weights.gbm, 
+#       i = 1)
+# 
+# summary(weights.gbm[[1]])
+# 
+# plot(weights.gbm, 
+#      i = 1, 
+#      save.out = save.out)
 ```
 
 The GBM method produces a similar mean as GLM and a similarly large range (0-216).
@@ -689,14 +689,14 @@ balance_stats.glm <- assessBalance(data = data,
 #### GBM
 
 ```{r}
-weights <- weights.gbm
-
-balance_stats.gbm <- assessBalance(data = data,
-                                   obj = obj,
-                                   weights = weights,
-                                   imp_conf = imp_conf,
-                                   balance_thresh = balance_thresh,
-                                   save.out = save.out)
+# weights <- weights.gbm
+# 
+# balance_stats.gbm <- assessBalance(data = data,
+#                                    obj = obj,
+#                                    weights = weights,
+#                                    imp_conf = imp_conf,
+#                                    balance_thresh = balance_thresh,
+#                                    save.out = save.out)
 ```
 
 #### Bart
@@ -741,8 +741,8 @@ summary(balance_stats.cbps,
 summary(balance_stats.glm, 
         save.out = save.out)
 
-summary(balance_stats.gbm, 
-        save.out = save.out)
+# summary(balance_stats.gbm, 
+#         save.out = save.out)
 
 summary(balance_stats.bart, 
         save.out = save.out)
@@ -760,7 +760,7 @@ summary(weights.cbps[[1]])[[1]][6]
 
 summary(weights.glm[[1]])[[1]][6]
 
-summary(weights.gbm[[1]])[[1]][6]
+# summary(weights.gbm[[1]])[[1]][6]
 
 summary(weights.bart[[1]])[[1]][6]
 
@@ -849,6 +849,7 @@ final_weights <- createWeights(data = data,
                                obj = obj, 
                                method = method, 
                                formulas = formulas,
+                               max.it = 1, # testing only
                                save.out = save.out)
 ```
 
