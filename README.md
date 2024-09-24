@@ -6,8 +6,6 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-<br>
-
 Those who study and work with humans are fundamentally interested in
 questions of causation. More specifically, scientists, clinicians,
 educators, and policymakers alike are often interested in *causal
@@ -77,7 +75,7 @@ Core features of *devMSMs* include:
   prior to the implementation of *devMSMs*
 
 - executable, step-by-step user guidance for implementing the *devMSMs*
-  worflow and preliminary steps in the form of vignettes geared toward
+  workflow and preliminary steps in the form of vignettes geared toward
   users of all levels of R programming experience, along with a
   <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">R
   markdown template file</a>
@@ -92,7 +90,7 @@ Core features of *devMSMs* include:
 The package contains 7 core functions for implementing the two phases of
 the MSM process: longitudinal confounder adjustment and outcome modeling
 of longitudinal data with time-varying exposures. <br>  
-<img width="820" alt="devMSMs overview" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png">
+<img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png" alt="devMSMs overview" width="820"/>
 <br>  
 <br>
 
@@ -109,8 +107,8 @@ manuscript. <br>
 | **Exposure Histories**        | Sequences of relatively high (`'h'`) or low (`'l'`) levels of exposure at each exposure time point or exposure epoch.                                                                                                                                          |
 | **Exposure Dosage**           | Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.                                                                                                       |
 | **Confounder**                | Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths.                                                                                         |
-| **Time-varying confounder**   | A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time.                                                                                                                              |
-| **Time invariant confounder** | A confounder measured at a single time point prior to the exposure time point which reflects a construct that is stable over time.                                                                                                                             |
+| **Time-varying confounder**   | A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly.                                                                                                  |
+| **Time invariant confounder** | A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure.                                                                                                                    |
 | **Collider**                  | A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias.                                                                                                                                 |
 
 <!-- <img width="513" alt="term summary table" src="https://github.com/istallworthy/devMSMs/assets/31548151/e8839e88-20dc-4e55-9f88-b936876be75b"> -->
@@ -123,7 +121,6 @@ manuscript. <br>
 package:
 
 ``` r
-# install.packages("devtools")
 require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs")
 library(devMSMs)
@@ -159,7 +156,7 @@ Core Inputs</a> and *Workflows* vignettes (for binary (TBA) or
 <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a>
 exposures) for implementing the steps below.
 
-<img width="800" alt="devMSMs schematic of workflow" src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png">
+<img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png" alt="devMSMs schematic of workflow" width="900"/>
 
 <br>
 
