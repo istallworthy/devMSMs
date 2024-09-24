@@ -26,7 +26,8 @@ Imports:
     stats,
     tinytable,
     WeightIt (>= 1.3.0),
-    utils
+    utils,
+    quarto
 Suggests: 
     dbarts,
     gbm,
