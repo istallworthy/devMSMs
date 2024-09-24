@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 library(tinytable)
 ```
 
-# devMSMs: Implementing Marginal <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100"/> Structural Models with Longitudinal Data
+# devMSMs: Implementing Marginal <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100" alt="Structural Models"/> with Longitudinal Data
 
 <!-- badges: start -->
 
@@ -97,8 +97,6 @@ library(tinytable)
 tt(terms, theme = "striped") |>
   format_tt(markdown = TRUE) 
 ```
-
-<!-- <img width="513" alt="term summary table" src="https://github.com/istallworthy/devMSMs/assets/31548151/e8839e88-20dc-4e55-9f88-b936876be75b"> -->
 
 <br>
 

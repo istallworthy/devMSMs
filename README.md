@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# devMSMs: Implementing Marginal <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100"/> Structural Models with Longitudinal Data
+# devMSMs: Implementing Marginal <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100" alt="Structural Models"/> with Longitudinal Data
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -110,8 +110,6 @@ manuscript. <br>
 | **Time-varying confounder**   | A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly.                                                                                                  |
 | **Time invariant confounder** | A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure.                                                                                                                    |
 | **Collider**                  | A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias.                                                                                                                                 |
-
-<!-- <img width="513" alt="term summary table" src="https://github.com/istallworthy/devMSMs/assets/31548151/e8839e88-20dc-4e55-9f88-b936876be75b"> -->
 
 <br>
 
