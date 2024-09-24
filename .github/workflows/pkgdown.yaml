@@ -35,27 +35,6 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      # Install system dependencies (Quarto CLI)
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev pandoc
-          wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.5.1/quarto-1.5.1-linux-amd64.deb
-          sudo dpkg -i quarto-1.5.1-linux-amd64.deb
-
-      # Install additional R packages including Quarto R package
-      - name: Install R packages
-        run: |
-          Rscript -e 'options(repos = "https://cloud.r-project.org"); install.packages("remotes")'
-          Rscript -e 'options(repos = "https://cloud.r-project.org"); remotes::install_cran("pkgdown")'
-          Rscript -e 'options(repos = "https://cloud.r-project.org"); remotes::install_cran("quarto")'
-
-      # Verify Quarto installation (optional, for debugging)
-      - name: Verify Quarto installation
-        run: |
-          quarto --version
-          Rscript -e 'packageVersion("quarto")'
-
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
