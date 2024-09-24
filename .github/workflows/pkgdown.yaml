@@ -34,6 +34,11 @@ jobs:
         with:
           extra-packages: any::pkgdown, local::.
           needs: website
+          # IS added
+      - name: Install dependencies
+        run: |
+          install.packages('pkgdown')
+          install.packages('quarto')
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
