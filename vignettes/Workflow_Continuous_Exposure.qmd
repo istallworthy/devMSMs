@@ -449,7 +449,7 @@ The function returns a list of weights objects each in the form of WeightItMSM o
 
 Below, we create IPTW weights using the default CBPS method.
 
-```{r cache = TRUE}
+```{r}
 weights.cbps <- createWeights(obj = obj, 
                              data = data, 
                              method = method,
