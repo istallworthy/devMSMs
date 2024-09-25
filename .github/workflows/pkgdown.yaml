@@ -43,9 +43,9 @@ jobs:
       - name: Check Quarto Path
         run: which quarto
         
-      - name: Fix Quarto Permissions
-        run: sudo chmod +x /Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto
-  
+      # - name: Fix Quarto Permissions
+      #   run: sudo chmod +x /Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto
+      # 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE, quiet = FALSE)
         shell: Rscript {0}
