@@ -34,14 +34,20 @@ jobs:
         with:
           extra-packages: any::pkgdown, local::.
           needs: website
-          
-      # - name: Install Quarto
-      #   run: |
-      #     wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.3.0/quarto-1.3.0-linux-amd64.deb
-      #     sudo dpkg -i quarto-1.3.0-linux-amd64.deb
 
+      - name: Install Quarto
+        run: |
+          wget https://quarto.org/download/latest/quarto-linux-amd64.deb
+          sudo dpkg -i quarto-linux-amd64.deb
+
+      - name: Check Quarto Path
+        run: which quarto
+        
+      - name: Fix Quarto Permissions
+        run: sudo chmod +x /Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto
+  
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE, quiet = FALSE)
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀
