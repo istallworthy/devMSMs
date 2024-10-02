@@ -54,6 +54,15 @@ Below, we specify the 60th and 30th percentiles to demarcate high and low levels
 hi_lo_cut <- c(0.6, 0.3)
 ```
 
+### P3.5 Optional: Exposure Epochs
+
+We specify that the first two exposure time points (6 and 15 months) will be considered infancy, the second two (34 and 25 months) toddlerhood, and the final (58 months) childhood.
+
+```{r}
+epochs <- c("Infancy", "Infancy", "Toddlerhood", "Toddlerhood", "Childhood")
+```
+
+
 #### P3.6. Recommended: Specify Hypotheses-Relevant Exposure Histories 
 See the Specify Core Inputs vignette for more information. 
 
