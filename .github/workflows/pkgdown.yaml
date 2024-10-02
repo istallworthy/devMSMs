@@ -9,7 +9,9 @@ on:
     types: [published]
   workflow_dispatch:
 
-name: pkgdown
+name: pkgdown.yaml
+
+permissions: read-all
 
 jobs:
   pkgdown:
@@ -35,24 +37,13 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - name: Install Quarto
-        run: |
-          wget https://quarto.org/download/latest/quarto-linux-amd64.deb
-          sudo dpkg -i quarto-linux-amd64.deb
-
-      - name: Check Quarto Path
-        run: which quarto
-        
-      # - name: Fix Quarto Permissions
-      #   run: sudo chmod +x /Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto
-      
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀
         if: github.event_name != 'pull_request'
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
         with:
           clean: false
           branch: gh-pages
