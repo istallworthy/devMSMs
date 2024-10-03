@@ -1,15 +1,14 @@
 ---
 title: "Customize Weights Formulas"
-format: html
-date: "`r Sys.Date()`"
-output:
-    html_vignette:
-        df_print: kable
-        toc: true
+date: today
+format:
+    html:
+      df_print: kable
+      toc: true
 vignette: >
   %\VignetteIndexEntry{Customize_Balancing_Formulas}
   %\VignetteEncoding{UTF-8}s
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
 ---
 
 ```{r, include = FALSE}
@@ -32,8 +31,6 @@ devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 require(devMSMs, quietly = TRUE)
 
 ```
-
-<br>  
 
 ## Core Inputs
 We specify core inputs to the *devMSMs* functions.  

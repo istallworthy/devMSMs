@@ -1,15 +1,14 @@
 ---
 title: "Terminology"
-format: html
-date: "`r Sys.Date()`"
-output:
-    html_vignette:
-        df_print: kable
-        toc: true
+date: today
+format:
+    html:
+      df_print: kable
+      toc: true
 vignette: >
   %\VignetteIndexEntry{Terminology}
   %\VignetteEncoding{UTF-8}s
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
 ---
 
 ```{r, include = FALSE}

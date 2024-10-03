@@ -1,15 +1,14 @@
 ---
 title: "Data Requirements & Preparation"
-format: html
-date: "`r Sys.Date()`"
-output:
-    html_vignette:
-        df_print: kable
-        toc: true
+date: today
+format:
+    html:
+      df_print: kable
+      toc: true
 vignette: >
   %\VignetteIndexEntry{Data_Requirements}
   %\VignetteEncoding{UTF-8}s
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
 ---
 
 ```{r, include = FALSE, warning = FALSE}
@@ -20,8 +19,6 @@ knitr::opts_chunk$set(
 
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
-
-<br>
 
 This vignette is designed to aid users in preparing their data for use with *devMSMs*. Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.
 
