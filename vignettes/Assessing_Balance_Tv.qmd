@@ -1,14 +1,14 @@
 ---
 title: "Assessing Balance for Time-Varying Exposures"
-date: "`r Sys.Date()`"
-output:
-    html_vignette:
-        df_print: kable
-        toc: true
+date: today
+format:
+    html:
+      df_print: kable
+      toc: true
 vignette: >
   %\VignetteIndexEntry{Assessing_Balance_Tv}
   %\VignetteEncoding{UTF-8}s
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
 ---
 
 Assessing balance for time-varying exposures is a topic that has not been extensively examined in the MSM literature. However, Jackson (2016) has established guidance that we draw on for this package, implemented in the `calcBalStats()` function (drawn on by the `assessBalance()` function) in *devMSMs*.

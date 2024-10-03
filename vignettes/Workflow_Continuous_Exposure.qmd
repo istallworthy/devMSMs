@@ -1,15 +1,15 @@
 ---
 title: "Workflow: Continuous Exposure"
 author: "Isabella Stallworthy"
-date: "`r Sys.Date()`"
-output:
-    html_vignette:
-        df_print: kable
-        toc: false
+date: today
+format:
+    html:
+      df_print: kable
+      toc: true
 vignette: >
   %\VignetteIndexEntry{Workflow_Continuous_Exposure}
   %\VignetteEncoding{UTF-8}s
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
 ---
 
 ```{r, include = FALSE}
