@@ -40,7 +40,7 @@ jobs:
       - name: Install Quarto
         run: |
          wget https://quarto.org/download/latest/quarto-linux-amd64.deb
-        sudo dpkg -i quarto-linux-amd64.deb
+         sudo dpkg -i quarto-linux-amd64.deb
     
       - name: Check Quarto version
         run: quarto --version
