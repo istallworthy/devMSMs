@@ -47,6 +47,7 @@ jobs:
         
       - name: Render Quarto articles # IS added to build separately
         run: |
+         Rscript -e 'options(repos = c(CRAN = "https://cloud.r-project.org"))'
          quarto render vignettes/Assessing_Balance_Tv.qmd
          quarto render vignettes/Workflow_Continuous_Exposure.qmd
          quarto render vignettes/Customize_Balancing_Formulas.qmd
