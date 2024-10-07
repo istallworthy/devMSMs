@@ -33,6 +33,8 @@ The code contained in this vignette is also available, integrated code from the 
 Until *devMSMs* is available on CRAN, you will need to install it directly from Github (https://github.com/istallworthy/devMSMs), as shown below.
 
 ```{r setup}
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+
 install.packages("devtools")
 require("devtools", quietly = TRUE)
 
