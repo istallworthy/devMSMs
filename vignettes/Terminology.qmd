@@ -17,6 +17,9 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "figures/"
 )
+install.packages("markdown")
+install.packages("tinytable")
+
 require(tinytable)
 require(markdown)
 ```
