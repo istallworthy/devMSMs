@@ -45,15 +45,14 @@ jobs:
       - name: Check Quarto version
         run: quarto --version
         
-      - name: Render Quarto articles # IS added to build separately
-        run: |
-         Rscript -e 'options(repos = c(CRAN = "https://cloud.r-project.org"))'
-         quarto render vignettes/Assessing_Balance_Tv.qmd
-         quarto render vignettes/Workflow_Continuous_Exposure.qmd
-         quarto render vignettes/Customize_Balancing_Formulas.qmd
-         quarto render vignettes/Terminology.qmd
-         quarto render vignettes/Specify_Core_Inputs.qmd
-         quarto render vignettes/Data_Requirements.qmd
+      # - name: Render Quarto articles # IS added to build separately
+      #   run: |
+      #    quarto render vignettes/Assessing_Balance_Tv.qmd
+      #    quarto render vignettes/Workflow_Continuous_Exposure.qmd
+      #    quarto render vignettes/Customize_Balancing_Formulas.qmd
+      #    quarto render vignettes/Terminology.qmd
+      #    quarto render vignettes/Specify_Core_Inputs.qmd
+      #    quarto render vignettes/Data_Requirements.qmd
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
