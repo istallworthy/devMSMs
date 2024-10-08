@@ -258,7 +258,7 @@ randomized and nonrandomized studies. Journal of Educational Psychology,
 66(5), 688–701. <https://doi.org/10.1037/h0037350>
 
 Stuart, E. A. (2010). Matching methods for causal inference: A review
-and a look forward. Statistical Science : A Review Journal of the
+and a look forward. Statistical Science: A Review Journal of the
 Institute of Mathematical Statistics, 25(1), 1–21.
 <https://doi.org/10.1214/09-STS313>
 

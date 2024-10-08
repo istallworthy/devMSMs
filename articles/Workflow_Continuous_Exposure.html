@@ -867,7 +867,7 @@ The love plots depict the standardized associations between confounder and expos
 <span>                             method <span class="op">=</span> <span class="va">method</span>,</span>
 <span>                             formulas <span class="op">=</span> <span class="va">formulas</span>,</span>
 <span>                             verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                             maxit <span class="op">=</span> <span class="fl">1</span>, <span class="co"># just for testing to speed up --will remove</span></span>
+<span>                             maxit <span class="op">=</span> <span class="fl">1</span>, <span class="co"># just for testing to speed up</span></span>
 <span>                             save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; initial  value 0.903706 </span></span>
 <span><span class="co">#&gt; final  value 0.463025 </span></span>
@@ -1196,16 +1196,16 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co"># weights.gbm &lt;- createWeights(obj = obj,</span></span>
 <span><span class="co">#                              data = data,</span></span>
 <span><span class="co">#                              method = method,</span></span>
-<span><span class="co">#                              formulas = formulas, </span></span>
+<span><span class="co">#                              formulas = formulas,</span></span>
 <span><span class="co">#                              save.out = save.out)</span></span>
 <span><span class="co"># </span></span>
-<span><span class="co"># print(weights.gbm, </span></span>
+<span><span class="co"># print(weights.gbm,</span></span>
 <span><span class="co">#       i = 1)</span></span>
 <span><span class="co"># </span></span>
 <span><span class="co"># summary(weights.gbm[[1]])</span></span>
 <span><span class="co"># </span></span>
-<span><span class="co"># plot(weights.gbm, </span></span>
-<span><span class="co">#      i = 1, </span></span>
+<span><span class="co"># plot(weights.gbm,</span></span>
+<span><span class="co">#      i = 1,</span></span>
 <span><span class="co">#      save.out = save.out)</span></span></code></pre></div>
 </div>
 <p>The GBM method produces a similar mean as GLM and a similarly large range (0-216).</p>
@@ -1225,7 +1225,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>      i <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.22 (SD = 20.29; range = 0-698).</span></span>
+<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.24 (SD = 16.16; range = 0-545).</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                         Time 1                        </span></span>
@@ -1234,23 +1234,23 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 698.1747</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                                </span></span>
-<span><span class="co">#&gt;           30    1235      591      475     1145</span></span>
-<span><span class="co">#&gt;  all 53.8862 65.6455 102.4181 117.0061 698.1747</span></span>
+<span><span class="co">#&gt;                                               </span></span>
+<span><span class="co">#&gt;           30    1235     591      475     1145</span></span>
+<span><span class="co">#&gt;  all 57.9469 58.0412 77.0575 116.4033 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       7.009 1.034   1.602       0</span></span>
+<span><span class="co">#&gt; all       5.854 1.003   1.423       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292. </span></span>
-<span><span class="co">#&gt; Weighted     25.8</span></span>
+<span><span class="co">#&gt;              Total</span></span>
+<span><span class="co">#&gt; Unweighted 1292.  </span></span>
+<span><span class="co">#&gt; Weighted     36.66</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                         Time 2                        </span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
@@ -1258,23 +1258,23 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 698.1747</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                                </span></span>
-<span><span class="co">#&gt;           30    1235      591      475     1145</span></span>
-<span><span class="co">#&gt;  all 53.8862 65.6455 102.4181 117.0061 698.1747</span></span>
+<span><span class="co">#&gt;                                               </span></span>
+<span><span class="co">#&gt;           30    1235     591      475     1145</span></span>
+<span><span class="co">#&gt;  all 57.9469 58.0412 77.0575 116.4033 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       7.009 1.034   1.602       0</span></span>
+<span><span class="co">#&gt; all       5.854 1.003   1.423       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292. </span></span>
-<span><span class="co">#&gt; Weighted     25.8</span></span>
+<span><span class="co">#&gt;              Total</span></span>
+<span><span class="co">#&gt; Unweighted 1292.  </span></span>
+<span><span class="co">#&gt; Weighted     36.66</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                         Time 3                        </span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
@@ -1282,23 +1282,23 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 698.1747</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                                </span></span>
-<span><span class="co">#&gt;           30    1235      591      475     1145</span></span>
-<span><span class="co">#&gt;  all 53.8862 65.6455 102.4181 117.0061 698.1747</span></span>
+<span><span class="co">#&gt;                                               </span></span>
+<span><span class="co">#&gt;           30    1235     591      475     1145</span></span>
+<span><span class="co">#&gt;  all 57.9469 58.0412 77.0575 116.4033 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       7.009 1.034   1.602       0</span></span>
+<span><span class="co">#&gt; all       5.854 1.003   1.423       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292. </span></span>
-<span><span class="co">#&gt; Weighted     25.8</span></span>
+<span><span class="co">#&gt;              Total</span></span>
+<span><span class="co">#&gt; Unweighted 1292.  </span></span>
+<span><span class="co">#&gt; Weighted     36.66</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                         Time 4                        </span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
@@ -1306,23 +1306,23 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 698.1747</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                                </span></span>
-<span><span class="co">#&gt;           30    1235      591      475     1145</span></span>
-<span><span class="co">#&gt;  all 53.8862 65.6455 102.4181 117.0061 698.1747</span></span>
+<span><span class="co">#&gt;                                               </span></span>
+<span><span class="co">#&gt;           30    1235     591      475     1145</span></span>
+<span><span class="co">#&gt;  all 57.9469 58.0412 77.0575 116.4033 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       7.009 1.034   1.602       0</span></span>
+<span><span class="co">#&gt; all       5.854 1.003   1.423       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292. </span></span>
-<span><span class="co">#&gt; Weighted     25.8</span></span>
+<span><span class="co">#&gt;              Total</span></span>
+<span><span class="co">#&gt; Unweighted 1292.  </span></span>
+<span><span class="co">#&gt; Weighted     36.66</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                         Time 5                        </span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
@@ -1330,23 +1330,23 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 698.1747</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                                </span></span>
-<span><span class="co">#&gt;           30    1235      591      475     1145</span></span>
-<span><span class="co">#&gt;  all 53.8862 65.6455 102.4181 117.0061 698.1747</span></span>
+<span><span class="co">#&gt;                                               </span></span>
+<span><span class="co">#&gt;           30    1235     591      475     1145</span></span>
+<span><span class="co">#&gt;  all 57.9469 58.0412 77.0575 116.4033 545.0708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       7.009 1.034   1.602       0</span></span>
+<span><span class="co">#&gt; all       5.854 1.003   1.423       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292. </span></span>
-<span><span class="co">#&gt; Weighted     25.8</span></span>
+<span><span class="co">#&gt;              Total</span></span>
+<span><span class="co">#&gt; Unweighted 1292.  </span></span>
+<span><span class="co">#&gt; Weighted     36.66</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>     i <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -2036,19 +2036,19 @@ The love plots depict the standardized associations between confounder and expos
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">balance_stats.bart</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 30 out of 241 (12.4%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.11 (max: 0.21):</span></span>
+<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 16 out of 241 (6.6%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.19):</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | Exposure  | Total # of covariates | # of imbalanced covariates |</span></span>
 <span><span class="co">#&gt; +===========+=======================+============================+</span></span>
-<span><span class="co">#&gt; | ESETA1.6  | 28                    |  6                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.6  | 28                    | 3                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.15 | 38                    | 14                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.15 | 38                    | 9                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.24 | 47                    |  7                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.24 | 47                    | 4                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.35 | 59                    |  0                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.35 | 59                    | 0                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.58 | 69                    |  3                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.58 | 69                    | 0                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates Averaging Across Imputed Datasetrs using `bart`</span></span>
@@ -2094,7 +2094,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; $effective.sample.size</span></span>
 <span><span class="co">#&gt;                 Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.00000</span></span>
-<span><span class="co">#&gt; Weighted     25.79567</span></span>
+<span><span class="co">#&gt; Weighted     36.66269</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $effective.sample.size</span></span>
@@ -3749,7 +3749,7 @@ The love plots depict the standardized associations between confounder and expos
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Isabella Stallworthy, Noah Greifer, Meriah DeJoseph, Emily Padrutt, Daniel Berry.</p>
+  <p>Developed by Isabella Stallworthy, Noah Greifer, Meriah DeJoseph, Emily Padrutt, Kyle Butts, Daniel Berry.</p>
 </div>
 
 <div class="pkgdown-footer-right">
