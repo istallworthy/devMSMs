@@ -236,7 +236,7 @@ outcome <- "StrDif_Tot.58"
 
 <br>
 
-# P.4 Data Preparation & Inspection
+# P4 Data Preparation & Inspection
 
 Some helper functions have optional arguments to suppress saving output locally (`save.out` = FALSE) and printing it to the console ( `verbose` = FALSE). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out` = TRUE.
 

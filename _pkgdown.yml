@@ -11,12 +11,14 @@ home:
     structure: [links, license, community, citation, authors]
 navbar:
   structure:
-    left:  [reference, articles, tutorials, news]
+    left:  [reference, articles, news]
     right: [search, github]
   components:
     articles:
       text: Articles
       menu:
+      - text: Terminology
+        href: articles/Terminology.html
       - text: Specify Core Inputs
         href: articles/Specify_Core_Inputs.html
       - text: Data Requirements & Preparation
