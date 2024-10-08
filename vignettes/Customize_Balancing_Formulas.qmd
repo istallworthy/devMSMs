@@ -26,6 +26,7 @@ The code contained in this vignette is also available, integrated code from the 
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 require(devtools, quietly = TRUE)
+require(quarto, quietly = TRUE)
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 require(devMSMs, quietly = TRUE)
