@@ -17,6 +17,8 @@ navbar:
     articles:
       text: Articles
       menu:
+      - text: Data Requirements & Preparation
+        href: articles/Data_Requirements.html
       - text: Assessing Balance for Time-Varying Exposures
         href: articles/Assessing_Balance_Tv.html
       - text: Customizing Weights Formulas
