@@ -459,7 +459,7 @@ weights.cbps <- createWeights(obj = obj,
                              method = method,
                              formulas = formulas,
                              verbose = TRUE,
-                             maxit = 1, # just for testing to speed up
+                             # maxit = 1, # just for testing to speed up
                              save.out = save.out)
 ```
 
@@ -530,22 +530,22 @@ As shown above, the GLM method produces a higher median of 1.27 and a much great
 #### GBM
 
 ```{r}
-# method <- "gbm"
-# 
-# weights.gbm <- createWeights(obj = obj,
-#                              data = data,
-#                              method = method,
-#                              formulas = formulas,
-#                              save.out = save.out)
-# 
-# print(weights.gbm,
-#       i = 1)
-# 
-# summary(weights.gbm[[1]])
-# 
-# plot(weights.gbm,
-#      i = 1,
-#      save.out = save.out)
+method <- "gbm"
+
+weights.gbm <- createWeights(obj = obj,
+                             data = data,
+                             method = method,
+                             formulas = formulas,
+                             save.out = save.out)
+
+print(weights.gbm,
+      i = 1)
+
+summary(weights.gbm[[1]])
+
+plot(weights.gbm,
+     i = 1,
+     save.out = save.out)
 ```
 
 The GBM method produces a similar mean as GLM and a similarly large range (0-216).
@@ -692,14 +692,14 @@ balance_stats.glm <- assessBalance(data = data,
 #### GBM
 
 ```{r}
-# weights <- weights.gbm
-# 
-# balance_stats.gbm <- assessBalance(data = data,
-#                                    obj = obj,
-#                                    weights = weights,
-#                                    imp_conf = imp_conf,
-#                                    balance_thresh = balance_thresh,
-#                                    save.out = save.out)
+weights <- weights.gbm
+
+balance_stats.gbm <- assessBalance(data = data,
+                                   obj = obj,
+                                   weights = weights,
+                                   imp_conf = imp_conf,
+                                   balance_thresh = balance_thresh,
+                                   save.out = save.out)
 ```
 
 #### Bart
@@ -744,8 +744,8 @@ summary(balance_stats.cbps,
 summary(balance_stats.glm, 
         save.out = save.out)
 
-# summary(balance_stats.gbm, 
-#         save.out = save.out)
+summary(balance_stats.gbm,
+        save.out = save.out)
 
 summary(balance_stats.bart, 
         save.out = save.out)
@@ -763,7 +763,7 @@ summary(weights.cbps[[1]])[[1]][6]
 
 summary(weights.glm[[1]])[[1]][6]
 
-# summary(weights.gbm[[1]])[[1]][6]
+summary(weights.gbm[[1]])[[1]][6]
 
 summary(weights.bart[[1]])[[1]][6]
 
@@ -852,7 +852,7 @@ final_weights <- createWeights(data = data,
                                obj = obj, 
                                method = method, 
                                formulas = formulas,
-                               max.it = 1, # testing only
+                               # max.it = 1, # testing only
                                save.out = save.out)
 ```
 
@@ -1370,19 +1370,21 @@ Similarly, we find no evidence for differences in behavioral problems as functio
 
 # References
 
-Arel-Bundock, V. 2023. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means,and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.
+Arel-Bundock, V. 2024. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means,and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.
 
 Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
 
 Cole, S. R., & Hernán, M. A. (2008). Constructing Inverse Probability Weights for Marginal Structural Models. American Journal of Epidemiology, 168(6), 656–664. https://doi.org/10.1093/aje/kwn164.
 
-Greifer, Noah. 2023.WeightIt: Weighting for Covariate Balance in Observational Studies. https://CRAN.R-project.org/package=WeightIt.
+Greifer N (2024). cobalt: Covariate Balance Tables and Plots.
+R package version 4.5.2, <https://github.com/ngreifer/cobalt>, <https://ngreifer.github.io/cobalt/>
 
-Lumley, Thomas. 2023. “survey: Analysis of Complex Survey Samples.”
+Greifer N (2024). WeightIt: Weighting for Covariate Balance in Observational Studies.
+<https://ngreifer.github.io/WeightIt/>, <https://github.com/ngreifer/WeightIt>
 
 Polley, Eric, Erin LeDell, Chris Kennedy, and Mark van der Laan. 2023. SuperLearner: SuperLearner Prediction. https://CRAN.R-project.org/package=SuperLearner.
 
-R Core Team (2013). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0, URLhttp://www.R-project.org/.
+R Core Team (2024). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. ISBN 3-900051-07-0, URLhttp://www.R-project.org/.
 
 Stuart, E. A. (2010). Matching methods for causal inference: A review and a look forward. Statistical Science: A Review Journal of the Institute of Mathematical Statistics, 25(1), 1–21. https://doi.org/10.1214/09-STS313.
 
