@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# devMSMs: Implementing Marginal <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100" alt="Structural Models"/> with Longitudinal Data
+# devMSMs: Implementing Marginal Structural Models (MSMs) <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100" alt="Structural Models"/> with Longitudinal Data
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -90,7 +90,7 @@ Core features of *devMSMs* include:
 The package contains 7 core functions for implementing the two phases of
 the MSM process: longitudinal confounder adjustment and outcome modeling
 of longitudinal data with time-varying exposures. <br>  
-<img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png" alt="devMSMs overview" width="820"/>
+<img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png" alt="devMSMs overview" width="900"/>
 <br>  
 <br>
 
@@ -154,16 +154,16 @@ Core Inputs</a> and *Workflows* vignettes (for binary (TBA) or
 <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a>
 exposures) for implementing the steps below.
 
-<img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png" alt="devMSMs schematic of workflow" width="900"/>
+<img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png" alt="devMSMs schematic of workflow" width="1000"/>
 
 <br>
 
 ## Citation & Bug Reports
 
 Please cite your use *devMSMs* using the following citation: <br>
-Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Berry D (2024).
-*devMSMs*: Implementing Marginal Structural Models with Longitudinal
-Data. R package version 0.0.0.9000,
+Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Butts K, Berry D
+(2024). <br> *devMSMs*: Implementing Marginal Structural Models with
+Longitudinal Data. R package version 0.0.0.9000,
 <https://istallworthy.github.io/devMSMs/>.
 
 <br>
@@ -175,7 +175,7 @@ Please report any bugs at the following link:
 
 ## Additional Resources
 
-Arel-Bundock, Diniz, M. A., Greifer, N., & Bacher, E. (2023).
+Arel-Bundock, Diniz, M. A., Greifer, N., & Bacher, E. (2024).
 marginaleffects: Predictions, Comparisons, Slopes, Marginal Means, and
 Hypothesis Tests (0.12.0) \[Computer software\].
 <https://cran.r-project.org/web/packages/marginaleffects/index.html>.
@@ -197,29 +197,35 @@ Eronen, M. I. (2020). Causal discovery and the problem of psychological
 interventions. New Ideas in Psychology, 59, 100785.
 <https://doi.org/10.1016/j.newideapsych.2020.100785>
 
-Fong, C., Hazlett, C., & Imai, K. (2018). Covariate balancing propensity
+Fong, C., Hazlett, C., & Imai, K. (2018).Covariate balancing propensity
 score for a continuous treatment: Application to the efficacy of
 political advertisements. The Annals of Applied Statistics, 12(1),
 156–177. <https://doi.org/10.1214/17-AOAS1101>
 
-Greifer N (2023). cobalt: Covariate Balance Tables and Plots. R package
+Foster, E. M. (2010). Causal inference and developmental psychology.
+Developmental Psychology, 46(6), 1454–1480.
+<https://doi.org/10.1037/a0020204>
+
+Greifer N (2024).cobalt: Covariate Balance Tables and Plots. R package
 version 4.5.2, <https://github.com/ngreifer/cobalt>,
 <https://ngreifer.github.io/cobalt/>
 
-Greifer N (2023). WeightIt: Weighting for Covariate Balance in
+Greifer N (2024). WeightIt: Weighting for Covariate Balance in
 Observational Studies. <https://ngreifer.github.io/WeightIt/>,
 <https://github.com/ngreifer/WeightIt>
 
-Jackson, John W. (2016).Diagnostics for Confounding of Time-varying and
+Jackson, John W.(2016). Diagnostics for Confounding of Time-varying and
 Other Joint Exposures. Epidemiology, 2016 Nov, 27(6), 859-69.
 <https://doi.org/10.1097/EDE.0000000000000547>.
 
-Haber, N. A., Wood, M. E., Wieten, S., & Breskin, A. (2022). DAG With
+Haber, N. A., Wood, M. E., Wieten, S., & Breskin, A.(2022). DAG With
 Omitted Objects Displayed (DAGWOOD): A framework for revealing causal
 assumptions in DAGs. Annals of Epidemiology, 68, 64–71.
 <https://doi.org/10.1016/j.annepidem.2022.01.001>
 
-Hirano, K., & Imbens, G. W. (2004). The Propensity Score with Continuous
+Hernán, M., & Robins, J. (2024). Causal Inference: What If. CRC Press.
+
+Hirano, K., & Imbens, G. W. (2004).The Propensity Score with Continuous
 Treatments. In Applied Bayesian Modeling and Causal Inference from
 Incomplete-Data Perspectives (pp. 73–84). John Wiley & Sons,
 Ltd. <https://doi.org/10.1002/0470090456.ch7>
@@ -230,10 +236,43 @@ for Covariate Selection and Balance in Propensity Score Methods. Journal
 of the Society for Social Work and Research, 8(2), 279–303.
 <https://doi.org/10.1086/691464>
 
-Robins, J. M., Hernán, M. Á., & Brumback, B. (2000). Marginal Structural
+Loh, W. W., Ren, D., & West, S. G. (2024). Parametric g-formula for
+Testing Time-Varying Causal Effects: What It Is, Why It Matters, and How
+to Implement It in Lavaan. Multivariate Behavioral Research, 59(5),
+995–1018. <https://doi.org/10.1080/00273171.2024.2354228>
+
+Pishgar, F., Greifer, N., Leyrat, C., & Stuart, E. (2021). MatchThem:
+Matching andWeighting after Multiple Imputation. R Journal, 13(2),
+292–305. <https://doi.org/10.32614/RJ-2021-073>
+
+Robins, J. M., Hernán, M.Á., & Brumback, B. (2000). Marginal Structural
 Models and Causal Inference in Epidemiology. Epidemiology, 11(5),
 550–560.
+
+Rubin, D. B. (2005). Causal Inference Using Potential Outcomes: Design,
+Modeling, Decisions. Journal of the American Statistical Association,
+100(469), 322–331. <https://doi.org/10.1198/016214504000001880>
+
+Rubin, D. B. (1974). Estimating causal effects of treatments in
+randomized and nonrandomized studies. Journal of Educational Psychology,
+66(5), 688–701. <https://doi.org/10.1037/h0037350>
+
+Stuart, E. A. (2010). Matching methods for causal inference: A review
+and a look forward. Statistical Science : A Review Journal of the
+Institute of Mathematical Statistics, 25(1), 1–21.
+<https://doi.org/10.1214/09-STS313>
+
+Stuart, E. A. (2008). Developing practical recommendations for the use
+of propensity scores: Discussion of ‘A critical appraisal of propensity
+score matching in the medical literature between 1996 and 2003’ by Peter
+Austin, Statistics in Medicine. Statistics in Medicine, 27(12),
+2062–2065. <https://doi.org/10.1002/sim.3207>
+
+Textor, J. (2015). Drawing and Analyzing Causal DAGs with DAGitty.
 
 Thoemmes, F., & Ong, A. D. (2016). A Primer on Inverse Probability of
 Treatment Weighting and Marginal Structural Models.
 <https://doi.org/10.1177/2167696815621645>
+
+Woodward, J. (2005). Making Things Happen: A Theory of Causal
+Explanation. Oxford University Press, USA.

@@ -31,34 +31,33 @@ require(markdown)
 This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and *Workflows* vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: *[insert link]*.  
 <br>  
   
-## Key Terminology
+Key Terminology
 
 ```{r}
 #| echo: false
 #| tbl-cap: "Summary of terminology used in *devMSMs*"
-terms <- data.frame(
-  Term = c("**Outcome**", "**Exposure**", "**Exposure Time Points**", "**Exposure Epochs**", "**Exposure Histories**", "**Exposure Dosage**", "**Backdoor Path**", "**Confounder**", "**Time-varying confounder**", "**Time invariant confounder**", "**Collider**"),
+terms = data.frame(
+  Term  = c("**Exposure**", "**Outcome**","**Exposure Time Points**", "**Exposure Epochs**", "**Exposure Histories**", "**Exposure Dosage**", "**Confounder**", "**Time-varying confounder**", "**Time invariant confounder**", "**Collider**"),
   Definition = c(
-    "Any developmental construct measured at one or more time points including at a final outcome time point",
-    "Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome",
-    "Time points in development when the exposure was measured at which balancing formulas will be created",
-    "*(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories",
-    "Sequences of relatively high (`'h'`) or low (`'p'`) levels of exposure at each exposure time point or exposure epoch",
-    "Total cumulative exposure epochs during which an individual experienced high (or low) levels of exposure across an entire exposure history",
-    "Any alternative, non-causal way (other than the direct causal effects from exposure to outcome) that the exposure at a given time point associates with the outcome within a causal diagram, often via confounders",
-    "Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths",
-    "A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time.",
-    "A confounder measured at a single time point prior to the exposure time point which reflects a construct that is stable over time.",
-    "A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which opens a backdoor path"
-  )
+  "Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome.", 
+  "Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects.", 
+  "Time points in development when the exposure was measured, at which balancing formulas will be created.", 
+  "*(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories.", 
+  "Sequences of relatively high (`'h'`) or low (`'l'`) levels of exposure at each exposure time point or exposure epoch.", 
+  "Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.", 
+  "Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths.", 
+  "A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly.", 
+  "A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure.", 
+  "A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias.")
 )
 
-tinytable::tt(terms, theme = "striped") |>
-  tinytable::format_tt(markdown = TRUE)
+library(tinytable)
+tt(terms, theme = "striped") |>
+  format_tt(markdown = TRUE) 
 ```
 <br>  
 
-## Balancing Formula
+# Balancing Formula
 
 Balancing formula are formula created at each exposure time point, regressing exposure on confounders, for the purpose of creating and/or assessing balancing weights. The general form is given by:
 <pre><code>ESETA1.t ~ <span style='color: darkred'>time-invariant</span> confounders + <span style='color: blue'>time-varying</span> confounders + <i>lagged</i> <span style='color: seagreen;'>outcomes</span> + <i>lagged</i> <span style='color: purple;'>outcomes</span></code></pre>
@@ -88,9 +87,9 @@ tinytable::tt(balance_formula) |>
 ```
 <br>  
 
-## 6 core functions of *devMSMs*
+# 7 core functions of *devMSMs*
 
-There are 6 key functions that are used in the *devMSMs* workflow.
+There are 7 key functions that are used in the *devMSMs* workflow.
 
 ```{r}
 #| echo: false
