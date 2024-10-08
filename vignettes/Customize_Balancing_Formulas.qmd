@@ -34,8 +34,8 @@ require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 require(devMSMs, quietly = TRUE)
 
-devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
-require(devMSMsHelpers, quietly = TRUE)
+# devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
+# require(devMSMsHelpers, quietly = TRUE)
 
 ```
 
