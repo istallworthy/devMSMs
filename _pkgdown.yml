@@ -13,3 +13,7 @@ footer:
 home:
   sidebar:
     structure: [links, license, community, citation, authors]
+articles:
+- title: Assessing Balance for Time-Varying Exposure
+  navbar: ~
+  contents: Assessing_Balance_Tv.qmd

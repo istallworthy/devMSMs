@@ -57,7 +57,3 @@ jobs:
           branch: debugging #gh-pages
           folder: docs
           
-articles:
-- title: Assessing Balance for Time-Varying Exposure
-  navbar: ~
-  contents: Assessing_Balance_Tv.qmd
