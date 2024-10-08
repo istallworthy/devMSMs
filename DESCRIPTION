@@ -7,9 +7,8 @@ Authors@R: c(person("Isabella", "Stallworthy", email = "istall@seas.upenn.edu", 
 	                 comment=c(ORCID="0000-0003-3067-7154")),
             person("Meriah", "DeJoseph", email = "meriahd@stanford.edu", role = c("aut")),
             person("Emily", "Padrutt", email = "padru004@umn.edu", role = c("aut")),
-            person("Kyle", "Butts", email = "buttskyle96@gmail.com", role = c("aut", ctb")),
-            person("Daniel", "Berry", email = "dberry@umn.edu", role = c("aut"))
-)
+            person("Kyle", "Butts", email = "buttskyle96@gmail.com", role = c("aut", "ctb")),
+            person("Daniel", "Berry", email = "dberry@umn.edu", role = c("aut")))
 Description: Functions for implementing MSMS with longitudinal data.
 License: GPL-3
 Encoding: UTF-8
