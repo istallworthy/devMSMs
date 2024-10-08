@@ -7,7 +7,7 @@ format:
       toc: true
 vignette: >
   %\VignetteIndexEntry{Assessing_Balance_Tv}
-  %\VignetteEncoding{UTF-8}s
+  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{quarto::html}
 ---
 

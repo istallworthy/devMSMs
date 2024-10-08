@@ -1,8 +1,6 @@
 ---
 title: "Recommended Workflow for using devMSMs with Longitudinal Data"
 author: "`Isabella C. Stallworthy, Meriah L. DeJoseph, Emily R. Padrutt, Noah Greifer, Daniel Berry`")
-date: "`r Sys.Date()`"
-output: html_document
 ---
 This example workflow provides more detail on the application of *devMSMs* to the empirical example in the manuscript, xxxx, which can be found here: xx.
 
