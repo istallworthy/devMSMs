@@ -2,10 +2,10 @@ url: https://istallworthy.github.io/devMSMs/
 template:
   bootstrap: 5
   bootswatch: litera
-navbar:
-  structure:
-    left:  [intro, reference, articles, tutorials, news]
-    right: [search, github]
+# navbar:
+#   structure:
+#     left:  [intro, reference, articles, tutorials, news]
+#     right: [search, github]
 footer:
   structure: 
     left: developed_by
@@ -13,7 +13,18 @@ footer:
 home:
   sidebar:
     structure: [links, license, community, citation, authors]
-articles:
-- title: "Assessing Balance for Time-Varying Exposures"
-  contents:
-  - Assessing_Balance_Tv.qmd
+# articles:
+# - title: "Assessing Balance for Time-Varying Exposures"
+#   navbar: ~
+#   contents:
+#   - vignettes/Assessing_Balance_Tv.qmd
+navbar:
+  structure:
+    left:  [reference, articles, tutorials, news]
+    right: [search, github]
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: Assessing Balance for Time-Varying Exposures
+        href: articles/Assessing_Balance_Tv.html
