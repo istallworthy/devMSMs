@@ -45,11 +45,6 @@ jobs:
       - name: Check Quarto version
         run: quarto --version
         
-      - name: Install dependencies
-        run: |
-          R -e 'install.packages("quarto")'
-          R -e 'install.packages("pkgdown")'
-
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
