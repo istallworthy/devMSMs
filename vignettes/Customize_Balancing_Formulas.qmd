@@ -39,7 +39,7 @@ require(devMSMs, quietly = TRUE)
 
 ```
 
-## Core Inputs
+# Core Inputs
 
 We specify core inputs to the *devMSMs* functions.
 
@@ -88,11 +88,11 @@ Below, we illustrate the customization options for each of the three modes of th
 
 <br>
 
-## Customize Full Weights Formulas (Steps 1 & 4)
+# Customize Full Weights Formulas (Steps 1 & 4)
 
 The default use of `createFormulas()` with `type` = "full" creates weights formulas at each exposure time point. Each formula contains all time invariant confounders as well as all time-varying confounders measured at time points prior to that exposure time point. For example, for the 24-month weights formula, we would have time-varying confounders only at 6 and 15 months.
 
-### Time-Varying Confounders Measured Contemporaneously With Exposure Time Point
+## Time-Varying Confounders Measured Contemporaneously With Exposure Time Point
 
 However, if users wish to also include any time-varying confounders measured contemporaneously with the exposure time point (e.g., also include 24-month time-varying confounders in the 24-month weights formula), they can specify those time-varying confounders in the optional argument to `initMSM()`, `concur_conf`.
 
@@ -121,7 +121,7 @@ print(full_formulas)
 
 Now `B18Raw.24` is included in the 24-month weights formula in addition to the 35-and 58-month formulas.
 
-### Fully Custom Formulas
+# Fully Custom Formulas
 
 Alternatively, a user could completely customize the full formulas by manually creating formulas for each exposure time point using the optional `custom` argument.
 
@@ -152,7 +152,7 @@ print(full_formulas)
 
 <br>
 
-## Customize Short Weights Formulas (Step 2)
+# Customize Short Weights Formulas (Step 2)
 
 The default use of `createFormulas()` with `type` = "short" creates shortened weights formulas at each exposure time point. Each formula contains all time invariant confounders as well as only those time-varying confounders measured at the time point directly prior (*t*-1 lag) to that exposure time point. For example, for the 24-month weights formula, we would only include time-varying confounders at 15 months. Please see the *Workflows* vignettes and accompanying manuscript for more detail.
 
@@ -173,7 +173,7 @@ print(short_formulas)
 
 <br>
 
-### Customize Updated Weights Formulas (Step 3)
+# Customize Updated Weights Formulas (Step 3)
 
 The default use of `createFormulas()` with `type` = "update" creates updated weights formulas at each exposure time point. Each formula contains all time invariant confounders; time-varying confounders measured at the time point directly prior (*t*-1 lag) to that exposure time point; as well as any time-varying confounders at greater lags that were not successfully balanced using the short weights formulas.
 

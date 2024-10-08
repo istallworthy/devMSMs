@@ -17,6 +17,8 @@ navbar:
     articles:
       text: Articles
       menu:
+      - text: Specify Core Inputs
+        href: articles/Specify_Core_Inputs.html
       - text: Data Requirements & Preparation
         href: articles/Data_Requirements.html
       - text: Assessing Balance for Time-Varying Exposures
