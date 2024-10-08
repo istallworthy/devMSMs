@@ -38,6 +38,7 @@
 <li><a class="dropdown-item" href="../articles/Terminology.html">Terminology</a></li>
     <li><a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a></li>
     <li><a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements &amp; Preparation</a></li>
+    <li><a class="dropdown-item" href="../articles/Workflow_Continuous_Exposures.html">Workflow for Continous Exposures</a></li>
     <li><a class="dropdown-item" href="../articles/Assessing_Balance_Tv.html">Assessing Balance for Time-Varying Exposures</a></li>
     <li><a class="dropdown-item" href="../articles/Customize_Balancing_Formulas.html">Customizing Weights Formulas</a></li>
   </ul>
@@ -97,12 +98,12 @@
 <!-- preamble start -->
 
     <script>
-      function styleCell_y4vv8bnczkpm4m4dafdt(i, j, css_id) {
-        var table = document.getElementById("tinytable_y4vv8bnczkpm4m4dafdt");
+      function styleCell_4qk4kk7bu6xjy9ez2gxq(i, j, css_id) {
+        var table = document.getElementById("tinytable_4qk4kk7bu6xjy9ez2gxq");
         table.rows[i].cells[j].classList.add(css_id);
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_y4vv8bnczkpm4m4dafdt');
+        var table = document.getElementById('tinytable_4qk4kk7bu6xjy9ez2gxq');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -110,8 +111,8 @@
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_y4vv8bnczkpm4m4dafdt(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_y4vv8bnczkpm4m4dafdt");
+      function spanCell_4qk4kk7bu6xjy9ez2gxq(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_4qk4kk7bu6xjy9ez2gxq");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -137,24 +138,24 @@
         targetCell.rowSpan = rowspan;
         targetCell.colSpan = colspan;
       }
-window.addEventListener('load', function () { styleCell_y4vv8bnczkpm4m4dafdt(0, 0, 'tinytable_css_idm5eomi4uz7uhrx0uhiz2') })
-window.addEventListener('load', function () { styleCell_y4vv8bnczkpm4m4dafdt(0, 1, 'tinytable_css_idckkbypg1rr29hntbheb6') })
-window.addEventListener('load', function () { styleCell_y4vv8bnczkpm4m4dafdt(0, 2, 'tinytable_css_idvokz3yag7sk9ll7pmglt') })
-window.addEventListener('load', function () { styleCell_y4vv8bnczkpm4m4dafdt(0, 3, 'tinytable_css_idvokz3yag7sk9ll7pmglt') })
-window.addEventListener('load', function () { styleCell_y4vv8bnczkpm4m4dafdt(0, 4, 'tinytable_css_idvokz3yag7sk9ll7pmglt') })
-window.addEventListener('load', function () { styleCell_y4vv8bnczkpm4m4dafdt(0, 5, 'tinytable_css_idvokz3yag7sk9ll7pmglt') })
-window.addEventListener('load', function () { styleCell_y4vv8bnczkpm4m4dafdt(0, 6, 'tinytable_css_idb1w53sknfufdakbnhmb7') })
-window.addEventListener('load', function () { styleCell_y4vv8bnczkpm4m4dafdt(0, 7, 'tinytable_css_idb1w53sknfufdakbnhmb7') })
-window.addEventListener('load', function () { styleCell_y4vv8bnczkpm4m4dafdt(0, 8, 'tinytable_css_idzr5ssvli3s43005k14ix') })
+window.addEventListener('load', function () { styleCell_4qk4kk7bu6xjy9ez2gxq(0, 0, 'tinytable_css_idj6zvgdt00vekjk5j384x') })
+window.addEventListener('load', function () { styleCell_4qk4kk7bu6xjy9ez2gxq(0, 1, 'tinytable_css_id4oelol7a4knp53xvo1mw') })
+window.addEventListener('load', function () { styleCell_4qk4kk7bu6xjy9ez2gxq(0, 2, 'tinytable_css_idrlgj1bth6n5h2o0bbrfh') })
+window.addEventListener('load', function () { styleCell_4qk4kk7bu6xjy9ez2gxq(0, 3, 'tinytable_css_idrlgj1bth6n5h2o0bbrfh') })
+window.addEventListener('load', function () { styleCell_4qk4kk7bu6xjy9ez2gxq(0, 4, 'tinytable_css_idrlgj1bth6n5h2o0bbrfh') })
+window.addEventListener('load', function () { styleCell_4qk4kk7bu6xjy9ez2gxq(0, 5, 'tinytable_css_idrlgj1bth6n5h2o0bbrfh') })
+window.addEventListener('load', function () { styleCell_4qk4kk7bu6xjy9ez2gxq(0, 6, 'tinytable_css_idb8oonu8ptp7k8hk8oylm') })
+window.addEventListener('load', function () { styleCell_4qk4kk7bu6xjy9ez2gxq(0, 7, 'tinytable_css_idb8oonu8ptp7k8hk8oylm') })
+window.addEventListener('load', function () { styleCell_4qk4kk7bu6xjy9ez2gxq(0, 8, 'tinytable_css_idb1dzzdcron33dwcnxdqh') })
     </script><style>
-    .table td.tinytable_css_idm5eomi4uz7uhrx0uhiz2, .table th.tinytable_css_idm5eomi4uz7uhrx0uhiz2 {  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idckkbypg1rr29hntbheb6, .table th.tinytable_css_idckkbypg1rr29hntbheb6 {  background-color: #E3EFDC;  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idvokz3yag7sk9ll7pmglt, .table th.tinytable_css_idvokz3yag7sk9ll7pmglt {  background-color: #FDF4CF;  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idb1w53sknfufdakbnhmb7, .table th.tinytable_css_idb1w53sknfufdakbnhmb7 {  background-color: #d4a0fa;  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idzr5ssvli3s43005k14ix, .table th.tinytable_css_idzr5ssvli3s43005k14ix {  background-color: #a0d8fa;  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_idj6zvgdt00vekjk5j384x, .table th.tinytable_css_idj6zvgdt00vekjk5j384x {  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_id4oelol7a4knp53xvo1mw, .table th.tinytable_css_id4oelol7a4knp53xvo1mw {  background-color: #E3EFDC;  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_idrlgj1bth6n5h2o0bbrfh, .table th.tinytable_css_idrlgj1bth6n5h2o0bbrfh {  background-color: #FDF4CF;  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_idb8oonu8ptp7k8hk8oylm, .table th.tinytable_css_idb8oonu8ptp7k8hk8oylm {  background-color: #d4a0fa;  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_idb1dzzdcron33dwcnxdqh, .table th.tinytable_css_idb1dzzdcron33dwcnxdqh {  background-color: #a0d8fa;  border-bottom: solid 0.1em #d3d8dc; }
     </style>
 <div class="container">
-      <table class="table table table-borderless" id="tinytable_y4vv8bnczkpm4m4dafdt" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-borderless" id="tinytable_4qk4kk7bu6xjy9ez2gxq" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Abridged example structure of a wide dataset formatted as required
 for the devMSMs. Column A denotes the ID variable, column B (green)
 denotes a time in-variant confounder (e.g., race, birth information),

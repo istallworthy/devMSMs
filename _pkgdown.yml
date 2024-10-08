@@ -24,7 +24,7 @@ navbar:
       - text: Data Requirements & Preparation
         href: articles/Data_Requirements.html
       - text: Workflow for Continous Exposures
-        href: articles/Workflow_Continuous_Exposures.html
+        href: articles/Workflow_Continuous_Exposure.html
       - text: Assessing Balance for Time-Varying Exposures
         href: articles/Assessing_Balance_Tv.html
       - text: Customizing Weights Formulas
