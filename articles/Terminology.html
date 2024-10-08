@@ -38,6 +38,7 @@
 <li><a class="dropdown-item" href="../articles/Terminology.html">Terminology</a></li>
     <li><a class="dropdown-item" href="../articles/Specify_Core_Inputs.html">Specify Core Inputs</a></li>
     <li><a class="dropdown-item" href="../articles/Data_Requirements.html">Data Requirements &amp; Preparation</a></li>
+    <li><a class="dropdown-item" href="../articles/Workflow_Continuous_Exposures.html">Workflow for Continous Exposures</a></li>
     <li><a class="dropdown-item" href="../articles/Assessing_Balance_Tv.html">Assessing Balance for Time-Varying Exposures</a></li>
     <li><a class="dropdown-item" href="../articles/Customize_Balancing_Formulas.html">Customizing Weights Formulas</a></li>
   </ul>
@@ -73,19 +74,18 @@
 
     <p><br></p>
 <p>This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and <em>Workflows</em> vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: <em>[insert link]</em>.<br><br></p>
-<section class="level2"><h2 id="key-terminology">Key Terminology<a class="anchor" aria-label="anchor" href="#key-terminology"></a>
-</h2>
+<p>Key Terminology</p>
 <div class="cell">
 <div class="cell-output-display">
 <!-- preamble start -->
 
     <script>
-      function styleCell_7y991brkd100oap00tvx(i, j, css_id) {
-        var table = document.getElementById("tinytable_7y991brkd100oap00tvx");
+      function styleCell_kfd32by4eq2ify4f2jqv(i, j, css_id) {
+        var table = document.getElementById("tinytable_kfd32by4eq2ify4f2jqv");
         table.rows[i].cells[j].classList.add(css_id);
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_7y991brkd100oap00tvx');
+        var table = document.getElementById('tinytable_kfd32by4eq2ify4f2jqv');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -93,8 +93,8 @@
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_7y991brkd100oap00tvx(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_7y991brkd100oap00tvx");
+      function spanCell_kfd32by4eq2ify4f2jqv(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_kfd32by4eq2ify4f2jqv");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -123,7 +123,7 @@
     </script><style>
     </style>
 <div class="container">
-      <table class="table table table-striped" id="tinytable_7y991brkd100oap00tvx" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-striped" id="tinytable_kfd32by4eq2ify4f2jqv" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of terminology used in <em>devMSMs</em></p></caption>
         <thead><tr>
 <th scope="col">Term</th>
@@ -131,49 +131,45 @@
               </tr></thead>
 <tbody>
 <tr>
-<td><strong>Outcome</strong></td>
-                  <td>Any developmental construct measured at one or more time points including at a final outcome time point</td>
+<td><strong>Exposure</strong></td>
+                  <td>Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome.</td>
                 </tr>
 <tr>
-<td><strong>Exposure</strong></td>
-                  <td>Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome</td>
+<td><strong>Outcome</strong></td>
+                  <td>Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects.</td>
                 </tr>
 <tr>
 <td><strong>Exposure Time Points</strong></td>
-                  <td>Time points in development when the exposure was measured at which balancing formulas will be created</td>
+                  <td>Time points in development when the exposure was measured, at which balancing formulas will be created.</td>
                 </tr>
 <tr>
 <td><strong>Exposure Epochs</strong></td>
                   <td>
-<em>(optional)</em> Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories</td>
+<em>(optional)</em> Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories.</td>
                 </tr>
 <tr>
 <td><strong>Exposure Histories</strong></td>
-                  <td>Sequences of relatively high (<code>'h'</code>) or low (<code>'p'</code>) levels of exposure at each exposure time point or exposure epoch</td>
+                  <td>Sequences of relatively high (<code>'h'</code>) or low (<code>'l'</code>) levels of exposure at each exposure time point or exposure epoch.</td>
                 </tr>
 <tr>
 <td><strong>Exposure Dosage</strong></td>
-                  <td>Total cumulative exposure epochs during which an individual experienced high (or low) levels of exposure across an entire exposure history</td>
-                </tr>
-<tr>
-<td><strong>Backdoor Path</strong></td>
-                  <td>Any alternative, non-causal way (other than the direct causal effects from exposure to outcome) that the exposure at a given time point associates with the outcome within a causal diagram, often via confounders</td>
+                  <td>Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.</td>
                 </tr>
 <tr>
 <td><strong>Confounder</strong></td>
-                  <td>Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths</td>
+                  <td>Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths.</td>
                 </tr>
 <tr>
 <td><strong>Time-varying confounder</strong></td>
-                  <td>A confounder measured at one or more time points prior to the exposure time point which reflects a construct that varies in time.</td>
+                  <td>A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly.</td>
                 </tr>
 <tr>
 <td><strong>Time invariant confounder</strong></td>
-                  <td>A confounder measured at a single time point prior to the exposure time point which reflects a construct that is stable over time.</td>
+                  <td>A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure.</td>
                 </tr>
 <tr>
 <td><strong>Collider</strong></td>
-                  <td>A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which opens a backdoor path</td>
+                  <td>A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias.</td>
                 </tr>
 </tbody>
 </table>
@@ -182,7 +178,7 @@
 </div>
 </div>
 <p><br></p>
-</section><section class="level2"><h2 id="balancing-formula">Balancing Formula<a class="anchor" aria-label="anchor" href="#balancing-formula"></a>
+<section class="section level2"><h2 id="balancing-formula">Balancing Formula<a class="anchor" aria-label="anchor" href="#balancing-formula"></a>
 </h2>
 Balancing formula are formula created at each exposure time point, regressing exposure on confounders, for the purpose of creating and/or assessing balancing weights. The general form is given by:
 <pre><code>ESETA1.t ~ <span style="color: darkred">time-invariant</span> confounders + <span style="color: blue">time-varying</span> confounders + <i>lagged</i> <span style="color: seagreen;">outcomes</span> + <i>lagged</i> <span style="color: purple;">outcomes</span></code></pre>
@@ -193,12 +189,12 @@ Balancing formula are formula created at each exposure time point, regressing ex
 <!-- preamble start -->
 
     <script>
-      function styleCell_hbvlspoql9x1futf7ure(i, j, css_id) {
-        var table = document.getElementById("tinytable_hbvlspoql9x1futf7ure");
+      function styleCell_18tjimopp76phdjp9rbd(i, j, css_id) {
+        var table = document.getElementById("tinytable_18tjimopp76phdjp9rbd");
         table.rows[i].cells[j].classList.add(css_id);
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_hbvlspoql9x1futf7ure');
+        var table = document.getElementById('tinytable_18tjimopp76phdjp9rbd');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -206,8 +202,8 @@ Balancing formula are formula created at each exposure time point, regressing ex
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_hbvlspoql9x1futf7ure(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_hbvlspoql9x1futf7ure");
+      function spanCell_18tjimopp76phdjp9rbd(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_18tjimopp76phdjp9rbd");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -233,13 +229,13 @@ Balancing formula are formula created at each exposure time point, regressing ex
         targetCell.rowSpan = rowspan;
         targetCell.colSpan = colspan;
       }
-window.addEventListener('load', function () { styleCell_hbvlspoql9x1futf7ure(0, 0, 'tinytable_css_idyzxo8dgpenz1tufa1g1i') })
-window.addEventListener('load', function () { styleCell_hbvlspoql9x1futf7ure(0, 1, 'tinytable_css_idyzxo8dgpenz1tufa1g1i') })
+window.addEventListener('load', function () { styleCell_18tjimopp76phdjp9rbd(0, 0, 'tinytable_css_idd3copcv6t210ep0hoq05') })
+window.addEventListener('load', function () { styleCell_18tjimopp76phdjp9rbd(0, 1, 'tinytable_css_idd3copcv6t210ep0hoq05') })
     </script><style>
-    .table td.tinytable_css_idyzxo8dgpenz1tufa1g1i, .table th.tinytable_css_idyzxo8dgpenz1tufa1g1i {  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_idd3copcv6t210ep0hoq05, .table th.tinytable_css_idd3copcv6t210ep0hoq05 {  border-bottom: solid 0.1em #d3d8dc; }
     </style>
 <div class="container">
-      <table class="table table table-borderless" id="tinytable_hbvlspoql9x1futf7ure" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-borderless" id="tinytable_18tjimopp76phdjp9rbd" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of the formula terminology used in the <em>devMSMs</em>
 package for creating balancing weights and assessing their performance
 in devMSMs (<em>Workflows</em> vignettes Steps 4-6). The different kinds
@@ -285,20 +281,20 @@ the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
 </div>
 </div>
 <p><br></p>
-</section><section class="level2"><h2 id="core-functions-of-devmsms">6 core functions of <em>devMSMs</em>
+</section><section class="section level2"><h2 id="core-functions-of-devmsms">7 core functions of <em>devMSMs</em>
 <a class="anchor" aria-label="anchor" href="#core-functions-of-devmsms"></a>
 </h2>
-<p>There are 6 key functions that are used in the <em>devMSMs</em> workflow.</p>
+<p>There are 7 key functions that are used in the <em>devMSMs</em> workflow.</p>
 <div class="cell">
 <!-- preamble start -->
 
     <script>
-      function styleCell_6j2edz6uakkkdh81cuz6(i, j, css_id) {
-        var table = document.getElementById("tinytable_6j2edz6uakkkdh81cuz6");
+      function styleCell_38v6vndepgesmcnekg7v(i, j, css_id) {
+        var table = document.getElementById("tinytable_38v6vndepgesmcnekg7v");
         table.rows[i].cells[j].classList.add(css_id);
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_6j2edz6uakkkdh81cuz6');
+        var table = document.getElementById('tinytable_38v6vndepgesmcnekg7v');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -306,8 +302,8 @@ the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_6j2edz6uakkkdh81cuz6(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_6j2edz6uakkkdh81cuz6");
+      function spanCell_38v6vndepgesmcnekg7v(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_38v6vndepgesmcnekg7v");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -336,7 +332,7 @@ the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
     </script><style>
     </style>
 <div class="container">
-      <table class="table table table-striped" id="tinytable_6j2edz6uakkkdh81cuz6" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-striped" id="tinytable_38v6vndepgesmcnekg7v" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of the 7 core functions of the <em>devMSMs</em> package.</p></caption>
         <thead><tr>
 <th scope="col">Function</th>
@@ -504,8 +500,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
-    </nav></aside>
+</script></main>
 </div>
 
 
