@@ -459,7 +459,7 @@ weights.cbps <- createWeights(obj = obj,
                              method = method,
                              formulas = formulas,
                              verbose = TRUE,
-                             maxit = 1, # just for testing to speed up --will remove
+                             maxit = 1, # just for testing to speed up
                              save.out = save.out)
 ```
 
@@ -535,16 +535,16 @@ As shown above, the GLM method produces a higher median of 1.27 and a much great
 # weights.gbm <- createWeights(obj = obj,
 #                              data = data,
 #                              method = method,
-#                              formulas = formulas, 
+#                              formulas = formulas,
 #                              save.out = save.out)
 # 
-# print(weights.gbm, 
+# print(weights.gbm,
 #       i = 1)
 # 
 # summary(weights.gbm[[1]])
 # 
-# plot(weights.gbm, 
-#      i = 1, 
+# plot(weights.gbm,
+#      i = 1,
 #      save.out = save.out)
 ```
 
