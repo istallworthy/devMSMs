@@ -8,7 +8,7 @@ format:
       toc: true
 vignette: >
   %\VignetteIndexEntry{Workflow_Continuous_Exposure}
-  %\VignetteEncoding{UTF-8}s
+  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{quarto::html}
 ---
 

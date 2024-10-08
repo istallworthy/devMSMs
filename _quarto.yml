@@ -1,0 +1,41 @@
+project:
+  type: website  # Define the project type
+  
+website:
+  title: "devMSMs: Implementing Marginal Structural Models with Longitudinal Data"
+  site-url: https://istallworthy.github.io/devMSMs/index.html URL for your project
+
+about:
+  template: trestles
+
+# navbar:
+#   right:
+#     - text: "Search"  # Search option
+#       href: "#"       # Replace with actual search URL if available
+#     - text: "GitHub"   # GitHub link
+#       href: "https://github.com/istallworthy/devMSMs"  # GitHub repo link
+#   left:
+#     - text: "Vignettes"     # Left navbar item
+#       href: "Assessing_Balance_Tv.qmd"  # Link to the introduction page
+    # - text: "Reference"  # Reference section
+    #   href: "reference.qmd"
+    # - text: "Articles"   # Articles section
+    #   href: "articles.qmd"
+    # - text: "Tutorials"   # Tutorials section
+    #   href: "tutorials.qmd"
+    # - text: "News"        # News section
+    #   href: "news.qmd"
+# 
+# footer: 
+#   left: "Developed" #, Meriah DeJoseph, Emily Padrutt, Noah Greifer, Kyle Butts, & Daniel Berry" # Replace with actual developer name or content
+#   right: "Built with Quarto"       # Customize as needed
+
+# home:
+#   sidebar:
+#     structure: 
+#       - "Links"         # Replace with actual links or structure
+#       - "License"
+#       - "Community"
+#       - "Citation"
+#       - "Authors"
+#   
