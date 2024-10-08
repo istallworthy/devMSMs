@@ -12,4 +12,4 @@ footer:
     right: built_with
 home:
   sidebar:
-    structure: [links, license, community, citation, authors, dev]
+    structure: [links, license, community, citation, authors]
