@@ -25,6 +25,7 @@ The code contained in this vignette is also available, integrated code from the 
 <br>
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
 install.packages("devtools")
 
