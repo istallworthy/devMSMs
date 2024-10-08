@@ -11,6 +11,12 @@ vignette: >
   %\VignetteEngine{quarto::html}
 ---
 
+testing
+```{r}
+1+1 
+plot(1:5, 1:5)
+```
+
 Assessing balance for time-varying exposures is a topic that has not been extensively examined in the MSM literature. However, Jackson (2016) has established guidance that we draw on for this package, implemented in the `calcBalStats()` function (drawn on by the `assessBalance()` function) in *devMSMs*.
 
 ## Calculating Raw Balance Statistics
