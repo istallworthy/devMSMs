@@ -67,7 +67,23 @@
 
 
 
-    <p>Assessing balance for time-varying exposures is a topic that has not been extensively examined in the MSM literature. However, Jackson (2016) has established guidance that we draw on for this package, implemented in the <code>calcBalStats()</code> function (drawn on by the <code><a href="../reference/assessBalance.html">assessBalance()</a></code> function) in <em>devMSMs</em>.</p>
+    <p>testing</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fl">1</span><span class="op">+</span><span class="fl">1</span> </span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure><p><img src="Assessing_Balance_Tv_files/figure-html/unnamed-chunk-1-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Assessing balance for time-varying exposures is a topic that has not been extensively examined in the MSM literature. However, Jackson (2016) has established guidance that we draw on for this package, implemented in the <code>calcBalStats()</code> function (drawn on by the <code><a href="../reference/assessBalance.html">assessBalance()</a></code> function) in <em>devMSMs</em>.</p>
 <section class="level2"><h2 id="calculating-raw-balance-statistics">Calculating Raw Balance Statistics<a class="anchor" aria-label="anchor" href="#calculating-raw-balance-statistics"></a>
 </h2>
 <p><code>calcBalStats()</code> assesses balance using correlations between confounder and exposure for continuous exposures and standardized mean differences of the confounder between exposure groups for binary exposures. These balancing statistics are created based on the diagnostics for confounding of time-varying exposures outlined by Jackson (2016). More specifically, at each user-specified exposure time point, raw balance statistics are calculated to quantify the association between exposure at that time point and each confounder, for each exposure history up until that time point. This is accomplished using the <code>col_w_cov()</code> function to calculate covariance for continuous exposures and the <code>col_w_smd()</code> function to calculate mean difference for binary exposures from the <em>cobalt</em> package (Greifer, 2023). Factor covariates are split into separate dummy variables using the <code>splitfactor()</code> function from cobalt. Any covariate interactions present in the formulas are created in the data by multiplying the constituent variables, with interactions including factor covariates implemented by constituent dummy variables.</p>
