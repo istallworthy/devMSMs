@@ -18,6 +18,12 @@ knitr::opts_chunk$set(
 )
 ```
 
+testing
+```{r}
+1+1 
+plot(1:5, 1:5)
+```
+
 This vignette provides guidance on how to customize weights formulas for use in *devMSMs*. Please first review the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a> and any of the *Workflows* vignettes.
 
 The code contained in this vignette is also available, integrated code from the other vignettes, in the ExampleWorkflow.rmd.
