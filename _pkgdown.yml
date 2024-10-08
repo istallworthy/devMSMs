@@ -23,5 +23,5 @@ navbar:
       menu:
       - text: Assessing Balance for Time-Varying Exposures
         href: articles/Assessing_Balance_Tv.html
-      - text: Customizing Weights Formulas
-        href: articles/Customizing_Balancing_Formulas.html
+      # - text: Customizing Weights Formulas
+      #   href: articles/Customizing_Balancing_Formulas.html
