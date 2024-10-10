@@ -61,7 +61,7 @@
       <h1>Terminology</h1>
 
 
-      <p class="date">2024-10-08</p>
+      <p class="date">2024-10-10</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Terminology.qmd" class="external-link"><code>vignettes/Terminology.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -72,20 +72,19 @@
 
 
 
-    <p><br></p>
-<p>This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and <em>Workflows</em> vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: <em>[insert link]</em>.<br><br></p>
+    <p>This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and <em>Workflows</em> vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: <em>[insert link]</em>.<br><br></p>
 <p>Key Terminology</p>
 <div class="cell">
 <div class="cell-output-display">
 <!-- preamble start -->
 
     <script>
-      function styleCell_5fnlw29ctljxy9bq3smi(i, j, css_id) {
-        var table = document.getElementById("tinytable_5fnlw29ctljxy9bq3smi");
+      function styleCell_g8v5mag2mz8jzqvb0ojk(i, j, css_id) {
+        var table = document.getElementById("tinytable_g8v5mag2mz8jzqvb0ojk");
         table.rows[i].cells[j].classList.add(css_id);
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_5fnlw29ctljxy9bq3smi');
+        var table = document.getElementById('tinytable_g8v5mag2mz8jzqvb0ojk');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -93,8 +92,8 @@
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_5fnlw29ctljxy9bq3smi(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_5fnlw29ctljxy9bq3smi");
+      function spanCell_g8v5mag2mz8jzqvb0ojk(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_g8v5mag2mz8jzqvb0ojk");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -123,7 +122,7 @@
     </script><style>
     </style>
 <div class="container">
-      <table class="table table table-striped" id="tinytable_5fnlw29ctljxy9bq3smi" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-striped" id="tinytable_g8v5mag2mz8jzqvb0ojk" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of terminology used in <em>devMSMs</em></p></caption>
         <thead><tr>
 <th scope="col">Term</th>
@@ -140,7 +139,7 @@
                 </tr>
 <tr>
 <td><strong>Exposure Time Points</strong></td>
-                  <td>Time points in development when the exposure was measured, at which balancing formulas will be created.</td>
+                  <td>Time points in development when the exposure was measured, at which weights formulas will be created.</td>
                 </tr>
 <tr>
 <td><strong>Exposure Epochs</strong></td>
@@ -178,10 +177,10 @@
 </div>
 </div>
 <p><br></p>
-<section class="section level2"><h2 id="balancing-formula">Balancing Formula<a class="anchor" aria-label="anchor" href="#balancing-formula"></a>
+<section class="section level2"><h2 id="weights-formula">Weights Formula<a class="anchor" aria-label="anchor" href="#weights-formula"></a>
 </h2>
-Balancing formula are formula created at each exposure time point, regressing exposure on confounders, for the purpose of creating and/or assessing balancing weights. The general form is given by:
-<pre><code>ESETA1.t ~ <span style="color: darkred">time-invariant</span> confounders + <span style="color: blue">time-varying</span> confounders + <i>lagged</i> <span style="color: seagreen;">outcomes</span> + <i>lagged</i> <span style="color: purple;">outcomes</span></code></pre>
+Weights formula are formula created at each exposure time point, regressing exposure on confounders, for the purpose of creating and/or assessing balancing weights. The general form is given by: <br><pre><code>ESETA1.t ~ <span style="color: darkred">time-invariant</span> confounders + <span style="color: blue">time-varying</span> confounders + <i>lagged</i> <span style="color: seagreen;">exposures</span> + <i>lagged</i> <span style="color: purple;">outcomes</span></code></pre>
+<p><br></p>
 <p>Below is a table that summarizes the three formula <code>type</code>’s that will be used.</p>
 <p>Table 2.</p>
 <div class="cell">
@@ -189,12 +188,12 @@ Balancing formula are formula created at each exposure time point, regressing ex
 <!-- preamble start -->
 
     <script>
-      function styleCell_sc41pzim23o6yrsx599h(i, j, css_id) {
-        var table = document.getElementById("tinytable_sc41pzim23o6yrsx599h");
+      function styleCell_s988p6wg8rbdvdbyofeb(i, j, css_id) {
+        var table = document.getElementById("tinytable_s988p6wg8rbdvdbyofeb");
         table.rows[i].cells[j].classList.add(css_id);
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_sc41pzim23o6yrsx599h');
+        var table = document.getElementById('tinytable_s988p6wg8rbdvdbyofeb');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -202,8 +201,8 @@ Balancing formula are formula created at each exposure time point, regressing ex
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_sc41pzim23o6yrsx599h(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_sc41pzim23o6yrsx599h");
+      function spanCell_s988p6wg8rbdvdbyofeb(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_s988p6wg8rbdvdbyofeb");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -229,13 +228,13 @@ Balancing formula are formula created at each exposure time point, regressing ex
         targetCell.rowSpan = rowspan;
         targetCell.colSpan = colspan;
       }
-window.addEventListener('load', function () { styleCell_sc41pzim23o6yrsx599h(0, 0, 'tinytable_css_id0wsxhyg6jsvt0kc0ip95') })
-window.addEventListener('load', function () { styleCell_sc41pzim23o6yrsx599h(0, 1, 'tinytable_css_id0wsxhyg6jsvt0kc0ip95') })
+window.addEventListener('load', function () { styleCell_s988p6wg8rbdvdbyofeb(0, 0, 'tinytable_css_idnotgkxxbznt3pl8l83zp') })
+window.addEventListener('load', function () { styleCell_s988p6wg8rbdvdbyofeb(0, 1, 'tinytable_css_idnotgkxxbznt3pl8l83zp') })
     </script><style>
-    .table td.tinytable_css_id0wsxhyg6jsvt0kc0ip95, .table th.tinytable_css_id0wsxhyg6jsvt0kc0ip95 {  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_idnotgkxxbznt3pl8l83zp, .table th.tinytable_css_idnotgkxxbznt3pl8l83zp {  border-bottom: solid 0.1em #d3d8dc; }
     </style>
 <div class="container">
-      <table class="table table table-borderless" id="tinytable_sc41pzim23o6yrsx599h" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-borderless" id="tinytable_s988p6wg8rbdvdbyofeb" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of the formula terminology used in the <em>devMSMs</em>
 package for creating balancing weights and assessing their performance
 in devMSMs (<em>Workflows</em> vignettes Steps 4-6). The different kinds
@@ -289,12 +288,12 @@ the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
 <!-- preamble start -->
 
     <script>
-      function styleCell_1f7h2hzfqgl7vj3fkw5e(i, j, css_id) {
-        var table = document.getElementById("tinytable_1f7h2hzfqgl7vj3fkw5e");
+      function styleCell_4k4ouvq7ydcu4tp1wr35(i, j, css_id) {
+        var table = document.getElementById("tinytable_4k4ouvq7ydcu4tp1wr35");
         table.rows[i].cells[j].classList.add(css_id);
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_1f7h2hzfqgl7vj3fkw5e');
+        var table = document.getElementById('tinytable_4k4ouvq7ydcu4tp1wr35');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -302,8 +301,8 @@ the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_1f7h2hzfqgl7vj3fkw5e(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_1f7h2hzfqgl7vj3fkw5e");
+      function spanCell_4k4ouvq7ydcu4tp1wr35(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_4k4ouvq7ydcu4tp1wr35");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -332,7 +331,7 @@ the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
     </script><style>
     </style>
 <div class="container">
-      <table class="table table table-striped" id="tinytable_1f7h2hzfqgl7vj3fkw5e" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-striped" id="tinytable_4k4ouvq7ydcu4tp1wr35" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of the 7 core functions of the <em>devMSMs</em> package.</p></caption>
         <thead><tr>
 <th scope="col">Function</th>

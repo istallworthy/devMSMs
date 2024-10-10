@@ -62,7 +62,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 <p>Those who study and work with humans are fundamentally interested in questions of causation. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in <em>causal processes</em> involving questions about when (timing) and at what levels (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people’s lives. However, for many, conceptual, methodological, and practical barriers have prevented the use of methods for causal inference developed in other fields. <br></p>
-<p>The goal of this <em>devMSMs</em> package and accompanying tutorial paper, <em>Investigating Causal Questions in Human Development Using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R</em> (<em>insert preprint link here</em>), is to provide a set of tools for implementing marginal structural models (<strong>MSMs</strong>; Robins et al., 2000).</p>
+<p>The goal of this <em>devMSMs</em> package and accompanying tutorial paper, <em>Investigating Causal Questions in Human Development Using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R</em> (<a href="https://osf.io/preprints/psyarxiv/284mb" class="external-link">preprint</a>), is to provide a set of tools for implementing marginal structural models (<strong>MSMs</strong>; Robins et al., 2000).</p>
 <p>MSMs orginated in epidemiology and public health and represent one under-utilized tool for improving causal inference with longitudinal observational data, given certain assumptions. In brief, MSMs leverage inverse-probability-of-treatment-weights (IPTW) and the potential outcomes framework. MSMs first focus on the problem of confounding, using IPTW to attenuate associations between measured confounders and an exposure (e.g., experience, characteristic, event –from biology to the broader environment) over time. A weighted model can then be fitted relating a time-varying exposure and a future outcome. Finally, the model-predicted effects of different exposure histories that vary in dose and timing can be evaluated and compared as counterfactuals, to reveal putative causal effects. <br></p>
 <p>We employ the term <em>exposure</em> (sometimes referred to as “treatment” in other literatures) to encompass a variety of environmental factors, individual characteristics, or experiences that constitute the putative causal events within a causal model. Exposures may be distal or proximal, reflecting a developing child’s experience within different environments at many levels (Bronfenbrenner &amp; Ceci, 1994), ranging from the family (e.g., parenting), home (e.g., economic strain), school (e.g., teacher quality), neighborhood (e.g., diversity), to the greater politico-cultural-economic context (e.g., inequality). Exposures could also reflect factors internal to the child, including neurodevelopmental (e.g., risk markers), physiological (e.g., stress), and behavioral (e.g., anxiety) patterns to which the child’s development is exposed.<br><br></p>
 <div class="section level2">
@@ -70,20 +70,20 @@
 </h2>
 <p>Core features of <em>devMSMs</em> include:</p>
 <ul>
-<li><p>flexible functions with built-in user guidance, drawing on established expertise and best practices for implementing longitudinal IPTW weighting and outcome modeling, to answer substantive causal questions about dose and timing</p></li>
-<li><p>functions that accept complete or imputed data to accommodate missingness often found in human studies</p></li>
-<li><p>a novel recommended workflow, based on expertise from several disciplines, for using the <em>devMSMs</em> functions with longitudinal data (see <em>Workflows</em> vignettes)</p></li>
-<li><p>an accompanying simulated longitudinal dataset, based on the real-world, Family Life Project (FLP) study of human development, for getting to know the package functions</p></li>
-<li><p>an accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of <em>devMSMs</em></p></li>
-<li><p>executable, step-by-step user guidance for implementing the <em>devMSMs</em> workflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd" class="external-link">R markdown template file</a></p></li>
-<li><p>a brief conceptual introduction, example empirical application, and additional resources in the accompanying tutorial paper</p></li>
+<li><p>Flexible functions with built-in user guidance, drawing on established expertise and best practices for implementing longitudinal IPTW weighting and outcome modeling, to answer substantive causal questions about dose and timing</p></li>
+<li><p>Functions that accept complete or imputed data to accommodate missingness often found in human studies</p></li>
+<li><p>A novel recommended workflow, based on expertise from several disciplines, for using the <em>devMSMs</em> functions with longitudinal data (see <em>Workflows</em> vignettes)</p></li>
+<li><p>An accompanying simulated longitudinal dataset, based on the real-world, Family Life Project (FLP) study of human development, for getting to know the package functions</p></li>
+<li><p>An accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of <em>devMSMs</em></p></li>
+<li><p>Executable, step-by-step user guidance for implementing the <em>devMSMs</em> workflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd" class="external-link">R markdown template file</a></p></li>
+<li><p>A brief conceptual introduction, example empirical application, and additional resources in the accompanying tutorial paper</p></li>
 </ul>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The package contains 7 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures. <br><br><img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png" alt="devMSMs overview" width="900"><br><br><br></p>
+<p>The package contains 7 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures. <br><img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png" alt="devMSMs overview" width="900"><br><br></p>
 <p>Below is a summary of the terms used in the <em>devMSMs</em> vignettes and functions. More details and examples can be found in the accompanying manuscript. <br></p>
 <table class="table">
 <colgroup>
@@ -105,7 +105,7 @@
 </tr>
 <tr class="odd">
 <td><strong>Exposure Time Points</strong></td>
-<td>Time points in development when the exposure was measured, at which balancing formulas will be created.</td>
+<td>Time points in development when the exposure was measured, at which weights formulas will be created.</td>
 </tr>
 <tr class="even">
 <td><strong>Exposure Epochs</strong></td>
@@ -165,7 +165,7 @@
 <div class="section level2">
 <h2 id="citation--bug-reports">Citation &amp; Bug Reports<a class="anchor" aria-label="anchor" href="#citation--bug-reports"></a>
 </h2>
-<p>Please cite your use <em>devMSMs</em> using the following citation: <br> Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Butts K, Berry D (2024). <br><em>devMSMs</em>: Implementing Marginal Structural Models with Longitudinal Data. R package version 0.0.0.9000, <a href="https://istallworthy.github.io/devMSMs/" class="uri">https://istallworthy.github.io/devMSMs/</a>.</p>
+<p>Please cite your use <em>devMSMs</em> using the following citation:<br><br> Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Butts K, Berry D (2024). <br><em>devMSMs</em>: Implementing Marginal Structural Models with Longitudinal Data. R package version 0.0.0.9000, <a href="https://istallworthy.github.io/devMSMs/" class="uri">https://istallworthy.github.io/devMSMs/</a>.</p>
 <p><br></p>
 <p>Please report any bugs at the following link: <a href="https://github.com/istallworthy/devMSMs/issues" class="external-link uri">https://github.com/istallworthy/devMSMs/issues</a></p>
 <p><br></p>

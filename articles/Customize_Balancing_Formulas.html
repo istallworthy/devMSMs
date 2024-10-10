@@ -61,7 +61,7 @@
       <h1>Customize Weights Formulas</h1>
 
 
-      <p class="date">2024-10-08</p>
+      <p class="date">2024-10-10</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Customize_Balancing_Formulas.qmd" class="external-link"><code>vignettes/Customize_Balancing_Formulas.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -74,7 +74,6 @@
 
     <p>This vignette provides guidance on how to customize weights formulas for use in <em>devMSMs</em>. Please first review the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a> and any of the <em>Workflows</em> vignettes.</p>
 <p>The code contained in this vignette is also available, integrated code from the other vignettes, in the ExampleWorkflow.rmd.</p>
-<p><br></p>
 <section class="section level2"><h2 id="core-inputs">Core Inputs<a class="anchor" aria-label="anchor" href="#core-inputs"></a>
 </h2>
 <p>We specify core inputs to the <em>devMSMs</em> functions.</p>
@@ -128,8 +127,7 @@
 <p>We first specify confounders to retain contemporaneously when creating our MSM object.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">devMSMs</span><span class="fu">::</span><span class="fu"><a href="../reference/initMSM.html">initMSM</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">devMSMs</span><span class="fu">::</span><span class="fu"><a href="../reference/initMSM.html">initMSM</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">sim_data_wide</span>, </span>
 <span>  exposure <span class="op">=</span> <span class="va">exposure</span>, </span>
 <span>  tv_conf <span class="op">=</span> <span class="va">tv_conf</span>, </span>
@@ -176,7 +174,7 @@
 <span>  <span class="va">ESETA1.58</span> <span class="op">~</span> <span class="va">BioDadInHH2</span> <span class="op">+</span> <span class="va">DrnkFreq</span> <span class="op">+</span> <span class="va">gov_assist</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<p><code>customFormulas()</code> then checks and retains these formulas for further use with the package.</p>
+<p><code><a href="../reference/createFormulas.html">createFormulas()</a></code> then checks and retains these formulas for further use with the package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">full_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">obj</span>, </span>
@@ -206,7 +204,7 @@
 <p>When creating short formulas, the user can specify the optional <code>concur_conf</code> and <code>custom</code> arguments detailed above. Of note, <code><a href="../reference/createFormulas.html">createFormulas()</a></code> does not check that formulas in the <code>custom</code> field meet criteria for the shortened formula, and thus the user is responsible for ensuring the validity of these formulas.</p>
 <p>When creating short formulas, the user can also specify an optional <code>keep_conf</code> argument. Users would specify this second argument with any time-varying confounders to always retain in the formulas, in lagged form, overriding the <em>t</em>-1 lag default. Users may wish to use this argument if they have time-varying confounders that are not highly consistent over time and have strong reasons to include them in the initial phase of selecting the optimal weighting method (see <em>Workflows</em> vignettes for more details). Note that unless these variables are also specified in <code>concuf_conf</code>, they will only be retained in lagged form.</p>
 <p>For example, to always retain income in all formulas in lagged form, overriding the <em>t</em>-1 lag default via <code>keep_conf</code>.</p>
-<p>As shown below, the <code>createFormulas</code> function now retains income at 6 months in all 15-, 24-, 35-, and 58-month formulas, overriding the <em>t</em>-1 lag rule for that variable. Without this specification, income at 6 months would have been omitted in formulas for exposure at 24, 35, and 58 months.</p>
+<p>As shown below, the <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function now retains income at 6 months in all 15-, 24-, 35-, and 58-month formulas, overriding the <em>t</em>-1 lag rule for that variable. Without this specification, income at 6 months would have been omitted in formulas for exposure at 24, 35, and 58 months.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">short_formulas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createFormulas.html">createFormulas</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">obj</span>, </span>
@@ -234,6 +232,10 @@
 </h2>
 <p>The default use of <code><a href="../reference/createFormulas.html">createFormulas()</a></code> with <code>type</code> = “update” creates updated weights formulas at each exposure time point. Each formula contains all time invariant confounders; time-varying confounders measured at the time point directly prior (<em>t</em>-1 lag) to that exposure time point; as well as any time-varying confounders at greater lags that were not successfully balanced using the short weights formulas.</p>
 <p>When creating updated formulas, the user can specify the optional <code>concur_conf</code>, <code>keep_conf</code>, and <code>custom</code> arguments detailed above. Of note, <code><a href="../reference/createFormulas.html">createFormulas()</a></code> does not check that formulas in the <code>custom</code> field meet criteria for the updated formula or identify any imbalanced confounders, and the user is responsible for ensuring the validity of these formulas. <br></p>
+</section><section class="section level2"><h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<p>Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., &amp; Barbarin, O. (2008). Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418</p>
+<p>Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., Garrett-Peiers, P., Conger, R. D., &amp; Bauer, P. J. (2013). The Family Life Project: An Epidemiological and Developmental Study of Young Children Living in Poor Rural Communities. Monographs of the Society for Research in Child Development, 78(5), i–150.</p>
 </section><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

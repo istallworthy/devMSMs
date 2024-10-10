@@ -61,7 +61,7 @@
       <h1>Workflow: Continuous Exposure</h1>
 
       <p class="author">Isabella Stallworthy</p>
-      <p class="date">2024-10-08</p>
+      <p class="date">2024-10-10</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Workflow_Continuous_Exposure.qmd" class="external-link"><code>vignettes/Workflow_Continuous_Exposure.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -72,9 +72,8 @@
 
 
 
-    <p><br></p>
-<p>This vignette guides a user through the process of using <em>devMSMs</em> to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.</p>
-<p>The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd" class="external-link">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript <em>[add link here]</em>. We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow. <br></p>
+    <p>This vignette guides a user through the process of using <em>devMSMs</em> to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.</p>
+<p>The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd" class="external-link">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript (<a href="https://osf.io/preprints/psyarxiv/284mb" class="external-link">preprinte</a>). We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow. <br></p>
 <section class="section level2"><h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Until <em>devMSMs</em> is available on CRAN, you will need to install it directly from Github (https://github.com/istallworthy/devMSMs), as shown below.</p>
@@ -116,37 +115,31 @@
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># home_dir = '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' </span></span></code></pre></div>
 </div>
-</section><section class="level3"><h4 id="p3-2-recommended-time-point-delimiter">P3.2 Recommended: Time Point Delimiter<a class="anchor" aria-label="anchor" href="#p3-2-recommended-time-point-delimiter"></a>
-</h4>
+<p><br> ### P3.2 Recommended: Time Point Delimiter</p>
 <p>Below, we use the default period as a time delimiter.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sep</span> <span class="op">&lt;-</span> <span class="st">"\\."</span></span></code></pre></div>
 </div>
-</section><section class="level3"><h4 id="p3-3-required-exposure-variable">P3.3 Required: Exposure Variable<a class="anchor" aria-label="anchor" href="#p3-3-required-exposure-variable"></a>
-</h4>
+<p><br> ### P3.3 Required: Exposure Variable</p>
 <p>We specify our 6 time points of exposure.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exposure</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ESETA1.6"</span>, <span class="st">"ESETA1.15"</span>, <span class="st">"ESETA1.24"</span>, <span class="st">"ESETA1.35"</span>, <span class="st">"ESETA1.58"</span><span class="op">)</span> </span></code></pre></div>
 </div>
-</section><section class="level3"><h4 id="p3-4--required-for-continuous-exposures-identify-high-and-low-cutoff-values">P3.4. Required for Continuous Exposures: Identify High and Low Cutoff Values<a class="anchor" aria-label="anchor" href="#p3-4--required-for-continuous-exposures-identify-high-and-low-cutoff-values"></a>
-</h4>
+<p><br> ### P3.4. Required for Continuous Exposures: Identify High and Low Cutoff Values</p>
 <p>Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hi_lo_cut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
 </div>
-</section><section class="level3"><h4 id="p3-5-optional-exposure-epochs">P3.5 Optional: Exposure Epochs<a class="anchor" aria-label="anchor" href="#p3-5-optional-exposure-epochs"></a>
-</h4>
+<p><br> ### P3.5 Optional: Exposure Epochs</p>
 <p>We specify that the first two exposure time points (6 and 15 months) will be considered infancy, the second two (34 and 25 months) toddlerhood, and the final (58 months) childhood.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epochs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Infancy"</span>, <span class="st">"Infancy"</span>, <span class="st">"Toddlerhood"</span>, <span class="st">"Toddlerhood"</span>, <span class="st">"Childhood"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<p><br></p>
-</section><section class="level3"><h4 id="p3-6-recommended-hypotheses-relevant-exposure-histories">P3.6 Recommended: Hypotheses-Relevant Exposure Histories<a class="anchor" aria-label="anchor" href="#p3-6-recommended-hypotheses-relevant-exposure-histories"></a>
-</h4>
+<p><br> ### P3.6 Recommended: Hypotheses-Relevant Exposure Histories</p>
 <p>See the Specify Core Inputs vignette for more information.</p>
 <p>Below, we specify low economic strain at all epochs (“l-l-l”) as our reference event in comparison to high levels at all epochs (“h-h-h”) to examine an example question comparing the causal effects of 0 vs 3 doses of exposure to economic strain on children’s behavior problems.</p>
 <div class="cell">
@@ -155,15 +148,13 @@
 <span></span>
 <span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"h-h-h"</span><span class="op">)</span></span></code></pre></div>
 </div>
-</section><section class="level3"><h4 id="p3-7-required-outcome-variable">P3.7 Required: Outcome Variable<a class="anchor" aria-label="anchor" href="#p3-7-required-outcome-variable"></a>
-</h4>
+<p><br> ### P3.7 Required: Outcome Variable</p>
 <p>We specify out outcome as behavior problems at 58 months.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outcome</span> <span class="op">&lt;-</span>  <span class="st">"StrDif_Tot.58"</span></span></code></pre></div>
 </div>
-</section><section class="level3"><h4 id="p3-8-recommended-confounders">P3.8 Recommended: Confounders<a class="anchor" aria-label="anchor" href="#p3-8-recommended-confounders"></a>
-</h4>
+<p><br> ### P3.8 Recommended: Confounders</p>
 <p>We specify both time-invariant and time-varying confounders.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
@@ -186,8 +177,7 @@
 <span>  <span class="st">"StrDif_Tot.35"</span>, </span>
 <span>  <span class="st">"fscore.35"</span><span class="op">)</span></span></code></pre></div>
 </div>
-</section><section class="level3"><h4 id="p3-8c-optional-concurrent-confounders">P3.8c Optional: Concurrent Confounders<a class="anchor" aria-label="anchor" href="#p3-8c-optional-concurrent-confounders"></a>
-</h4>
+<p><br> ### P3.8c Optional: Concurrent Confounders</p>
 <p>We specify no concurrent confounders as, given our data, we are unable to disentangle them from mediators or colliders.</p>
 <p><br></p>
 </section></section><section class="level2"><h3 id="step-p4--data-preparation-inspection">STEP P4. Data Preparation &amp; Inspection<a class="anchor" aria-label="anchor" href="#step-p4--data-preparation-inspection"></a>
@@ -200,7 +190,7 @@
 <li><p>a mids object (output from mice::mice()) of data imputed in wide format</p></li>
 <li><p>a list of data imputed in wide format as data frames</p></li>
 </ul>
-<p>See the Data Preparation vignette for more detail.</p>
+<p>See the <em>Data Preparation</em> vignette for more detail.</p>
 <p>We first load in 2 imputed datasets as a mice object. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain (“ESETA1”) measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems (“StrDif_Tot”) measured at 58 months. (See <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements &amp; Preparation vignette</a> for beginning with other data types, including missing data).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
@@ -222,8 +212,7 @@
 <span><span class="co">#&gt; 4    0.301   -0.501   0.000</span></span>
 <span><span class="co">#&gt; 5   -0.247    0.084   0.153</span></span></code></pre></div>
 </div>
-</section><section class="level3"><h4 id="p4-4-required-create-msm-object">P4.4 Required: Create MSM Object<a class="anchor" aria-label="anchor" href="#p4-4-required-create-msm-object"></a>
-</h4>
+<p><br> ### P4.4 Required: Create MSM Object</p>
 <p>We set a seed for reproducibility.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
@@ -524,7 +513,7 @@
 <p>The required input to create full weights formulas using the <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function are: MSM object (e.g., “obj”) and setting <code>type</code> = “full”.</p>
 <p>Optional inputs to create full weights formulas using the <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function are as follows.</p>
 <p>The user may specify a list of custom formulas by specifying to <code>custom</code> a list of formulas, one for each exposure time point (e.g., “exposure.time ~ variable.time + variable +…”) in formula format. We recommend first running the <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function without custom formulas (<code>custom</code> = NULL) and using the output as a model of the required format for custom formulas. The <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating.</p>
-<p>Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html">Customize weights formulas vignette</a> for more detail on how to customize formulas.</p>
+<p>Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html">Customize Weights Formulas vignette</a> for more detail on how to customize formulas.</p>
 <p>We chose not to create custom formulas and instead use <code><a href="../reference/createFormulas.html">createFormulas()</a></code> to make them automatically in this example.</p>
 <p>We first create full formulas.</p>
 <div class="cell">
@@ -559,14 +548,14 @@
 <p><br></p>
 </section><section class="level3"><h4 id="b--conduct-exploratory-pre-balance-assessment">1b. Conduct Exploratory Pre-Balance Assessment<a class="anchor" aria-label="anchor" href="#b--conduct-exploratory-pre-balance-assessment"></a>
 </h4>
-<p>The next step examines the initial imbalance, or how strongly exposure relates to each confounder at each time point, for all measured confounders prior to weighting using the <code><a href="../reference/assessBalance.html">assessBalance()</a></code> function. This function draws on the <code>calcBalStats()</code> function (see the Assessing Balance for Time-Varying Exposure section in the accompanying manuscript).<br>
-The <code><a href="../reference/assessBalance.html">assessBalance()</a></code> function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).</p>
+<p>The next step examines the initial imbalance, or how strongly exposure relates to each confounder at each time point, for all measured confounders prior to weighting using the <code><a href="../reference/assessBalance.html">assessBalance()</a></code> function. This function draws on the <code>calcBalStats()</code> function (see the Assessing Balance for Time-Varying Exposure section in the accompanying manuscript).<br></p>
+<p>The <code><a href="../reference/assessBalance.html">assessBalance()</a></code> function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).</p>
 <p>The required inputs for using the <code><a href="../reference/assessBalance.html">assessBalance()</a></code> function to conduct pre-balance testing are: data (data frame, a mids object, or a list of imputed datasets as dataframes in wide format) and an MSM object (e.g., “obj”). Please see the <em>Assessing Balance for Time-Varying Exposures</em> vignette for more detail on how this function calculates balance.</p>
 <p>The optional inputs are as follows.</p>
-<p>The user may specify <code>balance_thresh</code>, or a threshold(s) for determining confounder balance, in one of two ways.<br>
-* First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced, and above which they are considered imbalanced (default is 0.1; Stuart, 2010).</p>
+<p>The user may specify <code>balance_thresh</code>, or a threshold(s) for determining confounder balance, in one of two ways.</p>
 <ul>
-<li>Second, users may make an a priori assertion that some confounders are more important than others based on theory and existing research. In this case, they can provide two numbers that represent the balance thresholds for important and less important confounders, respectively. If the user supplies two balance thresholds, they must also supply a list of important confounders (time-varying: “variable.t”, time invariant: “variable”) to the <code>imp_conf</code> field. The balance threshold specification should be kept consistent throughout the use of this workflow.</li>
+<li><p>First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced, and above which they are considered imbalanced (default is 0.1; Stuart, 2010).</p></li>
+<li><p>Second, users may make an a priori assertion that some confounders are more important than others based on theory and existing research. In this case, they can provide two numbers that represent the balance thresholds for important and less important confounders, respectively. If the user supplies two balance thresholds, they must also supply a list of important confounders (time-varying: “variable.t”, time invariant: “variable”) to the <code>imp_conf</code> field. The balance threshold specification should be kept consistent throughout the use of this workflow.</p></li>
 </ul>
 <p>Below, as recommended, we provide two balancing thresholds and identify income and parent education as important confounders in the relation between economic strain and behavior problems.</p>
 <div class="cell">
@@ -841,7 +830,7 @@ The love plots depict the standardized associations between confounder and expos
 <p><br></p>
 </section><section class="level3"><h4 id="b--create-iptw-balancing-weights-using-multiple-weighting-methods">2b. Create IPTW Balancing Weights Using Multiple Weighting Methods<a class="anchor" aria-label="anchor" href="#b--create-iptw-balancing-weights-using-multiple-weighting-methods"></a>
 </h4>
-<p>Having created shorter, simplified weights formulas, we now create the first round of IPTW balancing weights (Thoemmes &amp; Ong, 2016) using the <code><a href="../reference/createWeights.html">createWeights()</a></code> function, the shortened weights formulas, and all available weighting methods. The function calls the <code>weightitMSM()</code> function from the <em>WeightIt</em> package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as recommended (Cole &amp; Hernan, 2008; Thoemmes &amp; Ong, 2016), and distributions can be saved for inspection.</p>
+<p>Having created shorter, simplified weights formulas, we now create the first round of IPTW balancing weights (Thoemmes &amp; Ong, 2016) using the <code><a href="../reference/createWeights.html">createWeights()</a></code> function, the shortened weights formulas, and all available weighting methods. The function calls the <code>weightitMSM()</code> function from the <em>WeightIt</em> package (Greifer, 2024) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as recommended (Cole &amp; Hernan, 2008; Thoemmes &amp; Ong, 2016), and distributions can be saved for inspection.</p>
 <p>The required inputs for using the <code><a href="../reference/createWeights.html">createWeights()</a></code> function to create the initial around of IPTW balancing weights are: an MSM object (e.g, ‘obj’), complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), and the short formulas (see Step 2a).</p>
 <p>We specify the short formulas below.</p>
 <div class="cell">
@@ -910,107 +899,10 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 1 and the `cbps` weighting method, the median weight value is 0.77 (SD = 1.18; range = 0-9).</span></span></code></pre></div>
 </div>
-<p>Next, we look inside the output to summarize the weighting process (drawing on the summary method from <em>weightIt</em>, for any given imputed dataset.</p>
+<p>Next, we look inside the output to summarize the weighting process (drawing on the summary method from <em>weightIt</em>), for any given imputed dataset (we chose the first one here).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.cbps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                         Time 1                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5138</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;        1246   1145    294    697    919</span></span>
-<span><span class="co">#&gt;  all 7.4581 7.6788 7.9902 8.2032 8.5138</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       1.066 0.725   0.443       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    605.04</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 2                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5138</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;        1246   1145    294    697    919</span></span>
-<span><span class="co">#&gt;  all 7.4581 7.6788 7.9902 8.2032 8.5138</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       1.066 0.725   0.443       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    605.04</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 3                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5138</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;        1246   1145    294    697    919</span></span>
-<span><span class="co">#&gt;  all 7.4581 7.6788 7.9902 8.2032 8.5138</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       1.066 0.725   0.443       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    605.04</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 4                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5138</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;        1246   1145    294    697    919</span></span>
-<span><span class="co">#&gt;  all 7.4581 7.6788 7.9902 8.2032 8.5138</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       1.066 0.725   0.443       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    605.04</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 5                        </span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.cbps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
@@ -1067,104 +959,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 1 and the `glm` weighting method, the median weight value is 1.27 (SD = 10.03; range = 0-271).</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.glm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                         Time 1                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 271.3462</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.1877 58.3054 63.4626 178.9983 271.3462</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var  MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.824 0.96   1.144       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     82.74</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 2                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 271.3462</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.1877 58.3054 63.4626 178.9983 271.3462</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var  MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.824 0.96   1.144       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     82.74</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 3                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 271.3462</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.1877 58.3054 63.4626 178.9983 271.3462</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var  MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.824 0.96   1.144       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     82.74</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 4                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 271.3462</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.1877 58.3054 63.4626 178.9983 271.3462</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var  MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.824 0.96   1.144       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     82.74</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 5                        </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.glm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
@@ -1217,104 +1012,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 1 and the `gbm` weighting method, the median weight value is 1.26 (SD = 8.18; range = 0-216).</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.gbm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                         Time 1                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 216.1534</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;          342      30     475    1145       36</span></span>
-<span><span class="co">#&gt;  all 43.0076 43.1447 55.5631 150.016 216.1534</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.383 0.916   1.016       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    103.87</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 2                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 216.1534</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;          342      30     475    1145       36</span></span>
-<span><span class="co">#&gt;  all 43.0076 43.1447 55.5631 150.016 216.1534</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.383 0.916   1.016       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    103.87</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 3                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 216.1534</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;          342      30     475    1145       36</span></span>
-<span><span class="co">#&gt;  all 43.0076 43.1447 55.5631 150.016 216.1534</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.383 0.916   1.016       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    103.87</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 4                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 216.1534</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;          342      30     475    1145       36</span></span>
-<span><span class="co">#&gt;  all 43.0076 43.1447 55.5631 150.016 216.1534</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.383 0.916   1.016       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    103.87</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 5                        </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.gbm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
@@ -1365,128 +1063,31 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>      i <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 19.51; range = 0-663).</span></span>
+<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.24 (SD = 16.7; range = 0-567).</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                         Time 1                        </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                   Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 663.017</span></span>
+<span><span class="co">#&gt;     Min                                    Max</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 567.1087</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
 <span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;           30    1235     475      591    1145</span></span>
-<span><span class="co">#&gt;  all 45.4484 71.8712 91.6244 156.2991 663.017</span></span>
+<span><span class="co">#&gt;           30    1235     591     475     1145</span></span>
+<span><span class="co">#&gt;  all 51.2246 75.0006 86.6528 93.3795 567.1087</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       6.764 1.031   1.581       0</span></span>
+<span><span class="co">#&gt; all       6.012 1.008   1.446       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;              Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     27.65</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 2                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                   Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 663.017</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;           30    1235     475      591    1145</span></span>
-<span><span class="co">#&gt;  all 45.4484 71.8712 91.6244 156.2991 663.017</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       6.764 1.031   1.581       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     27.65</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 3                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                   Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 663.017</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;           30    1235     475      591    1145</span></span>
-<span><span class="co">#&gt;  all 45.4484 71.8712 91.6244 156.2991 663.017</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       6.764 1.031   1.581       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     27.65</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 4                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                   Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 663.017</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;           30    1235     475      591    1145</span></span>
-<span><span class="co">#&gt;  all 45.4484 71.8712 91.6244 156.2991 663.017</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       6.764 1.031   1.581       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     27.65</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 5                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                   Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 663.017</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;           30    1235     475      591    1145</span></span>
-<span><span class="co">#&gt;  all 45.4484 71.8712 91.6244 156.2991 663.017</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       6.764 1.031   1.581       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     27.65</span></span>
+<span><span class="co">#&gt; Weighted     34.81</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>     i <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -1713,104 +1314,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; For imputation 1 and the `super` weighting method, the median weight value is 1.27 (SD = 9.99; range = 0-270).</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                         Time 1                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 270.2898</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.0314 58.1278 63.2379 178.3232 270.2898</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.817 0.959   1.141       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     83.06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 2                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 270.2898</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.0314 58.1278 63.2379 178.3232 270.2898</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.817 0.959   1.141       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     83.06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 3                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 270.2898</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.0314 58.1278 63.2379 178.3232 270.2898</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.817 0.959   1.141       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     83.06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 4                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 270.2898</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.0314 58.1278 63.2379 178.3232 270.2898</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.817 0.959   1.141       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     83.06</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 5                        </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
@@ -2132,7 +1636,7 @@ The love plots depict the standardized associations between confounder and expos
 <li>Lowest median absolute balance statistic, across all confounders and time points, reflecting the best overall attenuation of confounding (from summary output);</li>
 <li>Lowest maximum absolute balance statistic, across all confounders and time points (and imputed datasets, where applicable), indicating weakest remaining relation between exposure and confounder for the least balanced confounder (from summary output);<br>
 </li>
-<li>Reasonable effective sample size following weighting (for all imputed datasets, where applicable), indicating reasonable power to detect effects (from <em>weightiIt</em> summary output). <br> For the first three, we examine summaries for each of the weighting methods.</li>
+<li>Reasonable effective sample size following weighting (for all imputed datasets, where applicable), indicating reasonable power to detect effects (from <em>WeightIt</em> summary output). <br> For the first three, we examine summaries for each of the weighting methods.</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb46"><pre class="downlit sourceCode r">
@@ -2195,19 +1699,19 @@ The love plots depict the standardized associations between confounder and expos
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">balance_stats.bart</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 28 out of 241 (11.6%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.24):</span></span>
+<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 24 out of 241 (10.0%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.11 (max: 0.19):</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | Exposure  | Total # of covariates | # of imbalanced covariates |</span></span>
 <span><span class="co">#&gt; +===========+=======================+============================+</span></span>
-<span><span class="co">#&gt; | ESETA1.6  | 28                    |  7                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.6  | 28                    |  5                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.15 | 38                    | 13                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.24 | 47                    |  7                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.24 | 47                    |  4                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.35 | 59                    |  0                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.58 | 69                    |  1                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.58 | 69                    |  2                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates Averaging Across Imputed Datasetrs using `bart`</span></span>
@@ -2232,7 +1736,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; Table: Imbalanced Covariates Averaging Across Imputed Datasetrs using `super`</span></span></code></pre></div>
 </div>
 <p>From this, we find that the CBPS method has the fewest imbalanced confounders (with only 2), lowest median balance statistic, and lowest max balance statistic.</p>
-<p>To examine the fourth criterion, we use the <em>weightIt</em> summary method to examine effective sample sizes (“Weighted”) compared to the orignal sample size (“Unweighted”) across weighting methods. We do this just for the first imputed dataset.</p>
+<p>To examine the fourth criterion, we use the <em>WeightIt</em> summary method to examine effective sample sizes (“Weighted”) compared to the orignal sample size (“Unweighted”) across weighting methods. We do this just for the first imputed dataset.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.cbps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
@@ -2257,7 +1761,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; $effective.sample.size</span></span>
 <span><span class="co">#&gt;                 Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.00000</span></span>
-<span><span class="co">#&gt; Weighted     27.65344</span></span>
+<span><span class="co">#&gt; Weighted     34.81194</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $effective.sample.size</span></span>
@@ -2821,7 +2325,7 @@ The love plots depict the standardized associations between confounder and expos
 <p><br></p>
 </section><section class="level3"><h4 id="step-3c--create-final-balancing-weights">Step 3c. Create Final Balancing Weights<a class="anchor" aria-label="anchor" href="#step-3c--create-final-balancing-weights"></a>
 </h4>
-<p>Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the updated formulas from the previous step using the <code><a href="../reference/createWeights.html">createWeights()</a></code> function (<code>method</code> = “…’), with the SuperLearner method being the optimal weighting method identified in Step 2c. The function calls the <code>weightitMSM()</code> function from the <em>WeightIt</em> package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as is recommended (Cole &amp; Hernan, 2008; Thoemmes &amp; Ong, 2016) and distributions are saved out in the home directory for inspection.</p>
+<p>Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the updated formulas from the previous step using the <code><a href="../reference/createWeights.html">createWeights()</a></code> function (<code>method</code> = “…’), with the SuperLearner method being the optimal weighting method identified in Step 2c. The function calls the <code>weightitMSM()</code> function from the <em>WeightIt</em> package (Greifer, 2024) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as is recommended (Cole &amp; Hernan, 2008; Thoemmes &amp; Ong, 2016) and distributions are saved out in the home directory for inspection.</p>
 <p>The required inputs for using the <code><a href="../reference/createWeights.html">createWeights()</a></code> function to create the final round of IPTW balancing weights using the updated short weights formulas are: complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), an MSM object (e.g., “obj”), the best-performing weights method, and the updated formulas (see Step 3a).</p>
 <p>The optional input for the <code><a href="../reference/createWeights.html">createWeights()</a></code> function are listed in Step 2b.</p>
 <p>The function returns a list in the form of WeightItMSM output.</p>
@@ -3082,104 +2586,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Balance Stats for Exposure Time 2 Averaging Across Imputed Datasets</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">trim_weights</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                         Time 1                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 3.5109</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;          89     79     30     27     11</span></span>
-<span><span class="co">#&gt;  all 3.5109 3.5109 3.5109 3.5109 3.5109</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       0.893 0.685   0.371       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292. </span></span>
-<span><span class="co">#&gt; Weighted    718.9</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 2                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 3.5109</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;          89     79     30     27     11</span></span>
-<span><span class="co">#&gt;  all 3.5109 3.5109 3.5109 3.5109 3.5109</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       0.893 0.685   0.371       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292. </span></span>
-<span><span class="co">#&gt; Weighted    718.9</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 3                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 3.5109</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;          89     79     30     27     11</span></span>
-<span><span class="co">#&gt;  all 3.5109 3.5109 3.5109 3.5109 3.5109</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       0.893 0.685   0.371       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292. </span></span>
-<span><span class="co">#&gt; Weighted    718.9</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 4                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 3.5109</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;          89     79     30     27     11</span></span>
-<span><span class="co">#&gt;  all 3.5109 3.5109 3.5109 3.5109 3.5109</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       0.893 0.685   0.371       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;             Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292. </span></span>
-<span><span class="co">#&gt; Weighted    718.9</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 5                        </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">trim_weights</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
@@ -3241,104 +2648,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates Averaging Across Imputed Datasetrs using `cbps`</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">final_weights</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                         Time 1                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5407</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;         877   1145    697    294    919</span></span>
-<span><span class="co">#&gt;  all 7.1323 7.3944 7.7172 8.5237 8.5407</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       1.056 0.722   0.439       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    611.17</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 2                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5407</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;         877   1145    697    294    919</span></span>
-<span><span class="co">#&gt;  all 7.1323 7.3944 7.7172 8.5237 8.5407</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       1.056 0.722   0.439       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    611.17</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 3                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5407</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;         877   1145    697    294    919</span></span>
-<span><span class="co">#&gt;  all 7.1323 7.3944 7.7172 8.5237 8.5407</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       1.056 0.722   0.439       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    611.17</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 4                        </span></span>
-<span><span class="co">#&gt;                   Summary of weights</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight ranges:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5407</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;         877   1145    697    294    919</span></span>
-<span><span class="co">#&gt;  all 7.1323 7.3944 7.7172 8.5237 8.5407</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Weight statistics:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       1.056 0.722   0.439       0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted    611.17</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                         Time 5                        </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">final_weights</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
@@ -3567,7 +2877,7 @@ The love plots depict the standardized associations between confounder and expos
 <p><br></p>
 <section class="level3"><h4 id="step-5a--select-fit-a-weighted-outcome-model">Step 5a. Select &amp; Fit a Weighted Outcome Model<a class="anchor" aria-label="anchor" href="#step-5a--select-fit-a-weighted-outcome-model"></a>
 </h4>
-<p>First, we use the <code><a href="../reference/fitModel.html">fitModel()</a></code> function to fit a weighted generalized linear model relating exposure to outcome. The function draws on the <code>glm_weightit()</code> function of the <em>WeightIt</em> package (Greifer, 2023). The exposure main effects in models reflect exposure levels at each exposure time point unless exposure epochs are specified. One of the benefits of creating balancing weights is that they can be used in a variety of different marginal outcome models and those encompassed in this function are only a subset of possible models. Note that these models can get complex and we do not advise interpreting the individual terms.</p>
+<p>First, we use the <code><a href="../reference/fitModel.html">fitModel()</a></code> function to fit a weighted generalized linear model relating exposure to outcome. The function draws on the <code>glm_weightit()</code> function of the <em>WeightIt</em> package (Greifer, 2024). The exposure main effects in models reflect exposure levels at each exposure time point unless exposure epochs are specified. One of the benefits of creating balancing weights is that they can be used in a variety of different marginal outcome models and those encompassed in this function are only a subset of possible models. Note that these models can get complex and we do not advise interpreting the individual terms.</p>
 <p>The required inputs for using the <code><a href="../reference/fitModel.html">fitModel()</a></code> function are: complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), an MSM object (e.g., “obj”), an outcome, a list of trimmed weights, and a model from the list below (“m0”, “m1”, “m2”, or “m3”).</p>
 <p>We first inspect the following list of models.</p>
 <ul>
@@ -3730,7 +3040,6 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; +--------------------+-------+-----------------+--------+</span></span></code></pre></div>
 </div>
 <p>With a comparable result.</p>
-<p><br></p>
 </section><b>
 </b></section><b>
 <section class="level3"><h4 id="step-5b--estimate-compare-and-visualize-model-predicted-outcome-as-a-function-of-exposure-history">Step 5b. Estimate, Compare, and Visualize Model-Predicted Outcome as a Function of Exposure History<a class="anchor" aria-label="anchor" href="#step-5b--estimate-compare-and-visualize-model-predicted-outcome-as-a-function-of-exposure-history"></a>

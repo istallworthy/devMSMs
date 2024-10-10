@@ -61,7 +61,7 @@
       <h1>Data Requirements &amp; Preparation</h1>
 
 
-      <p class="date">2024-10-08</p>
+      <p class="date">2024-10-10</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Data_Requirements.qmd" class="external-link"><code>vignettes/Data_Requirements.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -86,8 +86,8 @@
 <li><p>a mids object (output from <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice::mice()</a></code>) of data imputed in wide format</p></li>
 <li><p>a list of data imputed in wide format as data frames. <br></p></li>
 </ul>
-<p>As shown in Figure 1, for use of the <em>devMSMs</em> package, data in any of the above 3 formats, must be wide and contain an “ID” column for subject identifier and exposure, outcome, and all confounders as separate columns (as shown in Figure 1). Column names can include only underscore special characters and time-varying variables should have a suffix that consists of a period followed by the time point (e.g., “variable.6”). All variables should be classed as integer, numeric, or a factor (not character). Auxiliary or nuisance covariates that are not confounders (e.g, assessment version) can be included in the dataset for use and specification in the final modeling step (<em>Workflow</em> vignettes Step 5).</p>
-<p><br><br></p>
+<p>As shown in the figure below, for use of the <em>devMSMs</em> package, data in any of the above 3 formats, must be wide and contain an “ID” column for subject identifier and exposure, outcome, and all confounders as separate columns (as shown in Figure 1). Column names can include only underscore special characters and time-varying variables should have a suffix that consists of a period followed by the time point (e.g., “variable.6”). All variables should be classed as integer, numeric, or a factor (not character). Auxiliary or nuisance covariates that are not confounders (e.g., assessment version) can be included in the dataset for use and specification in the final modeling step (<em>Workflow</em> vignettes Step 5).</p>
+<p><br></p>
 <!-- ![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](figures/sample_data.png){width="900px"} -->
 <div class="cell">
 <pre><code><span><span class="co">#&gt;   id ti_X tv_Y1.1 tv_Y1.2 tv_Y2.1 tv_Y2.2 exposure.1 exposure.2 outcome.2</span></span>
@@ -98,12 +98,12 @@
 <!-- preamble start -->
 
     <script>
-      function styleCell_wt3epevt87eq1gjp3g7m(i, j, css_id) {
-        var table = document.getElementById("tinytable_wt3epevt87eq1gjp3g7m");
+      function styleCell_o97vhy068se00l7apb5v(i, j, css_id) {
+        var table = document.getElementById("tinytable_o97vhy068se00l7apb5v");
         table.rows[i].cells[j].classList.add(css_id);
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_wt3epevt87eq1gjp3g7m');
+        var table = document.getElementById('tinytable_o97vhy068se00l7apb5v');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -111,8 +111,8 @@
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_wt3epevt87eq1gjp3g7m(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_wt3epevt87eq1gjp3g7m");
+      function spanCell_o97vhy068se00l7apb5v(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_o97vhy068se00l7apb5v");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -138,24 +138,24 @@
         targetCell.rowSpan = rowspan;
         targetCell.colSpan = colspan;
       }
-window.addEventListener('load', function () { styleCell_wt3epevt87eq1gjp3g7m(0, 0, 'tinytable_css_idyq7c0vuc6xohkedjc0tu') })
-window.addEventListener('load', function () { styleCell_wt3epevt87eq1gjp3g7m(0, 1, 'tinytable_css_idcuxjd6esc9qfh8goloh8') })
-window.addEventListener('load', function () { styleCell_wt3epevt87eq1gjp3g7m(0, 2, 'tinytable_css_idbwkesvgdwejsyt6ix2vl') })
-window.addEventListener('load', function () { styleCell_wt3epevt87eq1gjp3g7m(0, 3, 'tinytable_css_idbwkesvgdwejsyt6ix2vl') })
-window.addEventListener('load', function () { styleCell_wt3epevt87eq1gjp3g7m(0, 4, 'tinytable_css_idbwkesvgdwejsyt6ix2vl') })
-window.addEventListener('load', function () { styleCell_wt3epevt87eq1gjp3g7m(0, 5, 'tinytable_css_idbwkesvgdwejsyt6ix2vl') })
-window.addEventListener('load', function () { styleCell_wt3epevt87eq1gjp3g7m(0, 6, 'tinytable_css_idh1vri342rw784cgwmupr') })
-window.addEventListener('load', function () { styleCell_wt3epevt87eq1gjp3g7m(0, 7, 'tinytable_css_idh1vri342rw784cgwmupr') })
-window.addEventListener('load', function () { styleCell_wt3epevt87eq1gjp3g7m(0, 8, 'tinytable_css_idp1m4auswx1mun71aztau') })
+window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 0, 'tinytable_css_idec0s6q3offp2axowd0d7') })
+window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 1, 'tinytable_css_idvnm1wn1hmoc5w2pi9lhy') })
+window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 2, 'tinytable_css_idwz7yc244t4k4oyslp9c3') })
+window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 3, 'tinytable_css_idwz7yc244t4k4oyslp9c3') })
+window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 4, 'tinytable_css_idwz7yc244t4k4oyslp9c3') })
+window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 5, 'tinytable_css_idwz7yc244t4k4oyslp9c3') })
+window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 6, 'tinytable_css_id1vp9ggnvdrv9ubftgg4d') })
+window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 7, 'tinytable_css_id1vp9ggnvdrv9ubftgg4d') })
+window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 8, 'tinytable_css_id2pn0jlirmphz57cnkmp0') })
     </script><style>
-    .table td.tinytable_css_idyq7c0vuc6xohkedjc0tu, .table th.tinytable_css_idyq7c0vuc6xohkedjc0tu {  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idcuxjd6esc9qfh8goloh8, .table th.tinytable_css_idcuxjd6esc9qfh8goloh8 {  background-color: #E3EFDC;  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idbwkesvgdwejsyt6ix2vl, .table th.tinytable_css_idbwkesvgdwejsyt6ix2vl {  background-color: #FDF4CF;  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idh1vri342rw784cgwmupr, .table th.tinytable_css_idh1vri342rw784cgwmupr {  background-color: #d4a0fa;  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idp1m4auswx1mun71aztau, .table th.tinytable_css_idp1m4auswx1mun71aztau {  background-color: #a0d8fa;  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_idec0s6q3offp2axowd0d7, .table th.tinytable_css_idec0s6q3offp2axowd0d7 {  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_idvnm1wn1hmoc5w2pi9lhy, .table th.tinytable_css_idvnm1wn1hmoc5w2pi9lhy {  background-color: #E3EFDC;  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_idwz7yc244t4k4oyslp9c3, .table th.tinytable_css_idwz7yc244t4k4oyslp9c3 {  background-color: #FDF4CF;  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_id1vp9ggnvdrv9ubftgg4d, .table th.tinytable_css_id1vp9ggnvdrv9ubftgg4d {  background-color: #d4a0fa;  border-bottom: solid 0.1em #d3d8dc; }
+    .table td.tinytable_css_id2pn0jlirmphz57cnkmp0, .table th.tinytable_css_id2pn0jlirmphz57cnkmp0 {  background-color: #a0d8fa;  border-bottom: solid 0.1em #d3d8dc; }
     </style>
 <div class="container">
-      <table class="table table table-borderless" id="tinytable_wt3epevt87eq1gjp3g7m" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-borderless" id="tinytable_o97vhy068se00l7apb5v" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Abridged example structure of a wide dataset formatted as required
 for the devMSMs. Column A denotes the ID variable, column B (green)
 denotes a time in-variant confounder (e.g., race, birth information),
@@ -217,7 +217,6 @@ value at the final wave/timepoint. Missing data are denoted as
 <!-- hack to avoid NA insertion in last line -->
 </div>
 </div>
-<p><br></p>
 </section><section class="section level2"><h2 id="loading-packages">Loading packages<a class="anchor" aria-label="anchor" href="#loading-packages"></a>
 </h2>
 <div class="cell">
@@ -233,7 +232,6 @@ value at the final wave/timepoint. Missing data are denoted as
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"istallworthy/devMSMsHelpers"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">devMSMsHelpers</span><span class="op">)</span></span></code></pre></div>
 </div>
-<p><br></p>
 </section><section class="section level2"><h2 id="exploring-devmsms-package-data">Exploring <em>devMSMs</em> Package Data<a class="anchor" aria-label="anchor" href="#exploring-devmsms-package-data"></a>
 </h2>
 <p>The following longitudinal data that accompany <em>devMSMs</em> are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain (ESETA1) measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems (StrDif_Tot) measured at 58 months.</p>
@@ -312,10 +310,10 @@ value at the final wave/timepoint. Missing data are denoted as
 </div>
 <p><br></p>
 <p>The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">Github</a>. Of note, <em>devMSMs</em> must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).</p>
-<p><br></p>
 <div class="cell" data-tbl-cap="Summary of *devMSMs* helper functions.">
 <pre><code><span><span class="co">#&gt; [1] "&lt;S4 class 'tinytable' [package \"tinytable\"] with 27 slots&gt;"</span></span></code></pre>
 </div>
+<p><br></p>
 <p>We first install the <em>devMSMs</em> and <em>devMSMsHelpers</em> packages.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
@@ -329,7 +327,6 @@ value at the final wave/timepoint. Missing data are denoted as
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://istallworthy.github.io/devMSMs/">devMSMs</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">devMSMsHelpers</span><span class="op">)</span></span></code></pre></div>
 </div>
-<p><br></p>
 <p>Preliminary steps P1 (formulate hypotheses) and P2 (create a DAG) are detailed further in the accompanying manuscript. These following recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package.</p>
 </section><section class="section level2"><h2 id="p3--specify-core-inputs">P3. Specify Core Inputs<a class="anchor" aria-label="anchor" href="#p3--specify-core-inputs"></a>
 </h2>
@@ -364,7 +361,7 @@ value at the final wave/timepoint. Missing data are denoted as
 <span><span class="va">outcome</span> <span class="op">&lt;-</span> <span class="st">"StrDif_Tot.58"</span></span></code></pre></div>
 </div>
 <p><br></p>
-</section><section class="section level2"><h2 id="p4-data-preparation-inspection">P4 Data Preparation &amp; Inspection<a class="anchor" aria-label="anchor" href="#p4-data-preparation-inspection"></a>
+</section><section class="section level2"><h2 id="p4--data-preparation-inspection">P4. Data Preparation &amp; Inspection<a class="anchor" aria-label="anchor" href="#p4--data-preparation-inspection"></a>
 </h2>
 <p>Some helper functions have optional arguments to suppress saving output locally (<code>save.out</code> = FALSE) and printing it to the console ( <code>verbose</code> = FALSE). The defaults to both arguments are TRUE. Users must supply a path to a home directory if <code>save.out</code> = TRUE.</p>
 <div class="cell">
@@ -373,8 +370,7 @@ value at the final wave/timepoint. Missing data are denoted as
 <span></span>
 <span><span class="va">verbose</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span></code></pre></div>
 </div>
-<p><br></p>
-<p>As shown in Figure 2, users have several options for reading in data. They can begin this workflow with the following options:<br><br></p>
+<p>As shown in the Figure below, users have several options for reading in data. They can begin this workflow with the following options:<br></p>
 <ul>
 <li>(P4.1) long data: complete or with missingness that can be formatted and converted to wide data and (P4.3) imputed as needed</li>
 <li>(P4.2) wide data: complete or missingness that can be formatted and (P4.3) imputed as needed<br>
@@ -383,8 +379,8 @@ value at the final wave/timepoint. Missing data are denoted as
 </ul>
 <p><br></p>
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img src="figures/prelim_steps_overview.png" width="900"></p>
-<figcaption>Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated in bold) to the three kinds of data accepted by <em>devMSMs</em>.</figcaption></figure>
+<figure><p><img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/prelim_steps_overview.png" width="900"></p>
+<figcaption>Figure 2. Schematic of recommended preliminary steps showing the transformation of the different kinds of starting data to the three kinds of data accepted by <em>devMSMs</em>.</figcaption></figure>
 </div>
 <p><br><br></p>
 <section class="level2"><h3 id="p4-1--single-long-data-frame">P4.1. Single Long Data Frame<a class="anchor" aria-label="anchor" href="#p4-1--single-long-data-frame"></a>
