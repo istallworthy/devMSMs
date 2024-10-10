@@ -22,8 +22,6 @@ This vignette provides guidance on how to customize weights formulas for use in 
 
 The code contained in this vignette is also available, integrated code from the other vignettes, in the ExampleWorkflow.rmd.
 
-<br>
-
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
@@ -33,9 +31,6 @@ require(devtools, quietly = TRUE)
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 require(devMSMs, quietly = TRUE)
-
-# devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
-# require(devMSMsHelpers, quietly = TRUE)
 
 ```
 
@@ -77,7 +72,6 @@ obj <- devMSMs::initMSM(
   tv_conf = tv_conf, 
   ti_conf = ti_conf
 )
-
 ```
 
 <br>
@@ -101,7 +95,6 @@ For example, to include 24-month maternal depression in the 24-month weights for
 We first specify confounders to retain contemporaneously when creating our MSM object.
 
 ```{r}
-
 obj <- devMSMs::initMSM(
   data = sim_data_wide, 
   exposure = exposure, 
@@ -109,7 +102,6 @@ obj <- devMSMs::initMSM(
   ti_conf = ti_conf,
   concur_conf = "B18Raw.24"
 )
-
 ```
 
 ```{r}
@@ -141,7 +133,7 @@ custom <- list(
 )
 ```
 
-`customFormulas()` then checks and retains these formulas for further use with the package.
+`createFormulas()` then checks and retains these formulas for further use with the package.
 
 ```{r}
 full_formulas <- createFormulas(obj = obj, 
@@ -162,7 +154,7 @@ When creating short formulas, the user can also specify an optional `keep_conf` 
 
 For example, to always retain income in all formulas in lagged form, overriding the *t*-1 lag default via `keep_conf`.
 
-As shown below, the `createFormulas` function now retains income at 6 months in all 15-, 24-, 35-, and 58-month formulas, overriding the *t*-1 lag rule for that variable. Without this specification, income at 6 months would have been omitted in formulas for exposure at 24, 35, and 58 months.
+As shown below, the `createFormulas()` function now retains income at 6 months in all 15-, 24-, 35-, and 58-month formulas, overriding the *t*-1 lag rule for that variable. Without this specification, income at 6 months would have been omitted in formulas for exposure at 24, 35, and 58 months.
 
 ```{r}
 short_formulas <- createFormulas(obj = obj, 
@@ -178,3 +170,10 @@ print(short_formulas)
 The default use of `createFormulas()` with `type` = "update" creates updated weights formulas at each exposure time point. Each formula contains all time invariant confounders; time-varying confounders measured at the time point directly prior (*t*-1 lag) to that exposure time point; as well as any time-varying confounders at greater lags that were not successfully balanced using the short weights formulas.
 
 When creating updated formulas, the user can specify the optional `concur_conf`, `keep_conf`, and `custom` arguments detailed above. Of note, `createFormulas()` does not check that formulas in the `custom` field meet criteria for the updated formula or identify any imbalanced confounders, and the user is responsible for ensuring the validity of these formulas. <br>
+
+# References
+Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Barbarin, O. (2008). Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418
+  
+Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., Garrett-Peiers, P., Conger, R. D., & Bauer, P. J. (2013). The Family Life Project: An Epidemiological and Developmental Study of Young Children Living in Poor Rural Communities. Monographs of the Society for Research in Child Development, 78(5), i–150.
+
+

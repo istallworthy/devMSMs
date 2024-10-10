@@ -19,8 +19,9 @@ other fields. <br>
 The goal of this *devMSMs* package and accompanying tutorial paper,
 *Investigating Causal Questions in Human Development Using Marginal
 Structural Models: A Tutorial Introduction to the devMSMs Package in R*
-(*insert preprint link here*), is to provide a set of tools for
-implementing marginal structural models (**MSMs**; Robins et al., 2000).
+(<a href="https://osf.io/preprints/psyarxiv/284mb">preprint</a>), is to
+provide a set of tools for implementing marginal structural models
+(**MSMs**; Robins et al., 2000).
 
 MSMs orginated in epidemiology and public health and represent one
 under-utilized tool for improving causal inference with longitudinal
@@ -53,34 +54,34 @@ also reflect factors internal to the child, including neurodevelopmental
 
 Core features of *devMSMs* include:
 
-- flexible functions with built-in user guidance, drawing on established
+- Flexible functions with built-in user guidance, drawing on established
   expertise and best practices for implementing longitudinal IPTW
   weighting and outcome modeling, to answer substantive causal questions
   about dose and timing
 
-- functions that accept complete or imputed data to accommodate
+- Functions that accept complete or imputed data to accommodate
   missingness often found in human studies
 
-- a novel recommended workflow, based on expertise from several
+- A novel recommended workflow, based on expertise from several
   disciplines, for using the *devMSMs* functions with longitudinal data
   (see *Workflows* vignettes)
 
-- an accompanying simulated longitudinal dataset, based on the
+- An accompanying simulated longitudinal dataset, based on the
   real-world, Family Life Project (FLP) study of human development, for
   getting to know the package functions
 
-- an accompanying suite of
+- An accompanying suite of
   <a href="https://github.com/istallworthy/devMSMsHelpers">helper
   functions</a> to assist users in preparing and inspecting their data
   prior to the implementation of *devMSMs*
 
-- executable, step-by-step user guidance for implementing the *devMSMs*
+- Executable, step-by-step user guidance for implementing the *devMSMs*
   workflow and preliminary steps in the form of vignettes geared toward
   users of all levels of R programming experience, along with a
   <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">R
   markdown template file</a>
 
-- a brief conceptual introduction, example empirical application, and
+- A brief conceptual introduction, example empirical application, and
   additional resources in the accompanying tutorial paper
 
 <br>
@@ -89,10 +90,9 @@ Core features of *devMSMs* include:
 
 The package contains 7 core functions for implementing the two phases of
 the MSM process: longitudinal confounder adjustment and outcome modeling
-of longitudinal data with time-varying exposures. <br>  
+of longitudinal data with time-varying exposures. <br>
 <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png" alt="devMSMs overview" width="900"/>
-<br>  
-<br>
+<br> <br>
 
 Below is a summary of the terms used in the *devMSMs* vignettes and
 functions. More details and examples can be found in the accompanying
@@ -102,7 +102,7 @@ manuscript. <br>
 |-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Exposure**                  | Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome.                                                                                 |
 | **Outcome**                   | Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects.                                                                                                                  |
-| **Exposure Time Points**      | Time points in development when the exposure was measured, at which balancing formulas will be created.                                                                                                                                                        |
+| **Exposure Time Points**      | Time points in development when the exposure was measured, at which weights formulas will be created.                                                                                                                                                          |
 | **Exposure Epochs**           | *(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories. |
 | **Exposure Histories**        | Sequences of relatively high (`'h'`) or low (`'l'`) levels of exposure at each exposure time point or exposure epoch.                                                                                                                                          |
 | **Exposure Dosage**           | Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.                                                                                                       |
@@ -160,8 +160,8 @@ exposures) for implementing the steps below.
 
 ## Citation & Bug Reports
 
-Please cite your use *devMSMs* using the following citation: <br>
-Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Butts K, Berry D
+Please cite your use *devMSMs* using the following citation:  
+<br> Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Butts K, Berry D
 (2024). <br> *devMSMs*: Implementing Marginal Structural Models with
 Longitudinal Data. R package version 0.0.0.9000,
 <https://istallworthy.github.io/devMSMs/>.

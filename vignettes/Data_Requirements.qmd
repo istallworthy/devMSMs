@@ -42,9 +42,9 @@ We advise users implement the appropriate preliminary steps, with the goal of as
 
 -   a list of data imputed in wide format as data frames. <br>
 
-As shown in Figure 1, for use of the *devMSMs* package, data in any of the above 3 formats, must be wide and contain an “ID” column for subject identifier and exposure, outcome, and all confounders as separate columns (as shown in Figure 1). Column names can include only underscore special characters and time-varying variables should have a suffix that consists of a period followed by the time point (e.g., “variable.6”). All variables should be classed as integer, numeric, or a factor (not character). Auxiliary or nuisance covariates that are not confounders (e.g, assessment version) can be included in the dataset for use and specification in the final modeling step (*Workflow* vignettes Step 5).
+As shown in the figure below, for use of the *devMSMs* package, data in any of the above 3 formats, must be wide and contain an “ID” column for subject identifier and exposure, outcome, and all confounders as separate columns (as shown in Figure 1). Column names can include only underscore special characters and time-varying variables should have a suffix that consists of a period followed by the time point (e.g., “variable.6”). All variables should be classed as integer, numeric, or a factor (not character). Auxiliary or nuisance covariates that are not confounders (e.g., assessment version) can be included in the dataset for use and specification in the final modeling step (*Workflow* vignettes Step 5).
 
-<br> <br>
+<br>
 
 <!-- ![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](figures/sample_data.png){width="900px"} -->
 
@@ -74,7 +74,6 @@ tinytable::tt(example_df) |>
   tinytable::style_tt(i = 0, j = c("outcome.2"), background = "#a0d8fa")
 ```
 
-<br>
 
 # Loading packages
 
@@ -97,7 +96,6 @@ if (!require("devtools")) install.packages("devtools", quiet = TRUE)
 if (!require("devMSMs")) devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 ```
 
-<br>
 
 # Exploring *devMSMs* Package Data
 
@@ -141,8 +139,6 @@ head(sim_data_imp_list[[1]], n = c(5, 10))
 
 The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a>. Of note, *devMSMs* must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).
 
-<br>
-
 ```{r}
 #| echo: false
 #| tbl-cap: "Summary of *devMSMs* helper functions."
@@ -176,6 +172,7 @@ helper_functions <- data.frame(
 tinytable::tt(helper_functions, theme = "striped") |>
   format(markdown = TRUE)
 ```
+<br>
 
 We first install the *devMSMs* and *devMSMsHelpers* packages.
 
@@ -196,8 +193,6 @@ if (!require("devMSMsHelpers")) devtools::install_github("istallworthy/devMSMsHe
 library(devMSMs)
 library(devMSMsHelpers)
 ```
-
-<br>
 
 Preliminary steps P1 (formulate hypotheses) and P2 (create a DAG) are detailed further in the accompanying manuscript. These following recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package.
 
@@ -236,7 +231,7 @@ outcome <- "StrDif_Tot.58"
 
 <br>
 
-# P4 Data Preparation & Inspection
+# P4. Data Preparation & Inspection
 
 Some helper functions have optional arguments to suppress saving output locally (`save.out` = FALSE) and printing it to the console ( `verbose` = FALSE). The defaults to both arguments are TRUE. Users must supply a path to a home directory if `save.out` = TRUE.
 
@@ -246,10 +241,7 @@ save.out <- FALSE
 verbose <- TRUE
 ```
 
-<br>
-
-As shown in Figure 2, users have several options for reading in data. They can begin this workflow with the following options:\
-<br>
+As shown in the Figure below, users have several options for reading in data. They can begin this workflow with the following options:\
 
 -   (P4.1) long data: complete or with missingness that can be formatted and converted to wide data and (P4.3) imputed as needed
 -   (P4.2) wide data: complete or missingness that can be formatted and (P4.3) imputed as needed\
@@ -257,7 +249,8 @@ As shown in Figure 2, users have several options for reading in data. They can b
 
 <br>
 
-![Figure 2. Schematic of recommended preliminary steps showing the transformation of the 3 different kinds of starting data (enumerated in bold) to the three kinds of data accepted by *devMSMs*.](figures/prelim_steps_overview.png){width="900px"}
+![Figure 2. Schematic of recommended preliminary steps showing the transformation of the different kinds of starting data to the three kinds of data accepted by *devMSMs*.](https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/prelim_steps_overview.png){width="900px"}
+
 
 <br> <br>
 
