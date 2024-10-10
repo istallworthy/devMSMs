@@ -21,8 +21,6 @@ options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
 ```
 
-<br>
-
 This vignette guides users through the specification of the core inputs required by the *deMSMs* functions (and helper functions). Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the *devMSMs* package (see *Workflows* vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (`verbose` = FALSE) and elect not to save out locally any intermediate and final output (`save.out` = FALSE).
 
 Following completion of this vignette, the user should complete a *Workflow* vignette to implement *devMSMs* with their longitudinal data. Many of these core inputs will be specified at the beginning of the workflow in the MSM object.
@@ -198,7 +196,6 @@ concur_conf <- "B18Raw.6"
 
 The user can now proceed to the *Data Requirements* or *Workflows* vignettes.
 
-<b>  
 
 # References
 

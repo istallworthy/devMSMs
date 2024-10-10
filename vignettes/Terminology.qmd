@@ -26,12 +26,12 @@ install.packages("tinytable")
 require(tinytable)
 require(markdown)
 ```
-<br>
 
 This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and *Workflows* vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: *[insert link]*.  
 <br>  
   
 Key Terminology
+
 
 ```{r}
 #| echo: false
@@ -41,7 +41,7 @@ terms = data.frame(
   Definition = c(
   "Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome.", 
   "Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects.", 
-  "Time points in development when the exposure was measured, at which balancing formulas will be created.", 
+  "Time points in development when the exposure was measured, at which weights formulas will be created.", 
   "*(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories.", 
   "Sequences of relatively high (`'h'`) or low (`'l'`) levels of exposure at each exposure time point or exposure epoch.", 
   "Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.", 
@@ -57,10 +57,13 @@ tt(terms, theme = "striped") |>
 ```
 <br>  
 
-# Balancing Formula
+# Weights Formula
 
-Balancing formula are formula created at each exposure time point, regressing exposure on confounders, for the purpose of creating and/or assessing balancing weights. The general form is given by:
-<pre><code>ESETA1.t ~ <span style='color: darkred'>time-invariant</span> confounders + <span style='color: blue'>time-varying</span> confounders + <i>lagged</i> <span style='color: seagreen;'>outcomes</span> + <i>lagged</i> <span style='color: purple;'>outcomes</span></code></pre>
+Weights formula are formula created at each exposure time point, regressing exposure on confounders, for the purpose of creating and/or assessing balancing weights. The general form is given by:
+<br>
+<pre><code>ESETA1.t ~ <span style='color: darkred'>time-invariant</span> confounders + <span style='color: blue'>time-varying</span> confounders + <i>lagged</i> <span style='color: seagreen;'>exposures</span> + <i>lagged</i> <span style='color: purple;'>outcomes</span></code></pre>
+
+<br>
 
 Below is a table that summarizes the three formula `type`'s that will be used.
 

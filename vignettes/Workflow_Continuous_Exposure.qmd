@@ -22,11 +22,9 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-<br>
-
 This vignette guides a user through the process of using *devMSMs* to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.  
 
-The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript *\[add link here\]*. We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow.
+The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript (<a href="https://osf.io/preprints/psyarxiv/284mb">preprinte</a>). We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow.
 <br>
 
 # Installation
@@ -77,7 +75,7 @@ We do not specify a home directory given the nature of this example, but we do r
 ```{r}
 # home_dir = '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' 
 ```
-
+<br>
 ### P3.2 Recommended: Time Point Delimiter
 
 Below, we use the default period as a time delimiter.
@@ -85,7 +83,7 @@ Below, we use the default period as a time delimiter.
 ```{r}
 sep <- "\\."
 ```
-
+<br>
 ### P3.3 Required: Exposure Variable
 
 We specify our 6 time points of exposure.
@@ -93,7 +91,7 @@ We specify our 6 time points of exposure.
 ```{r}
 exposure <- c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
 ```
-
+<br>
 ### P3.4. Required for Continuous Exposures: Identify High and Low Cutoff Values
 
 Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.
@@ -101,7 +99,7 @@ Below, we specify the 60th and 30th percentiles to demarcate high and low levels
 ```{r}
 hi_lo_cut <- c(0.6, 0.3)
 ```
-
+<br>
 ### P3.5 Optional: Exposure Epochs
 
 We specify that the first two exposure time points (6 and 15 months) will be considered infancy, the second two (34 and 25 months) toddlerhood, and the final (58 months) childhood.
@@ -109,9 +107,7 @@ We specify that the first two exposure time points (6 and 15 months) will be con
 ```{r}
 epochs <- c("Infancy", "Infancy", "Toddlerhood", "Toddlerhood", "Childhood")
 ```
-
 <br>
-
 ### P3.6 Recommended: Hypotheses-Relevant Exposure Histories
 
 See the Specify Core Inputs vignette for more information.
@@ -123,7 +119,7 @@ reference <- c("l-l-l")
 
 comparison <- c("h-h-h")
 ```
-
+<br>
 ### P3.7 Required: Outcome Variable
 
 We specify out outcome as behavior problems at 58 months.
@@ -131,7 +127,7 @@ We specify out outcome as behavior problems at 58 months.
 ```{r}
 outcome <-  "StrDif_Tot.58"
 ```
-
+<br>
 ### P3.8 Recommended: Confounders
 
 We specify both time-invariant and time-varying confounders.
@@ -156,7 +152,7 @@ tv_conf <- c("SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
   "StrDif_Tot.35", 
   "fscore.35")
 ```
-
+<br>
 ### P3.8c Optional: Concurrent Confounders
 
 We specify no concurrent confounders as, given our data, we are unable to disentangle them from mediators or colliders.
@@ -175,7 +171,7 @@ We highly recommend first implementing the *Data Requirements & Preparation Vign
 
 -   a list of data imputed in wide format as data frames
 
-See the Data Preparation vignette for more detail.
+See the *Data Preparation* vignette for more detail.
 
 We first load in 2 imputed datasets as a mice object. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain ("ESETA1") measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems ("StrDif_Tot") measured at 58 months. (See <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements & Preparation vignette</a> for beginning with other data types, including missing data).
 
@@ -186,7 +182,7 @@ data <- sim_data_mice
 
 head(mice::complete(data, 1), n = c(5, 10))
 ```
-
+<br>
 ### P4.4 Required: Create MSM Object
 
 We set a seed for reproducibility.
@@ -275,7 +271,7 @@ Optional inputs to create full weights formulas using the `createFormulas()` fun
 
 The user may specify a list of custom formulas by specifying to `custom` a list of formulas, one for each exposure time point (e.g., “exposure.time \~ variable.time + variable +...”) in formula format. We recommend first running the `createFormulas()` function without custom formulas (`custom` = NULL) and using the output as a model of the required format for custom formulas. The `createFormulas()` function will automatically check custom formulas to ensure that there is a correctly formatted formula for each exposure time point with exposure as the dependent variable. However, the user is responsible for ensuring the custom formulas contain the appropriate confounders for the formula type they are generating.
 
-Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html">Customize weights formulas vignette</a> for more detail on how to customize formulas.
+Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Customize_Balancing_Formulas.html">Customize Weights Formulas vignette</a> for more detail on how to customize formulas.
 
 We chose not to create custom formulas and instead use `createFormulas()` to make them automatically in this example.
 
@@ -302,14 +298,16 @@ print(full_formulas)
 ### 1b. Conduct Exploratory Pre-Balance Assessment
 
 The next step examines the initial imbalance, or how strongly exposure relates to each confounder at each time point, for all measured confounders prior to weighting using the `assessBalance()` function. This function draws on the `calcBalStats()` function (see the Assessing Balance for Time-Varying Exposure section in the accompanying manuscript).\
+  
 The `assessBalance()` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).
 
 The required inputs for using the `assessBalance()` function to conduct pre-balance testing are: data (data frame, a mids object, or a list of imputed datasets as dataframes in wide format) and an MSM object (e.g., "obj"). Please see the *Assessing Balance for Time-Varying Exposures* vignette for more detail on how this function calculates balance.
 
 The optional inputs are as follows.
 
-The user may specify `balance_thresh`, or a threshold(s) for determining confounder balance, in one of two ways.\
-\* First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced, and above which they are considered imbalanced (default is 0.1; Stuart, 2010).
+The user may specify `balance_thresh`, or a threshold(s) for determining confounder balance, in one of two ways.
+  
+-    First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced, and above which they are considered imbalanced (default is 0.1; Stuart, 2010).
 
 -   Second, users may make an a priori assertion that some confounders are more important than others based on theory and existing research. In this case, they can provide two numbers that represent the balance thresholds for important and less important confounders, respectively. If the user supplies two balance thresholds, they must also supply a list of important confounders (time-varying: “variable.t”, time invariant: “variable”) to the `imp_conf` field. The balance threshold specification should be kept consistent throughout the use of this workflow.
 
@@ -425,7 +423,7 @@ These formulas are considerably shorter than the full formulas. For instance, at
 
 ### 2b. Create IPTW Balancing Weights Using Multiple Weighting Methods
 
-Having created shorter, simplified weights formulas, we now create the first round of IPTW balancing weights (Thoemmes & Ong, 2016) using the `createWeights()` function, the shortened weights formulas, and all available weighting methods. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016), and distributions can be saved for inspection.
+Having created shorter, simplified weights formulas, we now create the first round of IPTW balancing weights (Thoemmes & Ong, 2016) using the `createWeights()` function, the shortened weights formulas, and all available weighting methods. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2024) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016), and distributions can be saved for inspection.
 
 The required inputs for using the `createWeights()` function to create the initial around of IPTW balancing weights are: an MSM object (e.g, 'obj'), complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), and the short formulas (see Step 2a).
 
@@ -480,10 +478,10 @@ print(weights.cbps,
       i = 1)
 ```
 
-Next, we look inside the output to summarize the weighting process (drawing on the summary method from *weightIt*, for any given imputed dataset.
+Next, we look inside the output to summarize the weighting process (drawing on the summary method from *weightIt*), for any given imputed dataset (we chose the first one here).
 
 ```{r}
-summary(weights.cbps[[1]])
+summary(weights.cbps[[1]])[[1]]
 ```
 
 This summary also provides the effective sample size, or the sample size that results from applying the weights to the original sample size, for each time point. Weighting can often result is an effective or weighted sample size that is smaller than the orignal sample size and is something to keep in mind when evaluating weighting methods. In this example, we see that our original 1,292 sample is reduced to 605 upon weighting with the CBPS method.
@@ -516,7 +514,7 @@ weights.glm <- createWeights(obj = obj,
 print(weights.glm, 
       i = 1)
 
-summary(weights.glm[[1]])
+summary(weights.glm[[1]])[[1]]
 
 plot(weights.glm, 
      i = 1, 
@@ -541,7 +539,7 @@ weights.gbm <- createWeights(obj = obj,
 print(weights.gbm,
       i = 1)
 
-summary(weights.gbm[[1]])
+summary(weights.gbm[[1]])[[1]]
 
 plot(weights.gbm,
      i = 1,
@@ -566,7 +564,7 @@ weights.bart <- createWeights(obj = obj,
 print(weights.bart, 
       i = 1)
 
-summary(weights.bart[[1]])
+summary(weights.bart[[1]])[[1]]
 
 plot(weights.bart, 
      i = 1, 
@@ -591,7 +589,7 @@ weights.super <- createWeights(obj = obj,
 print(weights.super, 
       i = 1)
 
-summary(weights.super[[1]])
+summary(weights.super[[1]])[[1]]
 
 plot(weights.super, 
      i = 1, 
@@ -735,7 +733,7 @@ From these summaries, we identify the optimal weighting method for a dataset, or
 -   Fewest imbalanced confounders remaining relative to the user-specified balance threshold(s) (from summary output);
 -   Lowest median absolute balance statistic, across all confounders and time points, reflecting the best overall attenuation of confounding (from summary output);
 -   Lowest maximum absolute balance statistic, across all confounders and time points (and imputed datasets, where applicable), indicating weakest remaining relation between exposure and confounder for the least balanced confounder (from summary output);\
--   Reasonable effective sample size following weighting (for all imputed datasets, where applicable), indicating reasonable power to detect effects (from *weightiIt* summary output). <br> For the first three, we examine summaries for each of the weighting methods.
+-   Reasonable effective sample size following weighting (for all imputed datasets, where applicable), indicating reasonable power to detect effects (from *WeightIt* summary output). <br> For the first three, we examine summaries for each of the weighting methods.
 
 ```{r}
 summary(balance_stats.cbps, 
@@ -756,7 +754,7 @@ summary(balance_stats.super,
 
 From this, we find that the CBPS method has the fewest imbalanced confounders (with only 2), lowest median balance statistic, and lowest max balance statistic.
 
-To examine the fourth criterion, we use the *weightIt* summary method to examine effective sample sizes ("Weighted") compared to the orignal sample size ("Unweighted") across weighting methods. We do this just for the first imputed dataset.
+To examine the fourth criterion, we use the *WeightIt* summary method to examine effective sample sizes ("Weighted") compared to the orignal sample size ("Unweighted") across weighting methods. We do this just for the first imputed dataset.
 
 ```{r}
 summary(weights.cbps[[1]])[[1]][6]
@@ -833,7 +831,7 @@ As shown above, income at 6 and 15 months ("InRatioCor.6" and "InRatioCor.15") w
 
 ### Step 3c. Create Final Balancing Weights
 
-Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the updated formulas from the previous step using the `createWeights()` function (`method` = “...’), with the SuperLearner method being the optimal weighting method identified in Step 2c. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2023) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as is recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016) and distributions are saved out in the home directory for inspection.
+Next, we create a final set of balancing weights using the optimal weighting method identified in Step 2c and the updated formulas from the previous step using the `createWeights()` function (`method` = “...’), with the SuperLearner method being the optimal weighting method identified in Step 2c. The function calls the `weightitMSM()` function from the *WeightIt* package (Greifer, 2024) that uses the time-specific formulas to create weights at each time point before automatically multiplying them together to create one weight per person. Weights are stabilized, as is recommended (Cole & Hernan, 2008; Thoemmes & Ong, 2016) and distributions are saved out in the home directory for inspection.
 
 The required inputs for using the `createWeights()` function to create the final round of IPTW balancing weights using the updated short weights formulas are: complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), an MSM object (e.g., "obj"), the best-performing weights method, and the updated formulas (see Step 3a).
 
@@ -993,7 +991,7 @@ print(final_balance_stats_trim,
       t = 2,
       save.out = save.out)
 
-summary(trim_weights[[1]])
+summary(trim_weights[[1]])[[1]]
 ```
 
 As shown above, the trimmed weights result in one imbalanced confounder in relation to exposure at 15 months and an effective sample size of 719.
@@ -1019,7 +1017,7 @@ Summarize and inspect
 summary(final_balance_stats_untrim, 
         save.out = save.out)
 
-summary(final_weights[[1]])
+summary(final_weights[[1]])[[1]]
 ```
 
 We see that the non-trimmed weights result in no imbalanced confounders and an effective sample size of 611.
@@ -1106,7 +1104,7 @@ The goal of this final step is to fit a weighted model relating exposure at mean
 
 ### Step 5a. Select & Fit a Weighted Outcome Model
 
-First, we use the `fitModel()` function to fit a weighted generalized linear model relating exposure to outcome. The function draws on the `glm_weightit()` function of the *WeightIt* package (Greifer, 2023). The exposure main effects in models reflect exposure levels at each exposure time point unless exposure epochs are specified. One of the benefits of creating balancing weights is that they can be used in a variety of different marginal outcome models and those encompassed in this function are only a subset of possible models. Note that these models can get complex and we do not advise interpreting the individual terms.
+First, we use the `fitModel()` function to fit a weighted generalized linear model relating exposure to outcome. The function draws on the `glm_weightit()` function of the *WeightIt* package (Greifer, 2024). The exposure main effects in models reflect exposure levels at each exposure time point unless exposure epochs are specified. One of the benefits of creating balancing weights is that they can be used in a variety of different marginal outcome models and those encompassed in this function are only a subset of possible models. Note that these models can get complex and we do not advise interpreting the individual terms.
 
 The required inputs for using the `fitModel()` function are: complete data (data frame, mids object, or a list of imputed datasets as dataframes in wide format), an MSM object (e.g., "obj"), an outcome, a list of trimmed weights, and a model from the list below (“m0”, “m1”, “m2”, or “m3”).
 
@@ -1228,7 +1226,7 @@ print(models.s2,
 
 With a comparable result.
 
-<br>
+
 
 ### Step 5b. Estimate, Compare, and Visualize Model-Predicted Outcome as a Function of Exposure History
 
