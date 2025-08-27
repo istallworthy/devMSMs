@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2025-08-21">
+
+<title>Data Requirements &amp; Preparation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Data_Requirements_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Data_Requirements_files/libs/quarto-html/quarto.js"></script>
+<script src="Data_Requirements_files/libs/quarto-html/popper.min.js"></script>
+<script src="Data_Requirements_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Data_Requirements_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Data_Requirements_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Data_Requirements_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Data_Requirements_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Data_Requirements_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Data_Requirements_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#data-requirements" id="toc-data-requirements" class="nav-link active" data-scroll-target="#data-requirements">Data Requirements</a></li>
+  <li><a href="#loading-packages" id="toc-loading-packages" class="nav-link" data-scroll-target="#loading-packages">Loading packages</a></li>
+  <li><a href="#exploring-devmsms-package-data" id="toc-exploring-devmsms-package-data" class="nav-link" data-scroll-target="#exploring-devmsms-package-data">Exploring <em>devMSMs</em> Package Data</a></li>
+  <li><a href="#p3.-specify-core-inputs" id="toc-p3.-specify-core-inputs" class="nav-link" data-scroll-target="#p3.-specify-core-inputs">P3. Specify Core Inputs</a></li>
+  <li><a href="#p4.-data-preparation-inspection" id="toc-p4.-data-preparation-inspection" class="nav-link" data-scroll-target="#p4.-data-preparation-inspection">P4. Data Preparation &amp; Inspection</a>
+  <ul class="collapse">
+  <li><a href="#p4.1.-single-long-data-frame" id="toc-p4.1.-single-long-data-frame" class="nav-link" data-scroll-target="#p4.1.-single-long-data-frame">P4.1. Single Long Data Frame</a>
+  <ul class="collapse">
+  <li><a href="#p4.1a.-format-long-data" id="toc-p4.1a.-format-long-data" class="nav-link" data-scroll-target="#p4.1a.-format-long-data">P4.1a. Format Long Data</a></li>
+  <li><a href="#p4.1b.-tranform-formatted-long-data-to-wide" id="toc-p4.1b.-tranform-formatted-long-data-to-wide" class="nav-link" data-scroll-target="#p4.1b.-tranform-formatted-long-data-to-wide">P4.1b. Tranform Formatted Long Data to Wide</a></li>
+  </ul></li>
+  <li><a href="#p4.2.-single-wide-data-frame" id="toc-p4.2.-single-wide-data-frame" class="nav-link" data-scroll-target="#p4.2.-single-wide-data-frame">P4.2. Single Wide Data Frame</a>
+  <ul class="collapse">
+  <li><a href="#p4.2a.-format-wide-data" id="toc-p4.2a.-format-wide-data" class="nav-link" data-scroll-target="#p4.2a.-format-wide-data">P4.2a. Format Wide Data</a></li>
+  </ul></li>
+  <li><a href="#p4.3.-formatted-wide-data-with-missingness" id="toc-p4.3.-formatted-wide-data-with-missingness" class="nav-link" data-scroll-target="#p4.3.-formatted-wide-data-with-missingness">P4.3. Formatted Wide Data with Missingness</a>
+  <ul class="collapse">
+  <li><a href="#p4.3a.-multiply-impute-formatted-wide-data-frame-using-mice" id="toc-p4.3a.-multiply-impute-formatted-wide-data-frame-using-mice" class="nav-link" data-scroll-target="#p4.3a.-multiply-impute-formatted-wide-data-frame-using-mice">P4.3a. Multiply Impute Formatted, Wide Data Frame using MICE</a></li>
+  <li><a href="#p4.3b.-read-in-as-a-list-of-wide-imputed-data-saved-locally" id="toc-p4.3b.-read-in-as-a-list-of-wide-imputed-data-saved-locally" class="nav-link" data-scroll-target="#p4.3b.-read-in-as-a-list-of-wide-imputed-data-saved-locally">P4.3b. Read in as a List of Wide Imputed Data Saved Locally</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Requirements &amp; Preparation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 21, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This vignette is designed to aid users in preparing their data for use with <em>devMSMs</em>. Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.</p>
+<p>The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>.</p>
+<section id="data-requirements" class="level1">
+<h1>Data Requirements</h1>
+<p>We recommend considering several data requirements prior to using <em>devMSMs</em> and any of the vignettes.</p>
+<p>MSMs are most useful for strengthening causal inference using longitudinal data that include an exposure and confounders that vary in time prior to an outcome. At a minimum, <em>devMSMs</em> requires two time point data with an exposure measured at least once and an outcome measured at the second time point, and at least one confounder. The exposure can be binary (with integer class) or continuous (with numeric class), and there are no assumptions about the distributions of outcome or confounders. We highly recommend using continuous variables when appropriate and possible to avoid the information loss inherent to binarizing a continuous variable. Although there is no gold standard recommendation, we suggest users select exposures that have some within-person variation from which it would be reasonable to delineate different histories of “high” and “low” levels and avoid extrapolation.</p>
+<p>The outcome time point must be the last time point when exposure was measured or a time point after the last exposure measurement time point. For cases in which the outcome variable constitutes a growth process at the final time point, we advise choosing a reasonable measure for balancing purposes (e.g., baseline or average levels) before subsequently using the generated weights to separately conduct a weighted growth model of the outcome.</p>
+<p>We advise the user to specify and include in the dataset any time invariant and time-varying variables that could possibly confound the relation between exposure and outcome. We also suggest using multiple measured variables within each construct to help reduce any effects from measurement bias (Kainz et al., 2017). Time varying confounders are ideal for maximizing the power of MSMs. Time-varying confounders could include developmental indicators that tend to track with the exposure over time that could also cause the outcome, including past levels of the exposure. Of note, the time points at which the confounders were collected must be equal to, or a subset of, the time points at which the exposure and outcome were collected in the data. In a perfect world, all exposures and potential confounders would be measured at all time points prior to the outcome. However, with real-world data due to planned and unplanned missingness, this is often not the case. Users should consider discussing the implications and limitations conferred by variables that could be confounders that were not collected at all time points. As a basis for specifying confounders, users should turn to the literature to delineate a causal model that lays out hypothesized relations between confounders, exposures, and outcome.</p>
+<p>We advise users implement the appropriate preliminary steps, with the goal of assigning to ‘data’ one of the following wide data formats (see Figure 1) for use in the package:</p>
+<ul>
+<li><p>a single data frame of data in wide format with no missing data</p></li>
+<li><p>a mids object (output from <code>mice::mice()</code>) of data imputed in wide format</p></li>
+<li><p>a list of data imputed in wide format as data frames. <br></p></li>
+</ul>
+<p>As shown in the figure below, for use of the <em>devMSMs</em> package, data in any of the above 3 formats, must be wide and contain an “ID” column for subject identifier and exposure, outcome, and all confounders as separate columns (as shown in Figure 1). Column names can include only underscore special characters and time-varying variables should have a suffix that consists of a period followed by the time point (e.g., “variable.6”). All variables should be classed as integer, numeric, or a factor (not character). Auxiliary or nuisance covariates that are not confounders (e.g., assessment version) can be included in the dataset for use and specification in the final outcome modeling step (<em>Workflow</em> vignettes Step 5).</p>
+<p><br></p>
+<!-- ![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](figures/sample_data.png){width="900px"} -->
+<div class="cell">
+<pre><code>#&gt;   id ti_X tv_Y1.1 tv_Y1.2 tv_Y2.1 tv_Y2.2 exposure.1 exposure.2 outcome.2
+#&gt; 1  1  0.5      50      65      NA    0.04          3          4        80
+#&gt; 2  2   NA      33      57    0.08    0.03          5          3        68
+#&gt; 3  3  0.3      68      NA    0.01    0.02          6          8        59</code></pre>
+<div class="cell-output-display">
+<!-- preamble start -->
+
+    <script>
+
+      function styleCell_t7i8r6zqr45p1wm29och(i, j, css_id) {
+          var table = document.getElementById("tinytable_t7i8r6zqr45p1wm29och");
+          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function spanCell_t7i8r6zqr45p1wm29och(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_t7i8r6zqr45p1wm29och");
+        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+        if (!targetCell) {
+          console.warn(`Cell at (${i}, ${j}) not found.`);
+        }
+
+        // Get all cells that need to be removed
+        const cellsToRemove = [];
+        for (let r = 0; r < rowspan; r++) {
+          for (let c = 0; c < colspan; c++) {
+            if (r === 0 && c === 0) continue; // Skip the target cell
+            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
+            if (cell) {
+              cellsToRemove.push(cell);
+            }
+          }
+        }
+
+        // Remove all cells
+        cellsToRemove.forEach(cell => cell.remove());
+
+        // Set rowspan and colspan of the target cell if it exists
+        if (targetCell) {
+          targetCell.rowSpan = rowspan;
+          targetCell.colSpan = colspan;
+        }
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '0', j: 8 },  ], css_id: 'tinytable_css_w8om21ynylx4ghj3mn1z',}, 
+          { positions: [ { i: '0', j: 6 }, { i: '0', j: 7 },  ], css_id: 'tinytable_css_cdfefn57cedinoqc0g8g',}, 
+          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 },  ], css_id: 'tinytable_css_bmtl0g5c5gyrrgqvwp0o',}, 
+          { positions: [ { i: '0', j: 1 },  ], css_id: 'tinytable_css_1loszqrsbkoz1yuxzj5z',}, 
+          { positions: [ { i: '3', j: 0 }, { i: '3', j: 1 }, { i: '3', j: 2 }, { i: '3', j: 3 }, { i: '3', j: 4 }, { i: '3', j: 5 }, { i: '3', j: 6 }, { i: '3', j: 7 }, { i: '3', j: 8 },  ], css_id: 'tinytable_css_bdktiln7x57xkzbnk5rv',}, 
+          { positions: [ { i: '0', j: 0 },  ], css_id: 'tinytable_css_uzqow77fjtg73x06zxwu',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_t7i8r6zqr45p1wm29och(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_w8om21ynylx4ghj3mn1z, .table th.tinytable_css_w8om21ynylx4ghj3mn1z { background-color: #a0d8fa; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_cdfefn57cedinoqc0g8g, .table th.tinytable_css_cdfefn57cedinoqc0g8g { background-color: #d4a0fa; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_bmtl0g5c5gyrrgqvwp0o, .table th.tinytable_css_bmtl0g5c5gyrrgqvwp0o { background-color: #FDF4CF; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_1loszqrsbkoz1yuxzj5z, .table th.tinytable_css_1loszqrsbkoz1yuxzj5z { background-color: #E3EFDC; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_bdktiln7x57xkzbnk5rv, .table th.tinytable_css_bdktiln7x57xkzbnk5rv { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_uzqow77fjtg73x06zxwu, .table th.tinytable_css_uzqow77fjtg73x06zxwu { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+    </style>
+    <div class="container">
+      <table class="table table-borderless" id="tinytable_t7i8r6zqr45p1wm29och" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true"><caption><p>Abridged example structure of a wide dataset formatted as required
+for the devMSMs. Column A denotes the ID variable, column B (green)
+denotes a time in-variant confounder (e.g., race, birth information),
+columns C - F denote two time-varying confounders (lighter yellow) at
+two different time points (e.g., age.1, age.2 and income.1, income.2,
+where .1 represents wave 1 and .2 represents wave 2). Columns G - I
+denote the exposure and outcome of interest (darker yellow), where G and
+H are time-varying values on each exposure, and column I is the outcome
+value at the final wave/timepoint. Missing data are denoted as
+<em>NA</em> and will need to be imputed (Step P2).</p></caption>
+        <thead>
+        
+              <tr>
+                <th scope="col" data-row="0" data-col="0">id</th>
+                <th scope="col" data-row="0" data-col="1">ti_X</th>
+                <th scope="col" data-row="0" data-col="2">tv_Y1.1</th>
+                <th scope="col" data-row="0" data-col="3">tv_Y1.2</th>
+                <th scope="col" data-row="0" data-col="4">tv_Y2.1</th>
+                <th scope="col" data-row="0" data-col="5">tv_Y2.2</th>
+                <th scope="col" data-row="0" data-col="6">exposure.1</th>
+                <th scope="col" data-row="0" data-col="7">exposure.2</th>
+                <th scope="col" data-row="0" data-col="8">outcome.2</th>
+              </tr>
+        </thead>
+        
+        <tbody>
+                <tr>
+                  <td data-row="1" data-col="0">1</td>
+                  <td data-row="1" data-col="1">0.5</td>
+                  <td data-row="1" data-col="2">50</td>
+                  <td data-row="1" data-col="3">65</td>
+                  <td data-row="1" data-col="4">NA</td>
+                  <td data-row="1" data-col="5">0.04</td>
+                  <td data-row="1" data-col="6">3</td>
+                  <td data-row="1" data-col="7">4</td>
+                  <td data-row="1" data-col="8">80</td>
+                </tr>
+                <tr>
+                  <td data-row="2" data-col="0">2</td>
+                  <td data-row="2" data-col="1">NA</td>
+                  <td data-row="2" data-col="2">33</td>
+                  <td data-row="2" data-col="3">57</td>
+                  <td data-row="2" data-col="4">0.08</td>
+                  <td data-row="2" data-col="5">0.03</td>
+                  <td data-row="2" data-col="6">5</td>
+                  <td data-row="2" data-col="7">3</td>
+                  <td data-row="2" data-col="8">68</td>
+                </tr>
+                <tr>
+                  <td data-row="3" data-col="0">3</td>
+                  <td data-row="3" data-col="1">0.3</td>
+                  <td data-row="3" data-col="2">68</td>
+                  <td data-row="3" data-col="3">NA</td>
+                  <td data-row="3" data-col="4">0.01</td>
+                  <td data-row="3" data-col="5">0.02</td>
+                  <td data-row="3" data-col="6">6</td>
+                  <td data-row="3" data-col="7">8</td>
+                  <td data-row="3" data-col="8">59</td>
+                </tr>
+        </tbody>
+      </table>
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+</section>
+<section id="loading-packages" class="level1">
+<h1>Loading packages</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">repos =</span> <span class="fu">c</span>(<span class="at">CRAN =</span> <span class="st">"https://cloud.r-project.org/"</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"devtools"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(devtools, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(tinytable, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"istallworthy/devMSMs"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"istallworthy/devMSMsHelpers"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devMSMsHelpers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exploring-devmsms-package-data" class="level1">
+<h1>Exploring <em>devMSMs</em> Package Data</h1>
+<p>The following longitudinal data that accompany <em>devMSMs</em> are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain (ESETA1) measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems (StrDif_Tot) measured at 58 months.</p>
+<p><em>devMSMs</em> (see <em>Workflows</em> vignettes) requires complete data in wide format (i.e., one row per individual, with and “ID” column for identifiers), in one of three ways:</p>
+<ol type="1">
+<li>a single data frame with no missing data;</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sim_data_wide"</span>, <span class="at">package =</span> <span class="st">"devMSMs"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sim_data_wide, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<ol start="2" type="1">
+<li>imputed data in the form of a mids object (output from <code>mice::mice()</code>);</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(<span class="st">"mice"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Attaching package: 'mice'</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     filter</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     cbind, rbind</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sim_data_mice"</span>, <span class="at">package =</span> <span class="st">"devMSMs"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(sim_data_mice)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "mids"</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mice<span class="sc">::</span><span class="fu">complete</span>(sim_data_mice, <span class="dv">1</span>), <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6 BioDadInHH2 caregiv_health</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         3         1         1         7       16           1              3</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         2         4        -7         7        0           0              0</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         3         6         5        20       -1           0              3</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         4        24        25        17       11           0              3</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5         3        -8        -9        17        1           1              2</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CORTB.15 CORTB.24 CORTB.6</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   -0.227   -0.652   0.742</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    0.149    0.831   0.018</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    1.145    0.033  -0.379</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    0.301   -0.501   0.000</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   -0.247    0.084   0.153</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<ol start="3" type="1">
+<li>imputed data as a list of imputed data frames.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sim_data_imp_list"</span>, <span class="at">package =</span> <span class="st">"devMSMs"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sim_data_imp_list[[<span class="dv">1</span>]], <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   X ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6 BioDadInHH2 caregiv_health</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 1         3         1         1         7       16           1              3</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 2         2         4        -7         7        0           0              0</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 3         3         6         5        20       -1           0              3</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 4         4        24        25        17       11           0              3</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 5         3        -8        -9        17        1           1              2</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CORTB.15 CORTB.24</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   -0.227   -0.652</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    0.149    0.831</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    1.145    0.033</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    0.301   -0.501</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   -0.247    0.084</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<p>The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers">Github</a>. Of note, <em>devMSMs</em> must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).</p>
+<div class="cell" data-tbl-cap="Summary of *devMSMs* helper functions.">
+<pre><code>#&gt; [1] "&lt;S4 class 'tinytable' [package \"tinytable\"] with 34 slots&gt;"</code></pre>
+</div>
+<p><br></p>
+<p>We first install the <em>devMSMs</em> and <em>devMSMsHelpers</em> packages.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"devtools"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(devtools, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"istallworthy/devMSMs"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"istallworthy/devMSMsHelpers"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devMSMs)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devMSMsHelpers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Preliminary steps P1 (formulate hypotheses) and P2 (create a DAG) are detailed further in the accompanying manuscript. These following recommended preliminary steps are designed to assist the user in preparing and inspecting their data to ensure appropriate use of the package.</p>
+</section>
+<section id="p3.-specify-core-inputs" class="level1">
+<h1>P3. Specify Core Inputs</h1>
+<p>Please see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a> for more detail on the following core inputs. Here, we use ESETA1, a measure of economic strain experienced by the family, as the exposure and StrDif_Tot, or behavior problems measured by the SDQ, as the outcome.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>exposure <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"ESETA1.6"</span>, <span class="st">"ESETA1.15"</span>, <span class="st">"ESETA1.24"</span>, <span class="st">"ESETA1.35"</span>, <span class="st">"ESETA1.58"</span>) </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ti_conf <span class="ot">=</span>  <span class="fu">c</span>(<span class="st">"state"</span>, <span class="st">"BioDadInHH2"</span>, <span class="st">"PmAge2"</span>, <span class="st">"PmBlac2"</span>, <span class="st">"TcBlac2"</span>, <span class="st">"PmMrSt2"</span>, <span class="st">"PmEd2"</span>, <span class="st">"KFASTScr"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>             <span class="st">"RMomAgeU"</span>, <span class="st">"RHealth"</span>, <span class="st">"HomeOwnd"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>             <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span>, <span class="st">"gov_assist"</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>tv_conf <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"SAAmylase.6"</span>,<span class="st">"SAAmylase.15"</span>, <span class="st">"SAAmylase.24"</span>, </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">"MDI.6"</span>, <span class="st">"MDI.15"</span>,                                            </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"RHasSO.6"</span>, <span class="st">"RHasSO.15"</span>, <span class="st">"RHasSO.24"</span>,<span class="st">"RHasSO.35"</span>,                                       </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>            <span class="st">"WndNbrhood.6"</span>,<span class="st">"WndNbrhood.24"</span>, <span class="st">"WndNbrhood.35"</span>,                                     </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>            <span class="st">"IBRAttn.6"</span>, <span class="st">"IBRAttn.15"</span>, <span class="st">"IBRAttn.24"</span>,                                   </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>            <span class="st">"B18Raw.6"</span>, <span class="st">"B18Raw.15"</span>, <span class="st">"B18Raw.24"</span>,                                           </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">"HOMEETA1.6"</span>, <span class="st">"HOMEETA1.15"</span>, <span class="st">"HOMEETA1.24"</span>, <span class="st">"HOMEETA1.35"</span>,                            </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>            <span class="st">"InRatioCor.6"</span>, <span class="st">"InRatioCor.15"</span>, <span class="st">"InRatioCor.24"</span>, <span class="st">"InRatioCor.35"</span>,                         </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">"CORTB.6"</span>, <span class="st">"CORTB.15"</span>, <span class="st">"CORTB.24"</span>,                                                                  </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>            <span class="st">"EARS_TJo.24"</span>, <span class="st">"EARS_TJo.35"</span>,                                        </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">"LESMnPos.24"</span>, <span class="st">"LESMnPos.35"</span>,                                  </span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">"LESMnNeg.24"</span>, <span class="st">"LESMnNeg.35"</span>,       </span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">"StrDif_Tot.35"</span>, </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            <span class="st">"fscore.35"</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co"># home_dir = NA</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>outcome <span class="ot">&lt;-</span> <span class="st">"StrDif_Tot.58"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p4.-data-preparation-inspection" class="level1">
+<h1>P4. Data Preparation &amp; Inspection</h1>
+<p>Some helper functions have optional arguments to suppress saving output locally (<code>save.out</code> = FALSE) and printing it to the console ( <code>verbose</code> = FALSE). The defaults to both arguments are TRUE. Users must supply a path to a home directory if <code>save.out</code> = TRUE.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>save.out <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>verbose <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As shown in the Figure below, users have several options for reading in data. They can begin this workflow with the following options:<br>
+</p>
+<ul>
+<li>(P4.1) long data: complete or with missingness that can be formatted and converted to wide data and (P4.3) imputed as needed</li>
+<li>(P4.2) wide data: complete or missingness that can be formatted and (P4.3) imputed as needed<br>
+</li>
+<li>(P4.3) data already imputed in wide format can be read in as a list</li>
+</ul>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/prelim_steps_overview.png" class="img-fluid figure-img" width="900"></p>
+<figcaption>Figure 2. Schematic of recommended preliminary steps showing the transformation of the different kinds of starting data to the three kinds of data accepted by <em>devMSMs</em>.</figcaption>
+</figure>
+</div>
+<p><br> <br></p>
+<section id="p4.1.-single-long-data-frame" class="level2">
+<h2 class="anchored" data-anchor-id="p4.1.-single-long-data-frame">P4.1. Single Long Data Frame</h2>
+<p>Users beginning with a single data frame in long format (with or without missingness) can utilize a helper function <code>formatLongData()</code> to summarize exposure and outcome data and convert to required variable names.</p>
+<p>First, we load the simulated longitudinal data in long format (with missingness) that accompanies <em>devMSMs</em>. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain (ESETA1) measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems (StrDif_Tot) measured at 58 months.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sim_data_long_miss"</span>, <span class="at">package =</span> <span class="st">"devMSMs"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>data_long <span class="ot">&lt;-</span> sim_data_long_miss</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_long, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ID state BioDadInHH2 PmAge2 PmBlac2 TcBlac2 PmMrSt2 PmEd2 KFASTScr RMomAgeU</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  1     0           1 27.245       0       0       1    15       24       29</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<section id="p4.1a.-format-long-data" class="level3">
+<h3 class="anchored" data-anchor-id="p4.1a.-format-long-data">P4.1a. Format Long Data</h3>
+<p>For long data that is not correctly formatted, <code>formatLongData()</code> allows the users to supply existing variables for time (<code>time_var</code>), ID (<code>id_var</code>), and missing data (<code>missing</code>) for re-naming according to what is required by the package. It also allows the user to submit variables that should be factors and integers, and the function classes any factor confounders (<code>factor_confounders</code>) as factors, integer confounders (<code>integer_confounders</code>) as integers in the data, and all others as numeric. The <code>sep</code> field allows you to specify a delimeter for the integer that indicates time point in the variable names.</p>
+<p>Below, we format the simulated long FLP data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>factor_confounders <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"state"</span>, <span class="st">"TcBlac2"</span>, <span class="st">"BioDadInHH2"</span>, <span class="st">"HomeOwnd"</span>, <span class="st">"PmBlac2"</span>,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"PmMrSt2"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"RHealth"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"RHasSO"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>integer_confounders <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"KFASTScr"</span>, <span class="st">"PmEd2"</span>, <span class="st">"RMomAgeU"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"peri_health"</span>, </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"caregiv_health"</span>, <span class="st">"gov_assist"</span>, <span class="st">"B18Raw"</span>, <span class="st">"EARS_TJo"</span>, <span class="st">"MDI"</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>data_long_f <span class="ot">&lt;-</span> <span class="fu">formatLongData</span>(</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_long,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> exposure,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> outcome,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">sep =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_var =</span> <span class="st">"WAVE"</span>,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">id_var =</span> <span class="st">"ID"</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">missing =</span> <span class="cn">NA</span>,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">factor_confounders =</span> factor_confounders,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">integer_confounders =</span> integer_confounders,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">home_dir =</span> home_dir,</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">save.out =</span> save.out</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Table: Summary of ESETA1 Information</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |WAVE |      mean|        sd|    min|   max|</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |:----|---------:|---------:|------:|-----:|</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |15   | 0.2983433| 0.9261390| -2.699| 3.474|</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |24   | 0.1585387| 0.9575181| -2.858| 3.284|</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |35   | 0.1388395| 0.9475905| -3.046| 3.014|</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |58   | 0.0996006| 0.9924516| -2.478| 3.173|</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |6    | 0.3337979| 0.9298080| -2.809| 4.035|</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Table: Summary of StrDif_Tot Information</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |WAVE |      mean|        sd|    min|   max|</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |:----|---------:|---------:|------:|-----:|</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |35   | 0.6009797| 0.2830620| -0.230| 1.536|</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |58   | 0.5029778| 0.2931918| -0.281| 1.448|</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in formatLongData(data = data_long, exposure = exposure, outcome =</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; outcome, : The following variables are characters. Please change them to</span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; integers and re-run: WAVE</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_long_f, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ID state BioDadInHH2 PmAge2 PmBlac2 TcBlac2 PmMrSt2 PmEd2 KFASTScr RMomAgeU</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  1     0           1 27.245       0       0       1    15       24       29</span></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  1     0           1 27.245       0       0       1    15       24       29</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We get a descriptive statistics summary of the exposure, ESETA1, and the outcome, StrDif_Tot.58, for our visual inspections.</p>
+<p><br></p>
+</section>
+<section id="p4.1b.-tranform-formatted-long-data-to-wide" class="level3">
+<h3 class="anchored" data-anchor-id="p4.1b.-tranform-formatted-long-data-to-wide">P4.1b. Tranform Formatted Long Data to Wide</h3>
+<p>Users with correctly formatted data in long format have the option of using the following code to transform their data into wide format, to proceed to using the package (if there is no missing data) or imputing (with &lt; 20% missing data MAR).</p>
+<p>We then transform our newly formatted long data into wide format, specifying <code>idvar</code> as “ID”, <code>timevar</code> as “WAVE”, and supplying the time points (encompassing exposure, confounder, and outcome time points) in the data as 6, 15, 24, 35, and 58 to <code>times</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(<span class="st">"stats"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>sep <span class="ot">&lt;-</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">strsplit</span>(tv_conf[<span class="sc">!</span><span class="fu">grepl</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">:"</span>, tv_conf)], sep), head, <span class="dv">1</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">c</span>(v[<span class="sc">!</span><span class="fu">duplicated</span>(v)], <span class="fu">sapply</span>(<span class="fu">strsplit</span>(exposure[<span class="dv">1</span>], sep), head, <span class="dv">1</span>))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>data_wide_f <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">reshape</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_long_f,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">idvar =</span> <span class="st">"ID"</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">v.names =</span> v,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">timevar =</span> <span class="st">"WAVE"</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">15</span>, <span class="dv">24</span>, <span class="dv">35</span>, <span class="dv">58</span>),</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">direction =</span> <span class="st">"wide"</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>data_wide_f <span class="ot">&lt;-</span> data_wide_f[, <span class="fu">colSums</span>(<span class="fu">is.na</span>(data_wide_f)) <span class="sc">&lt;</span> <span class="fu">nrow</span>(data_wide_f)]</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_wide_f, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      ID state BioDadInHH2 PmAge2 PmBlac2 TcBlac2 PmMrSt2 PmEd2 KFASTScr</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     1     0           1 27.245       0       0       1    15       24</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    10     1           0 16.014       0       1       0    13       18</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11  100     1           0 31.042       1       1       1    14       15</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16 1000     1           0 23.597       1       1       1    10       14</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21 1001     1           0 25.592       1       1       1    13       23</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    RMomAgeU</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        29</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6        30</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11       25</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16       31</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21       27</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br> <br></p>
+</section>
+</section>
+<section id="p4.2.-single-wide-data-frame" class="level2">
+<h2 class="anchored" data-anchor-id="p4.2.-single-wide-data-frame">P4.2. Single Wide Data Frame</h2>
+<p>Alternatively, users could start with a single data frame of wide data (with or without missingness).</p>
+<p>Below, we we load in a single complete, wide data frame simulated from FLP as an example.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sim_data_wide"</span>, <span class="at">package =</span> <span class="st">"devMSMs"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>data_wide <span class="ot">&lt;-</span> sim_data_wide</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_wide, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<p>Data with missingness is more common with human data. Below we read in simulated wide FLP data with missingness.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sim_data_wide_miss"</span>, <span class="at">package =</span> <span class="st">"devMSMs"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>data_wide <span class="ot">&lt;-</span> sim_data_wide_miss</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_wide, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<section id="p4.2a.-format-wide-data" class="level3">
+<h3 class="anchored" data-anchor-id="p4.2a.-format-wide-data">P4.2a. Format Wide Data</h3>
+<p>Users beginning with a single unformatted data frame in long format can utilize a helper function <code>formatWideData()</code> to summarize exposure and outcome data and convert to required variable names. <code>formatWideData()</code> allows the users to supply existing variables for ID (<code>id_var</code>) and missing data (<code>missing</code>) for re-naming according to what is required by the package. It also allows the user to submit variables that should be factors and integers, and the function classes any factor confounders (<code>factor_confounders</code>) as factors, integer confounders (<code>integer_confounders</code>) as integers in the data, and all others as numeric. The user can also specify a time point delimeter (<code>sep</code>).</p>
+<p>Below, we format the simulated wide FLP data by listing out variables to make into factors and integers in wide format (e.g., “variable.t”), as well as the ID and missingness indicators.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>factor_confounders <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"state"</span>, <span class="st">"TcBlac2"</span>, <span class="st">"BioDadInHH2"</span>, <span class="st">"HomeOwnd"</span>, <span class="st">"PmBlac2"</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"PmMrSt2"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"RHealth"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"RHasSO.6"</span>, <span class="st">"RHasSO.15"</span>, <span class="st">"RHasSO.24"</span>, <span class="st">"RHasSO.35"</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>integer_confounders <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"KFASTScr"</span>, <span class="st">"PmEd2"</span>, <span class="st">"RMomAgeU"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"gov_assist"</span>, <span class="st">"B18Raw.6"</span>, <span class="st">"B18Raw.15"</span>, <span class="st">"B18Raw.24"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EARS_TJo.24"</span>, <span class="st">"EARS_TJo.35"</span>, <span class="st">"MDI.6"</span>, <span class="st">"MDI.15"</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>data_wide_f <span class="ot">&lt;-</span> <span class="fu">formatWideData</span>(</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_wide, </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> exposure, </span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> outcome,</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">sep =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span>,</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">id_var =</span> <span class="st">"ID"</span>,</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">missing =</span> <span class="cn">NA</span>,</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">factor_confounders =</span> factor_confounders,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">integer_confounders =</span> integer_confounders,</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">home_dir =</span> home_dir, </span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">save.out =</span> save.out</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;table class="kable_wrapper"&gt;</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;caption&gt;Summary of ESETA1 Information&lt;/caption&gt;</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;tbody&gt;</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;tr&gt;</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;td&gt; </span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |   |   ESETA1.6     |  ESETA1.15     |  ESETA1.24     |  ESETA1.35     |  ESETA1.58     |</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |:--|:---------------|:---------------|:---------------|:---------------|:---------------|</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |   |Min.   :-2.8090 |Min.   :-3.1010 |Min.   :-2.8580 |Min.   :-3.2410 |Min.   :-2.4780 |</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |   |1st Qu.:-0.3058 |1st Qu.:-0.3495 |1st Qu.:-0.4510 |1st Qu.:-0.5220 |1st Qu.:-0.4968 |</span></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |   |Median : 0.3735 |Median : 0.2745 |Median : 0.1635 |Median : 0.1140 |Median : 0.1275 |</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |   |Mean   : 0.3405 |Mean   : 0.2664 |Mean   : 0.1591 |Mean   : 0.1229 |Mean   : 0.1159 |</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |   |3rd Qu.: 0.9617 |3rd Qu.: 0.9217 |3rd Qu.: 0.8015 |3rd Qu.: 0.7750 |3rd Qu.: 0.7515 |</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |   |Max.   : 4.0350 |Max.   : 3.4740 |Max.   : 3.2840 |Max.   : 3.0140 |Max.   : 3.1730 |</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |   |NA's   :258     |NA's   :258     |NA's   :258     |NA's   :258     |NA's   :258     |</span></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &lt;/td&gt;</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;/tr&gt;</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;/tbody&gt;</span></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;/table&gt;</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Table: Summary of StrDif_Tot.58 Information</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |   Min.| X1st.Qu.| Median|      Mean| X3rd.Qu.|  Max.| NA.s|</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |------:|--------:|------:|---------:|--------:|-----:|----:|</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | -0.497|  0.29825|  0.488| 0.4989333|   0.7055| 1.448|  258|</span></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_wide_f, <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ID state TcBlac2 BioDadInHH2 HomeOwnd KFASTScr PmBlac2 PmEd2 PmMrSt2 PmAge2</span></span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  1     0       0           1        1       24       0    15       1 27.245</span></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  2     1       1           0        2       27       1    17       0 32.292</span></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  3     0       0           0        3       15       1    13       1 25.588</span></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  4     1       0           0        2       17       0    14       0 22.664</span></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  5     0       0           1        1       25       0    20       1 41.153</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br> <br></p>
+</section>
+</section>
+<section id="p4.3.-formatted-wide-data-with-missingness" class="level2">
+<h2 class="anchored" data-anchor-id="p4.3.-formatted-wide-data-with-missingness">P4.3. Formatted Wide Data with Missingness</h2>
+<p>The functions of the <em>devMSMs</em> package accept data in the form of a single data frame with no missing values or <em>m</em> imputed datasets in the form of either a mids object (output from the mice package or via <code>imputeData()</code>) or a list of imputed datasets. Most developmental data from humans will have some amount of missing data. Given that the creation of IPTW balancing weights requires complete data, we recommend imputing data. Imputation assumes a missing data mechanism of missing at random (MAR) and no more than 20% missing data in total (Leyrat et al., 2021). Given existing work demonstrating its superiority, <em>devMSMS</em> implements the ‘within’ approach for imputed data, conducting all steps on each imputed dataset before pooling estimates using Rubin’s rules to create final average predictions in order to make contrast comparisons in <em>Worfklows</em> vignettes Step 5 (Leyrat et al, 2021; Granger et al., 2019).</p>
+<p>As shown below, users can use a helper function to impute their wide data or impute elsewhere and read in the imputed data as a list for use with <em>devMSMs</em>.</p>
+<p><br></p>
+<section id="p4.3a.-multiply-impute-formatted-wide-data-frame-using-mice" class="level3">
+<h3 class="anchored" data-anchor-id="p4.3a.-multiply-impute-formatted-wide-data-frame-using-mice">P4.3a. Multiply Impute Formatted, Wide Data Frame using MICE</h3>
+<p>Users have the option of using the helper <code>imputeData()</code> function to impute their correctly formatted wide data. This step can take a while to run. The user can specify how many imputed datasets to create (default m = 5). <code>imputeData()</code> draws on the <code>mice()</code> function from the <em>mice</em> package (van Buuren &amp; Oudshoorn, 2011) to conduct multiple imputation by chained equations (mice). All other variables present in the dataset are used to impute missing data in each column.</p>
+<p>The user can specify the imputation method through the <code>method</code> field drawing from the following list: “pmm” (predictive mean matching), “midastouch” (weighted predictive mean matching), “sample” (random sample from observed values), “rf” (random forest) or “cart” (classification and regression trees). Random forest imputation is the default given evidence for its efficiency and superior performance (Shah et al., 2014). Please review the <em>mice</em> documentation for more details.<br>
+Additionally, users can specify an integer value to <code>seed</code> in order to offset the random number generator in <em>mice()</em> and make reproducible imputations.</p>
+<p>The parameter <code>read_imps_from_file</code> will allow you to read already imputed data in from local storage (TRUE) so as not to have to re-run this imputation code multiple times (FALSE; default). Users may use this parameter to supply their own mids object of imputed data from the <em>mice</em> package (with the title ‘all_imp.rds’). Be sure to inspect the console for any warnings as well as the resulting imputed datasets. Any variables that have missing data following imputation may need to be removed due to high collinearity and/or low variability.</p>
+<p>The required inputs for this function are a data frame in wide format (formatted according to pre-requirements listed above), m number of imputed datasets to create, a path to the home directory (if <code>save.out</code> = TRUE), exposure (e.g., “variable”), and outcome (e.g., “variable.t”). The home directory path, exposure, and outcome should already be defined if the user completed the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs vignette</a>.</p>
+<p>The optional inputs are as follows.</p>
+<p>The user can specify an imputation method compatible with <code>mice()</code> (see above). Additionally, the user can specify in <code>maxit</code> the number of interactions for <code>mice::mice()</code> to conduct (default is 5). The user can also specify <code>para_proc</code>, a logical indicator indicating whether or not to speed up imputing using parallel processing (default = TRUE). This draws on 2 cores using functions from the <em>parallel</em>, <em>doRNG</em>, and <em>doParallel</em> packages.</p>
+<p>The user may also specify any additional inputs accepted by <code>mice::mice()</code> and we advise consulting the <a href:="https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice" href="">[<em>mice</em> documentation]</a> for more information.</p>
+<p>The user can also indicate if they have already created imputed datasets from this function and wish to read them in (<code>read_imps_from_file = TRUE</code> rather than recreate them (default).</p>
+<p>For this example, we create 2 imputed datasets using the default random forest method and 0 iterations (just for illustrative purposes), set a seed for reproducibility, and assign the output to <code>data</code> for use with <em>devMSMs</em>. This code takes some time to run. (Note: given the challenges of imputing data from .rda files, we have set <code>m</code> = 2 and <code>maxit</code> = 0 here just for illustrative purposes. We recommend setting both <code>m</code> = 5 and <code>maxit</code> = 5 (<em>mice</em> default) when running data.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="dv">1234</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>method <span class="ot">&lt;-</span> <span class="st">"rf"</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>maxit <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>imputed_data <span class="ot">&lt;-</span> <span class="fu">imputeData</span>(</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_wide_f, </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> exposure, </span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> outcome,</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">sep =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span>,</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">m =</span> m, </span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> method, </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">maxit =</span> maxit, </span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">para_proc =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> s, </span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">read_imps_from_file =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">home_dir =</span> home_dir, </span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">save.out =</span> save.out</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Creating 2 imputed datasets using the rf imputation method in mice::mice(). This may take some time to run. </span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; USER </span><span class="al">ALERT</span><span class="co">: Please view any logged events from the imputation below: </span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Table: Logged Events from mice::mice</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mice<span class="sc">::</span><span class="fu">complete</span>(imputed_data, <span class="dv">1</span>), <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6 BioDadInHH2 caregiv_health</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         3         1         1         0       -4           1              3</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         2         5        -7         7        0           0              0</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         3         6         5        20       -1           0              3</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         4        24        25        17       11           0              3</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5         3        -8         1         3        1           1              2</span></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CORTB.15 CORTB.24 CORTB.6</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   -0.227   -0.652   0.742</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    0.654    0.397   0.018</span></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    1.145    0.033  -0.379</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    0.301   -0.501   0.000</span></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   -0.247    0.084   0.153</span></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> imputed_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We inspect the output to the console for any warnings from <code>mice()</code>.</p>
+<p>The mice object can now be assigned to <code>data</code> for use in the <em>deveMSMs</em> package (see <em>Workflows</em> vignettes).</p>
+<p><br></p>
+</section>
+<section id="p4.3b.-read-in-as-a-list-of-wide-imputed-data-saved-locally" class="level3">
+<h3 class="anchored" data-anchor-id="p4.3b.-read-in-as-a-list-of-wide-imputed-data-saved-locally">P4.3b. Read in as a List of Wide Imputed Data Saved Locally</h3>
+<p>Alternatively, if a user has imputed datasets already created from wide, formatted data using a program other than <em>mice</em>, they can read in, as a list, files saved locally as .csv files in a single folder. This list can be assigned to <code>data</code> for use in the <em>deveMSMs</em> package (see <em>Workflows</em> vignettes).</p>
+<p>Below, we load in a list of imputed data simulated from FLP, as an example. (See the example Rmarkdown file for code to do this with files saved locally.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"sim_data_imp_list"</span>, <span class="at">package =</span> <span class="st">"devMSMs"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> sim_data_imp_list</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data[[<span class="dv">1</span>]], <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   X ALI_Le.35 B18Raw.15 B18Raw.24 B18Raw.58 B18Raw.6 BioDadInHH2 caregiv_health</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 1         3         1         1         7       16           1              3</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 2         2         4        -7         7        0           0              0</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 3         3         6         5        20       -1           0              3</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 4         4        24        25        17       11           0              3</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 5         3        -8        -9        17        1           1              2</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CORTB.15 CORTB.24</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   -0.227   -0.652</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    0.149    0.831</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    1.145    0.033</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    0.301   -0.501</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   -0.247    0.084</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br> <br></p>
+</section>
+</section>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<p>Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., &amp; Barbarin, O. (2008). Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418</p>
+<p>Kainz, K., Greifer, N., Givens, A., Swietek, K., Lombardi, B. M., Zietz, S., &amp; Kohn, J. L. (2017). Improving Causal Inference: Recommendations for Covariate Selection and Balance in Propensity Score Methods. Journal of the Society for Social Work and Research, 8(2), 279–303. https://doi.org/10.1086/691464</p>
+<p>Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., Garrett-Peiers, P., Conger, R. D., &amp; Bauer, P. J. (2013). The Family Life Project: An Epidemiological and Developmental Study of Young Children Living in Poor Rural Communities. Monographs of the Society for Research in Child Development, 78(5), i–150.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -22,10 +22,9 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-This vignette guides a user through the process of using *devMSMs* to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.  
+This vignette guides a user through the process of using *devMSMs* to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.
 
-The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript (<a href="https://osf.io/preprints/psyarxiv/284mb">preprinte</a>). We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow.
-<br>
+The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript (<a href="https://osf.io/preprints/psyarxiv/284mb">preprintgh</a>). We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow. <br>
 
 # Installation
 
@@ -34,7 +33,7 @@ Until *devMSMs* is available on CRAN, you will need to install it directly from 
 ```{r setup}
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
-install.packages("devtools")
+install.packages("devtools", quiet = TRUE)
 require("devtools", quietly = TRUE)
 
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
@@ -75,7 +74,7 @@ We do not specify a home directory given the nature of this example, but we do r
 ```{r}
 # home_dir = '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' 
 ```
-<br>
+
 ### P3.2 Recommended: Time Point Delimiter
 
 Below, we use the default period as a time delimiter.
@@ -83,7 +82,7 @@ Below, we use the default period as a time delimiter.
 ```{r}
 sep <- "\\."
 ```
-<br>
+
 ### P3.3 Required: Exposure Variable
 
 We specify our 6 time points of exposure.
@@ -91,15 +90,15 @@ We specify our 6 time points of exposure.
 ```{r}
 exposure <- c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
 ```
-<br>
-### P3.4. Required for Continuous Exposures: Identify High and Low Cutoff Values
 
-Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.
+### P3.4. Required for Continuous Exposures: Identify High and Low Exemplar Cutoff Values
+
+Below, we specify the 60th and 30th percentiles to demarcate exemplar high and low levels of economic strain exposure, respectively.
 
 ```{r}
 hi_lo_cut <- c(0.6, 0.3)
 ```
-<br>
+
 ### P3.5 Optional: Exposure Epochs
 
 We specify that the first two exposure time points (6 and 15 months) will be considered infancy, the second two (34 and 25 months) toddlerhood, and the final (58 months) childhood.
@@ -107,7 +106,7 @@ We specify that the first two exposure time points (6 and 15 months) will be con
 ```{r}
 epochs <- c("Infancy", "Infancy", "Toddlerhood", "Toddlerhood", "Childhood")
 ```
-<br>
+
 ### P3.6 Recommended: Hypotheses-Relevant Exposure Histories
 
 See the Specify Core Inputs vignette for more information.
@@ -119,7 +118,7 @@ reference <- c("l-l-l")
 
 comparison <- c("h-h-h")
 ```
-<br>
+
 ### P3.7 Required: Outcome Variable
 
 We specify out outcome as behavior problems at 58 months.
@@ -127,7 +126,7 @@ We specify out outcome as behavior problems at 58 months.
 ```{r}
 outcome <-  "StrDif_Tot.58"
 ```
-<br>
+
 ### P3.8 Recommended: Confounders
 
 We specify both time-invariant and time-varying confounders.
@@ -152,7 +151,7 @@ tv_conf <- c("SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
   "StrDif_Tot.35", 
   "fscore.35")
 ```
-<br>
+
 ### P3.8c Optional: Concurrent Confounders
 
 We specify no concurrent confounders as, given our data, we are unable to disentangle them from mediators or colliders.
@@ -182,7 +181,7 @@ data <- sim_data_mice
 
 head(mice::complete(data, 1), n = c(5, 10))
 ```
-<br>
+
 ### P4.4 Required: Create MSM Object
 
 We set a seed for reproducibility.
@@ -229,11 +228,11 @@ print(obj)
 
 For all users, we highly recommend use of the helper `inspectData()` function (with the a complete dataset in long or wide format or imputed data in the case of missingness) to summarize exposure, outcome, and confounders and inspect the sample distribution among exposure histories. Based on any user-specified exposure epochs and high and low quantile values (for continuous exposures), this function outputs a table showing the sample distribution across all histories.
 
-We strongly suggest visually inspecting this table and revising the designation of epochs and/or high and low quantile values (for continuous exposures) until each history contains a reasonable number of participants. While there is no gold standard required number per history cell, users should guard against extrapolation beyond the scope of the data. For example, in our data, when using 75th and 25th percentile cutoffs, there were histories that represented less than two cases and thus we re-evaluated our cutoffs. Users may wish to revise any epoch designation and high and low cutoff values, where applicable. The function conducts summaries and history distribution inspection for each imputed dataset if imputed data are supplied.
+We strongly suggest visually inspecting this table and revising the designation of epochs and/or high and low quantile values (for continuous exposures) until each history contains a reasonable number of participants. While there is no gold standard required number per history cell, users should guard against extrapolation beyond the scope of the data. For example, in our data, when using 75th and 25th percentile expemplar cutoffs, there were histories that represented less than two cases and thus we re-evaluated our cutoffs. Users may wish to revise any epoch designation and high and low exemplar cutoff values, where applicable. The function conducts summaries and history distribution inspection for each imputed dataset if imputed data are supplied.
 
 The required inputs for `inspectData()` are: complete data (as a data frame in wide or long format, a list of imputed data frames in wide format, or a mids object), exposure (e.g., “variable”), and outcome (e.g., “variable.t”). If the exposure is continuously distributed, the user is required to supply to `hi_lo_cut` values demarcating high and low levels.
 
-Optional inputs are a home directory (if `save.out` = TRUE), epochs, high/low cutoff values for continuous exposures, and specification of reference and comparison histories.
+Optional inputs are a home directory (if `save.out` = TRUE), epochs, high/low exemplar cutoff values for continuous exposures, and specification of reference and comparison histories.
 
 The helper `inspectData()` function outputs the following files into the home directory: a correlation plot of all variables in the dataset, tables of exposure and outcome descriptive statistics, and two summary tables of the confounders considered at each time point.
 
@@ -298,7 +297,7 @@ print(full_formulas)
 ### 1b. Conduct Exploratory Pre-Balance Assessment
 
 The next step examines the initial imbalance, or how strongly exposure relates to each confounder at each time point, for all measured confounders prior to weighting using the `assessBalance()` function. This function draws on the `calcBalStats()` function (see the Assessing Balance for Time-Varying Exposure section in the accompanying manuscript).\
-  
+
 The `assessBalance()` function outputs balance statistics (correlations for continuous exposures and standardized mean differences for binary exposures) relating exposure at each time point to confounders in a table as well as in plots. This function also provides summary balance statistics averaging across all time points (and imputed datasets if they are supplied).
 
 The required inputs for using the `assessBalance()` function to conduct pre-balance testing are: data (data frame, a mids object, or a list of imputed datasets as dataframes in wide format) and an MSM object (e.g., "obj"). Please see the *Assessing Balance for Time-Varying Exposures* vignette for more detail on how this function calculates balance.
@@ -306,8 +305,8 @@ The required inputs for using the `assessBalance()` function to conduct pre-bala
 The optional inputs are as follows.
 
 The user may specify `balance_thresh`, or a threshold(s) for determining confounder balance, in one of two ways.
-  
--    First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced, and above which they are considered imbalanced (default is 0.1; Stuart, 2010).
+
+-   First, they can provide a single number value (0-1) for the absolute value of the standardized balance statistic (either the correlation for continuous exposures or standardized group mean difference for binary exposures) for exposure and confounders below which confounders are considered balanced, and above which they are considered imbalanced (default is 0.1; Stuart, 2010).
 
 -   Second, users may make an a priori assertion that some confounders are more important than others based on theory and existing research. In this case, they can provide two numbers that represent the balance thresholds for important and less important confounders, respectively. If the user supplies two balance thresholds, they must also supply a list of important confounders (time-varying: “variable.t”, time invariant: “variable”) to the `imp_conf` field. The balance threshold specification should be kept consistent throughout the use of this workflow.
 
@@ -391,7 +390,7 @@ The love plots depict the standardized associations between confounder and expos
 The goal of this second step is to create shortened, more parsimonious weights formulas for determining the optimal IPTW weighting method that most successfully reduces imbalance in the data.\
 <br>
 
-#### 2a. Create Simplified Weights Formulas
+### 2a. Create Simplified Weights Formulas
 
 First, we create shorter, more parsimonious weights formulas relating exposure to confounders at each time point using the `createFormulas()` function (`type` = "short”). For each exposure time point, these formulas contain all time invariant confounders as well as time-varying confounders only at the *t*-1 lag. The logic here is that balancing on confounders at the most recent prior time point (*t*-1 only) may achieve balance on levels at more distal time points, given the stability of many confounders over time. Importantly, we will empirically assess and relax this assumption if needed at subsequent steps (Steps 3a-b).
 
@@ -457,7 +456,6 @@ weights.cbps <- createWeights(obj = obj,
                              method = method,
                              formulas = formulas,
                              verbose = TRUE,
-                             # maxit = 1, # just for testing to speed up
                              save.out = save.out)
 ```
 
@@ -495,7 +493,6 @@ plot(weights.cbps,
 ```
 
 As shown above, the distribution has a heavy right tail (typical of real-world data). The right tail of the distribution represents individuals who experienced statistically unexpected levels of exposure given their levels of confounders.
-
 
 We then create and inspect IPTW balancing weights using all other available methods in order to evaluate and compare their performance in subsequent steps. Here, we summarize and plot averaging across all imputed datasets in order to get a sense for their overall performance. Example inspections are for the first imputed dataset.\
 <br>
@@ -1096,13 +1093,13 @@ From this, we find no remaining imbalanced confounders (similar to the untrimmed
 Having created IPTW balancing weights that minimize associations between confounders and exposure at each time point, we can move to the substantive modeling phase.\
 <br>
 
-## Step 5: Fit Weighted Outcome Model & Summarize & Visualize Results
+## Step 5: Fit Weighted Outcome Model
 
 The goal of this final step is to fit a weighted model relating exposure at meaningful epochs of developmental time to the outcome, before summarizing and visualizing the results. In this step, the user models and compares various counterfactuals, or the effects of different developmental histories of exposure on the outcome, to test substantive hypotheses about dose and timing.
 
 <br>
 
-### Step 5a. Select & Fit a Weighted Outcome Model
+### Step 5a. Select a Weighted Outcome Model
 
 First, we use the `fitModel()` function to fit a weighted generalized linear model relating exposure to outcome. The function draws on the `glm_weightit()` function of the *WeightIt* package (Greifer, 2024). The exposure main effects in models reflect exposure levels at each exposure time point unless exposure epochs are specified. One of the benefits of creating balancing weights is that they can be used in a variety of different marginal outcome models and those encompassed in this function are only a subset of possible models. Note that these models can get complex and we do not advise interpreting the individual terms.
 
@@ -1147,6 +1144,8 @@ link <- "identity"
 ```
 
 This function returns a list of fitted model objects, each as glm output.
+
+### Step 5b. Fit the Weighted Outcome Model
 
 We fit the outcome model using trimmed weights below.
 
@@ -1226,9 +1225,7 @@ print(models.s2,
 
 With a comparable result.
 
-
-
-### Step 5b. Estimate, Compare, and Visualize Model-Predicted Outcome as a Function of Exposure History
+## Step 6. Estimate, Compare, and Visualize Model-Predicted Outcome as a Function of Exposure History
 
 In this final step, we use the fitted model results to test substantive hypotheses about dose and timing. We estimate and then compare the average marginal estimates of the outcome for each user-specified exposure history (i.e., permutation of high (“h) and low (“l”) levels of exposure at each exposure epoch) using the `compareHistories()` function. This draws primarily from the `avg_predictions()` and `hypotheses()` functions in the *marginaleffects* package (Arel-Bundock, 2023).
 
@@ -1240,9 +1237,9 @@ The required inputs for using the `compareHistories()` function are: an MSM obje
 
 The optional inputs are as follows.
 
-To create histories of high and low values with continuous exposures, to `hi_lo_cut` the user can specify a list of two quantile values (0-1; default is median split +/- 0.001) demarcating high and low levels of exposure, respectively. (Imputed data are stacked to calculate cutoff values.) We suggest drawing on existing hypotheses and examining the variability in the exposure variable to determine high and low cutoffs. We recommend users begin by specifying meaningful high and low percentile cutoffs and examining how many individuals in the sample fall into each of the user-specified exposure histories created by those percentile cutoffs (see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs vignette</a>). While there are no gold standard recommendations for sufficient cell numbers per history, users should ensure that there is is reasonable coverage in all of their histories to avoid extrapolation and maximize precision.
+To create histories of high and low values with continuous exposures, to `hi_lo_cut` the user can specify a list of two quantile values (0-1; default is median split +/- 0.001) demarcating high and low levels of exposure, respectively. (Imputed data are stacked to calculate exemplar cutoff values.) We suggest drawing on existing hypotheses and examining the variability in the exposure variable to determine high and low exemplar cutoffs. We recommend users begin by specifying meaningful high and low percentile exemplar cutoffs and examining how many individuals in the sample fall into each of the user-specified exposure histories created by those percentile cutoffs (see the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs vignette</a>). While there are no gold standard recommendations for sufficient cell numbers per history, users should ensure that there is is reasonable coverage in all of their histories to avoid extrapolation and maximize precision.
 
-Below, we draw on the high and low cutoffs that we previously specified, that 60th and 30th percentile values to denote high and low levels of economic strain, respectively.
+Below, we draw on the high and low exemplar cutoffs that we previously specified, that 60th and 30th percentile values to denote high and low levels of economic strain, respectively.
 
 ```{r}
 hi_lo_cut <- c(0.6, 0.3) 
@@ -1250,7 +1247,7 @@ hi_lo_cut <- c(0.6, 0.3)
 
 The user also has the option to estimate and compare only a custom subset of user-specified exposure histories (i.e., sequences of high and low levels of exposure at each epoch or time point) using the `reference` and `comparison` fields. To conduct these recommended customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels (“low” or “high”, respectively). If the user supplies a reference history, they are required to provide at least one unique and valid history for comparison by, in quotations, providing to `comparison` a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference. If the user supplies one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be subject to multiple comparison correction.
 
-If no reference or comparison is specified, all histories will be compared to each other. If there are more than 4 exposure main effects (either as epochs or exposure time points), the user is required to select a subset of history comparisons (Step 5b), given that the base code (see the `hypotheses()` function from the *marginaleffects* package; Arel-Bundock, 2023) cannot accommodate all pairwise history comparisons for more than 5 time points.
+If no reference or comparison is specified, all histories will be compared to each other. If there are more than 4 exposure main effects (either as epochs or exposure time points), the user is required to select a subset of history comparisons (Step 6), given that the base code (see the `hypotheses()` function from the *marginaleffects* package; Arel-Bundock, 2023) cannot accommodate all pairwise history comparisons for more than 5 time points.
 
 The user can also specify a multiple comparison method in `mc_method` by in quotations, providing the shorthand for the method ("holm", "hochberg","hommel", "bonferroni", "BH" (default), "BY", "fdr", or "n" (see stats::p.adjust documentation; R Core Team) for multiple comparison correction to be applied to the final (pooled across imputed datasets when applicable) contrasts comparing effects of different exposure histories on outcome (default is Benjamini-Hochburg). Each code run is considered a family. If the user iterates through this function specifying different comparisons each time, we strongly recommend interpreting the outcome of the most inclusive set of comparisons to avoid false discovery.
 
@@ -1279,6 +1276,8 @@ out_lab <- "Behavior Problems"
 
 colors <- c("blue4", "darkgreen", "darkgoldenrod", "red2")
 ```
+
+### Step 6a. Estimate & Compare Potential Outcomes Across Exposure Histories
 
 The function returns a data frame of user-specified history comparisons containing contrast estimates, standard errors, statistics, p-values, low and high confidence intervals, and corrected p-values, labeled by history and dose.
 
@@ -1312,6 +1311,8 @@ summary(results,
 ```
 
 We then inspect the history comparison and conclude that there is no evidence that children who experienced different histories of exposure to economic strain over infancy, toddlerhood, and early childhood differ in their behavioral problems in early childhood.
+
+### Step 6b. Plot Potential Outcomes by Exposure Histories
 
 Lastly, we plot the results. The user has the option to supply `save.out` to save plot output to the home directory.
 
@@ -1374,11 +1375,9 @@ Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., & Bar
 
 Cole, S. R., & Hernán, M. A. (2008). Constructing Inverse Probability Weights for Marginal Structural Models. American Journal of Epidemiology, 168(6), 656–664. https://doi.org/10.1093/aje/kwn164.
 
-Greifer N (2024). cobalt: Covariate Balance Tables and Plots.
-R package version 4.5.2, <https://github.com/ngreifer/cobalt>, <https://ngreifer.github.io/cobalt/>
+Greifer N (2024). cobalt: Covariate Balance Tables and Plots. R package version 4.5.2, <https://github.com/ngreifer/cobalt>, <https://ngreifer.github.io/cobalt/>
 
-Greifer N (2024). WeightIt: Weighting for Covariate Balance in Observational Studies.
-<https://ngreifer.github.io/WeightIt/>, <https://github.com/ngreifer/WeightIt>
+Greifer N (2024). WeightIt: Weighting for Covariate Balance in Observational Studies. <https://ngreifer.github.io/WeightIt/>, <https://github.com/ngreifer/WeightIt>
 
 Polley, Eric, Erin LeDell, Chris Kennedy, and Mark van der Laan. 2023. SuperLearner: SuperLearner Prediction. https://CRAN.R-project.org/package=SuperLearner.
 

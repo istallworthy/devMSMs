@@ -27,11 +27,10 @@ require(tinytable)
 require(markdown)
 ```
 
-This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and *Workflows* vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: *[insert link]*.  
-<br>  
-  
-Key Terminology
+This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and *Workflows* vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: *\[insert link\]*.\
+<br>
 
+Key Terminology
 
 ```{r}
 #| echo: false
@@ -55,19 +54,22 @@ library(tinytable)
 tt(terms, theme = "striped") |>
   format_tt(markdown = TRUE) 
 ```
-<br>  
+
+<br>
 
 # Weights Formula
 
-Weights formula are formula created at each exposure time point, regressing exposure on confounders, for the purpose of creating and/or assessing balancing weights. The general form is given by:
-<br>
+Weights formula are formula, or mathematical equations, created at each exposure time point, regressing exposure on confounders for the purpose of creating and/or assessing balancing weights. The general form is given by: <br>\
+
+```{=html}
 <pre><code>ESETA1.t ~ <span style='color: darkred'>time-invariant</span> confounders + <span style='color: blue'>time-varying</span> confounders + <i>lagged</i> <span style='color: seagreen;'>exposures</span> + <i>lagged</i> <span style='color: purple;'>outcomes</span></code></pre>
+```
 
 <br>
 
-Below is a table that summarizes the three formula `type`'s that will be used.
+Below is a table that summarizes the three formula `type`s that will be used.
 
-Table 2. 
+Table 2.
 
 ```{r}
 #| echo: false
@@ -79,16 +81,17 @@ balance_formula <- data.frame(
     '*Updated balancing formula*\n\n`type = "update"`'
   ),
   `Definition` = c(
-    "Balancing formula containing all <span style='color: darkred;'>time invariant</span>, <i>all</i> lagged <span style='color: blue;'>time-varying</span> confounders, and lagged <span style='color: seagreen'>exposure</span> values. Used for pre-balance (<i>Workflows</i> vignettes Step 4b) and final balance assessment (<i>Workflows</i> vignettes Step 6).\n\n<pre><code>ESETA1.24 ~ <span style='color: blue;'>B18Raw.15</span> + <span style='color: blue;'>B18Raw.6</span> + <span style='color: darkred;'>BioDadInHH2</span> + <span style='color: blue;'>CORTB.15</span> + <span style='color: blue;'>CORTB.6</span> + <span style='color: darkred;'>DrnkFreq</span> + <span style='color: seagreen;'>ES.15</span> + <span style='color: seagreen;'>ES.6</span> + <span style='color: darkred;'>gov_assist</span> + <span style='color: blue;'>HOMEETA1.15</span> + <span style='color: blue;'>HOMEETA1.6</span> + <span style='color: darkred;'>HomeOwnd</span> ...</code></pre>",
-    "Balancing formula containing all <span style='color: darkred;'>time invariant</span>, <i>only t-1</i> lagged <span style='color: blue;'>time-varying</span> confounders, and lagged <span style='color: seagreen'>exposure</span> values. Used for creating and assessing preliminary balancing weights to determine optimal weighting method (<i>Workflows</i> vignettes Step 5b).\n\n<pre><code>ESETA1.24 ~ <span style='color: blue;'>B18Raw.15</span> + <span style='color: darkred;'>BioDadInHH2</span> + <span style='color: blue;'>CORTB.15</span> + <span style='color: darkred;'>DrnkFreq</span> + <span style='color: seagreen;'>ES.15</span> + <span style='color: darkred;'>gov_assist</span> + <span style='color: blue;'>HOMEETA1.15</span> + <span style='color: darkred;'>HomeOwnd</span> ...</code></pre>",
-    "Balancing formula containing all <span style='color: darkred;'>time invariant</span>, <i>only t-1</i> lagged <span style='color: blue;'>time-varying</span> confounders, as well as any <i>imbalanced</i> <span style='color: blue;'>time-varying</span> confounders, and lagged <span style='color: seagreen'>exposure</span> levels <i>at t-1+</i> Used to create final balancing weights (<i>Workflows<i> vignettes Step 6).\n\n<pre><code>ESETA1.24 ~ <span style='color: blue;'>B18Raw.15</span> + <span style='color: darkred;'>BioDadInHH2</span> + <span style='color: blue;'>CORTB.15</span> + <span style='color: darkred;'>DrnkFreq</span> + <span style='color: seagreen;'>ES.6</span> + <span style='color: seagreen;'>ES.15</span> + <span style='color: darkred;'>gov_assist</span> + <span style='color: blue;'>HOMEETA1.15</span> + <span style='color: darkred;'>HomeOwnd</span> ...</code></pre>"
+    "Balancing formula containing all <span style='color: darkred;'>time invariant</span>, <i>all</i> lagged <span style='color: blue;'>time-varying</span> confounders, and lagged <span style='color: seagreen'>exposure</span> values. Used for pre-balance (<i>Workflows</i> vignettes Step 4b) and final balance assessment.\n\n<pre><code>ESETA1.24 ~ <span style='color: blue;'>B18Raw.15</span> + <span style='color: blue;'>B18Raw.6</span> + <span style='color: darkred;'>BioDadInHH2</span> + <span style='color: blue;'>CORTB.15</span> + <span style='color: blue;'>CORTB.6</span> + <span style='color: darkred;'>DrnkFreq</span> + <span style='color: seagreen;'>ES.15</span> + <span style='color: seagreen;'>ES.6</span> + <span style='color: darkred;'>gov_assist</span> + <span style='color: blue;'>HOMEETA1.15</span> + <span style='color: blue;'>HOMEETA1.6</span> + <span style='color: darkred;'>HomeOwnd</span> ...</code></pre>",
+    "Balancing formula containing all <span style='color: darkred;'>time invariant</span>, <i>only t-1</i> lagged <span style='color: blue;'>time-varying</span> confounders, and lagged <span style='color: seagreen'>exposure</span> values. Used for creating and assessing preliminary balancing weights to determine optimal weighting method.\n\n<pre><code>ESETA1.24 ~ <span style='color: blue;'>B18Raw.15</span> + <span style='color: darkred;'>BioDadInHH2</span> + <span style='color: blue;'>CORTB.15</span> + <span style='color: darkred;'>DrnkFreq</span> + <span style='color: seagreen;'>ES.15</span> + <span style='color: darkred;'>gov_assist</span> + <span style='color: blue;'>HOMEETA1.15</span> + <span style='color: darkred;'>HomeOwnd</span> ...</code></pre>",
+    "Balancing formula containing all <span style='color: darkred;'>time invariant</span>, <i>only t-1</i> lagged <span style='color: blue;'>time-varying</span> confounders, as well as any <i>imbalanced</i> <span style='color: blue;'>time-varying</span> confounders, and lagged <span style='color: seagreen'>exposure</span> levels <i>at t-1+</i> Used to create final balancing weights.\n\n<pre><code>ESETA1.24 ~ <span style='color: blue;'>B18Raw.15</span> + <span style='color: darkred;'>BioDadInHH2</span> + <span style='color: blue;'>CORTB.15</span> + <span style='color: darkred;'>DrnkFreq</span> + <span style='color: seagreen;'>ES.6</span> + <span style='color: seagreen;'>ES.15</span> + <span style='color: darkred;'>gov_assist</span> + <span style='color: blue;'>HOMEETA1.15</span> + <span style='color: darkred;'>HomeOwnd</span> ...</code></pre>"
   )
 )
 
 tinytable::tt(balance_formula) |>
   tinytable::format_tt(markdown = TRUE)
 ```
-<br>  
+
+<br>
 
 # 7 core functions of *devMSMs*
 
@@ -143,5 +146,3 @@ main_functions <- data.frame(
 tinytable::tt(main_functions, theme = "striped") |>
   tinytable::format_tt(markdown = TRUE)
 ```
-
-

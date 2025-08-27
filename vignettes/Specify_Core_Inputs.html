@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Isabella Stallworthy">
+<meta name="dcterms.date" content="2025-08-21">
+
+<title>Specify Core Inputs</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Specify_Core_Inputs_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Specify_Core_Inputs_files/libs/quarto-html/quarto.js"></script>
+<script src="Specify_Core_Inputs_files/libs/quarto-html/popper.min.js"></script>
+<script src="Specify_Core_Inputs_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Specify_Core_Inputs_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Specify_Core_Inputs_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Specify_Core_Inputs_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Specify_Core_Inputs_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Specify_Core_Inputs_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Specify_Core_Inputs_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#p3.1-recommended-home-directory" id="toc-p3.1-recommended-home-directory" class="nav-link active" data-scroll-target="#p3.1-recommended-home-directory">P3.1 Recommended: Home Directory</a></li>
+  <li><a href="#p3.2-recommended-time-point-delimiter" id="toc-p3.2-recommended-time-point-delimiter" class="nav-link" data-scroll-target="#p3.2-recommended-time-point-delimiter">P3.2 Recommended: Time Point Delimiter</a></li>
+  <li><a href="#p3.3-required-exposure-variable" id="toc-p3.3-required-exposure-variable" class="nav-link" data-scroll-target="#p3.3-required-exposure-variable">P3.3 Required: Exposure Variable</a></li>
+  <li><a href="#p3.4-required-for-continuous-exposure-high-and-low-exemplar-cutoff-values" id="toc-p3.4-required-for-continuous-exposure-high-and-low-exemplar-cutoff-values" class="nav-link" data-scroll-target="#p3.4-required-for-continuous-exposure-high-and-low-exemplar-cutoff-values">P3.4 Required for Continuous Exposure: High and Low Exemplar Cutoff Values</a></li>
+  <li><a href="#p3.5-optional-exposure-epochs" id="toc-p3.5-optional-exposure-epochs" class="nav-link" data-scroll-target="#p3.5-optional-exposure-epochs">P3.5 Optional: Exposure Epochs</a></li>
+  <li><a href="#p3.6-recommended-hypotheses-relevant-exposure-histories" id="toc-p3.6-recommended-hypotheses-relevant-exposure-histories" class="nav-link" data-scroll-target="#p3.6-recommended-hypotheses-relevant-exposure-histories">P3.6 Recommended: Hypotheses-Relevant Exposure Histories</a></li>
+  <li><a href="#p3.7-required-outcome-variable" id="toc-p3.7-required-outcome-variable" class="nav-link" data-scroll-target="#p3.7-required-outcome-variable">P3.7 Required: Outcome Variable</a></li>
+  <li><a href="#p3.8-recommended-confounders" id="toc-p3.8-recommended-confounders" class="nav-link" data-scroll-target="#p3.8-recommended-confounders">P3.8 Recommended: Confounders</a>
+  <ul class="collapse">
+  <li><a href="#p3.8a-recommended-time-invariant-confounders" id="toc-p3.8a-recommended-time-invariant-confounders" class="nav-link" data-scroll-target="#p3.8a-recommended-time-invariant-confounders">P3.8a Recommended: Time Invariant Confounders</a></li>
+  <li><a href="#p3.8b-recommended-time-varying-confounders" id="toc-p3.8b-recommended-time-varying-confounders" class="nav-link" data-scroll-target="#p3.8b-recommended-time-varying-confounders">P3.8b Recommended: Time-varying Confounders</a></li>
+  <li><a href="#p3.8c-optional-concurrent-confounders" id="toc-p3.8c-optional-concurrent-confounders" class="nav-link" data-scroll-target="#p3.8c-optional-concurrent-confounders">P3.8c Optional: Concurrent Confounders</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Specify Core Inputs</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Isabella Stallworthy </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 21, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This vignette guides users through the specification of the core inputs required by the <em>deMSMs</em> functions (and helper functions). Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low exemplar cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the <em>devMSMs</em> package (see <em>Workflows</em> vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (<code>verbose</code> = FALSE) and elect not to save out locally any intermediate and final output (<code>save.out</code> = FALSE).</p>
+<p>Following completion of this vignette, the user should complete a <em>Workflow</em> vignette to implement <em>devMSMs</em> with their longitudinal data. Many of these core inputs will be specified at the beginning of the workflow in the MSM object.</p>
+<p>The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>.</p>
+<p><br></p>
+<section id="p3.1-recommended-home-directory" class="level1">
+<h1>P3.1 Recommended: Home Directory</h1>
+<p>Users are required to specify home directory, or in quotations, a path to a designated folder for all output from the package (without the final forward slash), if they plan to save out intermediary and final outputs in the package (default) by setting <code>save.out</code> = TRUE for any of the functions. All sub directories will be created within this home directory by the <em>devMSMs</em> functions automatically when <code>save.out</code> = TRUE.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>home_dir <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># home_dir &lt;- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p3.2-recommended-time-point-delimiter" class="level1">
+<h1>P3.2 Recommended: Time Point Delimiter</h1>
+<p>Users are required to use a consistent delimiter for parsing the names of their time-varying variables (i.e., exposure, time-varying confounders, outcome) into the name of the construct and the time point at which it was measured. The default is a period but the user can specify any delimiter. <em>devMSMs</em> will assume the integer after the final instance of the delimiter wihin the variable name corresponds to the time point at which it was measured. The same delimiter shoudl be used for all time-varying variables.</p>
+<p>Users can specify a different delimiter as a character string in regular expression (regex) form.</p>
+<p>Below, we use the default period as a time delimiter.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sep <span class="ot">&lt;-</span> <span class="st">"</span><span class="sc">\\</span><span class="st">."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p3.3-required-exposure-variable" class="level1">
+<h1>P3.3 Required: Exposure Variable</h1>
+<p>The exposure refers to the developmental construct that is hypothesized to cause the outcome. Users are required to specify an exposure variable for use in all functions in <em>devMSMs</em>. The exposure can be either continuously distributed or binary, which the package automatically detects. The user must specify exposure, or a list of character strings corresponding to the exposure variable in wide format, as it appears in your dataset. The time at which the exposure was measured should appear as a suffix with a delimiter of the user’s choosing (that should be the same for time-varying confounders).</p>
+<p>The user has two options when specifying the exposure variablee, and should select the option that best serves their theory regarding developmental timing and the practical constraints of their data and the modeling process.</p>
+<p>First, they may specify exposure at all time points at which the exposure was measured in their data. This means that balancing formulas will be created (Steps 1a, 2a, 3b in the <em>Workflows</em> vignettes) and IPTW weights will be created (Steps 2b, 3c in the <em>Workflows</em> vignettes) and assessed (Steps 2c, 3a, 4 in the <em>Workflows</em> vignettes) for all time points. In this case, if no epochs are specified, all time points will be included as exposure main effects in the final substantive model and history comparison (Steps 5 &amp; 6 in the <em>Workflows</em> vignettes).</p>
+<p>Second, they may specify a subset of theoretically important time points at which the exposure was measured in their data. This means that balancing formulas will be created and IPTW weights will be created and assessed for only those time points. Further, if no epochs are specified, only those subsetted time points will be included as exposure main effects in the final substantive models. Importantly, exposure variables at time point not included in <code>exposure</code> should be included as time-varying confounders, to be used for balancing purposes only.</p>
+<p>The specification of exposure epochs should be kept consistent throughout the use of the <em>devMSMs</em> package. If the user intends to specify exposure epochs, the user should include all time points encompassed in the epochs in. If the user does not intend to specify exposure epochs, the <code>exposure</code> will constitute the exposure main effects in the final outcome model and form the basis of the histories used for history comparison. In this case, if the user specifies more than 4 exposure time points, they will be required to conduct only a subset of history comparisons (Step 6 in the <em>Workflows</em> vignettes), given that the base code (see the <code>hypotheses()</code> function from the <em>marginaleffects</em> package) cannot accommodate all pairwise history comparisons for more than 5 time points.</p>
+<p>For this example, we elected to create epochs of infancy (6 and 15 months), toddlerhood (24 and 35 months), and early childhood (58 months) so we include all exposure time points.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>exposure <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ESETA1.6"</span>, <span class="st">"ESETA1.15"</span>, <span class="st">"ESETA1.24"</span>, <span class="st">"ESETA1.35"</span>, <span class="st">"ESETA1.58"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p3.4-required-for-continuous-exposure-high-and-low-exemplar-cutoff-values" class="level1">
+<h1>P3.4 Required for Continuous Exposure: High and Low Exemplar Cutoff Values</h1>
+<p>If your exposure variable is continuously distributed (e.g., economic strain), there is not inherent demarcation of what is considered high versus low levels of exposure. Given that the final step of MSM process involves examining how different exposure histories –that vary in dose and timing – over development result in different outcome levels, we need to specify what is considered high versus low levels of exposure. Critically, these ‘high’ and ‘low’ values are merely examples to be plugged into the fitted regression equation to obtain a model-implied predicted value of the outcome for that particular exposure. For continuous exposures, this is required for the recommended preliminary step from <em>Workflows</em> vignette and the <code>compareHistories()</code> <em>devMSMs</em> function (see <em>Workflows</em> vignettes).</p>
+<p>We note that specifying exemplar values is not unique to MSMs–we do this every time we probe the simple slopes of a statistical interaction at ‘high’ and ‘low’ values of a continuous moderator. It is often even implicit in the creation of binary exposure variables (e.g., how many doses of an intervention or drug trial constitute an ‘effective dose?’). Importantly, decision-making around exemplar values can be principled and transparent, drawing on theory, expertise, and data-derived criteria. Sometimes a continuous exposure has pre-established exemplar values, such as diagnostic thresholds for a clinical measure. Other times the researcher is tasked with identifying “reasonable” exemplar values. Ideally, this should be informed purely by theory; however, the user must also choose values that yield reasonable representation of the exposure histories in their data. For example, if one selected the 90th and 10th percentiles as ‘high’ and ‘low’ exposure, respectively, and there was some rank-order stability over time, then the representation of participants experiencing different exposure histories (e.g., ‘high’ at one time point yet ‘low’ at the others) within the data will be quite sparse. Thus, when these exposure histories are used to estimate the causal effects, the estimates will be imprecise (i.e., large standard errors) and risk extrapolation. We recommend first drawing upon theory and expertise, and then visually inspecting (see Step P4 of the <em>Workflow for Continuous Exposures</em> vignette) and adjusting to ensure adequate representation of participants within each history in your data, given the exemplar values. We also strongly recommend sensitivity analyses to probe the robustness of findings using both slightly more and less stringent exemplar values.</p>
+<p>We specify to <code>hi_lo_cut</code>, a list of two quantile values (0-1): the first represents the value above which is considered high levels exposure and the second represents the followed below which is considered low levels of exposure. These values may have to be revised following inspection of the sample distribution across the resulting exposure histories in the recommended preliminary steps of the <em>Workflows</em> vignettes. These final exemplar values will be used in creating and modeling the effects of exposure histories in Steps 5 and 6 of the <em>Workflows</em> vignettes.</p>
+<p>Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hi_lo_cut <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.6</span>, <span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p3.5-optional-exposure-epochs" class="level1">
+<h1>P3.5 Optional: Exposure Epochs</h1>
+<p>When modeling the effect of exposure on outcome in the MSM process, the user has the option to specify epochs of exposure, grouping the time points at which the exposure into more meaningful categories. This may be useful in cases when the user wishes to establish balance using all time points at which exposure was measured, but has substantive hypotheses at coarser timescales (e.g., infancy). If no epochs are specified, the time points at which exposure was measured will be used in the creation of exposure histories in the final step of the process. Each specified epoch must have a corresponding value (but the values can differ in number of entries as shown below).</p>
+<p>To specify epochs, users utilize the optional <code>epoch</code> argument by providing, as a character string, a list of user-created epoch labels, one for each exposure time point in the order in which they are listed in <code>exposure</code>. If the user specifies exposure epochs, exposure main effects are created for each epoch, and exposure levels are averaged for any epochs that consist of two or more time point values.</p>
+<p>The exposure epochs will be arguments in the <code>fitModel()</code> and <code>compareHistories()</code> <em>devMSMs</em> functions (see <em>Workflows</em> vignettes) and their specification should be kept consistent throughout use of the package and its vignettes. They will constitute the main effects variables when modeling the relation between exposure and outcome (<em>Workflows</em> vignettes Step 5) and form the basis for estimating and comparing exposure histories (<em>Workflows</em> vignettes Step 6). If no epochs are specified, the exposure time points from the <code>exposure</code> field will be used at the aforementioned steps.</p>
+<p>Below, we specify ‘infancy’ (“ESETA1.6”, “ESETA1.15), ‘toddlerhood’ (”ESETA1.24”, “ESETA1.35”), and ‘childhood’ (“ESETA1.58”).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>epoch <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Infancy"</span>, <span class="st">"Infancy"</span>, <span class="st">"Toddlerhood"</span>, <span class="st">"Toddlerhood"</span>, <span class="st">"Childhood"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p3.6-recommended-hypotheses-relevant-exposure-histories" class="level1">
+<h1>P3.6 Recommended: Hypotheses-Relevant Exposure Histories</h1>
+<p>We strongly recommend users be selective about which histories, or developmental sequences of high and low exposure (at exposure time points or epochs), are vital for testing their hypotheses. We recommend that the user estimates and compares only a subset of all possible exposure histories using the <code>reference</code> and <code>comparison</code> fields (rather than comparing all possible exposure histories). The user can specify a custom subset of exposure histories using the <code>reference</code> and <code>comparison</code> fields as optional inputs to the <code>compareHistories()</code> <em>devMSMs</em> function (see <em>Workflows</em> vignettes). To conduct these customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by providing a character string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or exposure time point), that signify the sequence of exposure levels (“low” or “high”, respectively).</p>
+<p>If you supply a reference history, in comparisons provide at least one unique and valid history for comparison by, in quotations, providing a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference in Step 6 of the <em>Workflows</em> vignettes. If you supply one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be supplied for multiple comparison correction. If no reference or comparison is specified, all histories will be compared to each other in Step 6 of the <em>Workflows</em> vignettes. However, if there are more than 4 exposure main effects (either as epochs or exposure time points), the user is required to select a subset of history comparisons (Step 6 of the <em>Workflows</em> vignettes), given that the base code (see the <code>hypotheses()</code> function from the <em>marginaleffects</em> package) cannot accommodate all pairwise history comparisons for more than 5 time points).</p>
+<p>These final reference and comparison values established at this step should be used for estimating and comparing exposure histories in Step 6 of the <em>Workflows</em> vignettes.</p>
+<p>Below, we specify low economic strain at all epochs (“l-l-l”) as our reference event in comparison to high levels at all epochs (“h-h-h”) as well as all histories that contain 1 dose of exposure to high economic strain at different epochs.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>reference <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"l-l-l"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"h-h-h"</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"l-l-h"</span>, </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"h-l-l"</span>, </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"l-h-l"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p3.7-required-outcome-variable" class="level1">
+<h1>P3.7 Required: Outcome Variable</h1>
+<p>The outcome refers to the developmental construct that is hypothesized to be caused by the exposure. Users are also required to specify an outcome variable at a designated final time point, as required input to the <code>fitModel()</code> and <code>compareHistories()</code> functions in the <em>devMSMs</em> package. This final time point should be equal to (or, ideally greater than) the final exposure time point. Note that instances of the outcome variable measured at any prior time points should be included as time-varying confounders for balancing purposes. Users must specify an outcome, as a character string with a suffix of time point at which it was collected, corresponding to the variable name in the wide data. Any outcome variables measured at prior time points should be included as time-varying confounders.</p>
+<p>For this example, we specify behavior problems measured at 58 months as the outcome.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>outcome <span class="ot">&lt;-</span> <span class="st">"StrDif_Tot.58"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p3.8-recommended-confounders" class="level1">
+<h1>P3.8 Recommended: Confounders</h1>
+<p>Specifying confounders is critical to the successful implmentation of MSMs. Confounders refer to variables that could cause either or both exposure and outcome, and thus could cause a spurious relation between exposure and outcome. MSMs assume that all possible confounders are measured.</p>
+<section id="p3.8a-recommended-time-invariant-confounders" class="level2">
+<h2 class="anchored" data-anchor-id="p3.8a-recommended-time-invariant-confounders">P3.8a Recommended: Time Invariant Confounders</h2>
+<p>Time invariant confounders are those that are considered to be stable across the developmental period you are studying. Specifying time invariant confounders in <code>ti_conf</code> is recommended in the use of this package as input for the <code>createFormulas()</code> function in <em>devMSMS</em>. Time invariant confounders could include core demographic or birth characteristics (e.g., sex, racial group membership, birth complications) that might cause either the exposure or outcome, either directly or as a proxy, as suggested by theory and/or evidenced by strong associations in the existing literature.</p>
+<p>If the user wishes to specify any interactions, they need to manually create them in the data before listing them here. Here, the user can also include any interaction terms between time invariant variables (e.g., “variable:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level.</p>
+<p>For <code>ti_conf</code>, as a list of character strings, provide the names of all confounders in your dataset that are time invariant. These should not have a time suffix. Below, we specify 18 time invariant confounders that were measured at the baseline study visit, prior to the first exposure time point.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ti_conf <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">"state"</span>, <span class="st">"BioDadInHH2"</span>, <span class="st">"PmAge2"</span>, <span class="st">"PmBlac2"</span>, <span class="st">"TcBlac2"</span>, <span class="st">"PmMrSt2"</span>, <span class="st">"PmEd2"</span>, <span class="st">"KFASTScr"</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"RMomAgeU"</span>, <span class="st">"RHealth"</span>, <span class="st">"HomeOwnd"</span>, <span class="st">"SWghtLB"</span>, <span class="st">"SurpPreg"</span>, <span class="st">"SmokTotl"</span>, <span class="st">"DrnkFreq"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"peri_health"</span>, <span class="st">"caregiv_health"</span>, <span class="st">"gov_assist"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p3.8b-recommended-time-varying-confounders" class="level2">
+<h2 class="anchored" data-anchor-id="p3.8b-recommended-time-varying-confounders">P3.8b Recommended: Time-varying Confounders</h2>
+<p>Time-varying confounders are those that are considered to vary over development, regardless of how many times they are measured in your dataset. Specifying time-varying confounders is recommended for the use of this package as input for the <code>createFormulas()</code> <em>devMSMs</em> function (see <em>Workflows</em> vignettes). In <code>tv_conf</code>, as a list of character strings, provide the names of all variables in wide format (e.g., “variable.t”) in your dataset that are time-varying, including any exposure and outcome variables not specified in their respective fields (see above). They should have a time suffix following a delimiter.</p>
+<p>Note that time-varying confounders should also include any confounders measured repeatedly at all time points (e.g., InRatioCor) or any collected only at one or several specific time points, and missing at other time points, but are not time invariant. Additionally, note that the user does not specify exposure time points to <code>tv_conf</code>, as lagged values of exposure will be automatically included as time-varying confounders in the creation of formulas.</p>
+<p>If the user wishes to specify any interactions, they need to manually create them in the data before listing them here. Here, the user can also include any interaction terms between time invariant variables (e.g., “variable:variable”) for inclusion in the balancing formula. Keep in mind that any interactions that include factor variables will be decomposed into interactions at each factor level.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tv_conf <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SAAmylase.6"</span>, <span class="st">"SAAmylase.15"</span>, <span class="st">"SAAmylase.24"</span>,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MDI.6"</span>, <span class="st">"MDI.15"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"RHasSO.6"</span>, <span class="st">"RHasSO.15"</span>, <span class="st">"RHasSO.24"</span>, <span class="st">"RHasSO.35"</span>, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"WndNbrhood.6"</span>, <span class="st">"WndNbrhood.24"</span>, <span class="st">"WndNbrhood.35"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"IBRAttn.6"</span>, <span class="st">"IBRAttn.15"</span>, <span class="st">"IBRAttn.24"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"B18Raw.6"</span>, <span class="st">"B18Raw.15"</span>, <span class="st">"B18Raw.24"</span>, </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"HOMEETA1.6"</span>, <span class="st">"HOMEETA1.15"</span>, <span class="st">"HOMEETA1.24"</span>, <span class="st">"HOMEETA1.35"</span>, </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"InRatioCor.6"</span>, <span class="st">"InRatioCor.15"</span>, <span class="st">"InRatioCor.24"</span>, <span class="st">"InRatioCor.35"</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CORTB.6"</span>, <span class="st">"CORTB.15"</span>, <span class="st">"CORTB.24"</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EARS_TJo.24"</span>, <span class="st">"EARS_TJo.35"</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"LESMnPos.24"</span>, <span class="st">"LESMnPos.35"</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"LESMnNeg.24"</span>, <span class="st">"LESMnNeg.35"</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"StrDif_Tot.35"</span>, </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"fscore.35"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="p3.8c-optional-concurrent-confounders" class="level2">
+<h2 class="anchored" data-anchor-id="p3.8c-optional-concurrent-confounders">P3.8c Optional: Concurrent Confounders</h2>
+<p>When creating balancing formula at each exposure time point, the default of <em>devMSMs</em> is to only include time-varying confounders measured before the exposure time point. This is because it is often difficult to differentiate confounders measured contemporaneously from mediators, and balancing on a mediator is ill-advised. However, sometimes a user may have good evidence to know that a given time-varying confounder is not a mediator of exposure even when measured contemporaneously. If this is the case, they may specify to override the package default an retain a given variable/set of time-varying confoudners in the formulas of the exposure measured contemporaneously.</p>
+<p>For <code>concur_conf</code>: as a list of character strings, provide the names of any time-varying confounders (in wide format) that you wish to be included contemporaneously in the balancing formulas (overriding the default which is to only include lagged confounders).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>concur_conf <span class="ot">&lt;-</span> <span class="st">"B18Raw.6"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<p>The user can now proceed to the <em>Data Requirements</em> or <em>Workflows</em> vignettes.</p>
+</section>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<p>Arel-Bundock, Vincent. 2024. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means, and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
