@@ -1177,7 +1177,7 @@ Importantly, we first examine the results of the Wald test at the top of the out
 
 <br>
 
-#### Sensitvity Analyses
+#### Sensitivity Analyses
 
 We then conduct sensitivity analyses, fitting the same model with weights that were trimmed at two different values.
 
@@ -1223,11 +1223,11 @@ print(models.s2,
       save.out = save.out)
 ```
 
-With a comparable result.
+With a comparable result. <b>
 
 ## Step 6. Estimate, Compare, and Visualize Model-Predicted Outcome as a Function of Exposure History
 
-In this final step, we use the fitted model results to test substantive hypotheses about dose and timing. We estimate and then compare the average marginal estimates of the outcome for each user-specified exposure history (i.e., permutation of high (“h) and low (“l”) levels of exposure at each exposure epoch) using the `compareHistories()` function. This draws primarily from the `avg_predictions()` and `hypotheses()` functions in the *marginaleffects* package (Arel-Bundock, 2023).
+In this final step, we use the fitted model results to test substantive hypotheses about dose and timing. We estimate and then compare the average marginal estimates of the outcome for each user-specified exposure history (i.e., permutation of high ("h") and low ("l") levels of exposure at each exposure epoch) using the `compareHistories()` function. This draws primarily from the `avg_predictions()` and `hypotheses()` functions in the *marginaleffects* package (Arel-Bundock, 2023).
 
 First, the `compareHistories()` function creates average predictions of the outcome for each exposure history. For each of the *n* combinations of user-specified exposure histories, we set the value of those predictors in the full dataset to the values in that combination, leaving all other variables as they are. This gives us *n* datasets, each the same size as our original dataset used to fit the model. For the *n* datasets, we then compute the predicted values given the model before taking the average predicted value for each of the *n* datasets. These *n* averaged predicted values are the expected potential outcomes under each combination. (For imputed data, the function outputs pooled predicted values using Rubin’s Rules.)
 
