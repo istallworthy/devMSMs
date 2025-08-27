@@ -8,8 +8,8 @@
 <title>Terminology • devMSMs</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="Terminology_files/libs/quarto-html/popper.min.js"></script><script src="Terminology_files/libs/quarto-html/tippy.umd.min.js"></script><link href="Terminology_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="Terminology_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Terminology">
@@ -61,7 +61,7 @@
       <h1>Terminology</h1>
 
 
-      <p class="date">2024-10-10</p>
+      <p class="date">2025-08-27</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Terminology.qmd" class="external-link"><code>vignettes/Terminology.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -74,101 +74,118 @@
 
     <p>This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and <em>Workflows</em> vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: <em>[insert link]</em>.<br><br></p>
 <p>Key Terminology</p>
-<div class="cell">
+<div class="cell" data-tbl-cap="Summary of terminology used in *devMSMs*">
 <div class="cell-output-display">
 <!-- preamble start -->
 
     <script>
-      function styleCell_g8v5mag2mz8jzqvb0ojk(i, j, css_id) {
-        var table = document.getElementById("tinytable_g8v5mag2mz8jzqvb0ojk");
-        table.rows[i].cells[j].classList.add(css_id);
-      }
-      function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_g8v5mag2mz8jzqvb0ojk');
-        var newRow = table.insertRow(i);
-        var newCell = newRow.insertCell(0);
-        newCell.setAttribute("colspan", colspan);
-        // newCell.innerText = content;
-        // this may be unsafe, but innerText does not interpret <br>
-        newCell.innerHTML = content;
-      }
-      function spanCell_g8v5mag2mz8jzqvb0ojk(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_g8v5mag2mz8jzqvb0ojk");
-        const targetRow = table.rows[i];
-        const targetCell = targetRow.cells[j];
-        for (let r = 0; r < rowspan; r++) {
-          // Only start deleting cells to the right for the first row (r == 0)
-          if (r === 0) {
-            // Delete cells to the right of the target cell in the first row
-            for (let c = colspan - 1; c > 0; c--) {
-              if (table.rows[i + r].cells[j + c]) {
-                table.rows[i + r].deleteCell(j + c);
-              }
-            }
+
+      function styleCell_eo8xftpam4czcs51jgy8(i, j, css_id) {
+          var table = document.getElementById("tinytable_eo8xftpam4czcs51jgy8");
+          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
           }
-          // For rows below the first, delete starting from the target column
-          if (r > 0) {
-            for (let c = colspan - 1; c >= 0; c--) {
-              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
-                table.rows[i + r].deleteCell(j);
-              }
+      }
+      function spanCell_eo8xftpam4czcs51jgy8(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_eo8xftpam4czcs51jgy8");
+        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+        if (!targetCell) {
+          console.warn(`Cell at (${i}, ${j}) not found.`);
+        }
+
+        // Get all cells that need to be removed
+        const cellsToRemove = [];
+        for (let r = 0; r < rowspan; r++) {
+          for (let c = 0; c < colspan; c++) {
+            if (r === 0 && c === 0) continue; // Skip the target cell
+            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
+            if (cell) {
+              cellsToRemove.push(cell);
             }
           }
         }
-        // Set rowspan and colspan of the target cell
-        targetCell.rowSpan = rowspan;
-        targetCell.colSpan = colspan;
+
+        // Remove all cells
+        cellsToRemove.forEach(cell => cell.remove());
+
+        // Set rowspan and colspan of the target cell if it exists
+        if (targetCell) {
+          targetCell.rowSpan = rowspan;
+          targetCell.colSpan = colspan;
+        }
       }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '7', j: 0 }, { i: '1', j: 0 }, { i: '3', j: 0 }, { i: '5', j: 0 }, { i: '1', j: 1 }, { i: '9', j: 0 }, { i: '5', j: 1 }, { i: '7', j: 1 }, { i: '9', j: 1 }, { i: '3', j: 1 },  ], css_id: 'tinytable_css_4hfwuxc5kcoev3ac6izh',},
+          { positions: [ { i: '0', j: 0 }, { i: '10', j: 1 }, { i: '10', j: 0 }, { i: '0', j: 1 },  ], css_id: 'tinytable_css_y8sftsq7fpiomgx4fhwa',},
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_eo8xftpam4czcs51jgy8(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
     </script><style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_4hfwuxc5kcoev3ac6izh, .table th.tinytable_css_4hfwuxc5kcoev3ac6izh { background-color: #ededed; }
+      .table td.tinytable_css_y8sftsq7fpiomgx4fhwa, .table th.tinytable_css_y8sftsq7fpiomgx4fhwa { border-bottom: solid #d3d8dc 0.1em; }
     </style>
 <div class="container">
-      <table class="table table table-striped" id="tinytable_g8v5mag2mz8jzqvb0ojk" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-striped" id="tinytable_eo8xftpam4czcs51jgy8" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of terminology used in <em>devMSMs</em></p></caption>
         <thead><tr>
-<th scope="col">Term</th>
-                <th scope="col">Definition</th>
+<th scope="col" data-row="0" data-col="0">Term</th>
+                <th scope="col" data-row="0" data-col="1">Definition</th>
               </tr></thead>
 <tbody>
 <tr>
-<td><strong>Exposure</strong></td>
-                  <td>Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome.</td>
+<td data-row="1" data-col="0"><strong>Exposure</strong></td>
+                  <td data-row="1" data-col="1">Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome.</td>
                 </tr>
 <tr>
-<td><strong>Outcome</strong></td>
-                  <td>Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects.</td>
+<td data-row="2" data-col="0"><strong>Outcome</strong></td>
+                  <td data-row="2" data-col="1">Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects.</td>
                 </tr>
 <tr>
-<td><strong>Exposure Time Points</strong></td>
-                  <td>Time points in development when the exposure was measured, at which weights formulas will be created.</td>
+<td data-row="3" data-col="0"><strong>Exposure Time Points</strong></td>
+                  <td data-row="3" data-col="1">Time points in development when the exposure was measured, at which weights formulas will be created.</td>
                 </tr>
 <tr>
-<td><strong>Exposure Epochs</strong></td>
-                  <td>
+<td data-row="4" data-col="0"><strong>Exposure Epochs</strong></td>
+                  <td data-row="4" data-col="1">
 <em>(optional)</em> Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories.</td>
                 </tr>
 <tr>
-<td><strong>Exposure Histories</strong></td>
-                  <td>Sequences of relatively high (<code>'h'</code>) or low (<code>'l'</code>) levels of exposure at each exposure time point or exposure epoch.</td>
+<td data-row="5" data-col="0"><strong>Exposure Histories</strong></td>
+                  <td data-row="5" data-col="1">Sequences of relatively high (<code>'h'</code>) or low (<code>'l'</code>) levels of exposure at each exposure time point or exposure epoch.</td>
                 </tr>
 <tr>
-<td><strong>Exposure Dosage</strong></td>
-                  <td>Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.</td>
+<td data-row="6" data-col="0"><strong>Exposure Dosage</strong></td>
+                  <td data-row="6" data-col="1">Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.</td>
                 </tr>
 <tr>
-<td><strong>Confounder</strong></td>
-                  <td>Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths.</td>
+<td data-row="7" data-col="0"><strong>Confounder</strong></td>
+                  <td data-row="7" data-col="1">Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths.</td>
                 </tr>
 <tr>
-<td><strong>Time-varying confounder</strong></td>
-                  <td>A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly.</td>
+<td data-row="8" data-col="0"><strong>Time-varying confounder</strong></td>
+                  <td data-row="8" data-col="1">A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly.</td>
                 </tr>
 <tr>
-<td><strong>Time invariant confounder</strong></td>
-                  <td>A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure.</td>
+<td data-row="9" data-col="0"><strong>Time invariant confounder</strong></td>
+                  <td data-row="9" data-col="1">A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure.</td>
                 </tr>
 <tr>
-<td><strong>Collider</strong></td>
-                  <td>A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias.</td>
+<td data-row="10" data-col="0"><strong>Collider</strong></td>
+                  <td data-row="10" data-col="1">A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias.</td>
                 </tr>
 </tbody>
 </table>
@@ -179,62 +196,77 @@
 <p><br></p>
 <section class="section level2"><h2 id="weights-formula">Weights Formula<a class="anchor" aria-label="anchor" href="#weights-formula"></a>
 </h2>
-Weights formula are formula created at each exposure time point, regressing exposure on confounders, for the purpose of creating and/or assessing balancing weights. The general form is given by: <br><pre><code>ESETA1.t ~ <span style="color: darkred">time-invariant</span> confounders + <span style="color: blue">time-varying</span> confounders + <i>lagged</i> <span style="color: seagreen;">exposures</span> + <i>lagged</i> <span style="color: purple;">outcomes</span></code></pre>
+<p>Weights formula are formula, or mathematical equations, created at each exposure time point, regressing exposure on confounders for the purpose of creating and/or assessing balancing weights. The general form is given by: <br><br></p>
+<pre><code>ESETA1.t ~ <span style="color: darkred">time-invariant</span> confounders + <span style="color: blue">time-varying</span> confounders + <i>lagged</i> <span style="color: seagreen;">exposures</span> + <i>lagged</i> <span style="color: purple;">outcomes</span></code></pre>
 <p><br></p>
-<p>Below is a table that summarizes the three formula <code>type</code>’s that will be used.</p>
+<p>Below is a table that summarizes the three formula <code>type</code>s that will be used.</p>
 <p>Table 2.</p>
-<div class="cell">
+<div class="cell" data-tbl-cap="Summary of the formula terminology used in the *devMSMs* package for creating balancing weights and assessing their performance in devMSMs (*Workflows* vignettes Steps 4-6). The different kinds of formulas vary with respect to their inclusion of time-varying confounders and the `type` specification to create them using the `createFormulas()` function.">
 <div class="cell-output-display">
 <!-- preamble start -->
 
     <script>
-      function styleCell_s988p6wg8rbdvdbyofeb(i, j, css_id) {
-        var table = document.getElementById("tinytable_s988p6wg8rbdvdbyofeb");
-        table.rows[i].cells[j].classList.add(css_id);
-      }
-      function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_s988p6wg8rbdvdbyofeb');
-        var newRow = table.insertRow(i);
-        var newCell = newRow.insertCell(0);
-        newCell.setAttribute("colspan", colspan);
-        // newCell.innerText = content;
-        // this may be unsafe, but innerText does not interpret <br>
-        newCell.innerHTML = content;
-      }
-      function spanCell_s988p6wg8rbdvdbyofeb(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_s988p6wg8rbdvdbyofeb");
-        const targetRow = table.rows[i];
-        const targetCell = targetRow.cells[j];
-        for (let r = 0; r < rowspan; r++) {
-          // Only start deleting cells to the right for the first row (r == 0)
-          if (r === 0) {
-            // Delete cells to the right of the target cell in the first row
-            for (let c = colspan - 1; c > 0; c--) {
-              if (table.rows[i + r].cells[j + c]) {
-                table.rows[i + r].deleteCell(j + c);
-              }
-            }
+
+      function styleCell_yfh97sv46uo4wo25dnzc(i, j, css_id) {
+          var table = document.getElementById("tinytable_yfh97sv46uo4wo25dnzc");
+          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
           }
-          // For rows below the first, delete starting from the target column
-          if (r > 0) {
-            for (let c = colspan - 1; c >= 0; c--) {
-              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
-                table.rows[i + r].deleteCell(j);
-              }
+      }
+      function spanCell_yfh97sv46uo4wo25dnzc(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_yfh97sv46uo4wo25dnzc");
+        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+        if (!targetCell) {
+          console.warn(`Cell at (${i}, ${j}) not found.`);
+        }
+
+        // Get all cells that need to be removed
+        const cellsToRemove = [];
+        for (let r = 0; r < rowspan; r++) {
+          for (let c = 0; c < colspan; c++) {
+            if (r === 0 && c === 0) continue; // Skip the target cell
+            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
+            if (cell) {
+              cellsToRemove.push(cell);
             }
           }
         }
-        // Set rowspan and colspan of the target cell
-        targetCell.rowSpan = rowspan;
-        targetCell.colSpan = colspan;
+
+        // Remove all cells
+        cellsToRemove.forEach(cell => cell.remove());
+
+        // Set rowspan and colspan of the target cell if it exists
+        if (targetCell) {
+          targetCell.rowSpan = rowspan;
+          targetCell.colSpan = colspan;
+        }
       }
-window.addEventListener('load', function () { styleCell_s988p6wg8rbdvdbyofeb(0, 0, 'tinytable_css_idnotgkxxbznt3pl8l83zp') })
-window.addEventListener('load', function () { styleCell_s988p6wg8rbdvdbyofeb(0, 1, 'tinytable_css_idnotgkxxbznt3pl8l83zp') })
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '3', j: 0 }, { i: '3', j: 1 },  ], css_id: 'tinytable_css_ud42ubpd2cmh1d494yk2',},
+          { positions: [ { i: '0', j: 0 }, { i: '0', j: 1 },  ], css_id: 'tinytable_css_3pgqz06nzrddt91ao71h',},
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_yfh97sv46uo4wo25dnzc(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
     </script><style>
-    .table td.tinytable_css_idnotgkxxbznt3pl8l83zp, .table th.tinytable_css_idnotgkxxbznt3pl8l83zp {  border-bottom: solid 0.1em #d3d8dc; }
+      /* tinytable css entries after */
+      .table td.tinytable_css_ud42ubpd2cmh1d494yk2, .table th.tinytable_css_ud42ubpd2cmh1d494yk2 { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_3pgqz06nzrddt91ao71h, .table th.tinytable_css_3pgqz06nzrddt91ao71h { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
 <div class="container">
-      <table class="table table table-borderless" id="tinytable_s988p6wg8rbdvdbyofeb" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-borderless" id="tinytable_yfh97sv46uo4wo25dnzc" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of the formula terminology used in the <em>devMSMs</em>
 package for creating balancing weights and assessing their performance
 in devMSMs (<em>Workflows</em> vignettes Steps 4-6). The different kinds
@@ -242,35 +274,35 @@ of formulas vary with respect to their inclusion of time-varying
 confounders and the <code>type</code> specification to create them using
 the <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function.</p></caption>
         <thead><tr>
-<th scope="col">Term</th>
-                <th scope="col">Definition</th>
+<th scope="col" data-row="0" data-col="0">Term</th>
+                <th scope="col" data-row="0" data-col="1">Definition</th>
               </tr></thead>
 <tbody>
 <tr>
-<td>
+<td data-row="1" data-col="0">
 <em>Full balancing formula</em>
 <p><code>type = "full"</code></p>
 </td>
-                  <td>Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>all</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for pre-balance (<i>Workflows</i> vignettes Step 4b) and final balance assessment (<i>Workflows</i> vignettes Step 6).
+                  <td data-row="1" data-col="1">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>all</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for pre-balance (<i>Workflows</i> vignettes Step 4b) and final balance assessment.
 <pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: blue;">B18Raw.6</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: blue;">CORTB.6</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: seagreen;">ES.6</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: blue;">HOMEETA1.6</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre>
 </td>
                 </tr>
 <tr>
-<td>
+<td data-row="2" data-col="0">
 <em>Simplified balancing formula</em>
 <p><code>type = "short"</code></p>
 </td>
-                  <td>Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for creating and assessing preliminary balancing weights to determine optimal weighting method (<i>Workflows</i> vignettes Step 5b).
+                  <td data-row="2" data-col="1">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for creating and assessing preliminary balancing weights to determine optimal weighting method.
 <pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre>
 </td>
                 </tr>
 <tr>
-<td>
+<td data-row="3" data-col="0">
 <em>Updated balancing formula</em>
 <p><code>type = "update"</code></p>
 </td>
-                  <td>Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, as well as any <i>imbalanced</i> <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> levels <i>at t-1+</i> Used to create final balancing weights (<i>Workflows<i> vignettes Step 6).
-<pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.6</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre></i></i>
+                  <td data-row="3" data-col="1">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, as well as any <i>imbalanced</i> <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> levels <i>at t-1+</i> Used to create final balancing weights.
+<pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.6</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre>
 </td>
                 </tr>
 </tbody>
@@ -284,114 +316,133 @@ the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
 <a class="anchor" aria-label="anchor" href="#core-functions-of-devmsms"></a>
 </h2>
 <p>There are 7 key functions that are used in the <em>devMSMs</em> workflow.</p>
-<div class="cell">
+<div class="cell" data-tbl-cap="Summary of the 7 core functions of the *devMSMs* package.">
 <!-- preamble start -->
 
     <script>
-      function styleCell_4k4ouvq7ydcu4tp1wr35(i, j, css_id) {
-        var table = document.getElementById("tinytable_4k4ouvq7ydcu4tp1wr35");
-        table.rows[i].cells[j].classList.add(css_id);
-      }
-      function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_4k4ouvq7ydcu4tp1wr35');
-        var newRow = table.insertRow(i);
-        var newCell = newRow.insertCell(0);
-        newCell.setAttribute("colspan", colspan);
-        // newCell.innerText = content;
-        // this may be unsafe, but innerText does not interpret <br>
-        newCell.innerHTML = content;
-      }
-      function spanCell_4k4ouvq7ydcu4tp1wr35(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_4k4ouvq7ydcu4tp1wr35");
-        const targetRow = table.rows[i];
-        const targetCell = targetRow.cells[j];
-        for (let r = 0; r < rowspan; r++) {
-          // Only start deleting cells to the right for the first row (r == 0)
-          if (r === 0) {
-            // Delete cells to the right of the target cell in the first row
-            for (let c = colspan - 1; c > 0; c--) {
-              if (table.rows[i + r].cells[j + c]) {
-                table.rows[i + r].deleteCell(j + c);
-              }
-            }
+
+      function styleCell_5qsxr36gbrpjvs4xvb5i(i, j, css_id) {
+          var table = document.getElementById("tinytable_5qsxr36gbrpjvs4xvb5i");
+          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
           }
-          // For rows below the first, delete starting from the target column
-          if (r > 0) {
-            for (let c = colspan - 1; c >= 0; c--) {
-              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
-                table.rows[i + r].deleteCell(j);
-              }
+      }
+      function spanCell_5qsxr36gbrpjvs4xvb5i(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_5qsxr36gbrpjvs4xvb5i");
+        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+        if (!targetCell) {
+          console.warn(`Cell at (${i}, ${j}) not found.`);
+        }
+
+        // Get all cells that need to be removed
+        const cellsToRemove = [];
+        for (let r = 0; r < rowspan; r++) {
+          for (let c = 0; c < colspan; c++) {
+            if (r === 0 && c === 0) continue; // Skip the target cell
+            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
+            if (cell) {
+              cellsToRemove.push(cell);
             }
           }
         }
-        // Set rowspan and colspan of the target cell
-        targetCell.rowSpan = rowspan;
-        targetCell.colSpan = colspan;
+
+        // Remove all cells
+        cellsToRemove.forEach(cell => cell.remove());
+
+        // Set rowspan and colspan of the target cell if it exists
+        if (targetCell) {
+          targetCell.rowSpan = rowspan;
+          targetCell.colSpan = colspan;
+        }
       }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '7', j: 0 }, { i: '7', j: 1 }, { i: '7', j: 2 }, { i: '7', j: 3 },  ], css_id: 'tinytable_css_g11l74hxerw0tx4b9aa6',},
+          { positions: [ { i: '5', j: 1 }, { i: '1', j: 0 }, { i: '3', j: 0 }, { i: '5', j: 0 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '1', j: 1 }, { i: '3', j: 1 }, { i: '1', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '1', j: 2 },  ], css_id: 'tinytable_css_k47rk1jfr27hjadj6wxp',},
+          { positions: [ { i: '0', j: 0 }, { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 },  ], css_id: 'tinytable_css_cw8thjrfa6uykp8q7ayv',},
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_5qsxr36gbrpjvs4xvb5i(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
     </script><style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_g11l74hxerw0tx4b9aa6, .table th.tinytable_css_g11l74hxerw0tx4b9aa6 { background-color: #ededed; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_k47rk1jfr27hjadj6wxp, .table th.tinytable_css_k47rk1jfr27hjadj6wxp { background-color: #ededed; }
+      .table td.tinytable_css_cw8thjrfa6uykp8q7ayv, .table th.tinytable_css_cw8thjrfa6uykp8q7ayv { border-bottom: solid #d3d8dc 0.1em; }
     </style>
 <div class="container">
-      <table class="table table table-striped" id="tinytable_4k4ouvq7ydcu4tp1wr35" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-striped" id="tinytable_5qsxr36gbrpjvs4xvb5i" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of the 7 core functions of the <em>devMSMs</em> package.</p></caption>
         <thead><tr>
-<th scope="col">Function</th>
-                <th scope="col">Purpose</th>
-                <th scope="col">Required.Input</th>
-                <th scope="col">Output</th>
+<th scope="col" data-row="0" data-col="0">Function</th>
+                <th scope="col" data-row="0" data-col="1">Purpose</th>
+                <th scope="col" data-row="0" data-col="2">Required.Input</th>
+                <th scope="col" data-row="0" data-col="3">Output</th>
               </tr></thead>
 <tbody>
 <tr>
-<td><a href="/reference/initMSM"><code>initMSM()</code></a></td>
-                  <td>Creates MSM object with core variables for use in all other functions.</td>
-                  <td>
+<td data-row="1" data-col="0"><a href="/reference/initMSM"><code>initMSM()</code></a></td>
+                  <td data-row="1" data-col="1">Creates MSM object with core variables for use in all other functions.</td>
+                  <td data-row="1" data-col="2">
 <code>exposure</code>, <code>time invariant confounders</code>, <code>time-varying confounders</code>)</td>
-                  <td>msmObject</td>
+                  <td data-row="1" data-col="3">msmObject</td>
                 </tr>
 <tr>
-<td><a href="/reference/createFormulas.html"><code>createFormulas()</code></a></td>
-                  <td>Creates balancing formulas at each exposure time point relating exposure to confounders.</td>
-                  <td>
+<td data-row="2" data-col="0"><a href="/reference/createFormulas.html"><code>createFormulas()</code></a></td>
+                  <td data-row="2" data-col="1">Creates balancing formulas at each exposure time point relating exposure to confounders.</td>
+                  <td data-row="2" data-col="2">
 <code>msmObject</code>, <code>type</code> (<code>'full'</code>, <code>'short'</code>, <code>'update'</code>)</td>
-                  <td>List of balancing formulas for each exposure time point.</td>
+                  <td data-row="2" data-col="3">List of balancing formulas for each exposure time point.</td>
                 </tr>
 <tr>
-<td><a href="/reference/assessBalance"><code>assessBalance()</code></a></td>
-                  <td>Assesses confounder balance at each exposure time point according to best practices (Jackson, 2016).</td>
-                  <td>
+<td data-row="3" data-col="0"><a href="/reference/assessBalance"><code>assessBalance()</code></a></td>
+                  <td data-row="3" data-col="1">Assesses confounder balance at each exposure time point according to best practices (Jackson, 2016).</td>
+                  <td data-row="3" data-col="2">
 <code>data</code>, <code>msmObject</code>
 </td>
-                  <td>List of balance statistics. Tables &amp; love plots displaying balance statistics at each exposure time point.</td>
+                  <td data-row="3" data-col="3">List of balance statistics. Tables &amp; love plots displaying balance statistics at each exposure time point.</td>
                 </tr>
 <tr>
-<td><a href="/reference/createWeights"><code>createWeights()</code></a></td>
-                  <td>Creates balancing weights for each person (wrapper for <code>weightit::weightitMSM</code>).</td>
-                  <td>
+<td data-row="4" data-col="0"><a href="/reference/createWeights"><code>createWeights()</code></a></td>
+                  <td data-row="4" data-col="1">Creates balancing weights for each person (wrapper for <code>weightit::weightitMSM</code>).</td>
+                  <td data-row="4" data-col="2">
 <code>data</code>, <code>msmObject</code>
 </td>
-                  <td>Weights object. Histogram &amp; summary of balancing weights.</td>
+                  <td data-row="4" data-col="3">Weights object. Histogram &amp; summary of balancing weights.</td>
                 </tr>
 <tr>
-<td><a href="/reference/trimWeights"><code>trimWeights()</code></a></td>
-                  <td>Trims balancing weights to account for heavy tails.</td>
-                  <td>
+<td data-row="5" data-col="0"><a href="/reference/trimWeights"><code>trimWeights()</code></a></td>
+                  <td data-row="5" data-col="1">Trims balancing weights to account for heavy tails.</td>
+                  <td data-row="5" data-col="2">
 <code>data</code>, <code>msmObject</code>
 </td>
-                  <td>Trimmed weights object.Histogram &amp; summary of trimmed weight.</td>
+                  <td data-row="5" data-col="3">Trimmed weights object.Histogram &amp; summary of trimmed weight.</td>
                 </tr>
 <tr>
-<td><a href="/reference/fitModel"><code>fitModel()</code></a></td>
-                  <td>Fits user-selected, weighted marginal model relating exposure to outcome.</td>
-                  <td>
+<td data-row="6" data-col="0"><a href="/reference/fitModel"><code>fitModel()</code></a></td>
+                  <td data-row="6" data-col="1">Fits user-selected, weighted marginal model relating exposure to outcome.</td>
+                  <td data-row="6" data-col="2">
 <code>data</code>, <code>msmObject</code>, <code>weights</code>, <code>outcome</code>, <code>model</code> (<code>m0</code>-<code>m3</code>)</td>
-                  <td>Fitted model object. Omnibus test &amp; table of model evidence.</td>
+                  <td data-row="6" data-col="3">Fitted model object. Omnibus test &amp; table of model evidence.</td>
                 </tr>
 <tr>
-<td><a href="/reference/compareHistories"><code>compareHistories()</code></a></td>
-                  <td>Estimate, compare, &amp; visualize model-predicted outcomes as a function of exposure history.</td>
-                  <td>
+<td data-row="7" data-col="0"><a href="/reference/compareHistories"><code>compareHistories()</code></a></td>
+                  <td data-row="7" data-col="1">Estimate, compare, &amp; visualize model-predicted outcomes as a function of exposure history.</td>
+                  <td data-row="7" data-col="2">
 <code>data</code>, <code>msmObject</code>, <code>fitted model</code>
 </td>
-                  <td>Tables of estimated values and comparisons. Boxplot.</td>
+                  <td data-row="7" data-col="3">Tables of estimated values and comparisons. Boxplot.</td>
                 </tr>
 </tbody>
 </table>
@@ -399,107 +450,89 @@ the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
 <!-- hack to avoid NA insertion in last line -->
 </div>
 </section><script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
         }
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'light-border',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config);
-  }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
       }
-    } else {
-      return undefined;
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config);
     }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
         });
-        return popup.innerHTML;
-      });
+      }
     }
-  }
-});
-</script></main>
+  });
+  </script></main>
 </div>
 
 
@@ -508,7 +541,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

@@ -8,8 +8,8 @@
 <title>Specify Core Inputs • devMSMs</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="Specify_Core_Inputs_files/libs/quarto-html/popper.min.js"></script><script src="Specify_Core_Inputs_files/libs/quarto-html/tippy.umd.min.js"></script><link href="Specify_Core_Inputs_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="Specify_Core_Inputs_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Specify Core Inputs">
@@ -61,7 +61,7 @@
       <h1>Specify Core Inputs</h1>
 
       <p class="author">Isabella Stallworthy</p>
-      <p class="date">2024-10-10</p>
+      <p class="date">2025-08-27</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Specify_Core_Inputs.qmd" class="external-link"><code>vignettes/Specify_Core_Inputs.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -72,7 +72,7 @@
 
 
 
-    <p>This vignette guides users through the specification of the core inputs required by the <em>deMSMs</em> functions (and helper functions). Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the <em>devMSMs</em> package (see <em>Workflows</em> vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (<code>verbose</code> = FALSE) and elect not to save out locally any intermediate and final output (<code>save.out</code> = FALSE).</p>
+    <p>This vignette guides users through the specification of the core inputs required by the <em>deMSMs</em> functions (and helper functions). Users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes. This vignette helps users specify core inputs (e.g., home directory, exposure, time-varying confounders, time invariant confounders, outcome, reference, comparison, high/low exemplar cutoff for continuous exposure, and balance threshold) that are used by multiple functions in the <em>devMSMs</em> package (see <em>Workflows</em> vignettes). Their use and values should be kept consistent throughout the package. Additionally, all functions have two optional inputs allowing the user to override defaults to suppress all messaging to the console (<code>verbose</code> = FALSE) and elect not to save out locally any intermediate and final output (<code>save.out</code> = FALSE).</p>
 <p>Following completion of this vignette, the user should complete a <em>Workflow</em> vignette to implement <em>devMSMs</em> with their longitudinal data. Many of these core inputs will be specified at the beginning of the workflow in the MSM object.</p>
 <p>The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd" class="external-link">ExampleWorkflow.rmd file</a>.</p>
 <p><br></p>
@@ -99,19 +99,20 @@
 </h2>
 <p>The exposure refers to the developmental construct that is hypothesized to cause the outcome. Users are required to specify an exposure variable for use in all functions in <em>devMSMs</em>. The exposure can be either continuously distributed or binary, which the package automatically detects. The user must specify exposure, or a list of character strings corresponding to the exposure variable in wide format, as it appears in your dataset. The time at which the exposure was measured should appear as a suffix with a delimiter of the user’s choosing (that should be the same for time-varying confounders).</p>
 <p>The user has two options when specifying the exposure variablee, and should select the option that best serves their theory regarding developmental timing and the practical constraints of their data and the modeling process.</p>
-<p>First, they may specify exposure at all time points at which the exposure was measured in their data. This means that balancing formulas will be created (Steps 1a, 2a, 3b in the <em>Workflows</em> vignettes) and IPTW weights will be created (Steps 2b, 3c in the <em>Workflows</em> vignettes) and assessed (Steps 2c, 3a, 4 in the <em>Workflows</em> vignettes) for all time points. In this case, if no epochs are specified, all time points will be included as exposure main effects in the final substantive model and history comparison (Step 5 in the <em>Workflows</em> vignettes).</p>
+<p>First, they may specify exposure at all time points at which the exposure was measured in their data. This means that balancing formulas will be created (Steps 1a, 2a, 3b in the <em>Workflows</em> vignettes) and IPTW weights will be created (Steps 2b, 3c in the <em>Workflows</em> vignettes) and assessed (Steps 2c, 3a, 4 in the <em>Workflows</em> vignettes) for all time points. In this case, if no epochs are specified, all time points will be included as exposure main effects in the final substantive model and history comparison (Steps 5 &amp; 6 in the <em>Workflows</em> vignettes).</p>
 <p>Second, they may specify a subset of theoretically important time points at which the exposure was measured in their data. This means that balancing formulas will be created and IPTW weights will be created and assessed for only those time points. Further, if no epochs are specified, only those subsetted time points will be included as exposure main effects in the final substantive models. Importantly, exposure variables at time point not included in <code>exposure</code> should be included as time-varying confounders, to be used for balancing purposes only.</p>
-<p>The specification of exposure epochs should be kept consistent throughout the use of the <em>devMSMs</em> package. If the user intends to specify exposure epochs, the user should include all time points encompassed in the epochs in. If the user does not intend to specify exposure epochs, the <code>exposure</code> will constitute the exposure main effects in the final outcome model and form the basis of the histories used for history comparison. In this case, if the user specifies more than 4 exposure time points, they will be required to conduct only a subset of history comparisons (Step 5b in the <em>Workflows</em> vignettes), given that the base code (see the <code>hypotheses()</code> function from the <em>marginaleffects</em> package) cannot accommodate all pairwise history comparisons for more than 5 time points.</p>
+<p>The specification of exposure epochs should be kept consistent throughout the use of the <em>devMSMs</em> package. If the user intends to specify exposure epochs, the user should include all time points encompassed in the epochs in. If the user does not intend to specify exposure epochs, the <code>exposure</code> will constitute the exposure main effects in the final outcome model and form the basis of the histories used for history comparison. In this case, if the user specifies more than 4 exposure time points, they will be required to conduct only a subset of history comparisons (Step 6 in the <em>Workflows</em> vignettes), given that the base code (see the <code>hypotheses()</code> function from the <em>marginaleffects</em> package) cannot accommodate all pairwise history comparisons for more than 5 time points.</p>
 <p>For this example, we elected to create epochs of infancy (6 and 15 months), toddlerhood (24 and 35 months), and early childhood (58 months) so we include all exposure time points.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exposure</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ESETA1.6"</span>, <span class="st">"ESETA1.15"</span>, <span class="st">"ESETA1.24"</span>, <span class="st">"ESETA1.35"</span>, <span class="st">"ESETA1.58"</span><span class="op">)</span> </span></code></pre></div>
 </div>
 <p><br></p>
-</section><section class="section level2"><h2 id="p3-4-required-for-continuous-exposure-high-and-low-cutoff-values">P3.4 Required for Continuous Exposure: High and Low Cutoff Values<a class="anchor" aria-label="anchor" href="#p3-4-required-for-continuous-exposure-high-and-low-cutoff-values"></a>
+</section><section class="section level2"><h2 id="p3-4-required-for-continuous-exposure-high-and-low-exemplar-cutoff-values">P3.4 Required for Continuous Exposure: High and Low Exemplar Cutoff Values<a class="anchor" aria-label="anchor" href="#p3-4-required-for-continuous-exposure-high-and-low-exemplar-cutoff-values"></a>
 </h2>
-<p>If your exposure variable is continuously distributed (e.g., economic strain), there is not inherent demarcation of what is considered high versus low levels of exposure. Given that part of the MSM process involved examining how different exposure histories –that vary in dose and timing – over development result in different outcome levels, we need to specify what is considered high versus low levels of exposure. For continuous exposures, this is required for the recommended preliminary step from <em>Workflows</em> vignette and the <code><a href="../reference/compareHistories.html">compareHistories()</a></code> <em>devMSMs</em> function (see <em>Workflows</em> vignettes).</p>
-<p>We specify to <code>hi_lo_cut</code>, a list of two quantile values (0-1): the first represents the value above which is considered high levels exposure and the second represents the followed below which is considered low levels of exposure. These values may have to be revised following inspection of the sample distribution across the resulting exposure histories in the recommended preliminary steps of the <em>Workflows</em> vignettes. These final values will be used in creating and modeling the effects of exposure histories in Step 5 of the <em>Workflows</em> vignettes.</p>
+<p>If your exposure variable is continuously distributed (e.g., economic strain), there is not inherent demarcation of what is considered high versus low levels of exposure. Given that the final step of MSM process involves examining how different exposure histories –that vary in dose and timing – over development result in different outcome levels, we need to specify what is considered high versus low levels of exposure. Critically, these ‘high’ and ‘low’ values are merely examples to be plugged into the fitted regression equation to obtain a model-implied predicted value of the outcome for that particular exposure. For continuous exposures, this is required for the recommended preliminary step from <em>Workflows</em> vignette and the <code><a href="../reference/compareHistories.html">compareHistories()</a></code> <em>devMSMs</em> function (see <em>Workflows</em> vignettes).</p>
+<p>We note that specifying exemplar values is not unique to MSMs–we do this every time we probe the simple slopes of a statistical interaction at ‘high’ and ‘low’ values of a continuous moderator. It is often even implicit in the creation of binary exposure variables (e.g., how many doses of an intervention or drug trial constitute an ‘effective dose?’). Importantly, decision-making around exemplar values can be principled and transparent, drawing on theory, expertise, and data-derived criteria. Sometimes a continuous exposure has pre-established exemplar values, such as diagnostic thresholds for a clinical measure. Other times the researcher is tasked with identifying “reasonable” exemplar values. Ideally, this should be informed purely by theory; however, the user must also choose values that yield reasonable representation of the exposure histories in their data. For example, if one selected the 90th and 10th percentiles as ‘high’ and ‘low’ exposure, respectively, and there was some rank-order stability over time, then the representation of participants experiencing different exposure histories (e.g., ‘high’ at one time point yet ‘low’ at the others) within the data will be quite sparse. Thus, when these exposure histories are used to estimate the causal effects, the estimates will be imprecise (i.e., large standard errors) and risk extrapolation. We recommend first drawing upon theory and expertise, and then visually inspecting (see Step P4 of the <em>Workflow for Continuous Exposures</em> vignette) and adjusting to ensure adequate representation of participants within each history in your data, given the exemplar values. We also strongly recommend sensitivity analyses to probe the robustness of findings using both slightly more and less stringent exemplar values.</p>
+<p>We specify to <code>hi_lo_cut</code>, a list of two quantile values (0-1): the first represents the value above which is considered high levels exposure and the second represents the followed below which is considered low levels of exposure. These values may have to be revised following inspection of the sample distribution across the resulting exposure histories in the recommended preliminary steps of the <em>Workflows</em> vignettes. These final exemplar values will be used in creating and modeling the effects of exposure histories in Steps 5 and 6 of the <em>Workflows</em> vignettes.</p>
 <p>Below, we specify the 60th and 30th percentiles to demarcate high and low levels of economic strain exposure, respectively.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
@@ -122,7 +123,7 @@
 </h2>
 <p>When modeling the effect of exposure on outcome in the MSM process, the user has the option to specify epochs of exposure, grouping the time points at which the exposure into more meaningful categories. This may be useful in cases when the user wishes to establish balance using all time points at which exposure was measured, but has substantive hypotheses at coarser timescales (e.g., infancy). If no epochs are specified, the time points at which exposure was measured will be used in the creation of exposure histories in the final step of the process. Each specified epoch must have a corresponding value (but the values can differ in number of entries as shown below).</p>
 <p>To specify epochs, users utilize the optional <code>epoch</code> argument by providing, as a character string, a list of user-created epoch labels, one for each exposure time point in the order in which they are listed in <code>exposure</code>. If the user specifies exposure epochs, exposure main effects are created for each epoch, and exposure levels are averaged for any epochs that consist of two or more time point values.</p>
-<p>The exposure epochs will be arguments in the <code><a href="../reference/fitModel.html">fitModel()</a></code> and <code><a href="../reference/compareHistories.html">compareHistories()</a></code> <em>devMSMs</em> functions (see <em>Workflows</em> vignettes) and their specification should be kept consistent throughout use of the package and its vignettes. They will constitute the main effects variables when modeling the relation between exposure and outcome (<em>Workflows</em> vignettes Step 5a) and form the basis for estimating and comparing exposure histories (<em>Workflows</em> vignettes Step 5b). If no epochs are specified, the exposure time points from the <code>exposure</code> field will be used at the aforementioned steps.</p>
+<p>The exposure epochs will be arguments in the <code><a href="../reference/fitModel.html">fitModel()</a></code> and <code><a href="../reference/compareHistories.html">compareHistories()</a></code> <em>devMSMs</em> functions (see <em>Workflows</em> vignettes) and their specification should be kept consistent throughout use of the package and its vignettes. They will constitute the main effects variables when modeling the relation between exposure and outcome (<em>Workflows</em> vignettes Step 5) and form the basis for estimating and comparing exposure histories (<em>Workflows</em> vignettes Step 6). If no epochs are specified, the exposure time points from the <code>exposure</code> field will be used at the aforementioned steps.</p>
 <p>Below, we specify ‘infancy’ (“ESETA1.6”, “ESETA1.15), ‘toddlerhood’ (”ESETA1.24”, “ESETA1.35”), and ‘childhood’ (“ESETA1.58”).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
@@ -132,8 +133,8 @@
 </section><section class="section level2"><h2 id="p3-6-recommended-hypotheses-relevant-exposure-histories">P3.6 Recommended: Hypotheses-Relevant Exposure Histories<a class="anchor" aria-label="anchor" href="#p3-6-recommended-hypotheses-relevant-exposure-histories"></a>
 </h2>
 <p>We strongly recommend users be selective about which histories, or developmental sequences of high and low exposure (at exposure time points or epochs), are vital for testing their hypotheses. We recommend that the user estimates and compares only a subset of all possible exposure histories using the <code>reference</code> and <code>comparison</code> fields (rather than comparing all possible exposure histories). The user can specify a custom subset of exposure histories using the <code>reference</code> and <code>comparison</code> fields as optional inputs to the <code><a href="../reference/compareHistories.html">compareHistories()</a></code> <em>devMSMs</em> function (see <em>Workflows</em> vignettes). To conduct these customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by providing a character string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or exposure time point), that signify the sequence of exposure levels (“low” or “high”, respectively).</p>
-<p>If you supply a reference history, in comparisons provide at least one unique and valid history for comparison by, in quotations, providing a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference in Step 5b of the <em>Workflows</em> vignettes. If you supply one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be supplied for multiple comparison correction. If no reference or comparison is specified, all histories will be compared to each other in Step 5b of the <em>Workflows</em> vignettes. However, if there are more than 4 exposure main effects (either as epochs or exposure time points), the user is required to select a subset of history comparisons (Step 5b of the <em>Workflows</em> vignettes), given that the base code (see the <code>hypotheses()</code> function from the <em>marginaleffects</em> package) cannot accommodate all pairwise history comparisons for more than 5 time points).</p>
-<p>These final reference and comparison values established at this step should be used for estimating and comparing exposure histories in Step 5b of the <em>Workflows</em> vignettes.</p>
+<p>If you supply a reference history, in comparisons provide at least one unique and valid history for comparison by, in quotations, providing a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference in Step 6 of the <em>Workflows</em> vignettes. If you supply one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be supplied for multiple comparison correction. If no reference or comparison is specified, all histories will be compared to each other in Step 6 of the <em>Workflows</em> vignettes. However, if there are more than 4 exposure main effects (either as epochs or exposure time points), the user is required to select a subset of history comparisons (Step 6 of the <em>Workflows</em> vignettes), given that the base code (see the <code>hypotheses()</code> function from the <em>marginaleffects</em> package) cannot accommodate all pairwise history comparisons for more than 5 time points).</p>
+<p>These final reference and comparison values established at this step should be used for estimating and comparing exposure histories in Step 6 of the <em>Workflows</em> vignettes.</p>
 <p>Below, we specify low economic strain at all epochs (“l-l-l”) as our reference event in comparison to high levels at all epochs (“h-h-h”) as well as all histories that contain 1 dose of exposure to high economic strain at different epochs.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
@@ -206,107 +207,89 @@
 </h2>
 <p>Arel-Bundock, Vincent. 2024. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means, and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.</p>
 </section><script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
         }
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'light-border',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config);
-  }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
       }
-    } else {
-      return undefined;
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config);
     }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
         });
-        return popup.innerHTML;
-      });
+      }
     }
-  }
-});
-</script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+  });
+  </script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -316,7 +299,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

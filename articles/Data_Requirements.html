@@ -8,8 +8,8 @@
 <title>Data Requirements &amp; Preparation • devMSMs</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="Data_Requirements_files/libs/quarto-html/popper.min.js"></script><script src="Data_Requirements_files/libs/quarto-html/tippy.umd.min.js"></script><link href="Data_Requirements_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="Data_Requirements_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Data Requirements &amp; Preparation">
@@ -61,7 +61,7 @@
       <h1>Data Requirements &amp; Preparation</h1>
 
 
-      <p class="date">2024-10-10</p>
+      <p class="date">2025-08-27</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Data_Requirements.qmd" class="external-link"><code>vignettes/Data_Requirements.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -86,10 +86,10 @@
 <li><p>a mids object (output from <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice::mice()</a></code>) of data imputed in wide format</p></li>
 <li><p>a list of data imputed in wide format as data frames. <br></p></li>
 </ul>
-<p>As shown in the figure below, for use of the <em>devMSMs</em> package, data in any of the above 3 formats, must be wide and contain an “ID” column for subject identifier and exposure, outcome, and all confounders as separate columns (as shown in Figure 1). Column names can include only underscore special characters and time-varying variables should have a suffix that consists of a period followed by the time point (e.g., “variable.6”). All variables should be classed as integer, numeric, or a factor (not character). Auxiliary or nuisance covariates that are not confounders (e.g., assessment version) can be included in the dataset for use and specification in the final modeling step (<em>Workflow</em> vignettes Step 5).</p>
+<p>As shown in the figure below, for use of the <em>devMSMs</em> package, data in any of the above 3 formats, must be wide and contain an “ID” column for subject identifier and exposure, outcome, and all confounders as separate columns (as shown in Figure 1). Column names can include only underscore special characters and time-varying variables should have a suffix that consists of a period followed by the time point (e.g., “variable.6”). All variables should be classed as integer, numeric, or a factor (not character). Auxiliary or nuisance covariates that are not confounders (e.g., assessment version) can be included in the dataset for use and specification in the final outcome modeling step (<em>Workflow</em> vignettes Step 5).</p>
 <p><br></p>
 <!-- ![Figure 1. Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).](figures/sample_data.png){width="900px"} -->
-<div class="cell">
+<div class="cell" data-tbl-cap="Abridged example structure of a wide dataset formatted as required for the devMSMs. Column A denotes the ID variable, column B (green) denotes a time in-variant confounder (e.g., race, birth information), columns C - F denote two time-varying confounders (lighter yellow) at two different time points (e.g., age.1, age.2 and income.1, income.2, where .1 represents wave 1 and .2 represents wave 2). Columns G - I denote the exposure and outcome of interest (darker yellow), where G and H are time-varying values on each exposure, and column I is the outcome value at the final wave/timepoint. Missing data are denoted as *NA* and will need to be imputed (Step P2).">
 <pre><code><span><span class="co">#&gt;   id ti_X tv_Y1.1 tv_Y1.2 tv_Y2.1 tv_Y2.2 exposure.1 exposure.2 outcome.2</span></span>
 <span><span class="co">#&gt; 1  1  0.5      50      65      NA    0.04          3          4        80</span></span>
 <span><span class="co">#&gt; 2  2   NA      33      57    0.08    0.03          5          3        68</span></span>
@@ -98,64 +98,75 @@
 <!-- preamble start -->
 
     <script>
-      function styleCell_o97vhy068se00l7apb5v(i, j, css_id) {
-        var table = document.getElementById("tinytable_o97vhy068se00l7apb5v");
-        table.rows[i].cells[j].classList.add(css_id);
-      }
-      function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_o97vhy068se00l7apb5v');
-        var newRow = table.insertRow(i);
-        var newCell = newRow.insertCell(0);
-        newCell.setAttribute("colspan", colspan);
-        // newCell.innerText = content;
-        // this may be unsafe, but innerText does not interpret <br>
-        newCell.innerHTML = content;
-      }
-      function spanCell_o97vhy068se00l7apb5v(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_o97vhy068se00l7apb5v");
-        const targetRow = table.rows[i];
-        const targetCell = targetRow.cells[j];
-        for (let r = 0; r < rowspan; r++) {
-          // Only start deleting cells to the right for the first row (r == 0)
-          if (r === 0) {
-            // Delete cells to the right of the target cell in the first row
-            for (let c = colspan - 1; c > 0; c--) {
-              if (table.rows[i + r].cells[j + c]) {
-                table.rows[i + r].deleteCell(j + c);
-              }
-            }
+
+      function styleCell_pt9wpizcpszswucs2g7q(i, j, css_id) {
+          var table = document.getElementById("tinytable_pt9wpizcpszswucs2g7q");
+          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
           }
-          // For rows below the first, delete starting from the target column
-          if (r > 0) {
-            for (let c = colspan - 1; c >= 0; c--) {
-              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
-                table.rows[i + r].deleteCell(j);
-              }
+      }
+      function spanCell_pt9wpizcpszswucs2g7q(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_pt9wpizcpszswucs2g7q");
+        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+        if (!targetCell) {
+          console.warn(`Cell at (${i}, ${j}) not found.`);
+        }
+
+        // Get all cells that need to be removed
+        const cellsToRemove = [];
+        for (let r = 0; r < rowspan; r++) {
+          for (let c = 0; c < colspan; c++) {
+            if (r === 0 && c === 0) continue; // Skip the target cell
+            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
+            if (cell) {
+              cellsToRemove.push(cell);
             }
           }
         }
-        // Set rowspan and colspan of the target cell
-        targetCell.rowSpan = rowspan;
-        targetCell.colSpan = colspan;
+
+        // Remove all cells
+        cellsToRemove.forEach(cell => cell.remove());
+
+        // Set rowspan and colspan of the target cell if it exists
+        if (targetCell) {
+          targetCell.rowSpan = rowspan;
+          targetCell.colSpan = colspan;
+        }
       }
-window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 0, 'tinytable_css_idec0s6q3offp2axowd0d7') })
-window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 1, 'tinytable_css_idvnm1wn1hmoc5w2pi9lhy') })
-window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 2, 'tinytable_css_idwz7yc244t4k4oyslp9c3') })
-window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 3, 'tinytable_css_idwz7yc244t4k4oyslp9c3') })
-window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 4, 'tinytable_css_idwz7yc244t4k4oyslp9c3') })
-window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 5, 'tinytable_css_idwz7yc244t4k4oyslp9c3') })
-window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 6, 'tinytable_css_id1vp9ggnvdrv9ubftgg4d') })
-window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 7, 'tinytable_css_id1vp9ggnvdrv9ubftgg4d') })
-window.addEventListener('load', function () { styleCell_o97vhy068se00l7apb5v(0, 8, 'tinytable_css_id2pn0jlirmphz57cnkmp0') })
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '0', j: 8 },  ], css_id: 'tinytable_css_ztg6dvrgy3u475orobc2',},
+          { positions: [ { i: '0', j: 6 }, { i: '0', j: 7 },  ], css_id: 'tinytable_css_2biddbc4lk8yh57nx20h',},
+          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 },  ], css_id: 'tinytable_css_11hdfslis7hrajnvo29t',},
+          { positions: [ { i: '0', j: 1 },  ], css_id: 'tinytable_css_dzzv9d3af9t0buatdnv7',},
+          { positions: [ { i: '3', j: 0 }, { i: '3', j: 1 }, { i: '3', j: 2 }, { i: '3', j: 3 }, { i: '3', j: 4 }, { i: '3', j: 5 }, { i: '3', j: 6 }, { i: '3', j: 7 }, { i: '3', j: 8 },  ], css_id: 'tinytable_css_mf4fbfeyf6k5dbpd7z25',},
+          { positions: [ { i: '0', j: 0 },  ], css_id: 'tinytable_css_d7yfxppca39mooa7a0n1',},
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_pt9wpizcpszswucs2g7q(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
     </script><style>
-    .table td.tinytable_css_idec0s6q3offp2axowd0d7, .table th.tinytable_css_idec0s6q3offp2axowd0d7 {  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idvnm1wn1hmoc5w2pi9lhy, .table th.tinytable_css_idvnm1wn1hmoc5w2pi9lhy {  background-color: #E3EFDC;  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_idwz7yc244t4k4oyslp9c3, .table th.tinytable_css_idwz7yc244t4k4oyslp9c3 {  background-color: #FDF4CF;  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_id1vp9ggnvdrv9ubftgg4d, .table th.tinytable_css_id1vp9ggnvdrv9ubftgg4d {  background-color: #d4a0fa;  border-bottom: solid 0.1em #d3d8dc; }
-    .table td.tinytable_css_id2pn0jlirmphz57cnkmp0, .table th.tinytable_css_id2pn0jlirmphz57cnkmp0 {  background-color: #a0d8fa;  border-bottom: solid 0.1em #d3d8dc; }
+      /* tinytable css entries after */
+      .table td.tinytable_css_ztg6dvrgy3u475orobc2, .table th.tinytable_css_ztg6dvrgy3u475orobc2 { background-color: #a0d8fa; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_2biddbc4lk8yh57nx20h, .table th.tinytable_css_2biddbc4lk8yh57nx20h { background-color: #d4a0fa; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_11hdfslis7hrajnvo29t, .table th.tinytable_css_11hdfslis7hrajnvo29t { background-color: #FDF4CF; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_dzzv9d3af9t0buatdnv7, .table th.tinytable_css_dzzv9d3af9t0buatdnv7 { background-color: #E3EFDC; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_mf4fbfeyf6k5dbpd7z25, .table th.tinytable_css_mf4fbfeyf6k5dbpd7z25 { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_d7yfxppca39mooa7a0n1, .table th.tinytable_css_d7yfxppca39mooa7a0n1 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
 <div class="container">
-      <table class="table table table-borderless" id="tinytable_o97vhy068se00l7apb5v" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table table-borderless" id="tinytable_pt9wpizcpszswucs2g7q" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Abridged example structure of a wide dataset formatted as required
 for the devMSMs. Column A denotes the ID variable, column B (green)
 denotes a time in-variant confounder (e.g., race, birth information),
@@ -167,49 +178,49 @@ H are time-varying values on each exposure, and column I is the outcome
 value at the final wave/timepoint. Missing data are denoted as
 <em>NA</em> and will need to be imputed (Step P2).</p></caption>
         <thead><tr>
-<th scope="col">id</th>
-                <th scope="col">ti_X</th>
-                <th scope="col">tv_Y1.1</th>
-                <th scope="col">tv_Y1.2</th>
-                <th scope="col">tv_Y2.1</th>
-                <th scope="col">tv_Y2.2</th>
-                <th scope="col">exposure.1</th>
-                <th scope="col">exposure.2</th>
-                <th scope="col">outcome.2</th>
+<th scope="col" data-row="0" data-col="0">id</th>
+                <th scope="col" data-row="0" data-col="1">ti_X</th>
+                <th scope="col" data-row="0" data-col="2">tv_Y1.1</th>
+                <th scope="col" data-row="0" data-col="3">tv_Y1.2</th>
+                <th scope="col" data-row="0" data-col="4">tv_Y2.1</th>
+                <th scope="col" data-row="0" data-col="5">tv_Y2.2</th>
+                <th scope="col" data-row="0" data-col="6">exposure.1</th>
+                <th scope="col" data-row="0" data-col="7">exposure.2</th>
+                <th scope="col" data-row="0" data-col="8">outcome.2</th>
               </tr></thead>
 <tbody>
 <tr>
-<td>1</td>
-                  <td>0.5</td>
-                  <td>50</td>
-                  <td>65</td>
-                  <td>  NA</td>
-                  <td>0.04</td>
-                  <td>3</td>
-                  <td>4</td>
-                  <td>80</td>
+<td data-row="1" data-col="0">1</td>
+                  <td data-row="1" data-col="1">0.5</td>
+                  <td data-row="1" data-col="2">50</td>
+                  <td data-row="1" data-col="3">65</td>
+                  <td data-row="1" data-col="4">NA</td>
+                  <td data-row="1" data-col="5">0.04</td>
+                  <td data-row="1" data-col="6">3</td>
+                  <td data-row="1" data-col="7">4</td>
+                  <td data-row="1" data-col="8">80</td>
                 </tr>
 <tr>
-<td>2</td>
-                  <td> NA</td>
-                  <td>33</td>
-                  <td>57</td>
-                  <td>0.08</td>
-                  <td>0.03</td>
-                  <td>5</td>
-                  <td>3</td>
-                  <td>68</td>
+<td data-row="2" data-col="0">2</td>
+                  <td data-row="2" data-col="1">NA</td>
+                  <td data-row="2" data-col="2">33</td>
+                  <td data-row="2" data-col="3">57</td>
+                  <td data-row="2" data-col="4">0.08</td>
+                  <td data-row="2" data-col="5">0.03</td>
+                  <td data-row="2" data-col="6">5</td>
+                  <td data-row="2" data-col="7">3</td>
+                  <td data-row="2" data-col="8">68</td>
                 </tr>
 <tr>
-<td>3</td>
-                  <td>0.3</td>
-                  <td>68</td>
-                  <td>NA</td>
-                  <td>0.01</td>
-                  <td>0.02</td>
-                  <td>6</td>
-                  <td>8</td>
-                  <td>59</td>
+<td data-row="3" data-col="0">3</td>
+                  <td data-row="3" data-col="1">0.3</td>
+                  <td data-row="3" data-col="2">68</td>
+                  <td data-row="3" data-col="3">NA</td>
+                  <td data-row="3" data-col="4">0.01</td>
+                  <td data-row="3" data-col="5">0.02</td>
+                  <td data-row="3" data-col="6">6</td>
+                  <td data-row="3" data-col="7">8</td>
+                  <td data-row="3" data-col="8">59</td>
                 </tr>
 </tbody>
 </table>
@@ -311,7 +322,7 @@ value at the final wave/timepoint. Missing data are denoted as
 <p><br></p>
 <p>The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">Github</a>. Of note, <em>devMSMs</em> must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).</p>
 <div class="cell" data-tbl-cap="Summary of *devMSMs* helper functions.">
-<pre><code><span><span class="co">#&gt; [1] "&lt;S4 class 'tinytable' [package \"tinytable\"] with 27 slots&gt;"</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; [1] "&lt;S4 class 'tinytable' [package \"tinytable\"] with 43 slots&gt;"</span></span></code></pre>
 </div>
 <p><br></p>
 <p>We first install the <em>devMSMs</em> and <em>devMSMsHelpers</em> packages.</p>
@@ -599,7 +610,7 @@ value at the final wave/timepoint. Missing data are denoted as
 <p><br><br></p>
 </section></section><section class="level2"><h3 id="p4-3--formatted-wide-data-with-missingness">P4.3. Formatted Wide Data with Missingness<a class="anchor" aria-label="anchor" href="#p4-3--formatted-wide-data-with-missingness"></a>
 </h3>
-<p>The functions of the <em>devMSMs</em> package accept data in the form of a single data frame with no missing values or <em>m</em> imputed datasets in the form of either a mids object (output from the mice package or via <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/imputeData.html" class="external-link">imputeData()</a></code>) or a list of imputed datasets. Most developmental data from humans will have some amount of missing data. Given that the creation of IPTW balancing weights requires complete data, we recommend imputing data. Imputation assumes a missing data mechanism of missing at random (MAR) and no more than 20% missing data in total (Leyrat et al., 2021). Given existing work demonstrating its superiority, <em>devMSMS</em> implements the ‘within’ approach for imputed data, conducting all steps on each imputed dataset before pooling estimates using Rubin’s rules to create final average predictions and contrast comparisons in <em>Worfklows</em> vignettes Step 5 (Leyrat et al, 2021; Granger et al., 2019).</p>
+<p>The functions of the <em>devMSMs</em> package accept data in the form of a single data frame with no missing values or <em>m</em> imputed datasets in the form of either a mids object (output from the mice package or via <code><a href="https://rdrr.io/pkg/devMSMsHelpers/man/imputeData.html" class="external-link">imputeData()</a></code>) or a list of imputed datasets. Most developmental data from humans will have some amount of missing data. Given that the creation of IPTW balancing weights requires complete data, we recommend imputing data. Imputation assumes a missing data mechanism of missing at random (MAR) and no more than 20% missing data in total (Leyrat et al., 2021). Given existing work demonstrating its superiority, <em>devMSMS</em> implements the ‘within’ approach for imputed data, conducting all steps on each imputed dataset before pooling estimates using Rubin’s rules to create final average predictions in order to make contrast comparisons in <em>Worfklows</em> vignettes Step 5 (Leyrat et al, 2021; Granger et al., 2019).</p>
 <p>As shown below, users can use a helper function to impute their wide data or impute elsewhere and read in the imputed data as a list for use with <em>devMSMs</em>.</p>
 <p><br></p>
 <section class="level3"><h4 id="p4-3a--multiply-impute-formatted-wide-data-frame-using-mice">P4.3a. Multiply Impute Formatted, Wide Data Frame using MICE<a class="anchor" aria-label="anchor" href="#p4-3a--multiply-impute-formatted-wide-data-frame-using-mice"></a>
@@ -694,107 +705,89 @@ Additionally, users can specify an integer value to <code>seed</code> in order t
 <p>Kainz, K., Greifer, N., Givens, A., Swietek, K., Lombardi, B. M., Zietz, S., &amp; Kohn, J. L. (2017). Improving Causal Inference: Recommendations for Covariate Selection and Balance in Propensity Score Methods. Journal of the Society for Social Work and Research, 8(2), 279–303. https://doi.org/10.1086/691464</p>
 <p>Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., Garrett-Peiers, P., Conger, R. D., &amp; Bauer, P. J. (2013). The Family Life Project: An Epidemiological and Developmental Study of Young Children Living in Poor Rural Communities. Monographs of the Society for Research in Child Development, 78(5), i–150.</p>
 </section><script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
         }
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'light-border',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config);
-  }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
       }
-    } else {
-      return undefined;
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config);
     }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
         });
-        return popup.innerHTML;
-      });
+      }
     }
-  }
-});
-</script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+  });
+  </script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -804,7 +797,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
