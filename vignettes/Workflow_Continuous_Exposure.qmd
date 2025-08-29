@@ -1245,7 +1245,7 @@ Below, we draw on the high and low exemplar cutoffs that we previously specified
 hi_lo_cut <- c(0.6, 0.3) 
 ```
 
-The user also has the option to estimate and compare only a custom subset of user-specified exposure histories (i.e., sequences of high and low levels of exposure at each epoch or time point) using the `reference` and `comparison` fields. To conduct these recommended customized comparisons, users must provide at least one unique valid history (e.g., “l-l-l”) as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels (“low” or “high”, respectively). If the user supplies a reference history, they are required to provide at least one unique and valid history for comparison by, in quotations, providing to `comparison` a string (or list of strings) of l’s and h’s (each separated by “-”), with each corresponding to each exposure epoch, that signify the sequence of exposure levels (“low” or “high”, respectively) that constitutes the comparison exposure history/histories to be compared to the reference. If the user supplies one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be subject to multiple comparison correction.
+The user also has the option to estimate and compare only a custom subset of user-specified exposure histories (i.e., sequences of high and low levels of exposure at each epoch or time point) using the `reference` and `comparison` fields. To conduct these recommended customized comparisons, users must provide at least one unique valid history (e.g., "l-l-l") as a reference by, in quotations, provide a string (or a list of strings) of lowercase l’s and h’s (each separated by -), each corresponding to each exposure epoch (or time point), that signify the sequence of exposure levels ("low" or "high", respectively). If the user supplies a reference history, they are required to provide at least one unique and valid history for comparison by, in quotations, providing to `comparison` a string (or list of strings) of l’s and h’s (each separated by "-"), with each corresponding to each exposure epoch, that signify the sequence of exposure levels ("low" or "high", respectively) that constitutes the comparison exposure history/histories to be compared to the reference. If the user supplies one or more comparisons, at least one reference must be specified. Each reference exposure history will be compared to each comparison history and all comparisons will be subject to multiple comparison correction.
 
 If no reference or comparison is specified, all histories will be compared to each other. If there are more than 4 exposure main effects (either as epochs or exposure time points), the user is required to select a subset of history comparisons (Step 6), given that the base code (see the `hypotheses()` function from the *marginaleffects* package; Arel-Bundock, 2023) cannot accommodate all pairwise history comparisons for more than 5 time points.
 
@@ -1257,7 +1257,7 @@ Below, we retain the default Benjamini-Hochburg method for multiple comparison.
 mc_comp_method <- "BH"
 ```
 
-Based on their substantive interests, the user also has the option to choose which level of dosage (“h” or “l”) is tallied in labels of dose counts in the tables and figures (`dose_level`; default is “h”). For example, if the exposure variable was coded in such a way that lower levels are conceptualized as the exposure (e.g., lower income), the user may wish to choose dosage level “l”.
+Based on their substantive interests, the user also has the option to choose which level of dosage ("h" or "l") is tallied in labels of dose counts in the tables and figures (`dose_level`; default is "h"). For example, if the exposure variable was coded in such a way that lower levels are conceptualized as the exposure (e.g., lower income), the user may wish to choose dosage level "l".
 
 Below, given our interest in histories of high economic strain, we specify that we wish to tally high doses of exposure.
 
@@ -1265,7 +1265,7 @@ Below, given our interest in histories of high economic strain, we specify that 
 dose_level <- "h"
 ```
 
-Lastly, the user can provide alternate plotting labels for exposure and outcome in the `exp_lab` and `out_lab` fields (defaults are variable names), as well as a list (equal to number of exposure main effects +1) of colors or a Brewer color palette (colors; default is “Dark2”). See RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).
+Lastly, the user can provide alternate plotting labels for exposure and outcome in the `exp_lab` and `out_lab` fields (defaults are variable names), as well as a list (equal to number of exposure main effects +1) of colors or a Brewer color palette (colors; default is "Dark2"). See RColorBrewer::display.brewer.all() or https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).
 
 Below, we specify plotting labels and 4 colors.
 
