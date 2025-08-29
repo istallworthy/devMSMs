@@ -276,28 +276,28 @@ for different exposure histories and <code>comps</code> with contrasts from
 <span class="r-out co"><span class="r-pr">#&gt;</span> +-------------------+-------------+-----------+-----------+------------+-----------+--------------+</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | term              | estimate    | std.error | p.value   | conf.low   | conf.high | p.value_corr |</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> +===================+=============+===========+===========+============+===========+==============+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (h-h-h) - (l-l-l) | 0.05723992  | 0.1571878 | 0.7157462 | -0.2508426 | 0.3653224 | 0.8193786    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | (h-h-h) - (l-l-l) | 0.05723992  | 0.1571878 | 0.7157462 | -0.2508426 | 0.3653224 | 0.8193787    |</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> +-------------------+-------------+-----------+-----------+------------+-----------+--------------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (h-h-l) - (l-l-l) | -0.02878467 | 0.1260582 | 0.8193786 | -0.2758543 | 0.2182850 | 0.8193786    |</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | (h-h-l) - (l-l-l) | -0.02878467 | 0.1260583 | 0.8193787 | -0.2758544 | 0.2182850 | 0.8193787    |</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> +-------------------+-------------+-----------+-----------+------------+-----------+--------------+ </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">comp2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="compareHistories-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">comp2</span>, <span class="st">"preds"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    term        A.1        A.2         A.3    estimate std.error  statistic</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 l-l-l -0.4684962 -0.2971206 -0.80434443 -0.14979959 0.1983536 -0.7552150</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 h-h-l  0.2359494  0.3148300 -0.80434443 -0.17858426 0.1267806 -1.4086087</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 h-h-h  0.2359494  0.3148300 -0.05134827 -0.09255967 0.1371104 -0.6750738</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 h-h-l  0.2359494  0.3148300 -0.80434443 -0.17858426 0.1267806 -1.4086089</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 h-h-h  0.2359494  0.3148300 -0.05134827 -0.09255967 0.1371104 -0.6750739</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     p.value  s.value   conf.low  conf.high  df dose</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.4501200 1.151619 -0.5385654 0.23896624 Inf    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 0.1589509 2.653347 -0.4270697 0.06990115 Inf    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 0.4996289 1.001071 -0.3612912 0.17617186 Inf    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.4501200 1.151619 -0.5385654 0.23896625 Inf    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 0.1589509 2.653347 -0.4270696 0.06990112 Inf    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 0.4996288 1.001071 -0.3612912 0.17617185 Inf    3</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">comp2</span>, <span class="st">"comps"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                term    estimate std.error  statistic   p.value   s.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (h-h-h) - (l-l-l)  0.05723992 0.1571878  0.3641498 0.7157462 0.4824801</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 (h-h-l) - (l-l-l) -0.02878467 0.1260582 -0.2283442 0.8193786 0.2873978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (h-h-h) - (l-l-l)  0.05723992 0.1571878  0.3641498 0.7157462 0.4824800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 (h-h-l) - (l-l-l) -0.02878467 0.1260583 -0.2283442 0.8193787 0.2873977</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     conf.low conf.high  dose p.value_corr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.2508426 0.3653224 3 - 0    0.8193786</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.2758543 0.2182850 2 - 0    0.8193786</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.2508426 0.3653224 3 - 0    0.8193787</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.2758544 0.2182850 2 - 0    0.8193787</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

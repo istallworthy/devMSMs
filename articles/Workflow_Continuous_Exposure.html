@@ -61,7 +61,7 @@
       <h1>Workflow: Continuous Exposure</h1>
 
       <p class="author">Isabella Stallworthy</p>
-      <p class="date">2025-08-27</p>
+      <p class="date">2025-08-29</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Workflow_Continuous_Exposure.qmd" class="external-link"><code>vignettes/Workflow_Continuous_Exposure.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -1072,7 +1072,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>      i <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.25 (SD = 10.51; range = 0-287).</span></span>
+<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 16.62; range = 0-543).</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
@@ -1080,23 +1080,23 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 287.3248</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 542.5772</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
 <span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;          79    1235      475      591     1145</span></span>
-<span><span class="co">#&gt;  all 42.841 73.1125 117.9498 159.0904 287.3248</span></span>
+<span><span class="co">#&gt;           30    1235     475      591     1145</span></span>
+<span><span class="co">#&gt;  all 76.6313 89.4552 97.9708 157.3235 542.5772</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Coef of Var  MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       4.012 0.97   1.202       0</span></span>
+<span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
+<span><span class="co">#&gt; all       5.813 1.027   1.489       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;              Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     75.64</span></span>
+<span><span class="co">#&gt; Weighted     37.16</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>     i <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -1708,19 +1708,19 @@ The love plots depict the standardized associations between confounder and expos
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">balance_stats.bart</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 20 out of 241 (8.3%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.12 (max: 0.20):</span></span>
+<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 33 out of 241 (13.7%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.12 (max: 0.23):</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | Exposure  | Total # of covariates | # of imbalanced covariates |</span></span>
 <span><span class="co">#&gt; +===========+=======================+============================+</span></span>
-<span><span class="co">#&gt; | ESETA1.6  | 28                    | 3                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.6  | 28                    | 6                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.15 | 38                    | 13                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.24 | 47                    | 4                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.24 | 47                    | 8                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.35 | 59                    | 0                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.35 | 59                    | 3                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.58 | 69                    | 0                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.58 | 69                    | 3                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates Averaging Across Imputed Datasetrs using `bart`</span></span>
@@ -1770,7 +1770,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; $effective.sample.size</span></span>
 <span><span class="co">#&gt;                 Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.00000</span></span>
-<span><span class="co">#&gt; Weighted     75.63941</span></span>
+<span><span class="co">#&gt; Weighted     37.16441</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $effective.sample.size</span></span>
@@ -3151,7 +3151,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; +-------------------+------------+------------+-----------+-------------+------------+--------------+</span></span>
 <span><span class="co">#&gt; | term              | estimate   | std.error  | p.value   | conf.low    | conf.high  | p.value_corr |</span></span>
 <span><span class="co">#&gt; +===================+============+============+===========+=============+============+==============+</span></span>
-<span><span class="co">#&gt; | (h-h-h) - (l-l-l) | 0.03035381 | 0.01948617 | 0.1991629 | -0.02526463 | 0.08597225 | 0.1991629    |</span></span>
+<span><span class="co">#&gt; | (h-h-h) - (l-l-l) | 0.03035381 | 0.01948568 | 0.1991615 | -0.02526563 | 0.08597325 | 0.1991615    |</span></span>
 <span><span class="co">#&gt; +-------------------+------------+------------+-----------+-------------+------------+--------------+</span></span></code></pre></div>
 </div>
 <p>We first confirm the distribution of our sample across our exposure histories is reasonable.</p>
@@ -3161,9 +3161,9 @@ The love plots depict the standardized associations between confounder and expos
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                term   estimate  std.error statistic       df   p.value</span></span>
-<span><span class="co">#&gt; 1 (h-h-h) - (l-l-l) 0.03035381 0.01948617   1.55771 3.739988 0.1991629</span></span>
+<span><span class="co">#&gt; 1 (h-h-h) - (l-l-l) 0.03035381 0.01948568   1.55775 3.739611 0.1991615</span></span>
 <span><span class="co">#&gt;      conf.low  conf.high    conf.low  conf.high  dose p.value_corr</span></span>
-<span><span class="co">#&gt; 1 -0.02526463 0.08597225 -0.02526463 0.08597225 3 - 0    0.1991629</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 -0.02526563 0.08597325 -0.02526563 0.08597325 3 - 0    0.1991615</span></span></code></pre></div>
 </div>
 <p>We then inspect the history comparison and conclude that there is no evidence that children who experienced different histories of exposure to economic strain over infancy, toddlerhood, and early childhood differ in their behavioral problems in early childhood.</p>
 </section><section class="level3"><h4 id="step-6b--plot-potential-outcomes-by-exposure-histories">Step 6b. Plot Potential Outcomes by Exposure Histories<a class="anchor" aria-label="anchor" href="#step-6b--plot-potential-outcomes-by-exposure-histories"></a>
@@ -3203,9 +3203,9 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results.s1</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                term   estimate  std.error statistic       df    p.value</span></span>
-<span><span class="co">#&gt; 1 (h-h-h) - (l-l-l) 0.03327779 0.01659936  2.004764 6.875314 0.08575957</span></span>
+<span><span class="co">#&gt; 1 (h-h-h) - (l-l-l) 0.03327779 0.01659826  2.004896 6.873502 0.08575392</span></span>
 <span><span class="co">#&gt;       conf.low  conf.high     conf.low  conf.high  dose p.value_corr</span></span>
-<span><span class="co">#&gt; 1 -0.006118212 0.07267379 -0.006118212 0.07267379 3 - 0   0.08575957</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 -0.006117766 0.07267335 -0.006117766 0.07267335 3 - 0   0.08575392</span></span></code></pre></div>
 </div>
 <p>As shown above, results indicate a marginal but non-significant contrast between “l-l-l” and “h-h-h” histories of economic strain exposure in relation to behavior problems in early childhood.</p>
 <p><br></p>
@@ -3227,10 +3227,10 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; Large sample assumed.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results.s2</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                term   estimate  std.error statistic      df   p.value</span></span>
-<span><span class="co">#&gt; 1 (h-h-h) - (l-l-l) 0.02640764 0.02274019  1.161276 2.65527 0.3392193</span></span>
+<span><span class="co">#&gt;                term   estimate  std.error statistic       df   p.value</span></span>
+<span><span class="co">#&gt; 1 (h-h-h) - (l-l-l) 0.02640764 0.02274049  1.161261 2.655409 0.3392202</span></span>
 <span><span class="co">#&gt;      conf.low conf.high    conf.low conf.high  dose p.value_corr</span></span>
-<span><span class="co">#&gt; 1 -0.05157867  0.104394 -0.05157867  0.104394 3 - 0    0.3392193</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 -0.05157699 0.1043923 -0.05157699 0.1043923 3 - 0    0.3392202</span></span></code></pre></div>
 </div>
 <p>Similarly, we find no evidence for differences in behavioral problems as function of history of exposure to economic strain.</p>
 <p><br><br></p>
