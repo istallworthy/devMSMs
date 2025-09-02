@@ -61,7 +61,7 @@
       <h1>Workflow: Continuous Exposure</h1>
 
       <p class="author">Isabella Stallworthy</p>
-      <p class="date">2025-08-29</p>
+      <p class="date">2025-09-02</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Workflow_Continuous_Exposure.qmd" class="external-link"><code>vignettes/Workflow_Continuous_Exposure.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -1072,7 +1072,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>      i <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 16.62; range = 0-543).</span></span>
+<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 19.22; range = 0-660).</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
@@ -1080,23 +1080,23 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 542.5772</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 659.5962</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
 <span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;           30    1235     475      591     1145</span></span>
-<span><span class="co">#&gt;  all 76.6313 89.4552 97.9708 157.3235 542.5772</span></span>
+<span><span class="co">#&gt;         1066     475    1235      591     1145</span></span>
+<span><span class="co">#&gt;  all 60.4154 67.6227 90.0896 116.7814 659.5962</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       5.813 1.027   1.489       0</span></span>
+<span><span class="co">#&gt; all       6.768 1.022   1.557       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;              Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     37.16</span></span>
+<span><span class="co">#&gt; Weighted     27.62</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>     i <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -1708,19 +1708,19 @@ The love plots depict the standardized associations between confounder and expos
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">balance_stats.bart</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 33 out of 241 (13.7%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.12 (max: 0.23):</span></span>
+<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 35 out of 241 (14.5%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.12 (max: 0.22):</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | Exposure  | Total # of covariates | # of imbalanced covariates |</span></span>
 <span><span class="co">#&gt; +===========+=======================+============================+</span></span>
-<span><span class="co">#&gt; | ESETA1.6  | 28                    | 6                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.6  | 28                    | 8                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.15 | 38                    | 13                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.24 | 47                    | 8                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.35 | 59                    | 3                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.35 | 59                    | 5                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.58 | 69                    | 3                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.58 | 69                    | 1                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates Averaging Across Imputed Datasetrs using `bart`</span></span>
@@ -1770,7 +1770,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; $effective.sample.size</span></span>
 <span><span class="co">#&gt;                 Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.00000</span></span>
-<span><span class="co">#&gt; Weighted     37.16441</span></span>
+<span><span class="co">#&gt; Weighted     27.62483</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $effective.sample.size</span></span>
@@ -3012,10 +3012,9 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; | Num.Obs.           | 1292  |                 |        |</span></span>
 <span><span class="co">#&gt; +--------------------+-------+-----------------+--------+</span></span></code></pre></div>
 </div>
-<p>We similarly find a significant likelihoood ratio test.</p>
-<p><b></b></p>
-<b>
-</b><p>We then fit the same model with the weights trimmed at the 98th quantile.</p>
+<p>We similarly find a significant likelihood ratio test.</p>
+<p><br></p>
+<p>We then fit the same model with the weights trimmed at the 98th quantile.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">trim_weights.s2</span></span>
@@ -3056,12 +3055,8 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; | Num.Obs.           | 1292   |                 |        |</span></span>
 <span><span class="co">#&gt; +--------------------+--------+-----------------+--------+</span></span></code></pre></div>
 </div>
-<p>With a comparable result. <b></b></p>
-<b>
-</b></section><b><b>
-</b></b></section><b><b>
-</b></b></section><b><b>
-<section class="level2"><h3 id="step-6--estimate-compare-and-visualize-model-predicted-outcome-as-a-function-of-exposure-history">Step 6. Estimate, Compare, and Visualize Model-Predicted Outcome as a Function of Exposure History<a class="anchor" aria-label="anchor" href="#step-6--estimate-compare-and-visualize-model-predicted-outcome-as-a-function-of-exposure-history"></a>
+<p>With a comparable result. <br></p>
+</section></section></section><section class="level2"><h3 id="step-6--estimate-compare-and-visualize-model-predicted-outcome-as-a-function-of-exposure-history">Step 6. Estimate, Compare, and Visualize Model-Predicted Outcome as a Function of Exposure History<a class="anchor" aria-label="anchor" href="#step-6--estimate-compare-and-visualize-model-predicted-outcome-as-a-function-of-exposure-history"></a>
 </h3>
 <p>In this final step, we use the fitted model results to test substantive hypotheses about dose and timing. We estimate and then compare the average marginal estimates of the outcome for each user-specified exposure history (i.e., permutation of high (“h”) and low (“l”) levels of exposure at each exposure epoch) using the <code><a href="../reference/compareHistories.html">compareHistories()</a></code> function. This draws primarily from the <code>avg_predictions()</code> and <code>hypotheses()</code> functions in the <em>marginaleffects</em> package (Arel-Bundock, 2023).</p>
 <p>First, the <code><a href="../reference/compareHistories.html">compareHistories()</a></code> function creates average predictions of the outcome for each exposure history. For each of the <em>n</em> combinations of user-specified exposure histories, we set the value of those predictors in the full dataset to the values in that combination, leaving all other variables as they are. This gives us <em>n</em> datasets, each the same size as our original dataset used to fit the model. For the <em>n</em> datasets, we then compute the predicted values given the model before taking the average predicted value for each of the <em>n</em> datasets. These <em>n</em> averaged predicted values are the expected potential outcomes under each combination. (For imputed data, the function outputs pooled predicted values using Rubin’s Rules.)</p>
@@ -3145,7 +3140,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; | h-h-h | 0.5      | 0.02      | 0.42     | 0.57      |</span></span>
 <span><span class="co">#&gt; +-------+----------+-----------+----------+-----------+ </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Conducting multiple comparison correction for all pairings between comparison histories and each refernece history using the BH method. </span></span>
+<span><span class="co">#&gt; Conducting multiple comparison correction for all pairings between comparison histories and each reference history using the BH method. </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; +-------------------+------------+------------+-----------+-------------+------------+--------------+</span></span>
@@ -3234,9 +3229,8 @@ The love plots depict the standardized associations between confounder and expos
 </div>
 <p>Similarly, we find no evidence for differences in behavioral problems as function of history of exposure to economic strain.</p>
 <p><br><br></p>
-</section></section></section></b></b></section><b><b>
-<section class="level1"><h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h1>
+</section></section></section></section><section class="section level2"><h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <p>Arel-Bundock, V. 2024. marginaleffects: Predictions, Comparisons, Slopes, Marginal Means,and Hypothesis Tests. https://CRAN.R-project.org/package=marginaleffects.</p>
 <p>Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford, R., &amp; Barbarin, O. (2008). Predicting Child Outcomes at the End of Kindergarten from the Quality of Pre-Kindergarten Teacher–Child Interactions and Instruction. Applied Developmental Science, 12(3), 140–153. https://doi.org/10.1080/10888690802199418</p>
 <p>Cole, S. R., &amp; Hernán, M. A. (2008). Constructing Inverse Probability Weights for Marginal Structural Models. American Journal of Epidemiology, 168(6), 656–664. https://doi.org/10.1093/aje/kwn164.</p>
@@ -3247,11 +3241,90 @@ The love plots depict the standardized associations between confounder and expos
 <p>Stuart, E. A. (2010). Matching methods for causal inference: A review and a look forward. Statistical Science: A Review Journal of the Institute of Mathematical Statistics, 25(1), 1–21. https://doi.org/10.1214/09-STS313.</p>
 <p>Thoemmes, F., &amp; Ong, A. D. (2016). A Primer on Inverse Probability of Treatment Weighting and Marginal Structural Models. https://doi.org/10.1177/2167696815621645.</p>
 <p>Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M., Garrett-Peters, P., Mills-Koonce, R., Garrett-Peiers, P., Conger, R. D., &amp; Bauer, P. J. (2013). The Family Life Project: An Epidemiological and Developmental Study of Young Children Living in Poor Rural Communities. Monographs of the Society for Research in Child Development, 78(5), i–150.</p>
-</section></b></b>
-
-
-
-  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+</section><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config);
+    }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
