@@ -213,26 +213,14 @@ compareHistories <- function(
       stop("Please a comparison history that differs from the reference history.", call. = FALSE)
     }
 
+    # for normal outcome variables
     comps <- lapply(preds, function(y) {
       h <- marginaleffects::hypotheses(y, hypothesis = hypothesis)
       class(h) <- c("comp_custom", class(h))
       return(h)
     })
     
-    # # IS testing equality tests
-    # eqs <- lapply(preds, function(y) {
-    #   
-    # test <-   marginaleffects::hypotheses(preds[[1]],
-    #                   # by = "am",
-    #                   # hypothesis = hypothesis,
-    #                   # equivalence = c(-1, 1))
-    #                   hypothesis = "b2 - b1 + b3 + b5 = 0") # correspond to rows
-    # # marginaleffects::comparisons(preds[[1]])
-    #   
-    #   class(c) <- c("comp_custom", class(c))
-    #   return(c)
-    # })
-    # 
+
   }
 
   # STEP 4 ----
@@ -366,7 +354,7 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
   .print_eval_hist(epoch_history, epoch, hi_lo_cut, reference, comparison)
   cat("Below are the pooled average predictions by user-specified history:")
   print(preds_tab, "markdown")
-  cat(sprintf("\nConducting multiple comparison correction for all pairings between comparison histories and each refernece history using the %s method. \n", mc_comp_method))
+  cat(sprintf("\nConducting multiple comparison correction for all pairings between comparison histories and each reference history using the %s method. \n", mc_comp_method))
   cat("\n")
   print(comps_tab, "markdown")
 

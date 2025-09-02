@@ -1201,9 +1201,9 @@ print(models.s1,
       save.out = save.out)
 ```
 
-We similarly find a significant likelihoood ratio test.
+We similarly find a significant likelihood ratio test.
 
-<b>
+<br>
 
 We then fit the same model with the weights trimmed at the 98th quantile.
 
@@ -1223,7 +1223,7 @@ print(models.s2,
       save.out = save.out)
 ```
 
-With a comparable result. <b>
+With a comparable result. <br>
 
 ## Step 6. Estimate, Compare, and Visualize Model-Predicted Outcome as a Function of Exposure History
 
