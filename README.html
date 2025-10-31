@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2025-10-31">
 
-<title>Terminology</title>
+<title>readme</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,74 +20,102 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="Terminology_files/libs/clipboard/clipboard.min.js"></script>
-<script src="Terminology_files/libs/quarto-html/quarto.js"></script>
-<script src="Terminology_files/libs/quarto-html/popper.min.js"></script>
-<script src="Terminology_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="Terminology_files/libs/quarto-html/anchor.min.js"></script>
-<link href="Terminology_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="Terminology_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="Terminology_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="Terminology_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="Terminology_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="README_files/libs/clipboard/clipboard.min.js"></script>
+<script src="README_files/libs/quarto-html/quarto.js"></script>
+<script src="README_files/libs/quarto-html/popper.min.js"></script>
+<script src="README_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="README_files/libs/quarto-html/anchor.min.js"></script>
+<link href="README_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="README_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="README_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="README_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="README_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
 
-<body>
+<body class="fullcontent">
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#weights-formula" id="toc-weights-formula" class="nav-link active" data-scroll-target="#weights-formula">Weights Formula</a></li>
-  <li><a href="#core-functions-of-devmsms" id="toc-core-functions-of-devmsms" class="nav-link" data-scroll-target="#core-functions-of-devmsms">7 core functions of <em>devMSMs</em></a></li>
-  </ul>
-</nav>
-</div>
+
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Terminology</h1>
-</div>
 
 
 
-<div class="quarto-title-meta">
-
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">October 31, 2025</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<p>This vignette contains some key definitions for using the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html">Recommended Preliminary Steps</a>, and <em>Workflows</em> vignettes. A more thorough introduction to these concepts can be found in the forthcoming manuscript: <em>[insert link]</em>.<br>
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+<section id="devmsms-implementing-marginal-structural-models-msms-with-longitudinal-data" class="level1">
+<h1>devMSMs: Implementing Marginal Structural Models (MSMs) <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100" alt="Structural Models"> with Longitudinal Data</h1>
+<!-- badges: start -->
+<!-- badges: end -->
+<p>Those who study and work with humans are fundamentally interested in questions of causation. More specifically, scientists, clinicians, educators, and policymakers alike are often interested in <em>causal processes</em> involving questions about when (timing) and at what levels (dose) different factors influence human functioning and development, in order to inform our scientific understanding and improve people’s lives. However, for many, conceptual, methodological, and practical barriers have prevented the use of methods for causal inference developed in other fields. <br></p>
+<p>The goal of this <em>devMSMs</em> package and accompanying tutorial paper, <em>Investigating Causal Questions in Human Development Using Marginal Structural Models: A Tutorial Introduction to the devMSMs Package in R</em> (<a href="https://osf.io/preprints/psyarxiv/284mb">preprint</a>), is to provide a set of tools for implementing marginal structural models (<strong>MSMs</strong>; Robins et al., 2000).</p>
+<p>MSMs orginated in epidemiology and public health and represent one under-utilized tool for improving causal inference with longitudinal observational data, given certain assumptions. In brief, MSMs leverage inverse-probability-of-treatment-weights (IPTW) and the potential outcomes framework. MSMs first focus on the problem of confounding, using IPTW to attenuate associations between measured confounders and an exposure (e.g., experience, characteristic, event –from biology to the broader environment) over time. A weighted model can then be fitted relating a time-varying exposure and a future outcome. Finally, the model-predicted effects of different exposure histories that vary in dose and timing can be evaluated and compared as counterfactuals, to reveal putative causal effects. <br></p>
+<p>We employ the term <em>exposure</em> (sometimes referred to as “treatment” in other literatures) to encompass a variety of environmental factors, individual characteristics, or experiences that constitute the putative causal events within a causal model. Exposures may be distal or proximal, reflecting a developing child’s experience within different environments at many levels (Bronfenbrenner &amp; Ceci, 1994), ranging from the family (e.g., parenting), home (e.g., economic strain), school (e.g., teacher quality), neighborhood (e.g., diversity), to the greater politico-cultural-economic context (e.g., inequality). Exposures could also reflect factors internal to the child, including neurodevelopmental (e.g., risk markers), physiological (e.g., stress), and behavioral (e.g., anxiety) patterns to which the child’s development is exposed.<br>
 <br></p>
-<p>Key Terminology</p>
-<div class="cell">
+<section id="core-features" class="level2">
+<h2 class="anchored" data-anchor-id="core-features">Core Features</h2>
+<p>Core features of <em>devMSMs</em> include:</p>
+<ul>
+<li><p>Flexible functions with built-in user guidance, drawing on established expertise and best practices for implementing longitudinal IPTW weighting and outcome modeling, to answer substantive causal questions about dose and timing</p></li>
+<li><p>Functions that accept complete or imputed data to accommodate missingness often found in human studies</p></li>
+<li><p>A novel recommended workflow, based on expertise from several disciplines, for using the <em>devMSMs</em> functions with longitudinal data (see <em>Workflows</em> vignettes)</p></li>
+<li><p>An accompanying simulated longitudinal dataset, based on the real-world, Family Life Project (FLP) study of human development, for getting to know the package functions</p></li>
+<li><p>An accompanying suite of <a href="https://github.com/istallworthy/devMSMsHelpers">helper functions</a> to assist users in preparing and inspecting their data prior to the implementation of <em>devMSMs</em></p></li>
+<li><p>Executable, step-by-step user guidance for implementing the <em>devMSMs</em> workflow and preliminary steps in the form of vignettes geared toward users of all levels of R programming experience, along with a <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">R markdown template file</a></p></li>
+<li><p>A brief conceptual introduction, example empirical application, and additional resources in the accompanying tutorial paper</p></li>
+</ul>
+<p><br></p>
+</section>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>The package contains 7 core functions for implementing the two phases of the MSM process: longitudinal confounder adjustment and outcome modeling of longitudinal data with time-varying exposures. <br> <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png" alt="devMSMs overview" width="900"> <br> <br></p>
+<p>Below is a summary of the terms used in the <em>devMSMs</em> vignettes and functions. More details and examples can be found in the accompanying manuscript. <br></p>
+<div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <!-- preamble start -->
 
     <script>
 
-      function styleCell_camutbkxdvofruglrlmu(i, j, css_id) {
-          var table = document.getElementById("tinytable_camutbkxdvofruglrlmu");
+      function styleCell_sj4utul1fr3gkuth38wu(i, j, css_id) {
+          var table = document.getElementById("tinytable_sj4utul1fr3gkuth38wu");
           var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -97,8 +124,8 @@ ul.task-list li input[type="checkbox"] {
               console.warn(`Cell at (${i}, ${j}) not found.`);
           }
       }
-      function spanCell_camutbkxdvofruglrlmu(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_camutbkxdvofruglrlmu");
+      function spanCell_sj4utul1fr3gkuth38wu(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_sj4utul1fr3gkuth38wu");
         const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
         if (!targetCell) {
           console.warn(`Cell at (${i}, ${j}) not found.`);
@@ -129,14 +156,14 @@ ul.task-list li input[type="checkbox"] {
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '7', j: 0 }, { i: '1', j: 0 }, { i: '3', j: 0 }, { i: '5', j: 0 }, { i: '1', j: 1 }, { i: '9', j: 0 }, { i: '5', j: 1 }, { i: '7', j: 1 }, { i: '9', j: 1 }, { i: '3', j: 1 },  ], css_id: 'tinytable_css_owg3mpdsff1vsorse8tk',}, 
-          { positions: [ { i: '0', j: 0 }, { i: '10', j: 1 }, { i: '10', j: 0 }, { i: '0', j: 1 },  ], css_id: 'tinytable_css_9mnw5e053cq6ujzylub5',}, 
+          { positions: [ { i: '7', j: 0 }, { i: '1', j: 0 }, { i: '3', j: 0 }, { i: '5', j: 0 }, { i: '1', j: 1 }, { i: '9', j: 0 }, { i: '5', j: 1 }, { i: '7', j: 1 }, { i: '9', j: 1 }, { i: '3', j: 1 },  ], css_id: 'tinytable_css_p463g77tzjbd8m2rv093',}, 
+          { positions: [ { i: '0', j: 0 }, { i: '10', j: 1 }, { i: '10', j: 0 }, { i: '0', j: 1 },  ], css_id: 'tinytable_css_prxoyhmzc8ciat8c9z1e',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_camutbkxdvofruglrlmu(cell.i, cell.j, group.css_id);
+                  styleCell_sj4utul1fr3gkuth38wu(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -144,11 +171,11 @@ ul.task-list li input[type="checkbox"] {
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_owg3mpdsff1vsorse8tk, .table th.tinytable_css_owg3mpdsff1vsorse8tk { background-color: #ededed; }
-      .table td.tinytable_css_9mnw5e053cq6ujzylub5, .table th.tinytable_css_9mnw5e053cq6ujzylub5 { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_p463g77tzjbd8m2rv093, .table th.tinytable_css_p463g77tzjbd8m2rv093 { background-color: #ededed; }
+      .table td.tinytable_css_prxoyhmzc8ciat8c9z1e, .table th.tinytable_css_prxoyhmzc8ciat8c9z1e { border-bottom: solid #d3d8dc 0.1em; }
     </style>
     <div class="container">
-      <table class="table table-striped" id="tinytable_camutbkxdvofruglrlmu" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true"><caption><p>Summary of terminology used in <em>devMSMs</em></p></caption>
+      <table class="table table-striped" id="tinytable_sj4utul1fr3gkuth38wu" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -205,252 +232,64 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <p><br></p>
-<section id="weights-formula" class="level1">
-<h1>Weights Formula</h1>
-<p>Weights formula are formula, or mathematical equations, created at each exposure time point, regressing exposure on confounders for the purpose of creating and/or assessing balancing weights. The general form is given by: <br><br>
-</p>
-<pre><code>ESETA1.t ~ <span style="color: darkred">time-invariant</span> confounders + <span style="color: blue">time-varying</span> confounders + <i>lagged</i> <span style="color: seagreen;">exposures</span> + <i>lagged</i> <span style="color: purple;">outcomes</span></code></pre>
-<p><br></p>
-<p>Below is a table that summarizes the three formula <code>type</code>s that will be used.</p>
-<p>Table 2.</p>
-<div class="cell">
-<div class="cell-output-display">
-<!-- preamble start -->
-
-    <script>
-
-      function styleCell_y5952xmmo5dgs8kcplwy(i, j, css_id) {
-          var table = document.getElementById("tinytable_y5952xmmo5dgs8kcplwy");
-          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-          if (cell) {
-              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
-              cell.classList.add(css_id);
-          } else {
-              console.warn(`Cell at (${i}, ${j}) not found.`);
-          }
-      }
-      function spanCell_y5952xmmo5dgs8kcplwy(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_y5952xmmo5dgs8kcplwy");
-        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-        if (!targetCell) {
-          console.warn(`Cell at (${i}, ${j}) not found.`);
-        }
-
-        // Get all cells that need to be removed
-        const cellsToRemove = [];
-        for (let r = 0; r < rowspan; r++) {
-          for (let c = 0; c < colspan; c++) {
-            if (r === 0 && c === 0) continue; // Skip the target cell
-            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
-            if (cell) {
-              cellsToRemove.push(cell);
-            }
-          }
-        }
-
-        // Remove all cells
-        cellsToRemove.forEach(cell => cell.remove());
-
-        // Set rowspan and colspan of the target cell if it exists
-        if (targetCell) {
-          targetCell.rowSpan = rowspan;
-          targetCell.colSpan = colspan;
-        }
-      }
-      // tinytable span after
-      window.addEventListener('load', function () {
-          var cellsToStyle = [
-            // tinytable style arrays after
-          { positions: [ { i: '3', j: 0 }, { i: '3', j: 1 },  ], css_id: 'tinytable_css_cnrvemoutrlntk7fa88o',}, 
-          { positions: [ { i: '0', j: 0 }, { i: '0', j: 1 },  ], css_id: 'tinytable_css_sn3xqv8luxw7ha8cz8gw',}, 
-          ];
-
-          // Loop over the arrays to style the cells
-          cellsToStyle.forEach(function (group) {
-              group.positions.forEach(function (cell) {
-                  styleCell_y5952xmmo5dgs8kcplwy(cell.i, cell.j, group.css_id);
-              });
-          });
-      });
-    </script>
-
-    <style>
-      /* tinytable css entries after */
-      .table td.tinytable_css_cnrvemoutrlntk7fa88o, .table th.tinytable_css_cnrvemoutrlntk7fa88o { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_sn3xqv8luxw7ha8cz8gw, .table th.tinytable_css_sn3xqv8luxw7ha8cz8gw { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-    </style>
-    <div class="container">
-      <table class="table table-borderless" id="tinytable_y5952xmmo5dgs8kcplwy" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true"><caption><p>Summary of the formula terminology used in the <em>devMSMs</em>
-package for creating balancing weights and assessing their performance
-in devMSMs (<em>Workflows</em> vignettes Steps 4-6). The different kinds
-of formulas vary with respect to their inclusion of time-varying
-confounders and the <code>type</code> specification to create them using
-the <code>createFormulas()</code> function.</p></caption>
-        <thead>
-        
-              <tr>
-                <th scope="col" data-row="0" data-col="0">Term</th>
-                <th scope="col" data-row="0" data-col="1">Definition</th>
-              </tr>
-        </thead>
-        
-        <tbody>
-                <tr>
-                  <td data-row="1" data-col="0"><em>Full balancing formula</em>
-<p><code>type = "full"</code></p></td>
-                  <td data-row="1" data-col="1">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>all</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for pre-balance (<i>Workflows</i> vignettes Step 4b) and final balance assessment.
-<pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: blue;">B18Raw.6</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: blue;">CORTB.6</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: seagreen;">ES.6</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: blue;">HOMEETA1.6</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre></td>
-                </tr>
-                <tr>
-                  <td data-row="2" data-col="0"><em>Simplified balancing formula</em>
-<p><code>type = "short"</code></p></td>
-                  <td data-row="2" data-col="1">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for creating and assessing preliminary balancing weights to determine optimal weighting method.
-<pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre></td>
-                </tr>
-                <tr>
-                  <td data-row="3" data-col="0"><em>Updated balancing formula</em>
-<p><code>type = "update"</code></p></td>
-                  <td data-row="3" data-col="1">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, as well as any <i>imbalanced</i> <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> levels <i>at t-1+</i> Used to create final balancing weights.
-<pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.6</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre></td>
-                </tr>
-        </tbody>
-      </table>
-    </div>
-<!-- hack to avoid NA insertion in last line -->
+</section>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<p><em>devMSMs</em> can be installed in R Studio from Github using the <em>devtools</em> package:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(devtools, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"istallworthy/devMSMs"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devMSMs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p><br></p>
+<p>The helper functions can be installed from the accompanying <em>devMSMsHelpers</em> repo:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"istallworthy/devMSMsHelpers"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devMSMsHelpers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><br></p>
 </section>
-<section id="core-functions-of-devmsms" class="level1">
-<h1>7 core functions of <em>devMSMs</em></h1>
-<p>There are 7 key functions that are used in the <em>devMSMs</em> workflow.</p>
-<div class="cell">
-<!-- preamble start -->
-
-    <script>
-
-      function styleCell_0lecxsbpvm09kcdwiwz5(i, j, css_id) {
-          var table = document.getElementById("tinytable_0lecxsbpvm09kcdwiwz5");
-          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-          if (cell) {
-              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
-              cell.classList.add(css_id);
-          } else {
-              console.warn(`Cell at (${i}, ${j}) not found.`);
-          }
-      }
-      function spanCell_0lecxsbpvm09kcdwiwz5(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_0lecxsbpvm09kcdwiwz5");
-        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-        if (!targetCell) {
-          console.warn(`Cell at (${i}, ${j}) not found.`);
-        }
-
-        // Get all cells that need to be removed
-        const cellsToRemove = [];
-        for (let r = 0; r < rowspan; r++) {
-          for (let c = 0; c < colspan; c++) {
-            if (r === 0 && c === 0) continue; // Skip the target cell
-            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
-            if (cell) {
-              cellsToRemove.push(cell);
-            }
-          }
-        }
-
-        // Remove all cells
-        cellsToRemove.forEach(cell => cell.remove());
-
-        // Set rowspan and colspan of the target cell if it exists
-        if (targetCell) {
-          targetCell.rowSpan = rowspan;
-          targetCell.colSpan = colspan;
-        }
-      }
-      // tinytable span after
-      window.addEventListener('load', function () {
-          var cellsToStyle = [
-            // tinytable style arrays after
-          { positions: [ { i: '7', j: 0 }, { i: '7', j: 1 }, { i: '7', j: 2 }, { i: '7', j: 3 },  ], css_id: 'tinytable_css_64yu8jmlz0zm93yoxz39',}, 
-          { positions: [ { i: '5', j: 1 }, { i: '1', j: 0 }, { i: '3', j: 0 }, { i: '5', j: 0 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '1', j: 1 }, { i: '3', j: 1 }, { i: '1', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '1', j: 2 },  ], css_id: 'tinytable_css_a8mc877jsk81y4fydk6m',}, 
-          { positions: [ { i: '0', j: 0 }, { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 },  ], css_id: 'tinytable_css_15x7amo6a7km0hf8rmya',}, 
-          ];
-
-          // Loop over the arrays to style the cells
-          cellsToStyle.forEach(function (group) {
-              group.positions.forEach(function (cell) {
-                  styleCell_0lecxsbpvm09kcdwiwz5(cell.i, cell.j, group.css_id);
-              });
-          });
-      });
-    </script>
-
-    <style>
-      /* tinytable css entries after */
-      .table td.tinytable_css_64yu8jmlz0zm93yoxz39, .table th.tinytable_css_64yu8jmlz0zm93yoxz39 { background-color: #ededed; border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_a8mc877jsk81y4fydk6m, .table th.tinytable_css_a8mc877jsk81y4fydk6m { background-color: #ededed; }
-      .table td.tinytable_css_15x7amo6a7km0hf8rmya, .table th.tinytable_css_15x7amo6a7km0hf8rmya { border-bottom: solid #d3d8dc 0.1em; }
-    </style>
-    <div class="container">
-      <table class="table table-striped" id="tinytable_0lecxsbpvm09kcdwiwz5" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true"><caption><p>Summary of the 7 core functions of the <em>devMSMs</em> package.</p></caption>
-        <thead>
-        
-              <tr>
-                <th scope="col" data-row="0" data-col="0">Function</th>
-                <th scope="col" data-row="0" data-col="1">Purpose</th>
-                <th scope="col" data-row="0" data-col="2">Required.Input</th>
-                <th scope="col" data-row="0" data-col="3">Output</th>
-              </tr>
-        </thead>
-        
-        <tbody>
-                <tr>
-                  <td data-row="1" data-col="0"><a href="/reference/initMSM"><code>initMSM()</code></a></td>
-                  <td data-row="1" data-col="1">Creates MSM object with core variables for use in all other functions.</td>
-                  <td data-row="1" data-col="2"><code>exposure</code>, <code>time invariant confounders</code>, <code>time-varying confounders</code>)</td>
-                  <td data-row="1" data-col="3">msmObject</td>
-                </tr>
-                <tr>
-                  <td data-row="2" data-col="0"><a href="/reference/createFormulas.html"><code>createFormulas()</code></a></td>
-                  <td data-row="2" data-col="1">Creates balancing formulas at each exposure time point relating exposure to confounders.</td>
-                  <td data-row="2" data-col="2"><code>msmObject</code>, <code>type</code> (<code>'full'</code>, <code>'short'</code>, <code>'update'</code>)</td>
-                  <td data-row="2" data-col="3">List of balancing formulas for each exposure time point.</td>
-                </tr>
-                <tr>
-                  <td data-row="3" data-col="0"><a href="/reference/assessBalance"><code>assessBalance()</code></a></td>
-                  <td data-row="3" data-col="1">Assesses confounder balance at each exposure time point according to best practices (Jackson, 2016).</td>
-                  <td data-row="3" data-col="2"><code>data</code>, <code>msmObject</code></td>
-                  <td data-row="3" data-col="3">List of balance statistics. Tables &amp; love plots displaying balance statistics at each exposure time point.</td>
-                </tr>
-                <tr>
-                  <td data-row="4" data-col="0"><a href="/reference/createWeights"><code>createWeights()</code></a></td>
-                  <td data-row="4" data-col="1">Creates balancing weights for each person (wrapper for <code>weightit::weightitMSM</code>).</td>
-                  <td data-row="4" data-col="2"><code>data</code>, <code>msmObject</code></td>
-                  <td data-row="4" data-col="3">Weights object. Histogram &amp; summary of balancing weights.</td>
-                </tr>
-                <tr>
-                  <td data-row="5" data-col="0"><a href="/reference/trimWeights"><code>trimWeights()</code></a></td>
-                  <td data-row="5" data-col="1">Trims balancing weights to account for heavy tails.</td>
-                  <td data-row="5" data-col="2"><code>data</code>, <code>msmObject</code></td>
-                  <td data-row="5" data-col="3">Trimmed weights object.Histogram &amp; summary of trimmed weight.</td>
-                </tr>
-                <tr>
-                  <td data-row="6" data-col="0"><a href="/reference/fitModel"><code>fitModel()</code></a></td>
-                  <td data-row="6" data-col="1">Fits user-selected, weighted marginal model relating exposure to outcome.</td>
-                  <td data-row="6" data-col="2"><code>data</code>, <code>msmObject</code>, <code>weights</code>, <code>outcome</code>, <code>model</code> (<code>m0</code>-<code>m3</code>)</td>
-                  <td data-row="6" data-col="3">Fitted model object. Omnibus test &amp; table of model evidence.</td>
-                </tr>
-                <tr>
-                  <td data-row="7" data-col="0"><a href="/reference/compareHistories"><code>compareHistories()</code></a></td>
-                  <td data-row="7" data-col="1">Estimate, compare, &amp; visualize model-predicted outcomes as a function of exposure history.</td>
-                  <td data-row="7" data-col="2"><code>data</code>, <code>msmObject</code>, <code>fitted model</code></td>
-                  <td data-row="7" data-col="3">Tables of estimated values and comparisons. Boxplot.</td>
-                </tr>
-        </tbody>
-      </table>
-    </div>
-<!-- hack to avoid NA insertion in last line -->
-</div>
+<section id="recommended-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="recommended-workflow">Recommended Workflow</h2>
+<p>We propose a recommended workflow for using <em>devMSMs</em> to answer causal questions with longituinal data. We suggest using the vignettes in the order they appear in the Articles tab. After reading the accompanying manuscript, We recommend first reviewing the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a> and <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a> vignettes as you begin preparing your data. We then recommend downloading the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">R markdown template file</a> which contains all the code described in the <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specify Core Inputs</a> and <em>Workflows</em> vignettes (for binary (TBA) or <a href="https://istallworthy.github.io/devMSMs/articles/Workflow_Continuous_Exposure.html">continuous</a> exposures) for implementing the steps below.</p>
+<p><img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png" alt="devMSMs schematic of workflow" width="1000"></p>
+<p><br></p>
+</section>
+<section id="citation-bug-reports" class="level2">
+<h2 class="anchored" data-anchor-id="citation-bug-reports">Citation &amp; Bug Reports</h2>
+<p>Please cite your use <em>devMSMs</em> using the following citation:<br>
+<br> Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Butts K, Berry D (2024). <br> <em>devMSMs</em>: Implementing Marginal Structural Models with Longitudinal Data. R package version 0.0.0.9000, <a href="https://istallworthy.github.io/devMSMs/" class="uri">https://istallworthy.github.io/devMSMs/</a>.</p>
+<p><br></p>
+<p>Please report any bugs at the following link: <a href="https://github.com/istallworthy/devMSMs/issues" class="uri">https://github.com/istallworthy/devMSMs/issues</a></p>
+<p><br></p>
+</section>
+<section id="additional-resources" class="level2">
+<h2 class="anchored" data-anchor-id="additional-resources">Additional Resources</h2>
+<p>Arel-Bundock, Diniz, M. A., Greifer, N., &amp; Bacher, E. (2024). marginaleffects: Predictions, Comparisons, Slopes, Marginal Means, and Hypothesis Tests (0.12.0) [Computer software]. <a href="https://cran.r-project.org/web/packages/marginaleffects/index.html" class="uri">https://cran.r-project.org/web/packages/marginaleffects/index.html</a>.</p>
+<p>Austin, P. C. (2011). An Introduction to Propensity Score Methods for Reducing the Effects of Confounding in Observational Studies. Multivariate Behavioral Research, 46(3), 399–424. <a href="https://doi.org/10.1080/00273171.2011.568786" class="uri">https://doi.org/10.1080/00273171.2011.568786</a></p>
+<p>Blackwell, M. (2013). A Framework for Dynamic Causal Inference in Political Science. American Journal of Political Science, 57(2), 504–520. <a href="https://doi.org/10.1111/j.1540-5907.2012.00626.x" class="uri">https://doi.org/10.1111/j.1540-5907.2012.00626.x</a></p>
+<p>Cole, S. R., &amp; Hernán, M. A. (2008). Constructing Inverse Probability Weights for Marginal Structural Models. American Journal of Epidemiology, 168(6), 656–664. <a href="https://doi.org/10.1093/aje/kwn164" class="uri">https://doi.org/10.1093/aje/kwn164</a></p>
+<p>Eronen, M. I. (2020). Causal discovery and the problem of psychological interventions. New Ideas in Psychology, 59, 100785. <a href="https://doi.org/10.1016/j.newideapsych.2020.100785" class="uri">https://doi.org/10.1016/j.newideapsych.2020.100785</a></p>
+<p>Fong, C., Hazlett, C., &amp; Imai, K. (2018).Covariate balancing propensity score for a continuous treatment: Application to the efficacy of political advertisements. The Annals of Applied Statistics, 12(1), 156–177. <a href="https://doi.org/10.1214/17-AOAS1101" class="uri">https://doi.org/10.1214/17-AOAS1101</a></p>
+<p>Foster, E. M. (2010). Causal inference and developmental psychology. Developmental Psychology, 46(6), 1454–1480. https://doi.org/10.1037/a0020204</p>
+<p>Greifer N (2024).cobalt: Covariate Balance Tables and Plots. R package version 4.5.2, <a href="https://github.com/ngreifer/cobalt" class="uri">https://github.com/ngreifer/cobalt</a>, <a href="https://ngreifer.github.io/cobalt/" class="uri">https://ngreifer.github.io/cobalt/</a></p>
+<p>Greifer N (2024). WeightIt: Weighting for Covariate Balance in Observational Studies. <a href="https://ngreifer.github.io/WeightIt/" class="uri">https://ngreifer.github.io/WeightIt/</a>, <a href="https://github.com/ngreifer/WeightIt" class="uri">https://github.com/ngreifer/WeightIt</a></p>
+<p>Jackson, John W.(2016). Diagnostics for Confounding of Time-varying and Other Joint Exposures. Epidemiology, 2016 Nov, 27(6), 859-69. <a href="https://doi.org/10.1097/EDE.0000000000000547" class="uri">https://doi.org/10.1097/EDE.0000000000000547</a>.</p>
+<p>Haber, N. A., Wood, M. E., Wieten, S., &amp; Breskin, A.(2022). DAG With Omitted Objects Displayed (DAGWOOD): A framework for revealing causal assumptions in DAGs. Annals of Epidemiology, 68, 64–71. <a href="https://doi.org/10.1016/j.annepidem.2022.01.001" class="uri">https://doi.org/10.1016/j.annepidem.2022.01.001</a></p>
+<p>Hernán, M., &amp; Robins, J. (2024). Causal Inference: What If. CRC Press.</p>
+<p>Hirano, K., &amp; Imbens, G. W. (2004).The Propensity Score with Continuous Treatments. In Applied Bayesian Modeling and Causal Inference from Incomplete-Data Perspectives (pp.&nbsp;73–84). John Wiley &amp; Sons, Ltd.&nbsp;<a href="https://doi.org/10.1002/0470090456.ch7" class="uri">https://doi.org/10.1002/0470090456.ch7</a></p>
+<p>Kainz, K., Greifer, N., Givens, A., Swietek, K., Lombardi, B. M., Zietz, S., &amp; Kohn, J. L. (2017). Improving Causal Inference: Recommendations for Covariate Selection and Balance in Propensity Score Methods. Journal of the Society for Social Work and Research, 8(2), 279–303. <a href="https://doi.org/10.1086/691464" class="uri">https://doi.org/10.1086/691464</a></p>
+<p>Loh, W. W., Ren, D., &amp; West, S. G. (2024). Parametric g-formula for Testing Time-Varying Causal Effects: What It Is, Why It Matters, and How to Implement It in Lavaan. Multivariate Behavioral Research, 59(5), 995–1018. https://doi.org/10.1080/00273171.2024.2354228</p>
+<p>Pishgar, F., Greifer, N., Leyrat, C., &amp; Stuart, E. (2021). MatchThem: Matching andWeighting after Multiple Imputation. R Journal, 13(2), 292–305. https://doi.org/10.32614/RJ-2021-073</p>
+<p>Robins, J. M., Hernán, M.Á., &amp; Brumback, B. (2000). Marginal Structural Models and Causal Inference in Epidemiology. Epidemiology, 11(5), 550–560.</p>
+<p>Rubin, D. B. (2005). Causal Inference Using Potential Outcomes: Design, Modeling, Decisions. Journal of the American Statistical Association, 100(469), 322–331. https://doi.org/10.1198/016214504000001880</p>
+<p>Rubin, D. B. (1974). Estimating causal effects of treatments in randomized and nonrandomized studies. Journal of Educational Psychology, 66(5), 688–701. https://doi.org/10.1037/h0037350</p>
+<p>Stuart, E. A. (2010). Matching methods for causal inference: A review and a look forward. Statistical Science: A Review Journal of the Institute of Mathematical Statistics, 25(1), 1–21. https://doi.org/10.1214/09-STS313</p>
+<p>Stuart, E. A. (2008). Developing practical recommendations for the use of propensity scores: Discussion of ‘A critical appraisal of propensity score matching in the medical literature between 1996 and 2003’ by Peter Austin, Statistics in Medicine. Statistics in Medicine, 27(12), 2062–2065. https://doi.org/10.1002/sim.3207</p>
+<p>Textor, J. (2015). Drawing and Analyzing Causal DAGs with DAGitty.</p>
+<p>Thoemmes, F., &amp; Ong, A. D. (2016). A Primer on Inverse Probability of Treatment Weighting and Marginal Structural Models. <a href="https://doi.org/10.1177/2167696815621645" class="uri">https://doi.org/10.1177/2167696815621645</a></p>
+<p>Woodward, J. (2005). Making Things Happen: A Theory of Causal Explanation. Oxford University Press, USA.</p>
+</section>
 </section>
 
 </main>

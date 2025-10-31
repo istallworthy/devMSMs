@@ -428,6 +428,7 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
                  "m3" = c(epoch_vars, interactions)) #, covariates))
   
   # IS added 10/29/25
+  if(!class(family) %in% ("function")){
   if(any(family %in% "multinomial")){ # multinomial outcome
     WeightIt::multinom_weightit(
       formula = reformulate(covs, response = outcome),
@@ -442,7 +443,7 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
       link = link,
       weightit = weights
     )
-  }else{
+  }}else{
     WeightIt::glm_weightit(
       formula = reformulate(covs, response = outcome),
       data = data,
