@@ -336,13 +336,14 @@ compareHistories <- function(
           )
         }, .groups = "drop")
       preds <- data.frame(preds)
+      comps <- summary(mice::pool(comps, dfcom = Inf), conf.int = TRUE)
+      
     } else {
       preds <- summary(mice::pool(preds, dfcom = Inf), conf.int = TRUE)
       comps <- summary(mice::pool(comps, dfcom = Inf), conf.int = TRUE)
       names(preds)[7:8] <- names(comps)[7:8] <- c("conf.low", "conf.high")
     }
     
-    comps <- summary(mice::pool(comps, dfcom = Inf), conf.int = TRUE)
     # names(preds)[7:8] <- names(comps)[7:8] <- c("conf.low", "conf.high")
   } else { # REGULAR DATA
     comps <- as.data.frame(comps[[1]])
