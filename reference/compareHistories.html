@@ -62,6 +62,7 @@ plotting results.</p>
 <span>  dose_level <span class="op">=</span> <span class="st">"h"</span>,</span>
 <span>  reference <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  comparison <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outcome_level <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mc_comp_method <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  save.out <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -112,6 +113,12 @@ compare comparison, required if comparison is supplied</p></dd>
 <dd><p>(optional) list of one or more strings of "-"-separated "l"
 and "h" values indicative of comparison history/histories to compare to
 reference, required if reference is supplied</p></dd>
+
+
+<dt id="arg-outcome-level">outcome_level<a class="anchor" aria-label="anchor" href="#arg-outcome-level"></a></dt>
+<dd><p>levels of a factor outcome within which the user wishes
+compare histories (default is all levels), history predictions and comparisons
+will be made within each outcome level.</p></dd>
 
 
 <dt id="arg-mc-comp-method">mc_comp_method<a class="anchor" aria-label="anchor" href="#arg-mc-comp-method"></a></dt>
@@ -210,23 +217,15 @@ for different exposure histories and <code>comps</code> with contrasts from
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">w</span>,</span></span>
 <span class="r-in"><span>  outcome <span class="op">=</span> <span class="st">"D.3"</span>, model <span class="op">=</span> <span class="st">"m0"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in all_fits[[1]]:</span> subscript out of bounds</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">comp</span> <span class="op">&lt;-</span> <span class="fu">compareHistories</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  fit <span class="op">=</span> <span class="va">fit</span>,</span></span>
 <span class="r-in"><span>  hi_lo_cut <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.6</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Assertion failed. One of the following must apply:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * checkmate::check_character(hypothesis): Must comply to pattern</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * '=|&lt;=|&gt;='</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * checkmate::check_numeric(hypothesis): Must be of type 'numeric', not</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * 'character'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * checkmate::check_formula(hypothesis): Must be a formula, not</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * character</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * checkmate::check_matrix(hypothesis): Must be of type 'matrix', not</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * 'character'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * checkmate::check_function(hypothesis): Must be a function, not</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * 'character'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>  * checkmate::check_null(hypothesis): Must be NULL</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> in compareHistories(fit = fit, hi_lo_cut =...:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>  Argument 'fit' (equal to 'fit') could not be evaluated.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> PROBLEM: object 'fit' not found.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">comp</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'comp' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">comp</span><span class="op">)</span></span></span>
@@ -242,62 +241,17 @@ for different exposure histories and <code>comps</code> with contrasts from
 <span class="r-in"><span>  reference <span class="op">=</span> <span class="st">"l-l-l"</span>,</span></span>
 <span class="r-in"><span>  comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"h-h-h"</span>, <span class="st">"h-h-l"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> in compareHistories(fit = fit, hi_lo_cut =...:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>  Argument 'fit' (equal to 'fit') could not be evaluated.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> PROBLEM: object 'fit' not found.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">comp2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Exposure Main Effects:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are no participants in your sample in the following histories: l-l-l. </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>                    Please revise your reference/comparison histories and/or the high/low cutoffs, if applicable.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Out of the total of 50 individuals in the sample, below is the distribution of the 6 (12%) individuals that fall into 2 user-selected exposure histories (out of the 24 total) created from 30th and 60th percentile values for low and high levels of exposure-epoch A.1, A.2, A.3. </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> USER ALERT: Please inspect the distribution of the sample across the following exposure histories and ensure there is sufficient spread to avoid extrapolation and low precision:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +---------------+---+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | epoch_history | n |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +===============+===+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | h-h-h         | 3 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +---------------+---+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | h-h-l         | 3 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +---------------+---+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Table: Summary of user-selected exposure histories based on exposure main effects A.1, A.2, A.3: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Below are the pooled average predictions by user-specified history:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------+-------+------+--------+----------+-----------+----------+-----------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | term  | A.1   | A.2  | A.3    | estimate | std.error | conf.low | conf.high |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +=======+=======+======+========+==========+===========+==========+===========+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | l-l-l | -0.47 | -0.3 | -0.804 | -0.15    | 0.2       | -0.54    | 0.24      |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------+-------+------+--------+----------+-----------+----------+-----------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | h-h-l | 0.24  | 0.31 | -0.804 | -0.179   | 0.13      | -0.43    | 0.07      |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------+-------+------+--------+----------+-----------+----------+-----------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | h-h-h | 0.24  | 0.31 | -0.051 | -0.093   | 0.14      | -0.36    | 0.18      |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------+-------+------+--------+----------+-----------+----------+-----------+ </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Conducting multiple comparison correction for all pairings between comparison histories and each reference history using the BH method. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------------+-------------+-----------+-----------+------------+-----------+--------------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | term              | estimate    | std.error | p.value   | conf.low   | conf.high | p.value_corr |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +===================+=============+===========+===========+============+===========+==============+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (h-h-h) - (l-l-l) | 0.05723992  | 0.1571878 | 0.7157462 | -0.2508426 | 0.3653224 | 0.8193787    |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------------+-------------+-----------+-----------+------------+-----------+--------------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (h-h-l) - (l-l-l) | -0.02878467 | 0.1260583 | 0.8193787 | -0.2758544 | 0.2182850 | 0.8193787    |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------------+-------------+-----------+-----------+------------+-----------+--------------+ </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'comp2' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">comp2</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="compareHistories-1.png" alt="" width="700" height="433"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'comp2' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">comp2</span>, <span class="st">"preds"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    term        A.1        A.2         A.3    estimate std.error  statistic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 l-l-l -0.4684962 -0.2971206 -0.80434443 -0.14979959 0.1983536 -0.7552150</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 h-h-l  0.2359494  0.3148300 -0.80434443 -0.17858426 0.1267806 -1.4086089</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 h-h-h  0.2359494  0.3148300 -0.05134827 -0.09255967 0.1371104 -0.6750739</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     p.value  s.value   conf.low  conf.high  df dose</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.4501200 1.151619 -0.5385654 0.23896625 Inf    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 0.1589509 2.653347 -0.4270696 0.06990112 Inf    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 0.4996288 1.001071 -0.3612912 0.17617185 Inf    3</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'comp2' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">comp2</span>, <span class="st">"comps"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                term    estimate std.error  statistic   p.value   s.value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (h-h-h) - (l-l-l)  0.05723992 0.1571878  0.3641498 0.7157462 0.4824800</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 (h-h-l) - (l-l-l) -0.02878467 0.1260583 -0.2283442 0.8193787 0.2873977</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     conf.low conf.high  dose p.value_corr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.2508426 0.3653224 3 - 0    0.8193787</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.2758544 0.2182850 2 - 0    0.8193787</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'comp2' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

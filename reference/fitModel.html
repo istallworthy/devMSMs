@@ -112,7 +112,10 @@ required for covariate models ("m1", "m3")</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
-<dd><p>(optional) family function specification for <code><a href="https://ngreifer.github.io/WeightIt/reference/glm_weightit.html" class="external-link">WeightIt::glm_weightit()</a></code> model.</p></dd>
+<dd><p>(optional) family function specification for <code><a href="https://ngreifer.github.io/WeightIt/reference/glm_weightit.html" class="external-link">WeightIt::glm_weightit()</a></code> model.
+Note that this should be specified as as a function, not a character string unless you have
+a multinomial outcome, in which case set this to "multinomial", or if you have an ordinal
+outcome with more than 2 levels, in which case set this to "ordinal". (default is gaussian)</p></dd>
 
 
 <dt id="arg-link">link<a class="anchor" aria-label="anchor" href="#arg-link"></a></dt>
@@ -182,171 +185,63 @@ of the number of datasets (1 for a data.frame or the number of imputed datasets)
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">w</span>, </span></span>
 <span class="r-in"><span>  outcome <span class="op">=</span> <span class="st">"D.3"</span>, model <span class="op">=</span> <span class="st">"m0"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in all_fits[[1]]:</span> subscript out of bounds</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_m0</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Please inspect the Wald test to determine if the exposures collectively predict significant variation in the outcome compared to a model without exposure terms.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> We strongly suggest only conducting history comparisons if the test is significant.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="text-decoration: underline;">Wald test</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">Variance: HC0 robust (adjusted for estimation of weights)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model 1: D.3 ~ A.1 + A.2 + A.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model 2: D.3 ~ 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Res.Df Df  Chisq Pr(&gt;Chisq)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     46                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     49  3 1.7185     0.6328</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m0, is summarized below:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |             | (1)                              |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |             | Est.   | CI              | p     |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +=============+========+=================+=======+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (Intercept) | -0.265 | [-0.546, 0.015] | 0.063 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.1         | 0.086  | [-0.142, 0.314] | 0.461 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.2         | -0.053 | [-0.325, 0.220] | 0.705 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.3         | 0.149  | [-0.140, 0.437] | 0.312 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | Num.Obs.    | 50     |                 |       |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+ </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'fit_m0' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fit_m1</span> <span class="op">&lt;-</span> <span class="fu">fitModel</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">w</span>, </span></span>
 <span class="r-in"><span>  outcome <span class="op">=</span> <span class="st">"D.3"</span>, model <span class="op">=</span> <span class="st">"m1"</span>, </span></span>
 <span class="r-in"><span>  covariates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in all_fits[[1]]:</span> subscript out of bounds</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_m1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Please inspect the Wald test to determine if the exposures collectively predict significant variation in the outcome compared to a model without exposure terms.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> We strongly suggest only conducting history comparisons if the test is significant.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="text-decoration: underline;">Wald test</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">Variance: HC0 robust (adjusted for estimation of weights)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model 1: D.3 ~ A.1 + A.2 + A.3 + C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model 2: D.3 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Res.Df Df  Chisq Pr(&gt;Chisq)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     45                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     48  3 1.6466     0.6489</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m1, is summarized below:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |             | (1)                               |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |             | Est.   | CI               | p     |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +=============+========+==================+=======+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (Intercept) | -0.273 | [-0.533, -0.012] | 0.040 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.1         | 0.065  | [-0.159, 0.289]  | 0.568 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.2         | -0.064 | [-0.353, 0.225]  | 0.665 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.3         | 0.149  | [-0.129, 0.427]  | 0.294 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | C           | 0.334  | [0.074, 0.594]   | 0.012 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | Num.Obs.    | 50     |                  |       |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+ </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'fit_m1' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fit_m2</span> <span class="op">&lt;-</span> <span class="fu">fitModel</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">w</span>, </span></span>
 <span class="r-in"><span>  outcome <span class="op">=</span> <span class="st">"D.3"</span>, model <span class="op">=</span> <span class="st">"m2"</span>, </span></span>
 <span class="r-in"><span>  int_order <span class="op">=</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in all_fits[[1]]:</span> subscript out of bounds</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_m2</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Please inspect the Wald test to determine if the exposures collectively predict significant variation in the outcome compared to a model without exposure terms.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> We strongly suggest only conducting history comparisons if the test is significant.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="text-decoration: underline;">Wald test</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">Variance: HC0 robust (adjusted for estimation of weights)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model 1: D.3 ~ A.1 + A.2 + A.3 + A.1 + A.2 + A.3 + A.1:A.2 + A.1:A.3 + A.2:A.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model 2: D.3 ~ 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Res.Df Df  Chisq Pr(&gt;Chisq)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     43                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     49  6 2.8312     0.8297</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m2, is summarized below:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |             | (1)                              |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |             | Est.   | CI              | p     |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +=============+========+=================+=======+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (Intercept) | -0.268 | [-0.556, 0.020] | 0.068 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.1         | 0.072  | [-0.173, 0.316] | 0.566 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.2         | -0.028 | [-0.307, 0.250] | 0.843 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.3         | 0.142  | [-0.143, 0.427] | 0.329 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.1 × A.2   | -0.088 | [-0.395, 0.219] | 0.574 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.1 × A.3   | 0.010  | [-0.376, 0.397] | 0.958 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.2 × A.3   | -0.095 | [-0.423, 0.233] | 0.571 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | Num.Obs.    | 50     |                 |       |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+-----------------+-------+ </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'fit_m2' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fit_m3</span> <span class="op">&lt;-</span> <span class="fu">fitModel</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">w</span>, </span></span>
 <span class="r-in"><span>  outcome <span class="op">=</span> <span class="st">"D.3"</span>, model <span class="op">=</span> <span class="st">"m3"</span>,</span></span>
 <span class="r-in"><span>  int_order <span class="op">=</span> <span class="fl">2</span>, covariates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in all_fits[[1]]:</span> subscript out of bounds</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_m3</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Please inspect the Wald test to determine if the exposures collectively predict significant variation in the outcome compared to a model without exposure terms.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> We strongly suggest only conducting history comparisons if the test is significant.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="text-decoration: underline;">Wald test</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">Variance: HC0 robust (adjusted for estimation of weights)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model 1: D.3 ~ A.1 + A.2 + A.3 + A.1 + A.2 + A.3 + C + A.1:A.2 + A.1:A.3 + A.1:C + A.2:A.3 + A.2:C + A.3:C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model 2: D.3 ~ C</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Res.Df Df  Chisq Pr(&gt;Chisq)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     39                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     48  9 10.134     0.3397</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The marginal model, m3, is summarized below:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |             | (1)                               |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |             | Est.   | CI               | p     |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +=============+========+==================+=======+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (Intercept) | -0.232 | [-0.486, 0.023]  | 0.075 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.1         | 0.049  | [-0.223, 0.322]  | 0.723 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.2         | -0.046 | [-0.333, 0.240]  | 0.751 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.3         | 0.126  | [-0.141, 0.392]  | 0.354 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | C           | 0.358  | [0.066, 0.649]   | 0.016 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.1 × A.2   | 0.067  | [-0.245, 0.380]  | 0.673 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.1 × A.3   | 0.195  | [-0.156, 0.546]  | 0.276 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.1 × C     | -0.076 | [-0.318, 0.167]  | 0.540 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.2 × A.3   | -0.164 | [-0.480, 0.151]  | 0.308 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.2 × C     | -0.343 | [-0.684, -0.001] | 0.049 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | A.3 × C     | -0.108 | [-0.333, 0.117]  | 0.347 |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | Num.Obs.    | 50     |                  |       |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> +-------------+--------+------------------+-------+ </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'fit_m3' not found</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  ID <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span>,</span></span>
+<span class="r-in"><span>  A.1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  A.2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  A.3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  B.1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  B.2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  B.3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  D.3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span>, <span class="fl">16</span><span class="op">)</span>, <span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="initMSM.html">initMSM</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">data</span>,</span></span>
+<span class="r-in"><span>  exposure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A.1"</span>, <span class="st">"A.2"</span>, <span class="st">"A.3"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ti_conf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  tv_conf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B.1"</span>, <span class="st">"B.2"</span>, <span class="st">"B.3"</span>, <span class="st">"D.3"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="createFormulas.html">createFormulas</a></span><span class="op">(</span><span class="va">obj</span>, type <span class="op">=</span> <span class="st">"short"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="createWeights.html">createWeights</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, formulas <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">fit_m0</span> <span class="op">&lt;-</span> <span class="fu">fitModel</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">w</span>, </span></span>
+<span class="r-in"><span>  outcome <span class="op">=</span> <span class="st">"D.3"</span>, model <span class="op">=</span> <span class="st">"m0"</span>, family <span class="op">=</span> <span class="st">"multinomial"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_m0</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> There are duplicate labels in the estimates table. Call `get_estimates()` to see the available identifiers, and use the `shape` argument to specify the (potentially nested or grouped)  nature of parameters. Alternatively, duplication can happen when you use `coef_map` or `coef_rename` to assign the same label to multiple variables, but these variables are part of the same model. Please check your `coef_map` and `coef_rename` arguments.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

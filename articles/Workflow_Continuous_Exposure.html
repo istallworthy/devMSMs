@@ -61,7 +61,7 @@
       <h1>Workflow: Continuous Exposure</h1>
 
       <p class="author">Isabella Stallworthy</p>
-      <p class="date">2025-09-02</p>
+      <p class="date">2025-10-31</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Workflow_Continuous_Exposure.qmd" class="external-link"><code>vignettes/Workflow_Continuous_Exposure.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -916,13 +916,13 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5133</span></span>
+<span><span class="co">#&gt;     Min                                 Max</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 8.513</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;        1246   1145    294    697    919</span></span>
-<span><span class="co">#&gt;  all 7.4584 7.6788 7.9896 8.2035 8.5133</span></span>
+<span><span class="co">#&gt;                                  </span></span>
+<span><span class="co">#&gt;       1246  1145  919   697   294</span></span>
+<span><span class="co">#&gt;  all 7.458 7.679 7.99 8.203 8.513</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -973,13 +973,13 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 271.3462</span></span>
+<span><span class="co">#&gt;     Min                                   Max</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 271.346</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.1877 58.3054 63.4626 178.9983 271.3462</span></span>
+<span><span class="co">#&gt;                                          </span></span>
+<span><span class="co">#&gt;        1145   1030    697     591     475</span></span>
+<span><span class="co">#&gt;  all 52.188 58.305 63.463 178.998 271.346</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1026,13 +1026,13 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 216.1534</span></span>
+<span><span class="co">#&gt;     Min                                   Max</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 216.153</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                              </span></span>
-<span><span class="co">#&gt;          342      30     475    1145       36</span></span>
-<span><span class="co">#&gt;  all 43.0076 43.1447 55.5631 150.016 216.1534</span></span>
+<span><span class="co">#&gt;                                          </span></span>
+<span><span class="co">#&gt;        1145    475    342      36      30</span></span>
+<span><span class="co">#&gt;  all 43.008 43.145 55.563 150.016 216.153</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1072,31 +1072,31 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>      i <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 19.22; range = 0-660).</span></span>
+<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.25 (SD = 22.14; range = 0-753).</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 659.5962</span></span>
+<span><span class="co">#&gt;     Min                                   Max</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 752.676</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1066     475    1235      591     1145</span></span>
-<span><span class="co">#&gt;  all 60.4154 67.6227 90.0896 116.7814 659.5962</span></span>
+<span><span class="co">#&gt;                                           </span></span>
+<span><span class="co">#&gt;        1235   1145     591     475      30</span></span>
+<span><span class="co">#&gt;  all 62.259 83.862 100.834 184.266 752.676</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       6.768 1.022   1.557       0</span></span>
+<span><span class="co">#&gt; all       7.343 1.058   1.702       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;              Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     27.62</span></span>
+<span><span class="co">#&gt; Weighted     23.54</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>     i <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -1122,6 +1122,22 @@ The love plots depict the standardized associations between confounder and expos
 <span>                             formulas <span class="op">=</span> <span class="va">formulas</span>, </span>
 <span>                             save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: nnls</span></span>
+<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
+<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
+<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
+<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
+<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
+<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
+<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
+<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
+<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
+<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
+<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
+<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
+<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
+<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
+<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
+<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
 <span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
 <span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
 <span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
@@ -1297,55 +1313,35 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
 <span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
 <span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :</span></span>
-<span><span class="co">#&gt; prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">weights.super</span>, </span>
 <span>      i <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For imputation 1 and the `super` weighting method, the median weight value is 1.27 (SD = 9.99; range = 0-270).</span></span>
+<span><span class="co">#&gt; For imputation 1 and the `super` weighting method, the median weight value is 1.27 (SD = 9.71; range = 0-256).</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                    Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 270.2898</span></span>
+<span><span class="co">#&gt;     Min                                   Max</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 255.589</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                               </span></span>
-<span><span class="co">#&gt;         1030     475     697     1145      591</span></span>
-<span><span class="co">#&gt;  all 52.0314 58.1278 63.2379 178.3232 270.2898</span></span>
+<span><span class="co">#&gt;                                         </span></span>
+<span><span class="co">#&gt;       1145   1030    697     591     475</span></span>
+<span><span class="co">#&gt;  all 50.53 56.147 65.494 180.021 255.589</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       3.817 0.959   1.141       0</span></span>
+<span><span class="co">#&gt; all       3.724 0.957   1.127       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;              Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     83.06</span></span>
+<span><span class="co">#&gt; Weighted     86.97</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weights.super</span>, </span>
 <span>     i <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -1708,30 +1704,30 @@ The love plots depict the standardized associations between confounder and expos
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">balance_stats.bart</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 35 out of 241 (14.5%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.12 (max: 0.22):</span></span>
+<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 32 out of 241 (13.3%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.25):</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | Exposure  | Total # of covariates | # of imbalanced covariates |</span></span>
 <span><span class="co">#&gt; +===========+=======================+============================+</span></span>
 <span><span class="co">#&gt; | ESETA1.6  | 28                    | 8                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.15 | 38                    | 13                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.15 | 38                    | 15                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.24 | 47                    | 8                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.24 | 47                    | 7                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.35 | 59                    | 5                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.35 | 59                    | 2                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.58 | 69                    | 1                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.58 | 69                    | 0                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates Averaging Across Imputed Datasetrs using `bart`</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">balance_stats.super</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `super` weighting method: As shown below, 31 out of 241 (12.9%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.29):</span></span>
+<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `super` weighting method: As shown below, 30 out of 241 (12.4%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.29):</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | Exposure  | Total # of covariates | # of imbalanced covariates |</span></span>
 <span><span class="co">#&gt; +===========+=======================+============================+</span></span>
-<span><span class="co">#&gt; | ESETA1.6  | 28                    | 7                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.6  | 28                    | 6                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.15 | 38                    | 18                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
@@ -1749,34 +1745,29 @@ The love plots depict the standardized associations between confounder and expos
 <div class="cell">
 <div class="sourceCode cell-code" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.cbps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
-<span><span class="co">#&gt; $effective.sample.size</span></span>
-<span><span class="co">#&gt;                Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.0000</span></span>
-<span><span class="co">#&gt; Weighted    605.0464</span></span>
+<span><span class="co">#&gt; $negative.entropy</span></span>
+<span><span class="co">#&gt;       all </span></span>
+<span><span class="co">#&gt; 0.4431531</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.glm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
-<span><span class="co">#&gt; $effective.sample.size</span></span>
-<span><span class="co">#&gt;                 Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.00000</span></span>
-<span><span class="co">#&gt; Weighted     82.74434</span></span>
+<span><span class="co">#&gt; $negative.entropy</span></span>
+<span><span class="co">#&gt;      all </span></span>
+<span><span class="co">#&gt; 1.143656</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.gbm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
-<span><span class="co">#&gt; $effective.sample.size</span></span>
-<span><span class="co">#&gt;                Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.0000</span></span>
-<span><span class="co">#&gt; Weighted    103.8726</span></span>
+<span><span class="co">#&gt; $negative.entropy</span></span>
+<span><span class="co">#&gt;      all </span></span>
+<span><span class="co">#&gt; 1.016072</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
-<span><span class="co">#&gt; $effective.sample.size</span></span>
-<span><span class="co">#&gt;                 Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.00000</span></span>
-<span><span class="co">#&gt; Weighted     27.62483</span></span>
+<span><span class="co">#&gt; $negative.entropy</span></span>
+<span><span class="co">#&gt;      all </span></span>
+<span><span class="co">#&gt; 1.701811</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
-<span><span class="co">#&gt; $effective.sample.size</span></span>
-<span><span class="co">#&gt;                 Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.00000</span></span>
-<span><span class="co">#&gt; Weighted     83.05617</span></span></code></pre></div>
+<span><span class="co">#&gt; $negative.entropy</span></span>
+<span><span class="co">#&gt;    all </span></span>
+<span><span class="co">#&gt; 1.1272</span></span></code></pre></div>
 </div>
 <p>From this, we also find that the CBPS method yields the highest effective sample size of 605.</p>
 <p>From these inspections, we identify the best performing weighting method as CBPS.</p>
@@ -2600,13 +2591,13 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 3.5109</span></span>
+<span><span class="co">#&gt;     Min                                 Max</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 3.511</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;          89     79     30     27     11</span></span>
-<span><span class="co">#&gt;  all 3.5109 3.5109 3.5109 3.5109 3.5109</span></span>
+<span><span class="co">#&gt;                                   </span></span>
+<span><span class="co">#&gt;         11    27    30    79    89</span></span>
+<span><span class="co">#&gt;  all 3.511 3.511 3.511 3.511 3.511</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -2662,13 +2653,13 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Min                                  Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 8.5406</span></span>
+<span><span class="co">#&gt;     Min                                 Max</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 8.541</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span><span class="co">#&gt;                                        </span></span>
-<span><span class="co">#&gt;         877   1145    697    294    919</span></span>
-<span><span class="co">#&gt;  all 7.1324 7.3945 7.7172 8.5239 8.5406</span></span>
+<span><span class="co">#&gt;                                   </span></span>
+<span><span class="co">#&gt;       1145   919   877   697   294</span></span>
+<span><span class="co">#&gt;  all 7.132 7.394 7.717 8.524 8.541</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -3167,7 +3158,8 @@ The love plots depict the standardized associations between confounder and expos
 <div class="cell">
 <div class="sourceCode cell-code" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results</span>, </span>
-<span>     save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span></code></pre></div>
+<span>     save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `height` was translated to `width`.</span></span></code></pre></div>
 <div class="cell-output-display">
 <div>
 <figure><p><img src="Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-78-1.png" width="672"></p>

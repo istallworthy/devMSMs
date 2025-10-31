@@ -61,7 +61,7 @@
       <h1>Terminology</h1>
 
 
-      <p class="date">2025-09-02</p>
+      <p class="date">2025-10-31</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Terminology.qmd" class="external-link"><code>vignettes/Terminology.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -78,114 +78,77 @@
 <div class="cell-output-display">
 <!-- preamble start -->
 
-    <script>
-
-      function styleCell_n6tc5fwg2ap0w8b0498w(i, j, css_id) {
-          var table = document.getElementById("tinytable_n6tc5fwg2ap0w8b0498w");
-          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-          if (cell) {
-              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
-              cell.classList.add(css_id);
-          } else {
-              console.warn(`Cell at (${i}, ${j}) not found.`);
-          }
-      }
-      function spanCell_n6tc5fwg2ap0w8b0498w(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_n6tc5fwg2ap0w8b0498w");
-        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-        if (!targetCell) {
-          console.warn(`Cell at (${i}, ${j}) not found.`);
-        }
-
-        // Get all cells that need to be removed
-        const cellsToRemove = [];
-        for (let r = 0; r < rowspan; r++) {
-          for (let c = 0; c < colspan; c++) {
-            if (r === 0 && c === 0) continue; // Skip the target cell
-            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
-            if (cell) {
-              cellsToRemove.push(cell);
-            }
-          }
-        }
-
-        // Remove all cells
-        cellsToRemove.forEach(cell => cell.remove());
-
-        // Set rowspan and colspan of the target cell if it exists
-        if (targetCell) {
-          targetCell.rowSpan = rowspan;
-          targetCell.colSpan = colspan;
-        }
-      }
+    <script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script><script>
+      // Create table-specific functions using external factory
+      const tableFns_m7l04k2p7659k1wz2qsc = TinyTable.createTableFunctions("tinytable_m7l04k2p7659k1wz2qsc");
       // tinytable span after
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '7', j: 0 }, { i: '1', j: 0 }, { i: '3', j: 0 }, { i: '5', j: 0 }, { i: '1', j: 1 }, { i: '9', j: 0 }, { i: '5', j: 1 }, { i: '7', j: 1 }, { i: '9', j: 1 }, { i: '3', j: 1 },  ], css_id: 'tinytable_css_telmav9khh58x4hzawvh',},
-          { positions: [ { i: '0', j: 0 }, { i: '10', j: 1 }, { i: '10', j: 0 }, { i: '0', j: 1 },  ], css_id: 'tinytable_css_b8fdij4ql6ncd9w2hy9e',},
+          { positions: [ { i: '1', j: 1 }, { i: '3', j: 1 }, { i: '5', j: 1 }, { i: '7', j: 1 }, { i: '9', j: 1 }, { i: '1', j: 2 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '7', j: 2 }, { i: '9', j: 2 } ], css_id: 'tinytable_css_u3bmvzk5y1wnrllj7662',},
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_n6tc5fwg2ap0w8b0498w(cell.i, cell.j, group.css_id);
+                  tableFns_m7l04k2p7659k1wz2qsc.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
-    </script><style>
-      /* tinytable css entries after */
-      .table td.tinytable_css_telmav9khh58x4hzawvh, .table th.tinytable_css_telmav9khh58x4hzawvh { background-color: #ededed; }
-      .table td.tinytable_css_b8fdij4ql6ncd9w2hy9e, .table th.tinytable_css_b8fdij4ql6ncd9w2hy9e { border-bottom: solid #d3d8dc 0.1em; }
+    </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+<style>
+    /* tinytable css entries after */
+    #tinytable_m7l04k2p7659k1wz2qsc td.tinytable_css_u3bmvzk5y1wnrllj7662, #tinytable_m7l04k2p7659k1wz2qsc th.tinytable_css_u3bmvzk5y1wnrllj7662 { background-color: #ededed }
     </style>
 <div class="container">
-      <table class="table table table-striped" id="tinytable_n6tc5fwg2ap0w8b0498w" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table tinytable" id="tinytable_m7l04k2p7659k1wz2qsc" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of terminology used in <em>devMSMs</em></p></caption>
+
         <thead><tr>
-<th scope="col" data-row="0" data-col="0">Term</th>
-                <th scope="col" data-row="0" data-col="1">Definition</th>
+<th scope="col" data-row="0" data-col="1">Term</th>
+                <th scope="col" data-row="0" data-col="2">Definition</th>
               </tr></thead>
 <tbody>
 <tr>
-<td data-row="1" data-col="0"><strong>Exposure</strong></td>
-                  <td data-row="1" data-col="1">Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome.</td>
+<td data-row="1" data-col="1"><strong>Exposure</strong></td>
+                  <td data-row="1" data-col="2">Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome.</td>
                 </tr>
 <tr>
-<td data-row="2" data-col="0"><strong>Outcome</strong></td>
-                  <td data-row="2" data-col="1">Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects.</td>
+<td data-row="2" data-col="1"><strong>Outcome</strong></td>
+                  <td data-row="2" data-col="2">Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects.</td>
                 </tr>
 <tr>
-<td data-row="3" data-col="0"><strong>Exposure Time Points</strong></td>
-                  <td data-row="3" data-col="1">Time points in development when the exposure was measured, at which weights formulas will be created.</td>
+<td data-row="3" data-col="1"><strong>Exposure Time Points</strong></td>
+                  <td data-row="3" data-col="2">Time points in development when the exposure was measured, at which weights formulas will be created.</td>
                 </tr>
 <tr>
-<td data-row="4" data-col="0"><strong>Exposure Epochs</strong></td>
-                  <td data-row="4" data-col="1">
+<td data-row="4" data-col="1"><strong>Exposure Epochs</strong></td>
+                  <td data-row="4" data-col="2">
 <em>(optional)</em> Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories.</td>
                 </tr>
 <tr>
-<td data-row="5" data-col="0"><strong>Exposure Histories</strong></td>
-                  <td data-row="5" data-col="1">Sequences of relatively high (<code>'h'</code>) or low (<code>'l'</code>) levels of exposure at each exposure time point or exposure epoch.</td>
+<td data-row="5" data-col="1"><strong>Exposure Histories</strong></td>
+                  <td data-row="5" data-col="2">Sequences of relatively high (<code>'h'</code>) or low (<code>'l'</code>) levels of exposure at each exposure time point or exposure epoch.</td>
                 </tr>
 <tr>
-<td data-row="6" data-col="0"><strong>Exposure Dosage</strong></td>
-                  <td data-row="6" data-col="1">Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.</td>
+<td data-row="6" data-col="1"><strong>Exposure Dosage</strong></td>
+                  <td data-row="6" data-col="2">Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.</td>
                 </tr>
 <tr>
-<td data-row="7" data-col="0"><strong>Confounder</strong></td>
-                  <td data-row="7" data-col="1">Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths.</td>
+<td data-row="7" data-col="1"><strong>Confounder</strong></td>
+                  <td data-row="7" data-col="2">Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths.</td>
                 </tr>
 <tr>
-<td data-row="8" data-col="0"><strong>Time-varying confounder</strong></td>
-                  <td data-row="8" data-col="1">A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly.</td>
+<td data-row="8" data-col="1"><strong>Time-varying confounder</strong></td>
+                  <td data-row="8" data-col="2">A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly.</td>
                 </tr>
 <tr>
-<td data-row="9" data-col="0"><strong>Time invariant confounder</strong></td>
-                  <td data-row="9" data-col="1">A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure.</td>
+<td data-row="9" data-col="1"><strong>Time invariant confounder</strong></td>
+                  <td data-row="9" data-col="2">A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure.</td>
                 </tr>
 <tr>
-<td data-row="10" data-col="0"><strong>Collider</strong></td>
-                  <td data-row="10" data-col="1">A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias.</td>
+<td data-row="10" data-col="1"><strong>Collider</strong></td>
+                  <td data-row="10" data-col="2">A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias.</td>
                 </tr>
 </tbody>
 </table>
@@ -205,103 +168,68 @@
 <div class="cell-output-display">
 <!-- preamble start -->
 
-    <script>
-
-      function styleCell_z8k41o0mqlehq30p4phv(i, j, css_id) {
-          var table = document.getElementById("tinytable_z8k41o0mqlehq30p4phv");
-          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-          if (cell) {
-              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
-              cell.classList.add(css_id);
-          } else {
-              console.warn(`Cell at (${i}, ${j}) not found.`);
-          }
-      }
-      function spanCell_z8k41o0mqlehq30p4phv(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_z8k41o0mqlehq30p4phv");
-        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-        if (!targetCell) {
-          console.warn(`Cell at (${i}, ${j}) not found.`);
-        }
-
-        // Get all cells that need to be removed
-        const cellsToRemove = [];
-        for (let r = 0; r < rowspan; r++) {
-          for (let c = 0; c < colspan; c++) {
-            if (r === 0 && c === 0) continue; // Skip the target cell
-            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
-            if (cell) {
-              cellsToRemove.push(cell);
-            }
-          }
-        }
-
-        // Remove all cells
-        cellsToRemove.forEach(cell => cell.remove());
-
-        // Set rowspan and colspan of the target cell if it exists
-        if (targetCell) {
-          targetCell.rowSpan = rowspan;
-          targetCell.colSpan = colspan;
-        }
-      }
+    <script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script><script>
+      // Create table-specific functions using external factory
+      const tableFns_c3edhd9pka8di76dc2sl = TinyTable.createTableFunctions("tinytable_c3edhd9pka8di76dc2sl");
       // tinytable span after
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '3', j: 0 }, { i: '3', j: 1 },  ], css_id: 'tinytable_css_jqm80zqgh7juvjadlffy',},
-          { positions: [ { i: '0', j: 0 }, { i: '0', j: 1 },  ], css_id: 'tinytable_css_jzm58kkiixopetlaikyo',},
+          { positions: [ { i: '3', j: 1 }, { i: '3', j: 2 } ], css_id: 'tinytable_css_uuhquztl3i5qkwl19fvd',},
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 } ], css_id: 'tinytable_css_5mfv5ogljsj2degrxpx2',},
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_z8k41o0mqlehq30p4phv(cell.i, cell.j, group.css_id);
+                  tableFns_c3edhd9pka8di76dc2sl.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
-    </script><style>
-      /* tinytable css entries after */
-      .table td.tinytable_css_jqm80zqgh7juvjadlffy, .table th.tinytable_css_jqm80zqgh7juvjadlffy { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_jzm58kkiixopetlaikyo, .table th.tinytable_css_jzm58kkiixopetlaikyo { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+    </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+<style>
+    /* tinytable css entries after */
+    #tinytable_c3edhd9pka8di76dc2sl td.tinytable_css_uuhquztl3i5qkwl19fvd, #tinytable_c3edhd9pka8di76dc2sl th.tinytable_css_uuhquztl3i5qkwl19fvd {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_c3edhd9pka8di76dc2sl td.tinytable_css_5mfv5ogljsj2degrxpx2, #tinytable_c3edhd9pka8di76dc2sl th.tinytable_css_5mfv5ogljsj2degrxpx2 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
     </style>
 <div class="container">
-      <table class="table table table-borderless" id="tinytable_z8k41o0mqlehq30p4phv" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table tinytable" id="tinytable_c3edhd9pka8di76dc2sl" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of the formula terminology used in the <em>devMSMs</em>
 package for creating balancing weights and assessing their performance
 in devMSMs (<em>Workflows</em> vignettes Steps 4-6). The different kinds
 of formulas vary with respect to their inclusion of time-varying
 confounders and the <code>type</code> specification to create them using
 the <code><a href="../reference/createFormulas.html">createFormulas()</a></code> function.</p></caption>
+
         <thead><tr>
-<th scope="col" data-row="0" data-col="0">Term</th>
-                <th scope="col" data-row="0" data-col="1">Definition</th>
+<th scope="col" data-row="0" data-col="1">Term</th>
+                <th scope="col" data-row="0" data-col="2">Definition</th>
               </tr></thead>
 <tbody>
 <tr>
-<td data-row="1" data-col="0">
+<td data-row="1" data-col="1">
 <em>Full balancing formula</em>
 <p><code>type = "full"</code></p>
 </td>
-                  <td data-row="1" data-col="1">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>all</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for pre-balance (<i>Workflows</i> vignettes Step 4b) and final balance assessment.
+                  <td data-row="1" data-col="2">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>all</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for pre-balance (<i>Workflows</i> vignettes Step 4b) and final balance assessment.
 <pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: blue;">B18Raw.6</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: blue;">CORTB.6</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: seagreen;">ES.6</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: blue;">HOMEETA1.6</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre>
 </td>
                 </tr>
 <tr>
-<td data-row="2" data-col="0">
+<td data-row="2" data-col="1">
 <em>Simplified balancing formula</em>
 <p><code>type = "short"</code></p>
 </td>
-                  <td data-row="2" data-col="1">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for creating and assessing preliminary balancing weights to determine optimal weighting method.
+                  <td data-row="2" data-col="2">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> values. Used for creating and assessing preliminary balancing weights to determine optimal weighting method.
 <pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre>
 </td>
                 </tr>
 <tr>
-<td data-row="3" data-col="0">
+<td data-row="3" data-col="1">
 <em>Updated balancing formula</em>
 <p><code>type = "update"</code></p>
 </td>
-                  <td data-row="3" data-col="1">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, as well as any <i>imbalanced</i> <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> levels <i>at t-1+</i> Used to create final balancing weights.
+                  <td data-row="3" data-col="2">Balancing formula containing all <span style="color: darkred;">time invariant</span>, <i>only t-1</i> lagged <span style="color: blue;">time-varying</span> confounders, as well as any <i>imbalanced</i> <span style="color: blue;">time-varying</span> confounders, and lagged <span style="color: seagreen">exposure</span> levels <i>at t-1+</i> Used to create final balancing weights.
 <pre><code>ESETA1.24 ~ <span style="color: blue;">B18Raw.15</span> + <span style="color: darkred;">BioDadInHH2</span> + <span style="color: blue;">CORTB.15</span> + <span style="color: darkred;">DrnkFreq</span> + <span style="color: seagreen;">ES.6</span> + <span style="color: seagreen;">ES.15</span> + <span style="color: darkred;">gov_assist</span> + <span style="color: blue;">HOMEETA1.15</span> + <span style="color: darkred;">HomeOwnd</span> ...</code></pre>
 </td>
                 </tr>
@@ -319,130 +247,91 @@ the <code><a href="../reference/createFormulas.html">createFormulas()</a></code>
 <div class="cell" data-tbl-cap="Summary of the 7 core functions of the *devMSMs* package.">
 <!-- preamble start -->
 
-    <script>
-
-      function styleCell_q9imgd2jcuxo2uoaz0dh(i, j, css_id) {
-          var table = document.getElementById("tinytable_q9imgd2jcuxo2uoaz0dh");
-          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-          if (cell) {
-              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
-              cell.classList.add(css_id);
-          } else {
-              console.warn(`Cell at (${i}, ${j}) not found.`);
-          }
-      }
-      function spanCell_q9imgd2jcuxo2uoaz0dh(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_q9imgd2jcuxo2uoaz0dh");
-        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-        if (!targetCell) {
-          console.warn(`Cell at (${i}, ${j}) not found.`);
-        }
-
-        // Get all cells that need to be removed
-        const cellsToRemove = [];
-        for (let r = 0; r < rowspan; r++) {
-          for (let c = 0; c < colspan; c++) {
-            if (r === 0 && c === 0) continue; // Skip the target cell
-            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
-            if (cell) {
-              cellsToRemove.push(cell);
-            }
-          }
-        }
-
-        // Remove all cells
-        cellsToRemove.forEach(cell => cell.remove());
-
-        // Set rowspan and colspan of the target cell if it exists
-        if (targetCell) {
-          targetCell.rowSpan = rowspan;
-          targetCell.colSpan = colspan;
-        }
-      }
+    <script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script><script>
+      // Create table-specific functions using external factory
+      const tableFns_0kv6jeehr0i4o28cgu29 = TinyTable.createTableFunctions("tinytable_0kv6jeehr0i4o28cgu29");
       // tinytable span after
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '7', j: 0 }, { i: '7', j: 1 }, { i: '7', j: 2 }, { i: '7', j: 3 },  ], css_id: 'tinytable_css_pnbm8s5l9bereg38h27z',},
-          { positions: [ { i: '5', j: 1 }, { i: '1', j: 0 }, { i: '3', j: 0 }, { i: '5', j: 0 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '1', j: 1 }, { i: '3', j: 1 }, { i: '1', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '1', j: 2 },  ], css_id: 'tinytable_css_nctvz4co0jkchze836zs',},
-          { positions: [ { i: '0', j: 0 }, { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 },  ], css_id: 'tinytable_css_3b8tpvwqtll4oz2m6gf1',},
+          { positions: [ { i: '1', j: 1 }, { i: '3', j: 1 }, { i: '5', j: 1 }, { i: '7', j: 1 }, { i: '1', j: 2 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '7', j: 2 }, { i: '1', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '7', j: 3 }, { i: '1', j: 4 }, { i: '3', j: 4 }, { i: '5', j: 4 }, { i: '7', j: 4 } ], css_id: 'tinytable_css_f4c74gxp6iigr2lzm4mx',},
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_q9imgd2jcuxo2uoaz0dh(cell.i, cell.j, group.css_id);
+                  tableFns_0kv6jeehr0i4o28cgu29.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
-    </script><style>
-      /* tinytable css entries after */
-      .table td.tinytable_css_pnbm8s5l9bereg38h27z, .table th.tinytable_css_pnbm8s5l9bereg38h27z { background-color: #ededed; border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_nctvz4co0jkchze836zs, .table th.tinytable_css_nctvz4co0jkchze836zs { background-color: #ededed; }
-      .table td.tinytable_css_3b8tpvwqtll4oz2m6gf1, .table th.tinytable_css_3b8tpvwqtll4oz2m6gf1 { border-bottom: solid #d3d8dc 0.1em; }
+    </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+<style>
+    /* tinytable css entries after */
+    #tinytable_0kv6jeehr0i4o28cgu29 td.tinytable_css_f4c74gxp6iigr2lzm4mx, #tinytable_0kv6jeehr0i4o28cgu29 th.tinytable_css_f4c74gxp6iigr2lzm4mx { background-color: #ededed }
     </style>
 <div class="container">
-      <table class="table table table-striped" id="tinytable_q9imgd2jcuxo2uoaz0dh" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table tinytable" id="tinytable_0kv6jeehr0i4o28cgu29" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Summary of the 7 core functions of the <em>devMSMs</em> package.</p></caption>
+
         <thead><tr>
-<th scope="col" data-row="0" data-col="0">Function</th>
-                <th scope="col" data-row="0" data-col="1">Purpose</th>
-                <th scope="col" data-row="0" data-col="2">Required.Input</th>
-                <th scope="col" data-row="0" data-col="3">Output</th>
+<th scope="col" data-row="0" data-col="1">Function</th>
+                <th scope="col" data-row="0" data-col="2">Purpose</th>
+                <th scope="col" data-row="0" data-col="3">Required.Input</th>
+                <th scope="col" data-row="0" data-col="4">Output</th>
               </tr></thead>
 <tbody>
 <tr>
-<td data-row="1" data-col="0"><a href="/reference/initMSM"><code>initMSM()</code></a></td>
-                  <td data-row="1" data-col="1">Creates MSM object with core variables for use in all other functions.</td>
-                  <td data-row="1" data-col="2">
+<td data-row="1" data-col="1"><a href="/reference/initMSM"><code>initMSM()</code></a></td>
+                  <td data-row="1" data-col="2">Creates MSM object with core variables for use in all other functions.</td>
+                  <td data-row="1" data-col="3">
 <code>exposure</code>, <code>time invariant confounders</code>, <code>time-varying confounders</code>)</td>
-                  <td data-row="1" data-col="3">msmObject</td>
+                  <td data-row="1" data-col="4">msmObject</td>
                 </tr>
 <tr>
-<td data-row="2" data-col="0"><a href="/reference/createFormulas.html"><code>createFormulas()</code></a></td>
-                  <td data-row="2" data-col="1">Creates balancing formulas at each exposure time point relating exposure to confounders.</td>
-                  <td data-row="2" data-col="2">
+<td data-row="2" data-col="1"><a href="/reference/createFormulas.html"><code>createFormulas()</code></a></td>
+                  <td data-row="2" data-col="2">Creates balancing formulas at each exposure time point relating exposure to confounders.</td>
+                  <td data-row="2" data-col="3">
 <code>msmObject</code>, <code>type</code> (<code>'full'</code>, <code>'short'</code>, <code>'update'</code>)</td>
-                  <td data-row="2" data-col="3">List of balancing formulas for each exposure time point.</td>
+                  <td data-row="2" data-col="4">List of balancing formulas for each exposure time point.</td>
                 </tr>
 <tr>
-<td data-row="3" data-col="0"><a href="/reference/assessBalance"><code>assessBalance()</code></a></td>
-                  <td data-row="3" data-col="1">Assesses confounder balance at each exposure time point according to best practices (Jackson, 2016).</td>
-                  <td data-row="3" data-col="2">
+<td data-row="3" data-col="1"><a href="/reference/assessBalance"><code>assessBalance()</code></a></td>
+                  <td data-row="3" data-col="2">Assesses confounder balance at each exposure time point according to best practices (Jackson, 2016).</td>
+                  <td data-row="3" data-col="3">
 <code>data</code>, <code>msmObject</code>
 </td>
-                  <td data-row="3" data-col="3">List of balance statistics. Tables &amp; love plots displaying balance statistics at each exposure time point.</td>
+                  <td data-row="3" data-col="4">List of balance statistics. Tables &amp; love plots displaying balance statistics at each exposure time point.</td>
                 </tr>
 <tr>
-<td data-row="4" data-col="0"><a href="/reference/createWeights"><code>createWeights()</code></a></td>
-                  <td data-row="4" data-col="1">Creates balancing weights for each person (wrapper for <code>weightit::weightitMSM</code>).</td>
-                  <td data-row="4" data-col="2">
+<td data-row="4" data-col="1"><a href="/reference/createWeights"><code>createWeights()</code></a></td>
+                  <td data-row="4" data-col="2">Creates balancing weights for each person (wrapper for <code>weightit::weightitMSM</code>).</td>
+                  <td data-row="4" data-col="3">
 <code>data</code>, <code>msmObject</code>
 </td>
-                  <td data-row="4" data-col="3">Weights object. Histogram &amp; summary of balancing weights.</td>
+                  <td data-row="4" data-col="4">Weights object. Histogram &amp; summary of balancing weights.</td>
                 </tr>
 <tr>
-<td data-row="5" data-col="0"><a href="/reference/trimWeights"><code>trimWeights()</code></a></td>
-                  <td data-row="5" data-col="1">Trims balancing weights to account for heavy tails.</td>
-                  <td data-row="5" data-col="2">
+<td data-row="5" data-col="1"><a href="/reference/trimWeights"><code>trimWeights()</code></a></td>
+                  <td data-row="5" data-col="2">Trims balancing weights to account for heavy tails.</td>
+                  <td data-row="5" data-col="3">
 <code>data</code>, <code>msmObject</code>
 </td>
-                  <td data-row="5" data-col="3">Trimmed weights object.Histogram &amp; summary of trimmed weight.</td>
+                  <td data-row="5" data-col="4">Trimmed weights object.Histogram &amp; summary of trimmed weight.</td>
                 </tr>
 <tr>
-<td data-row="6" data-col="0"><a href="/reference/fitModel"><code>fitModel()</code></a></td>
-                  <td data-row="6" data-col="1">Fits user-selected, weighted marginal model relating exposure to outcome.</td>
-                  <td data-row="6" data-col="2">
+<td data-row="6" data-col="1"><a href="/reference/fitModel"><code>fitModel()</code></a></td>
+                  <td data-row="6" data-col="2">Fits user-selected, weighted marginal model relating exposure to outcome.</td>
+                  <td data-row="6" data-col="3">
 <code>data</code>, <code>msmObject</code>, <code>weights</code>, <code>outcome</code>, <code>model</code> (<code>m0</code>-<code>m3</code>)</td>
-                  <td data-row="6" data-col="3">Fitted model object. Omnibus test &amp; table of model evidence.</td>
+                  <td data-row="6" data-col="4">Fitted model object. Omnibus test &amp; table of model evidence.</td>
                 </tr>
 <tr>
-<td data-row="7" data-col="0"><a href="/reference/compareHistories"><code>compareHistories()</code></a></td>
-                  <td data-row="7" data-col="1">Estimate, compare, &amp; visualize model-predicted outcomes as a function of exposure history.</td>
-                  <td data-row="7" data-col="2">
+<td data-row="7" data-col="1"><a href="/reference/compareHistories"><code>compareHistories()</code></a></td>
+                  <td data-row="7" data-col="2">Estimate, compare, &amp; visualize model-predicted outcomes as a function of exposure history.</td>
+                  <td data-row="7" data-col="3">
 <code>data</code>, <code>msmObject</code>, <code>fitted model</code>
 </td>
-                  <td data-row="7" data-col="3">Tables of estimated values and comparisons. Boxplot.</td>
+                  <td data-row="7" data-col="4">Tables of estimated values and comparisons. Boxplot.</td>
                 </tr>
 </tbody>
 </table>

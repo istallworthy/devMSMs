@@ -62,16 +62,16 @@ values above a given quantile with the weight value of that quantile.</p>
 
 
 <dt id="arg-at">at<a class="anchor" aria-label="anchor" href="#arg-at"></a></dt>
-<dd><p><code>numeric</code>; either the quantile of the weights above which
-weights are to be trimmed. A single number between .5 and 1, or the number
-of weights to be trimmed (e.g., <code>at = 3</code> for the top 3 weights to be
-set to the 4th largest weight).</p></dd>
+<dd><p><code>numeric</code>; either the quantile of the weights above which weights
+are to be trimmed. A single number between .5 and 1, or the number of
+weights to be trimmed (e.g., <code>at = 3</code> for the top 3 weights to be set to
+the 4th largest weight).</p></dd>
 
 
 <dt id="arg-lower">lower<a class="anchor" aria-label="anchor" href="#arg-lower"></a></dt>
-<dd><p><code>logical</code>; whether also to trim at the lower quantile
-(e.g., for <code>at = .9</code>, trimming at both .1 and .9, or for <code>at = 3</code>,
-trimming the top and bottom 3 weights). Default is <code>FALSE</code> to only trim the higher weights.</p></dd>
+<dd><p><code>logical</code>; whether also to trim at the lower quantile (e.g., for
+<code>at = .9</code>, trimming at both .1 and .9, or for <code>at = 3</code>, trimming the top
+and bottom 3 weights). Default is <code>FALSE</code> to only trim the higher weights.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -125,13 +125,13 @@ this function wraps</p></div>
 <span class="r-in"><span><span class="va">tw</span> <span class="op">&lt;-</span> <span class="fu">trimWeights</span><span class="op">(</span><span class="va">w</span>, at <span class="op">=</span> <span class="fl">0.975</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tw</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the `glm` weighting method, after trimming at 97.5th quantile, the median weight value is 0.99 (SD = 0.33; range = 0.48-2).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the `glm` weighting method, after trimming at 97.5th quantile, the median weight value is 0.99 (SD = 0.23; range = 0.56-2).</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tw</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="trimWeights-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">trimWeights</span><span class="op">(</span><span class="va">w</span>, at <span class="op">=</span> <span class="fl">0.975</span>, lower <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> For the `glm` weighting method, after trimming between 2.5th and 97.5th quantiles, the median weight value is 0.99 (SD = 0.33; range = 0.48-2).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> For the `glm` weighting method, after trimming between 2.5th and 97.5th quantiles, the median weight value is 0.99 (SD = 0.23; range = 0.56-2).</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -61,7 +61,7 @@
       <h1>Data Requirements &amp; Preparation</h1>
 
 
-      <p class="date">2025-09-02</p>
+      <p class="date">2025-10-31</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Data_Requirements.qmd" class="external-link"><code>vignettes/Data_Requirements.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -97,76 +97,40 @@
 <div class="cell-output-display">
 <!-- preamble start -->
 
-    <script>
-
-      function styleCell_ztfvmycvb1ef09k9onc7(i, j, css_id) {
-          var table = document.getElementById("tinytable_ztfvmycvb1ef09k9onc7");
-          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-          if (cell) {
-              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
-              cell.classList.add(css_id);
-          } else {
-              console.warn(`Cell at (${i}, ${j}) not found.`);
-          }
-      }
-      function spanCell_ztfvmycvb1ef09k9onc7(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_ztfvmycvb1ef09k9onc7");
-        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-        if (!targetCell) {
-          console.warn(`Cell at (${i}, ${j}) not found.`);
-        }
-
-        // Get all cells that need to be removed
-        const cellsToRemove = [];
-        for (let r = 0; r < rowspan; r++) {
-          for (let c = 0; c < colspan; c++) {
-            if (r === 0 && c === 0) continue; // Skip the target cell
-            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
-            if (cell) {
-              cellsToRemove.push(cell);
-            }
-          }
-        }
-
-        // Remove all cells
-        cellsToRemove.forEach(cell => cell.remove());
-
-        // Set rowspan and colspan of the target cell if it exists
-        if (targetCell) {
-          targetCell.rowSpan = rowspan;
-          targetCell.colSpan = colspan;
-        }
-      }
+    <script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script><script>
+      // Create table-specific functions using external factory
+      const tableFns_juaiiw3btsvi8xwq74ha = TinyTable.createTableFunctions("tinytable_juaiiw3btsvi8xwq74ha");
       // tinytable span after
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '0', j: 8 },  ], css_id: 'tinytable_css_34xzz9ie9hid7dhr7otk',},
-          { positions: [ { i: '0', j: 6 }, { i: '0', j: 7 },  ], css_id: 'tinytable_css_h2f52jnjnf1ds74449zn',},
-          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 },  ], css_id: 'tinytable_css_3p6mkwqgzhzjsk731w1y',},
-          { positions: [ { i: '0', j: 1 },  ], css_id: 'tinytable_css_56nz7gmvnrojadafdpt3',},
-          { positions: [ { i: '3', j: 0 }, { i: '3', j: 1 }, { i: '3', j: 2 }, { i: '3', j: 3 }, { i: '3', j: 4 }, { i: '3', j: 5 }, { i: '3', j: 6 }, { i: '3', j: 7 }, { i: '3', j: 8 },  ], css_id: 'tinytable_css_pyinjwwm6tfb7pxe0clo',},
-          { positions: [ { i: '0', j: 0 },  ], css_id: 'tinytable_css_gfhn9e0jboxs4icgwfwm',},
+          { positions: [ { i: '0', j: 9 } ], css_id: 'tinytable_css_uxm45ta7zup5a2asjmge',},
+          { positions: [ { i: '0', j: 7 }, { i: '0', j: 8 } ], css_id: 'tinytable_css_z1hlfrdub53iq4nw6mr5',},
+          { positions: [ { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 }, { i: '0', j: 6 } ], css_id: 'tinytable_css_51d1py6ybbmhail2eqlv',},
+          { positions: [ { i: '0', j: 2 } ], css_id: 'tinytable_css_mr9oorbifguw27g34p5q',},
+          { positions: [ { i: '3', j: 1 }, { i: '3', j: 2 }, { i: '3', j: 3 }, { i: '3', j: 4 }, { i: '3', j: 5 }, { i: '3', j: 6 }, { i: '3', j: 7 }, { i: '3', j: 8 }, { i: '3', j: 9 } ], css_id: 'tinytable_css_6o5njn0o3v46s4epgi2v',},
+          { positions: [ { i: '0', j: 1 } ], css_id: 'tinytable_css_ldmeq5oop16v8lnocbou',},
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_ztfvmycvb1ef09k9onc7(cell.i, cell.j, group.css_id);
+                  tableFns_juaiiw3btsvi8xwq74ha.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
-    </script><style>
-      /* tinytable css entries after */
-      .table td.tinytable_css_34xzz9ie9hid7dhr7otk, .table th.tinytable_css_34xzz9ie9hid7dhr7otk { background-color: #a0d8fa; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-      .table td.tinytable_css_h2f52jnjnf1ds74449zn, .table th.tinytable_css_h2f52jnjnf1ds74449zn { background-color: #d4a0fa; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-      .table td.tinytable_css_3p6mkwqgzhzjsk731w1y, .table th.tinytable_css_3p6mkwqgzhzjsk731w1y { background-color: #FDF4CF; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-      .table td.tinytable_css_56nz7gmvnrojadafdpt3, .table th.tinytable_css_56nz7gmvnrojadafdpt3 { background-color: #E3EFDC; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-      .table td.tinytable_css_pyinjwwm6tfb7pxe0clo, .table th.tinytable_css_pyinjwwm6tfb7pxe0clo { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_gfhn9e0jboxs4icgwfwm, .table th.tinytable_css_gfhn9e0jboxs4icgwfwm { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+    </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+<style>
+    /* tinytable css entries after */
+    #tinytable_juaiiw3btsvi8xwq74ha td.tinytable_css_uxm45ta7zup5a2asjmge, #tinytable_juaiiw3btsvi8xwq74ha th.tinytable_css_uxm45ta7zup5a2asjmge {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; background-color: #a0d8fa }
+    #tinytable_juaiiw3btsvi8xwq74ha td.tinytable_css_z1hlfrdub53iq4nw6mr5, #tinytable_juaiiw3btsvi8xwq74ha th.tinytable_css_z1hlfrdub53iq4nw6mr5 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; background-color: #d4a0fa }
+    #tinytable_juaiiw3btsvi8xwq74ha td.tinytable_css_51d1py6ybbmhail2eqlv, #tinytable_juaiiw3btsvi8xwq74ha th.tinytable_css_51d1py6ybbmhail2eqlv {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; background-color: #FDF4CF }
+    #tinytable_juaiiw3btsvi8xwq74ha td.tinytable_css_mr9oorbifguw27g34p5q, #tinytable_juaiiw3btsvi8xwq74ha th.tinytable_css_mr9oorbifguw27g34p5q {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; background-color: #E3EFDC }
+    #tinytable_juaiiw3btsvi8xwq74ha td.tinytable_css_6o5njn0o3v46s4epgi2v, #tinytable_juaiiw3btsvi8xwq74ha th.tinytable_css_6o5njn0o3v46s4epgi2v {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_juaiiw3btsvi8xwq74ha td.tinytable_css_ldmeq5oop16v8lnocbou, #tinytable_juaiiw3btsvi8xwq74ha th.tinytable_css_ldmeq5oop16v8lnocbou {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
     </style>
 <div class="container">
-      <table class="table table table-borderless" id="tinytable_ztfvmycvb1ef09k9onc7" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table tinytable" id="tinytable_juaiiw3btsvi8xwq74ha" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
 <caption><p>Abridged example structure of a wide dataset formatted as required
 for the devMSMs. Column A denotes the ID variable, column B (green)
 denotes a time in-variant confounder (e.g., race, birth information),
@@ -177,50 +141,51 @@ denote the exposure and outcome of interest (darker yellow), where G and
 H are time-varying values on each exposure, and column I is the outcome
 value at the final wave/timepoint. Missing data are denoted as
 <em>NA</em> and will need to be imputed (Step P2).</p></caption>
+
         <thead><tr>
-<th scope="col" data-row="0" data-col="0">id</th>
-                <th scope="col" data-row="0" data-col="1">ti_X</th>
-                <th scope="col" data-row="0" data-col="2">tv_Y1.1</th>
-                <th scope="col" data-row="0" data-col="3">tv_Y1.2</th>
-                <th scope="col" data-row="0" data-col="4">tv_Y2.1</th>
-                <th scope="col" data-row="0" data-col="5">tv_Y2.2</th>
-                <th scope="col" data-row="0" data-col="6">exposure.1</th>
-                <th scope="col" data-row="0" data-col="7">exposure.2</th>
-                <th scope="col" data-row="0" data-col="8">outcome.2</th>
+<th scope="col" data-row="0" data-col="1">id</th>
+                <th scope="col" data-row="0" data-col="2">ti_X</th>
+                <th scope="col" data-row="0" data-col="3">tv_Y1.1</th>
+                <th scope="col" data-row="0" data-col="4">tv_Y1.2</th>
+                <th scope="col" data-row="0" data-col="5">tv_Y2.1</th>
+                <th scope="col" data-row="0" data-col="6">tv_Y2.2</th>
+                <th scope="col" data-row="0" data-col="7">exposure.1</th>
+                <th scope="col" data-row="0" data-col="8">exposure.2</th>
+                <th scope="col" data-row="0" data-col="9">outcome.2</th>
               </tr></thead>
 <tbody>
 <tr>
-<td data-row="1" data-col="0">1</td>
-                  <td data-row="1" data-col="1">0.5</td>
-                  <td data-row="1" data-col="2">50</td>
-                  <td data-row="1" data-col="3">65</td>
-                  <td data-row="1" data-col="4">NA</td>
-                  <td data-row="1" data-col="5">0.04</td>
-                  <td data-row="1" data-col="6">3</td>
-                  <td data-row="1" data-col="7">4</td>
-                  <td data-row="1" data-col="8">80</td>
+<td data-row="1" data-col="1">1</td>
+                  <td data-row="1" data-col="2">0.5</td>
+                  <td data-row="1" data-col="3">50</td>
+                  <td data-row="1" data-col="4">65</td>
+                  <td data-row="1" data-col="5">NA</td>
+                  <td data-row="1" data-col="6">0.04</td>
+                  <td data-row="1" data-col="7">3</td>
+                  <td data-row="1" data-col="8">4</td>
+                  <td data-row="1" data-col="9">80</td>
                 </tr>
 <tr>
-<td data-row="2" data-col="0">2</td>
-                  <td data-row="2" data-col="1">NA</td>
-                  <td data-row="2" data-col="2">33</td>
-                  <td data-row="2" data-col="3">57</td>
-                  <td data-row="2" data-col="4">0.08</td>
-                  <td data-row="2" data-col="5">0.03</td>
-                  <td data-row="2" data-col="6">5</td>
-                  <td data-row="2" data-col="7">3</td>
-                  <td data-row="2" data-col="8">68</td>
+<td data-row="2" data-col="1">2</td>
+                  <td data-row="2" data-col="2">NA</td>
+                  <td data-row="2" data-col="3">33</td>
+                  <td data-row="2" data-col="4">57</td>
+                  <td data-row="2" data-col="5">0.08</td>
+                  <td data-row="2" data-col="6">0.03</td>
+                  <td data-row="2" data-col="7">5</td>
+                  <td data-row="2" data-col="8">3</td>
+                  <td data-row="2" data-col="9">68</td>
                 </tr>
 <tr>
-<td data-row="3" data-col="0">3</td>
-                  <td data-row="3" data-col="1">0.3</td>
-                  <td data-row="3" data-col="2">68</td>
-                  <td data-row="3" data-col="3">NA</td>
-                  <td data-row="3" data-col="4">0.01</td>
-                  <td data-row="3" data-col="5">0.02</td>
-                  <td data-row="3" data-col="6">6</td>
-                  <td data-row="3" data-col="7">8</td>
-                  <td data-row="3" data-col="8">59</td>
+<td data-row="3" data-col="1">3</td>
+                  <td data-row="3" data-col="2">0.3</td>
+                  <td data-row="3" data-col="3">68</td>
+                  <td data-row="3" data-col="4">NA</td>
+                  <td data-row="3" data-col="5">0.01</td>
+                  <td data-row="3" data-col="6">0.02</td>
+                  <td data-row="3" data-col="7">6</td>
+                  <td data-row="3" data-col="8">8</td>
+                  <td data-row="3" data-col="9">59</td>
                 </tr>
 </tbody>
 </table>
@@ -322,7 +287,7 @@ value at the final wave/timepoint. Missing data are denoted as
 <p><br></p>
 <p>The helper functions (summarized in Table 1) for the following recommended preliminary steps can be found at this <a href="https://github.com/istallworthy/devMSMsHelpers" class="external-link">Github</a>. Of note, <em>devMSMs</em> must also be installed and loaded to use these helper functions (see <a href="https://istallworthy.github.io/devMSMs/">Installation</a>).</p>
 <div class="cell" data-tbl-cap="Summary of *devMSMs* helper functions.">
-<pre><code><span><span class="co">#&gt; [1] "&lt;S4 class 'tinytable' [package \"tinytable\"] with 43 slots&gt;"</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; [1] "&lt;S4 class 'tinytable' [package \"tinytable\"] with 57 slots&gt;"</span></span></code></pre>
 </div>
 <p><br></p>
 <p>We first install the <em>devMSMs</em> and <em>devMSMsHelpers</em> packages.</p>
