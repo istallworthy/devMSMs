@@ -9,14 +9,14 @@ trimWeights(weights, at = 0, lower = FALSE, verbose = FALSE, save.out = FALSE)
 \arguments{
 \item{weights}{list of IPTW weights output from \code{\link[=createWeights]{createWeights()}}}
 
-\item{at}{\code{numeric}; either the quantile of the weights above which
-weights are to be trimmed. A single number between .5 and 1, or the number
-of weights to be trimmed (e.g., \code{at = 3} for the top 3 weights to be
-set to the 4th largest weight).}
+\item{at}{\code{numeric}; either the quantile of the weights above which weights
+are to be trimmed. A single number between .5 and 1, or the number of
+weights to be trimmed (e.g., \code{at = 3} for the top 3 weights to be set to
+the 4th largest weight).}
 
-\item{lower}{\code{logical}; whether also to trim at the lower quantile
-(e.g., for \code{at = .9}, trimming at both .1 and .9, or for \code{at = 3},
-trimming the top and bottom 3 weights). Default is \code{FALSE} to only trim the higher weights.}
+\item{lower}{\code{logical}; whether also to trim at the lower quantile (e.g., for
+\code{at = .9}, trimming at both .1 and .9, or for \code{at = 3}, trimming the top
+and bottom 3 weights). Default is \code{FALSE} to only trim the higher weights.}
 
 \item{verbose}{(optional) TRUE or FALSE indicator for printing output to console.
 default is FALSE.}

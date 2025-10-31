@@ -17,6 +17,9 @@
 #' @param covariates list of characters reflecting variable names of covariates,
 #'   required for covariate models ("m1", "m3")
 #' @param family (optional) family function specification for [WeightIt::glm_weightit()] model.
+#'   Note that this should be specified as as a function, not a character string unless you have
+#'   a multinomial outcome, in which case set this to "multinomial", or if you have an ordinal 
+#'   outcome with more than 2 levels, in which case set this to "ordinal". (default is gaussian)
 #' @param link (optional) link function specification for [WeightIt::glm_weightit()] model.
 #'
 #' @return list containing [WeightIt::glm_weightit()] model output. It is the length 
@@ -71,6 +74,31 @@
 #' )
 #' print(fit_m3)
 #' 
+#' data <- data.frame(
+#'   ID = 1:50,
+#'   A.1 = rnorm(n = 50),
+#'   A.2 = rnorm(n = 50),
+#'   A.3 = rnorm(n = 50),
+#'   B.1 = rnorm(n = 50),
+#'   B.2 = rnorm(n = 50),
+#'   B.3 = rnorm(n = 50),
+#'   C = rnorm(n = 50),
+#'   D.3 = c(rep(c("A", "B", "C"), 16), "A", "B")
+#' )
+#' obj <- initMSM(
+#'   data,
+#'   exposure = c("A.1", "A.2", "A.3"),
+#'   ti_conf = c("C"),
+#'   tv_conf = c("B.1", "B.2", "B.3", "D.3")
+#' )
+#' f <- createFormulas(obj, type = "short")
+#' w <- createWeights(data = data, formulas = f)
+#' 
+#' fit_m0 <- fitModel(
+#'   data = data, weights = w, 
+#'   outcome = "D.3", model = "m0", family = "multinomial"
+#' )
+#' print(fit_m0)
 #' 
 #'
 #' @export
@@ -399,11 +427,28 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
                  "m2" = c(epoch_vars, interactions),
                  "m3" = c(epoch_vars, interactions)) #, covariates))
   
-  WeightIt::glm_weightit(
-    formula = reformulate(covs, response = outcome),
-    data = data,
-    family = family,
-    link = link,
-    weightit = weights
-  )
+  # IS added 10/29/25
+  if(any(family %in% "multinomial")){ # multinomial outcome
+    WeightIt::multinom_weightit(
+      formula = reformulate(covs, response = outcome),
+      data = data,
+      link = link,
+      weightit = weights
+    )
+  }else if(any(family %in% "ordinal")){ # ordinal outcome with more than 2 levels
+    WeightIt::ordinal_weightit(
+      formula = reformulate(covs, response = outcome),
+      data = data,
+      link = link,
+      weightit = weights
+    )
+  }else{
+    WeightIt::glm_weightit(
+      formula = reformulate(covs, response = outcome),
+      data = data,
+      family = family,
+      link = link,
+      weightit = weights
+    )
+  }
 }

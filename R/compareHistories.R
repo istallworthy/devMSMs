@@ -23,6 +23,9 @@
 #' @param comparison (optional) list of one or more strings of "-"-separated "l"
 #'   and "h" values indicative of comparison history/histories to compare to
 #'   reference, required if reference is supplied
+#' @param outcome_level levels of a factor outcome within which the user wishes
+#'  compare histories (default is all levels), history predictions and comparisons
+#'  will be made within each outcome level. 
 #' @param mc_comp_method (optional) character abbreviation for multiple
 #'   comparison correction method for stats::p.adjust, default is
 #'   Benjamini-Hochburg ("BH")
@@ -85,6 +88,7 @@ compareHistories <- function(
     hi_lo_cut,
     dose_level = "h",
     reference = NULL, comparison = NULL,
+    outcome_level = NULL, 
     mc_comp_method = "BH",
     verbose = FALSE, save.out = FALSE) {
   ### Checks ----
@@ -107,6 +111,7 @@ compareHistories <- function(
   sep <- obj[["sep"]]
   outcome <- attr(fit, "outcome")
   model <- attr(fit, "model")
+  model_class <- class(fit[[1]]) # added by IS 10/29/25
 
   n_epoch <- length(unique(epoch))
   exposure_levels <- apply(
@@ -179,30 +184,97 @@ compareHistories <- function(
   # Estimated marginal predictions for each history
   preds <- lapply(fit, function(m) { # Goes through different fitted model
     d <- m$data
-
+    
     p <- marginaleffects::avg_predictions(
       m,
       newdata = d, variables = prediction_vars,
-      type = "response"
+      type = "response" #TODO: do we want this to always be response? should it ever be link?
     )
     
     .add_histories(p, epoch_vars)
   })
 
+  
   # STEP 3 ----
   # Conduct history comparisons
-  if (is.null(reference) && is.null(comparison)) {
-    # All pairwise comparisons if no ref/comparisons were specified by user
-    # Pairwise comparision, but we want term to be nicely labeled by histories
+  
+  # added by IS 10/29/25 
+  # For FACTOR outcomes
+  if (any(model_class %in% c("multinom_weightit", "ordinal_weightit"))){ #TODO: which other model classes to include in this pipeline?
     comps <- lapply(preds, function(y) {
-      h <- marginaleffects::hypotheses(
-        model = as.data.frame(y), vcov = vcov(y), hypothesis = "pairwise"
-      )
-      class(h) <- c("comp_custom", class(h))
-      return(h)
+      # Extract row indices per group in current row order:
+      idx_by_group <- split(seq_len(nrow(y)), y$group)  # get indices of each outcome level, preserves order
+      
+      if (!is.null(outcome_level)){ # just focus on user-specified outcome levels
+        idx_by_group <- idx_by_group[names(idx_by_group) %in% outcome_level]
+      }
+      
+      terms_by_group <- lapply(idx_by_group, function(ix) y$term[ix]) # gets histories for each outcome level
+      
+      # pairwise comparisons if no ref/comp specified
+      if (is.null(reference) && is.null(comparison)) {
+        reference2 <- y$term
+        comparison2 <- y$term
+      } else{
+        reference2 <- reference
+        comparison2 <- comparison
+      }
+      
+      all_h <- data.frame()
+      
+      # for each reference history at a time
+      for (r in reference2){
+        # Build columns per outcome level
+        H_parts <- list()
+        for (g in names(idx_by_group)) { # for each available outcome level
+          ix <- idx_by_group[[g]]
+          Cg <- .make_C_within(y$term[ix], r, comparison2) # make contrast matrix
+          Hg <- matrix(0, nrow = nrow(y), ncol = ncol(Cg))
+          Hg[ix, ] <- Cg
+          colnames(Hg) <- paste(g, colnames(Cg), sep = " | ")
+          H_parts[[g]] <- Hg
+        }
+        
+        # cbinds the individual outcome level contrast matrices horizontally (NOT vertically)
+        H <- do.call(cbind, H_parts)
+        
+        h <- marginaleffects::hypotheses(y, hypothesis = H)
+        all_h <- rbind(all_h, h)
+      }
+      
+      class(all_h) <- c("comp_custom", class(all_h))
+      return(all_h)
     })
   } else {
-    hypothesis <- .create_hypotheses_mat(preds[[1]]$term, reference, comparison)
+    
+    # For CONTINUOUSLY distributed outcomes
+    
+    # IS 10/31/25 --this no longer works with hypothese() in new marginaleffects version
+    # if (is.null(reference) && is.null(comparison)) {
+    #   # All pairwise comparisons if no ref/comparisons were specified by user
+    #   # Pairwise comparison, but we want term to be nicely labeled by histories
+    #   comps <- lapply(preds, function(y) {
+    #     # h <- marginaleffects::hypotheses(
+    #     #   model = as.data.frame(y), vcov = vcov(y), hypothesis = "pairwise"
+    #     # )
+    #     # 
+    #     # class(h) <- c("comp_custom", class(h))
+    #     # return(h)
+    #   })
+    # } else {
+    
+    #IS added to accommodate all pairwise in case of no ref/comp
+    # pairwise comparisons if no ref/comp specified
+    if (is.null(reference) && is.null(comparison)) {
+      y <- preds[[1]] # just to get all histories
+      reference2 <- y$term
+      comparison2 <- y$term
+    } else{
+      reference2 <- reference
+      comparison2 <- comparison
+    }
+    
+    hypothesis <- .create_hypotheses_mat(preds[[1]]$term, reference2, comparison2)
     
     # IS added to remove same-same history comparisons 
     nonid <- colnames(hypothesis)[sapply(strsplit(colnames(hypothesis), " - "), "[", 1) != 
@@ -212,17 +284,16 @@ compareHistories <- function(
     if (length(hypothesis) == 0L){
       stop("Please a comparison history that differs from the reference history.", call. = FALSE)
     }
-
+    
     # for normal outcome variables
     comps <- lapply(preds, function(y) {
       h <- marginaleffects::hypotheses(y, hypothesis = hypothesis)
       class(h) <- c("comp_custom", class(h))
       return(h)
     })
-    
-
+    #}
   }
-
+  
   # STEP 4 ----
   # pooling predicted values and contrasts for imputed data
   is_pooled <- length(preds) > 1
@@ -245,9 +316,34 @@ compareHistories <- function(
     # on.exit({ rm(glance_custom_internal.glm_weightit, envir = globalenv()) })
 
     rlang::check_installed("mice")
-    preds <- summary(mice::pool(preds, dfcom = Inf), conf.int = TRUE)
+    
+    # added by IS 10/30/25 to pool predictions by outcome level (multinom case)
+    if(any(model_class %in% c("multinom_weightit", "ordinal_weightit"))){
+      # preds_all <- purrr::imap_dfr(preds, ~ mutate(.x, .imp = .y))
+      preds_all <- dplyr::bind_rows(preds, .id = ".imp") |>
+        mutate(.imp = as.integer(.imp))
+      preds <- preds_all %>%
+        dplyr::group_by(group, term) %>% # preserve history and outcome level grouping     
+        dplyr::summarise({
+          ps <- mice::pool.scalar(Q = estimate, U = std.error^2)
+          se <- sqrt(ps$t)
+          tibble(
+            estimate  = ps$qbar,
+            std.error = se,
+            df        = ps$df,
+            conf.low  = ps$qbar + qt(.025, ps$df) * se,
+            conf.high = ps$qbar + qt(.975, ps$df) * se
+          )
+        }, .groups = "drop")
+      preds <- data.frame(preds)
+    } else {
+      preds <- summary(mice::pool(preds, dfcom = Inf), conf.int = TRUE)
+      comps <- summary(mice::pool(comps, dfcom = Inf), conf.int = TRUE)
+      names(preds)[7:8] <- names(comps)[7:8] <- c("conf.low", "conf.high")
+    }
+    
     comps <- summary(mice::pool(comps, dfcom = Inf), conf.int = TRUE)
-    names(preds)[7:8] <- names(comps)[7:8] <- c("conf.low", "conf.high")
+    # names(preds)[7:8] <- names(comps)[7:8] <- c("conf.low", "conf.high")
   } else { # REGULAR DATA
     comps <- as.data.frame(comps[[1]])
     preds <- as.data.frame(preds[[1]])
@@ -264,6 +360,11 @@ compareHistories <- function(
   # If the user specified reference and comparison groups, subset pred_pool for inspection and plotting
   if (!is.null(reference) && !is.null(comparison)) {
     idx_keep <- preds$term %in% c(reference, comparison)
+    
+    # IS added 10/29/25 to filter on outcome level
+    if(!is.null(outcome_level)){
+      idx_keep <- idx_keep & preds$group %in% outcome_level
+    }
     preds <- preds[idx_keep, , drop = FALSE]
   }
 

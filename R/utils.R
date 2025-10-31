@@ -264,14 +264,49 @@ perm2 <- function(r, v) {
   sub_mats <- lapply(reference, function(ref) {
     n_cols <- length(comparison)
     cus_comps <- matrix(0, ncol = n_cols, nrow = length(histories))
+    
+    # IS changed to accommodate multinomial outcome that might have multiple entries per history
     cus_comps[match(ref, histories), ] <- -1
+    # cus_comps[which(histories %in% ref), ] <- -1
+    
     # cus_comps[match(comparison, histories), 1:n_cols] <- 1
+    
+    # changed by IS to find all matches
     cus_comps[cbind(match(comparison, histories), seq_len(n_cols))] <- 1 # changed by IS to appropriately assign 1 to comparison histories
+    # cus_comps[cbind(which(histories %in% comparison), seq_len(n_cols))] <- 1 
+    
     colnames(cus_comps) <- sprintf("(%s) - (%s)", comparison, ref)
     return(cus_comps)
   })
   
   do.call("cbind", sub_mats)
+}
+
+
+#' Create contrast matrices for each level of a factored outcome (added by IS 10/29/25)
+#' @param term_vec terms from "preds" that correspond to that outcome level
+#' @param reference reference history (single) to which to compare comparison history/histories
+#' @param comparison one or more histories to compare to the reference
+#' @noRd
+.make_C_within <- function(term_vec, reference, comparison) {
+  reference2 <- rep(reference, length.out = length(comparison))
+  
+  # Build list-of-lists: each entry is (comparison[i], reference[i])
+  comps <- setNames(
+    lapply(seq_along(comparison), function(i) {
+      c(comparison[i], reference2[i])
+    }),
+    paste0("(", comparison, ") - (", reference, ")")
+  )
+  
+  C <- sapply(comps, function(v){
+    num <- v[1]; den <- v[2]
+    w <- rep(0, length(term_vec))
+    w[term_vec == num] <-  1
+    w[term_vec == den] <- -1
+    w
+  })
+  C
 }
 
 #' Add history labels and dose to table based on `epoch_vars`

@@ -13,6 +13,7 @@ compareHistories(
   dose_level = "h",
   reference = NULL,
   comparison = NULL,
+  outcome_level = NULL,
   mc_comp_method = "BH",
   verbose = FALSE,
   save.out = FALSE
@@ -47,6 +48,10 @@ compare comparison, required if comparison is supplied}
 \item{comparison}{(optional) list of one or more strings of "-"-separated "l"
 and "h" values indicative of comparison history/histories to compare to
 reference, required if reference is supplied}
+
+\item{outcome_level}{levels of a factor outcome within which the user wishes
+compare histories (default is all levels), history predictions and comparisons
+will be made within each outcome level.}
 
 \item{mc_comp_method}{(optional) character abbreviation for multiple
 comparison correction method for stats::p.adjust, default is
