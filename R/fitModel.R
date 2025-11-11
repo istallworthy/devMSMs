@@ -290,6 +290,7 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
   obj <- attr(x, "obj")
   data_type <- obj[["data_type"]]
   exposure_root <- obj[["exposure_root"]]
+  model_class <- class(x[[1]]) # added by IS 11/11/25
   
   if (data_type %in% c("mids", "list")) data_type <- "imputed"
   else i <- 1L
@@ -320,13 +321,25 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
     xi <- x[[i]]
   }
   
-  t <- modelsummary::modelsummary(
-    xi,
-    statistic = c("CI" = "[{conf.low}, {conf.high}]", "p" = "{p.value}"),
-    shape = term ~ model + statistic,
-    gof_map = c("nobs"),
-    output = "tinytable"
-  )
+  # added by IS to accommodate multiple outcome levels 11/11/25
+  if(any(grepl("multinom_weightit", model_class))){
+    t <- modelsummary::modelsummary(
+      xi,
+      statistic = c("CI" = "[{conf.low}, {conf.high}]", "p" = "{p.value}"),
+      shape = term + response ~ model + statistic,
+      gof_map = c("nobs"),
+      output = "tinytable"
+    )
+  } else{
+    
+    t <- modelsummary::modelsummary(
+      xi,
+      statistic = c("CI" = "[{conf.low}, {conf.high}]", "p" = "{p.value}"),
+      shape = term ~ model + statistic,
+      gof_map = c("nobs"),
+      output = "tinytable"
+    )
+  }
   
   if (data_type == "imputed") {
     if (is.na(i)) {
@@ -429,27 +442,34 @@ print.devMSM_models <- function(x, i = NA, save.out = FALSE, ...) {
   
   # IS added 10/29/25
   if(!class(family) %in% ("function")){
-  if(any(family %in% "multinomial")){ # multinomial outcome
-    WeightIt::multinom_weightit(
-      formula = reformulate(covs, response = outcome),
-      data = data,
-      link = link,
-      weightit = weights
-    )
-  }else if(any(family %in% "ordinal")){ # ordinal outcome with more than 2 levels
-    WeightIt::ordinal_weightit(
-      formula = reformulate(covs, response = outcome),
-      data = data,
-      link = link,
-      weightit = weights
-    )
-  }}else{
-    WeightIt::glm_weightit(
-      formula = reformulate(covs, response = outcome),
-      data = data,
-      family = family,
-      link = link,
-      weightit = weights
-    )
-  }
+    if(any(family %in% "multinomial")){ # multinomial outcome
+      WeightIt::multinom_weightit(
+        formula = reformulate(covs, response = outcome),
+        data = data,
+        link = link,
+        weightit = weights
+      )
+    }else if(any(family %in% "ordinal")){ # ordinal outcome with more than 2 levels
+      WeightIt::ordinal_weightit(
+        formula = reformulate(covs, response = outcome),
+        data = data,
+        link = link,
+        weightit = weights
+      )
+    }else{
+      WeightIt::glm_weightit(
+        formula = reformulate(covs, response = outcome),
+        data = data,
+        family = family,
+        link = link,
+        weightit = weights
+      )
+    }} else{ # send function to glm_weightit
+      WeightIt::glm_weightit(
+        formula = reformulate(covs, response = outcome),
+        data = data,
+        family = family,
+        link = link,
+        weightit = weights)
+    }
 }
