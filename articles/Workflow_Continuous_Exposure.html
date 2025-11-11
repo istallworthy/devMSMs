@@ -61,7 +61,7 @@
       <h1>Workflow: Continuous Exposure</h1>
 
       <p class="author">Isabella Stallworthy</p>
-      <p class="date">2025-10-31</p>
+      <p class="date">2025-11-11</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/main/vignettes/Workflow_Continuous_Exposure.qmd" class="external-link"><code>vignettes/Workflow_Continuous_Exposure.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -1072,7 +1072,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>      i <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.25 (SD = 22.14; range = 0-753).</span></span>
+<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 19.46; range = 0-648).</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
@@ -1080,23 +1080,23 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Min                                   Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 752.676</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 648.092</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
 <span><span class="co">#&gt;                                           </span></span>
 <span><span class="co">#&gt;        1235   1145     591     475      30</span></span>
-<span><span class="co">#&gt;  all 62.259 83.862 100.834 184.266 752.676</span></span>
+<span><span class="co">#&gt;  all 54.313 89.722 113.026 179.047 648.092</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all       7.343 1.058   1.702       0</span></span>
+<span><span class="co">#&gt; all       6.634 1.042    1.61       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;              Total</span></span>
 <span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     23.54</span></span>
+<span><span class="co">#&gt; Weighted     28.72</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>     i <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -1704,19 +1704,19 @@ The love plots depict the standardized associations between confounder and expos
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">balance_stats.bart</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 32 out of 241 (13.3%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.25):</span></span>
+<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 33 out of 241 (13.7%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.12 (max: 0.24):</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | Exposure  | Total # of covariates | # of imbalanced covariates |</span></span>
 <span><span class="co">#&gt; +===========+=======================+============================+</span></span>
-<span><span class="co">#&gt; | ESETA1.6  | 28                    | 8                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.6  | 28                    | 7                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.15 | 38                    | 15                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.15 | 38                    | 16                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.24 | 47                    | 7                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.35 | 59                    | 2                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.58 | 69                    | 0                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.58 | 69                    | 1                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Table: Imbalanced Covariates Averaging Across Imputed Datasetrs using `bart`</span></span>
@@ -1762,7 +1762,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $negative.entropy</span></span>
 <span><span class="co">#&gt;      all </span></span>
-<span><span class="co">#&gt; 1.701811</span></span>
+<span><span class="co">#&gt; 1.609861</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $negative.entropy</span></span>
@@ -3326,7 +3326,7 @@ The love plots depict the standardized associations between confounder and expos
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
