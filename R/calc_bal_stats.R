@@ -41,6 +41,11 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
   exposure <- var_tab$var[var_tab$type == "exposure"]
   exposure_time <- var_tab$time[var_tab$type == "exposure"]
   sep <- obj[["sep"]]
+  
+  # added by IS 1/5/26 to add any specified concurrent confounders
+  if (!is.null(var_tab$concur_conf)) { # added to fix bug if no concur_conf
+    tv_conf_time <- tv_conf_time - 0.01 * var_tab$concur_conf[var_tab$type == "tv_conf"]
+  }
 
   # creating initial data frames
   # data frame with all sampling weights for all exposures at all exposure time points for all histories
@@ -58,6 +63,8 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
       tv_conf[tv_conf_time < exposure_time_pt],
       exposure[exposure_time_pts < exposure_time_pt]
     )
+    
+    
 
     var_is_factorable <- vapply(vars, function(v) {
       is.character(data[[v]]) || is.factor(data[[v]])
