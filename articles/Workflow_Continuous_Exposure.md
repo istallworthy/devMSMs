@@ -1390,7 +1390,7 @@ weights.bart <- createWeights(obj = obj,
 print(weights.bart, 
       i = 1)
 #> 
-#> For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 19.46; range = 0-648).
+#> For imputation 1 and the `bart` weighting method, the median weight value is 1.24 (SD = 17.43; range = 0-587).
 
 summary(weights.bart[[1]])[[1]]
 #>                   Summary of weights
@@ -1398,23 +1398,23 @@ summary(weights.bart[[1]])[[1]]
 #> - Weight ranges:
 #> 
 #>     Min                                   Max
-#> all   0 |---------------------------| 648.092
+#> all   0 |---------------------------| 587.049
 #> 
 #> - Units with the 5 most extreme weights:
-#>                                           
-#>        1235   1145     591     475      30
-#>  all 54.313 89.722 113.026 179.047 648.092
+#>                                          
+#>        1235   1145    830     591     475
+#>  all 45.173 79.794 86.678 139.123 587.049
 #> 
 #> - Weight statistics:
 #> 
 #>     Coef of Var   MAD Entropy # Zeros
-#> all       6.634 1.042    1.61       0
+#> all       6.166 1.019   1.488       0
 #> 
 #> - Effective Sample Sizes:
 #> 
 #>              Total
 #> Unweighted 1292.  
-#> Weighted     28.72
+#> Weighted     33.13
 
 plot(weights.bart, 
      i = 1, 
@@ -2082,17 +2082,17 @@ summary(balance_stats.gbm,
 
 summary(balance_stats.bart, 
         save.out = save.out)
-#> USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 33 out of 241 (13.7%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.12 (max: 0.24):
+#> USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 23 out of 241 (9.5%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.22):
 #> +-----------+-----------------------+----------------------------+
 #> | Exposure  | Total # of covariates | # of imbalanced covariates |
 #> +===========+=======================+============================+
-#> | ESETA1.6  | 28                    | 7                          |
+#> | ESETA1.6  | 28                    | 6                          |
 #> +-----------+-----------------------+----------------------------+
-#> | ESETA1.15 | 38                    | 16                         |
+#> | ESETA1.15 | 38                    | 11                         |
 #> +-----------+-----------------------+----------------------------+
-#> | ESETA1.24 | 47                    | 7                          |
+#> | ESETA1.24 | 47                    | 2                          |
 #> +-----------+-----------------------+----------------------------+
-#> | ESETA1.35 | 59                    | 2                          |
+#> | ESETA1.35 | 59                    | 3                          |
 #> +-----------+-----------------------+----------------------------+
 #> | ESETA1.58 | 69                    | 1                          |
 #> +-----------+-----------------------+----------------------------+
@@ -2146,8 +2146,8 @@ summary(weights.gbm[[1]])[[1]][6]
 
 summary(weights.bart[[1]])[[1]][6]
 #> $negative.entropy
-#>      all 
-#> 1.609861
+#>     all 
+#> 1.48807
 
 summary(weights.super[[1]])[[1]][6]
 #> $negative.entropy
