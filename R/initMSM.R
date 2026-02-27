@@ -50,7 +50,7 @@
 initMSM <- function(data, exposure, epoch = NULL, tv_conf, ti_conf = NULL,
                     concur_conf = NULL, home_dir = NULL, sep = "[\\._]") {
   if (inherits(data, "mids")) {
-    d <- data[[1]]
+    d <- mice::complete(data, 1) #data[[1]]
     data_type <- "mids"
   } else if (is.data.frame(data)) {
     d <- data
