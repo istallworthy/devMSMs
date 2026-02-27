@@ -1390,7 +1390,7 @@ weights.bart <- createWeights(obj = obj,
 print(weights.bart, 
       i = 1)
 #> 
-#> For imputation 1 and the `bart` weighting method, the median weight value is 1.24 (SD = 17.43; range = 0-587).
+#> For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 14.47; range = 0-478).
 
 summary(weights.bart[[1]])[[1]]
 #>                   Summary of weights
@@ -1398,23 +1398,23 @@ summary(weights.bart[[1]])[[1]]
 #> - Weight ranges:
 #> 
 #>     Min                                   Max
-#> all   0 |---------------------------| 587.049
+#> all   0 |---------------------------| 478.264
 #> 
 #> - Units with the 5 most extreme weights:
 #>                                          
-#>        1235   1145    830     591     475
-#>  all 45.173 79.794 86.678 139.123 587.049
+#>        1235   1145    591     475      30
+#>  all 59.017 75.056 87.017 113.976 478.264
 #> 
 #> - Weight statistics:
 #> 
 #>     Coef of Var   MAD Entropy # Zeros
-#> all       6.166 1.019   1.488       0
+#> all       5.372 0.989   1.355       0
 #> 
 #> - Effective Sample Sizes:
 #> 
 #>              Total
 #> Unweighted 1292.  
-#> Weighted     33.13
+#> Weighted     43.31
 
 plot(weights.bart, 
      i = 1, 
@@ -2082,19 +2082,19 @@ summary(balance_stats.gbm,
 
 summary(balance_stats.bart, 
         save.out = save.out)
-#> USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 23 out of 241 (9.5%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.22):
+#> USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 18 out of 241 (7.5%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.12 (max: 0.19):
 #> +-----------+-----------------------+----------------------------+
 #> | Exposure  | Total # of covariates | # of imbalanced covariates |
 #> +===========+=======================+============================+
-#> | ESETA1.6  | 28                    | 6                          |
+#> | ESETA1.6  | 28                    | 4                          |
 #> +-----------+-----------------------+----------------------------+
-#> | ESETA1.15 | 38                    | 11                         |
+#> | ESETA1.15 | 38                    | 10                         |
 #> +-----------+-----------------------+----------------------------+
-#> | ESETA1.24 | 47                    | 2                          |
+#> | ESETA1.24 | 47                    | 3                          |
 #> +-----------+-----------------------+----------------------------+
-#> | ESETA1.35 | 59                    | 3                          |
+#> | ESETA1.35 | 59                    | 1                          |
 #> +-----------+-----------------------+----------------------------+
-#> | ESETA1.58 | 69                    | 1                          |
+#> | ESETA1.58 | 69                    | 0                          |
 #> +-----------+-----------------------+----------------------------+
 #> 
 #> Table: Imbalanced Covariates Averaging Across Imputed Datasetrs using `bart`
@@ -2147,7 +2147,7 @@ summary(weights.gbm[[1]])[[1]][6]
 summary(weights.bart[[1]])[[1]][6]
 #> $negative.entropy
 #>     all 
-#> 1.48807
+#> 1.35495
 
 summary(weights.super[[1]])[[1]][6]
 #> $negative.entropy
