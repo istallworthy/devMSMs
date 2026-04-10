@@ -424,7 +424,7 @@ The user can specify an imputation method compatible with `mice()` (see above). 
 
 The user may also specify any additional inputs accepted by `mice::mice()` and we advise consulting the <a href:="https://www.rdocumentation.org/packages/mice/versions/3.16.0/topics/mice">\[*mice* documentation\]</a> for more information.
 
-The user can also indicate if they have already created imputed datasets from this function and wish to read them in (`read_imps_from_file = TRUE` rather than recreate them (default).
+The user can also indicate if they have already created imputed datasets from this function and wish to read them in (`read_imps_from_file = TRUE`) rather than recreate them (default).
 
 For this example, we create 2 imputed datasets using the default random forest method and 0 iterations (just for illustrative purposes), set a seed for reproducibility, and assign the output to `data` for use with *devMSMs*. This code takes some time to run. (Note: given the challenges of imputing data from .rda files, we have set `m` = 2 and `maxit` = 0 here just for illustrative purposes. We recommend setting both `m` = 5 and `maxit` = 5 (*mice* default) when running data.)
 

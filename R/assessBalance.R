@@ -460,7 +460,7 @@ summary.devMSM_bal_stats <- function(object, i = NA, save.out = FALSE, ...) {
         if (!is.na(i)) {
           sprintf("Imbalanced Covariates for imputation %s using `%s`", i, weight_method)
         } else {
-          sprintf("Imbalanced Covariates Averaging Across Imputed Datasetrs using `%s`", weight_method)
+          sprintf("Imbalanced Covariates Averaging Across Imputed Datasets using `%s`", weight_method)
         }
       } else {
         if (!is.na(i)) {

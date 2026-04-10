@@ -122,7 +122,16 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
           prop_sum$history[prop_sum$Freq == 1 | prop_sum$Freq == 0]
         )
       } # ends hist exc
-
+      
+      # added by IS 4/8/26 to skip histories for which exposures are all 0s (cannot calc bal stats)
+      omitted_histories <- Filter(
+        function(h) {
+          which_idx <- (history == h)
+          sum(data[[exposure_name]][which_idx]) == 0
+        },
+        setdiff(prop_sum$history, omitted_histories)
+      )
+      
       # finding balance by history
       # if weighted, use IPTW weights from weightitmsm and weight by history
       history_bal_stats <- sapply(
@@ -137,10 +146,15 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
           )
         }
       )
-
+      
+      # IS amended to exclude ommitted histories
       # getting weighted mean across histories (cols), weighting by proportion of those w/ that same history
-      weighted_bal_stats <- history_bal_stats %*% prop_sum$prop
-
+      # weighted_bal_stats <- history_bal_stats %*% prop_sum$prop
+      keep <- !(prop_sum$history %in% omitted_histories)
+      props <- as.numeric(prop_sum$prop[keep])
+      weighted_bal_stats <- history_bal_stats %*% props
+      
+      
       if (exposure_type == "continuous") {
         # unweighted covar sd *
         s1 <- cobalt::col_w_sd(bal_vars)

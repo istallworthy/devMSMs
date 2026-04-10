@@ -91,13 +91,6 @@ We specify our 6 time points of exposure.
 exposure <- c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
 ```
 
-### P3.4. Required for Continuous Exposures: Identify High and Low Exemplar Cutoff Values
-
-Below, we specify the 60th and 30th percentiles to demarcate exemplar high and low levels of economic strain exposure, respectively.
-
-```{r}
-hi_lo_cut <- c(0.6, 0.3)
-```
 
 ### P3.5 Optional: Exposure Epochs
 
@@ -175,11 +168,19 @@ See the *Data Preparation* vignette for more detail.
 We first load in 2 imputed datasets as a mice object. These data are simulated based on data from the Family Life Project (FLP), a longitudinal study following 1,292 families representative of two geographic areas (three counties in North Carolina and three counties in Pennsylvania) with high rural child poverty (Vernon-Feagans et al., 2013; Burchinal et al., 2008). We take the example exposure of economic strain ("ESETA1") measured at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior problems ("StrDif_Tot") measured at 58 months. (See <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements & Preparation vignette</a> for beginning with other data types, including missing data).
 
 ```{r}
-data("sim_data_mice", package = "devMSMs")
+# data("sim_data_mice", package = "devMSMs")
+data("sim_data_wide_bin", package = "devMSMs")
 
-data <- sim_data_mice
 
-head(mice::complete(data, 1), n = c(5, 10))
+data <- sim_data_wide_bin #sim_data_mice
+
+data <- data %>%
+  mutate(
+    across(
+      c(ESETA1.6, ESETA1.15, ESETA1.24, ESETA1.35, ESETA1.58),
+      ~ as.integer(as.character(.))
+    )
+  )
 ```
 
 ### P4.4 Required: Create MSM Object
@@ -240,7 +241,6 @@ The helper `inspectData()` function outputs the following files into the home di
 inspectData(data = data, 
             obj = obj, 
             outcome = outcome, 
-            hi_lo_cut = hi_lo_cut,
             reference = reference, 
             comparison = comparison, 
             verbose = TRUE,
@@ -646,7 +646,7 @@ We can then visualize the imbalance with love plots, averaging across imputed da
 
 ```{r}
 plot(balance_stats.cbps, 
-     t = 4, 
+     t = 5, 
      save.out = save.out)
 
 plot(balance_stats.cbps, 
@@ -1121,13 +1121,13 @@ Below, we specify the M0 model.
 m <- "m0"
 ```
 
-If the user selects a covariate model (“m1” or “m3”), they are required to supply a list to `covariates` that corresponds to covariates in the wide data (see Step 4). This can be helpful for including any time-invariant confounders that could not be successfully balanced using the weights. 
+If the user selects a covariate model (“m1” or “m3”), they are required to supply a list to `covariates` that corresponds to covariates in the wide data (see Step 4).
 
 The optional inputs to the `fitModel()` function are as follows.
 
 If the user selects an interaction model (“m2” or “m3”), they are required to provide a interaction order integer in the `int_order` field that reflects the maximum interaction (e.g., 3) (that will automatically include all lower order interactions (e.g., 2-way)). The interaction order cannot exceed the total number of exposure main effects (3 in our case, as we specified 3 exposure epochs).
 
-If we were to specify an interaction model ("m2" or "m3"), we would also need to specify the interaction order (to be included with all lower-level interactoins) between exposure main effects to the `fitModel()` function below.
+If we were to specify an interaction model ("m2" or "m3"), we would also need to specify the interaction order ( to be included with all lower-level interactoins) between exposure main effects to the `fitModel()` function below.
 
 ```{r}
 #int_order <- 2
