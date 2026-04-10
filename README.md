@@ -17,9 +17,8 @@ have prevented the use of methods for causal inference developed in
 other fields. <br>
 
 The goal of this *devMSMs* package and accompanying tutorial paper,
-*Investigating Causal Questions in Human Development Using Marginal
-Structural Models: A Tutorial Introduction to the devMSMs Package in R*
-(<a href="https://osf.io/preprints/psyarxiv/284mb">preprint</a>), is to
+*Investigating Causal Questions About Temporal and cumulative Developmental Effects: A Tutorial Introduction to the devMSMs Package in R*
+(<a href="https://academic.oup.com/chidev/article/97/2/331/8516421">paper link</a>), is to
 provide a set of tools for implementing marginal structural models
 (**MSMs**; Robins et al., 2000).
 
