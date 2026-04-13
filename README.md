@@ -25,6 +25,7 @@ R*
 link</a>), is to provide a set of tools for implementing marginal
 structural models (**MSMs**; Robins et al., 2000).
 
+
 MSMs originated in epidemiology and public health and represent one
 under-utilized tool for improving causal inference with longitudinal
 observational data, given certain assumptions. In brief, MSMs leverage
