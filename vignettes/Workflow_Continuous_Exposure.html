@@ -194,10 +194,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"istallworthy/devMSMs"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: `install_github()` was deprecated in devtools 2.5.0.</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Please use pak::pak("user/repo") instead.</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devMSMs)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"istallworthy/devMSMsHelpers"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devMSMsHelpers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Installing 31 packages: rappdirs, cli, highr, rlang, base64enc, yaml, xfun, tinytex, knitr, bslib, ps, zoo, viridisLite, cpp11, vctrs, isoband, ggplot2, insight, backports, rstudioapi, rmarkdown, processx, later, cobalt, tables, performance, data.table, checkmate, WeightIt, modelsummary, marginaleffects</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devMSMs)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"istallworthy/devMSMsHelpers"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devMSMsHelpers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>All <em>devMSMs</em> functions have an option to save out objects as ‘.rds’ files. Users can also save out content from print, summary, and plot methods, as illustrated in the sections below. To save, users must supply a path to a home directory (<code>home_dir</code>) when creating their initial MSM object. Users can save to the home directory using the default file labels (and .txt file type) using <code>save.out</code> = TRUE. When saving tables, users have the option to supply their own name and file type (e.g., <code>save.out</code> = “custom_name.png”). Allowable file types are: .png, .html, .pdf, .tex, and .md. All sub-folders referenced by each function are created automatically within the home directory. We recommend saving outputs for future use and provide commented out examples here. When an output is saved out, the function automatically provides a path file to aid the user in reading in that output in the future.</p>
 <p>Some functions output tables. These are all from the <em>tinytables</em> package and can be further customized (e.g., dimensions, footnotes, captions, combined, etc.) according to the options provided by the package (https://vincentarelbundock.github.io/tinytable/vignettes/tinytable.html).</p>
@@ -1179,7 +1180,7 @@ The love plots depict the standardized associations between confounder and expos
 <span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(weights.bart, </span>
 <span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">i =</span> <span class="dv">1</span>)</span>
 <span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.24 (SD = 17.54; range = 0-585).</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 15.2; range = 0-497).</span></span>
 <span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(weights.bart[[<span class="dv">1</span>]])[[<span class="dv">1</span>]]</span>
 <span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   Summary of weights</span></span>
@@ -1187,23 +1188,23 @@ The love plots depict the standardized associations between confounder and expos
 <span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Weight ranges:</span></span>
 <span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Min                                   Max</span></span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; all   0 |---------------------------| 584.889</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; all   0 |---------------------------| 496.897</span></span>
 <span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
-<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                        </span></span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        1235   1145    591   475      30</span></span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  all 57.533 70.715 92.712 161.6 584.889</span></span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                          </span></span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        1235   1145    591     475      30</span></span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  all 61.911 75.362 97.366 139.281 496.897</span></span>
 <span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Weight statistics:</span></span>
 <span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Coef of Var  MAD Entropy # Zeros</span></span>
-<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; all       6.189 1.02   1.506       0</span></span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; all       5.514 1.003   1.407       0</span></span>
 <span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Total</span></span>
-<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unweighted 1292. </span></span>
-<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Weighted     32.9</span></span>
+<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              Total</span></span>
+<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unweighted 1292.  </span></span>
+<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Weighted     41.17</span></span>
 <span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(weights.bart, </span>
 <span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>     <span class="at">i =</span> <span class="dv">1</span>, </span>
@@ -1812,19 +1813,19 @@ The love plots depict the standardized associations between confounder and expos
 <span id="cb46-57"><a href="#cb46-57" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-58"><a href="#cb46-58" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(balance_stats.bart, </span>
 <span id="cb46-59"><a href="#cb46-59" aria-hidden="true" tabindex="-1"></a>        <span class="at">save.out =</span> save.out)</span>
-<span id="cb46-60"><a href="#cb46-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; USER </span><span class="al">ALERT</span><span class="co">: Averaging across imputed datasets using `bart` weighting method: As shown below, 27 out of 241 (11.2%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.14 (max: 0.23):</span></span>
+<span id="cb46-60"><a href="#cb46-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; USER </span><span class="al">ALERT</span><span class="co">: Averaging across imputed datasets using `bart` weighting method: As shown below, 29 out of 241 (12.0%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.11 (max: 0.21):</span></span>
 <span id="cb46-61"><a href="#cb46-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span id="cb46-62"><a href="#cb46-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | Exposure  | Total # of covariates | # of imbalanced covariates |</span></span>
 <span id="cb46-63"><a href="#cb46-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; +===========+=======================+============================+</span></span>
-<span id="cb46-64"><a href="#cb46-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | ESETA1.6  | 28                    | 6                          |</span></span>
+<span id="cb46-64"><a href="#cb46-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | ESETA1.6  | 28                    | 5                          |</span></span>
 <span id="cb46-65"><a href="#cb46-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span id="cb46-66"><a href="#cb46-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | ESETA1.15 | 38                    | 11                         |</span></span>
+<span id="cb46-66"><a href="#cb46-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | ESETA1.15 | 38                    | 13                         |</span></span>
 <span id="cb46-67"><a href="#cb46-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span id="cb46-68"><a href="#cb46-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | ESETA1.24 | 47                    | 7                          |</span></span>
+<span id="cb46-68"><a href="#cb46-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | ESETA1.24 | 47                    | 6                          |</span></span>
 <span id="cb46-69"><a href="#cb46-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span id="cb46-70"><a href="#cb46-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | ESETA1.35 | 59                    | 3                          |</span></span>
 <span id="cb46-71"><a href="#cb46-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span id="cb46-72"><a href="#cb46-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | ESETA1.58 | 69                    | 0                          |</span></span>
+<span id="cb46-72"><a href="#cb46-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | ESETA1.58 | 69                    | 2                          |</span></span>
 <span id="cb46-73"><a href="#cb46-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span id="cb46-74"><a href="#cb46-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb46-75"><a href="#cb46-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Table: Imbalanced Covariates Averaging Across Imputed Datasets using `bart`</span></span>
@@ -1869,7 +1870,7 @@ The love plots depict the standardized associations between confounder and expos
 <span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(weights.bart[[<span class="dv">1</span>]])[[<span class="dv">1</span>]][<span class="dv">6</span>]</span>
 <span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $negative.entropy</span></span>
 <span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      all </span></span>
-<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1.506331</span></span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1.407004</span></span>
 <span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(weights.super[[<span class="dv">1</span>]])[[<span class="dv">1</span>]][<span class="dv">6</span>]</span>
 <span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $negative.entropy</span></span>
