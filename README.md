@@ -4,6 +4,7 @@
 # devMSMs: Implementing Marginal Structural Models (MSMs) <img src="https://raw.githubusercontent.com/istallworthy/devMSMs/main/inst/imgfile.png" align="right" width="100" alt="Structural Models"/> with Longitudinal Data
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 Those who study and work with humans are fundamentally interested in
@@ -17,13 +18,14 @@ have prevented the use of methods for causal inference developed in
 other fields. <br>
 
 The goal of this *devMSMs* package and accompanying tutorial paper,
-*Investigating Causal Questions in Human Development Using Marginal
-Structural Models: A Tutorial Introduction to the devMSMs Package in R*
-(<a href="https://osf.io/preprints/psyarxiv/284mb">preprint</a>), is to
-provide a set of tools for implementing marginal structural models
-(**MSMs**; Robins et al., 2000).
+*Investigating Causal Questions About Temporal and Cumulative
+Developmental Effects: A Tutorial Introduction to the devMSMs Package in
+R*
+(<a href="https://academic.oup.com/chidev/article/97/2/331/8516421">paper
+link</a>), is to provide a set of tools for implementing marginal
+structural models (**MSMs**; Robins et al., 2000).
 
-MSMs orginated in epidemiology and public health and represent one
+MSMs originated in epidemiology and public health and represent one
 under-utilized tool for improving causal inference with longitudinal
 observational data, given certain assumptions. In brief, MSMs leverage
 inverse-probability-of-treatment-weights (IPTW) and the potential
@@ -98,18 +100,18 @@ Below is a summary of the terms used in the *devMSMs* vignettes and
 functions. More details and examples can be found in the accompanying
 manuscript. <br>
 
-| Term                          | Definition                                                                                                                                                                                                                                                     |
-|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Exposure**                  | Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome.                                                                                 |
-| **Outcome**                   | Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects.                                                                                                                  |
-| **Exposure Time Points**      | Time points in development when the exposure was measured, at which weights formulas will be created.                                                                                                                                                          |
-| **Exposure Epochs**           | *(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories. |
-| **Exposure Histories**        | Sequences of relatively high (`'h'`) or low (`'l'`) levels of exposure at each exposure time point or exposure epoch.                                                                                                                                          |
-| **Exposure Dosage**           | Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history.                                                                                                       |
-| **Confounder**                | Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths.                                                                                         |
-| **Time-varying confounder**   | A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly.                                                                                                  |
-| **Time invariant confounder** | A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure.                                                                                                                    |
-| **Collider**                  | A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias.                                                                                                                                 |
+| Term | Definition |
+|----|----|
+| **Exposure** | Exposure or experience that constitutes the causal event of interest and is measured at at least two time points, with at least one time point occurring prior to the outcome. |
+| **Outcome** | Any developmental construct measured at least once at a final outcome time point upon which the exposure is theorized to have causal effects. |
+| **Exposure Time Points** | Time points in development when the exposure was measured, at which weights formulas will be created. |
+| **Exposure Epochs** | *(optional)* Further delineation of exposure time points into meaningful units of developmental time, each of which could encompass multiple exposure time points, that together constitute exposure main effects in the outcome model and exposure histories. |
+| **Exposure Histories** | Sequences of relatively high (`'h'`) or low (`'l'`) levels of exposure at each exposure time point or exposure epoch. |
+| **Exposure Dosage** | Total cumulative exposure epochs/time points during which an individual experienced high (or low) levels of exposure, across an entire exposure history. |
+| **Confounder** | Pre-exposure variable that represents a common cause of exposure at a given time point and outcome; adjusting for all of which successfully blocks all backdoor paths. |
+| **Time-varying confounder** | A confounder that often changes over time (even if it is not measured at every time point), and is affected by prior exposure, either directly or indirectly. |
+| **Time invariant confounder** | A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure. |
+| **Collider** | A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias. |
 
 <br>
 
