@@ -123,11 +123,12 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
         )
       } # ends hist exc
       
-      # added by IS 4/8/26 to skip histories for which exposures are all 0s (cannot calc bal stats)
+      # added by IS 4/8/26 to skip histories for which exposures are all 0s or all 1s (cannot calc bal stats)
       omitted_histories <- Filter(
         function(h) {
           which_idx <- (history == h)
-          sum(data[[exposure_name]][which_idx]) == 0
+          vals <- data[[exposure_name]][which_idx]
+          all(vals == 0) || all(vals == 1)
         },
         setdiff(prop_sum$history, omitted_histories)
       )
