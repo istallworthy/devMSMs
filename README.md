@@ -18,13 +18,12 @@ have prevented the use of methods for causal inference developed in
 other fields. <br>
 
 The goal of this *devMSMs* package and accompanying tutorial paper,
-*Investigating Causal Questions About Temporal and Cumulative
+*Investigating Causal Questions about Temporal and Cumulative
 Developmental Effects: A Tutorial Introduction to the devMSMs Package in
 R*
 (<a href="https://academic.oup.com/chidev/article/97/2/331/8516421">paper
 link</a>), is to provide a set of tools for implementing marginal
 structural models (**MSMs**; Robins et al., 2000).
-
 
 MSMs originated in epidemiology and public health and represent one
 under-utilized tool for improving causal inference with longitudinal
