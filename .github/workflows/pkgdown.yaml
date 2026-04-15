@@ -18,7 +18,6 @@ jobs:
   pkgdown:
     runs-on: ubuntu-latest
 
-    # Only restrict concurrency for non-PR jobs
     concurrency:
       group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
 
@@ -42,40 +41,17 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: r-lib/pkgdown, any::quarto, local::.
+          extra-packages: |
+            r-lib/pkgdown
+            any::quarto
+            github::istallworthy/devMSMsHelpers
+            local::.
           needs: website
-
-      - name: Session info
-        shell: Rscript {0}
-        run: |
-          cat("R version:\n")
-          print(R.version.string)
-          cat("\npkgdown version:\n")
-          print(as.character(packageVersion("pkgdown")))
-          cat("\nquarto R package version:\n")
-          print(as.character(packageVersion("quarto")))
 
       - name: Check Quarto
         run: |
           which quarto
           quarto --version
-
-      - name: List vignette files
-        run: |
-          pwd
-          ls -la
-          ls -la vignettes || true
-          find vignettes -maxdepth 2 -type f | sort || true
-
-      - name: Render failing vignette directly
-        shell: Rscript {0}
-        run: |
-          quarto::quarto_render("vignettes/Workflow_Continuous_Exposure.qmd", quiet = FALSE)
-
-      - name: Build articles with full logs
-        shell: Rscript {0}
-        run: |
-          pkgdown::build_articles(quiet = FALSE)
 
       - name: Build site
         shell: Rscript {0}
