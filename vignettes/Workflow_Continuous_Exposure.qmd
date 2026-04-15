@@ -36,7 +36,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
 install.packages("devtools", quiet = TRUE)
 require("devtools", quietly = TRUE)
 
-devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
+# devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
 library(devMSMs)
 
 devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
