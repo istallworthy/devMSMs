@@ -44,7 +44,7 @@ jobs:
           extra-packages: |
             r-lib/pkgdown
             any::quarto
-            github::istallworthy/devMSMsHelpers
+            istallworthy/devMSMsHelpers
             local::.
           needs: website
 
