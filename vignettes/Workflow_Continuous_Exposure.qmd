@@ -33,6 +33,9 @@ Until *devMSMs* is available on CRAN, you will need to install it directly from 
 ```{r setup}
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
+install.packages("remotes", quiet = TRUE)
+require("remotes", quietly = TRUE)
+
 install.packages("devtools", quiet = TRUE)
 require("devtools", quietly = TRUE)
 
