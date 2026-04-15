@@ -124,14 +124,15 @@ calc_bal_stats <- function(data, obj, weights = NULL, balance_thresh = NULL, imp
       } # ends hist exc
       
       # added by IS 4/8/26 to skip histories for which exposures are all 0s or all 1s (cannot calc bal stats)
-      omitted_histories <- Filter(
-        function(h) {
-          which_idx <- (history == h)
-          vals <- data[[exposure_name]][which_idx]
-          all(vals == 0) || all(vals == 1)
-        },
-        setdiff(prop_sum$history, omitted_histories)
-      )
+      omitted_histories <- c(omitted_histories, 
+                             Filter(
+                               function(h) {
+                                 which_idx <- (history == h)
+                                 vals <- data[[exposure_name]][which_idx]
+                                 all(vals == 0) || all(vals == 1)
+                               },
+                               setdiff(prop_sum$history, omitted_histories)
+                             ))
       
       # finding balance by history
       # if weighted, use IPTW weights from weightitmsm and weight by history
