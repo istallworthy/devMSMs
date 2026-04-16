@@ -1,0 +1,150 @@
+# Wide data imputed and read in (continuous exposure)
+
+These data are simulated based on data from the Family Life Project
+(FLP), a longitudinal study following 1,292 families representative of
+two geographic areas (three counties in North Carolina and three
+counties in Pennsylvania) with high rural child poverty (Vernon-Feagans
+et al., 2013; Burchinal et al., 2008). MAR missingness has been added
+using the missMethods package before imputing with the mice package and
+reading in each imputed dataset. These data contain economic strain
+(ESEATA1) as a continuously distributed variable.
+
+## Usage
+
+``` r
+sim_data_imp_list
+```
+
+## Format
+
+A wide data frame of 1,292 observations There are 36 measured variables
+collected at one or more of the following time points: 6, 15, 24, 35,
+and 58 months.
+
+- "ID" subject id
+
+- "ESETA1" continuous exposure of economic strain
+
+- "StrDif_Tot.58" continuous outcome of behavioral problems
+
+- "InRatioCor" continuous income-to-needs ratio
+
+- "PmEd2" parent's education level (0-11 = less than high school, 12 =
+  GED, 13 = GED and additional training, 14 = high school grad, 15 =
+  high school and additional training, 16 = some college, 17 =
+  associates degree, 18 = four year college degree, 19 = some post
+  college, 20 = masters degree, 21 = professional degree, 22 = PhD)
+
+- "state" family's state of residence (NC = North Carolina, PA =
+  Pennslyvania)
+
+- "TcBlac2" child's race (1 = Black, 0 = White)
+
+- "bioDadInHH2" whether the biological father lives with the family (1 =
+  yes, 0 = no)
+
+- "HomeOwnd" whether family owns home (1 = owned or being bought by
+  family, 2 = owned or being bought by someone else, 3 = rented for
+  rent, 4 = occupied without payment for rent)
+
+- "KFASTScr" continuous score of caregiver reading comprehension
+
+- "PmBlac2" primary caregiver's race (1 = Black, 0 = White)
+
+- "PmAge2" primary caregiver age in years
+
+- "PmMrSt2" caregiver marital status (1 = single, 2 = married and living
+  with spouse, 3 = married and not living with spouse, 4 = divorced, 5 =
+  separated, 6 = widowed)
+
+- "RMomAgeU" continuous age in years of biological mother when caregiver
+  was born
+
+- "RHealth" index of general caregiver health (1 = excellent, 2 = very
+  good, 3 = good, 4 = fair, 5 = poor)
+
+- "RHasSO" whether caregiver has significant other or not (1 = yes, 0 =
+  no)
+
+- "SmokTotl" total cigarettes biological mother smoked while pregnant (1
+  = 21 cigarettes or less, 2 = 2 - 99 cigarettes, 3 = 100 or more
+  cigarettes)
+
+- "caregiv_health" sum score of caregiver health problems including
+  emotional problems, ADHD, asthma, cancer, high blood pressure, limited
+  mobility, learning disability, general subjective health, mental
+  health, overwight, seizures, depression, diabetes
+
+- "peri_health" sum score of pregnancy/birth health including excessive
+  vomitting, fetal distress, colic, had alcohol, high blood pressure,
+  heavy bleeding, infection, congenital issues, stay in pediatric
+  intensive care, labor induction, independent breathing at birth, had
+  surgery, in NICU, smoked while pregnant, breach, excessive weight
+  loss, incubation, water retention, had c-section
+
+- "SWghtLB" child birth weight in pounds
+
+- "SurpPreg" whether caregiver had a surprise pregnancy (1 = yes, 0 =
+  no)
+
+- "DrnkFreq" how frequently caregiver drank while pregnant (1 = never, 2
+  = once or twice, 3 = once a month, 4 = twice a month, 5 = couple
+  times/week, 6 = everyday)
+
+- "gov_assist" sum score of whether family received government benefits
+  including early headstart, early intervention, food stamps, subsidized
+  childcare, heating assistance, government housing, transportation,
+  school free lunch, WIC, and AFDC
+
+- "ALI_LE" continuous child language expression
+
+- "B18Raw" continuous caregiver total depression problems
+
+- "CORTB" continuous child salivary cortisol at rest
+
+- "EARS_TJo"
+
+- "fscore" continuous executive function factor score
+
+- "HOMEETA1" continuous sociocognitive resources factor score
+
+- "IBRAttn" continuous child total joint attention
+
+- "LESMnNeg" continuous family negative life events
+
+- "LESMnPos" continuous family positive life events
+
+- "MDI" continuous child Bayely mental development index
+
+- "RHAsSO" whether caregiver has significant other at a given time (1 =
+  yes, 0 = no)
+
+- "SAAmylase" continuous child salivary alpha amylase at rest
+
+- "WndNbrhood" continuous neighborhood safety
+
+## References
+
+DeJoseph, M. L., Sifre, R. D., Raver, C. C., Blair, C. B., & Berry, D.
+(2021). Capturing Environmental Dimensions of Adversity and Resources in
+the Context of Poverty Across Infancy Through Early Adolescence: A
+Moderated Nonlinear Factor Model. Child Development, n/a(n/a).
+https://doi.org/10.1111/cdev.13504
+
+Burchinal, M., Howes, C., Pianta, R., Bryant, D., Early, D., Clifford,
+R., & Barbarin, O. (2008). Predicting Child Outcomes at the End of
+Kindergarten from the Quality of Pre-Kindergarten Teacher–Child
+Interactions and Instruction. Applied Developmental Science, 12(3),
+140–153. https://doi.org/10.1080/10888690802199418
+
+Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M.,
+Garrett-Peters, P., Mills-Koonce, R., Garrett-Peiers, P., Conger, R. D.,
+& Bauer, P. J. (2013). The Family Life Project: An Epidemiological and
+Developmental Study of Young Children Living in Poor Rural Communities.
+Monographs of the Society for Research in Child Development, 78(5),
+i–150.
+
+Willoughby, M. T., Blair, C. B., Wirth, R. J., & Greenberg, M. (2010).
+The measurement of executive function at age 3 years: psychometric
+properties and criterion validity of a new battery of tasks.
+Psychological assessment, 22(2), 306.
