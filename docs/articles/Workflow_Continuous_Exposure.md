@@ -1,7 +1,7 @@
 # Workflow: Continuous Exposure
 
 This vignette guides a user through the process of using *devMSMs* to
-fit marginal structural models (MSMs) with a a continuously distributed
+fit marginal structural models (MSMs) with a continuously distributed
 exposure variable. The users should first view the
 [Terminology](https://istallworthy.github.io/devMSMs/articles/Terminology.html),
 [Data
@@ -18,7 +18,7 @@ practical details provided in the manuscript
 ([preprintgh](https://osf.io/preprints/psyarxiv/284mb)). We strongly
 suggest users familiarize themselves with concepts of the MSM process
 outlined in the manuscript and the practical steps and functions put
-forth in the following sections before implementing this workflow.  
+forth in the following sections before implementing this workflow.\
 
 ## Installation
 
@@ -27,6 +27,7 @@ directly from Github (https://github.com/istallworthy/devMSMs), as shown
 below.
 
 ``` r
+
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
 # install.packages("remotes", quiet = TRUE)
@@ -67,10 +68,11 @@ package
 (https://vincentarelbundock.github.io/tinytable/vignettes/tinytable.html).
 
 ``` r
+
 save.out = FALSE
 ```
 
-  
+\
 
 ## Phase 0: Preliminary Conceptual & Data Preparation
 
@@ -105,6 +107,7 @@ We do not specify a home directory given the nature of this example, but
 we do recommend doing so to save out core function outputs.
 
 ``` r
+
 # home_dir = '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa' 
 ```
 
@@ -113,6 +116,7 @@ we do recommend doing so to save out core function outputs.
 Below, we use the default period as a time delimiter.
 
 ``` r
+
 sep <- "\\."
 ```
 
@@ -121,6 +125,7 @@ sep <- "\\."
 We specify our 6 time points of exposure.
 
 ``` r
+
 exposure <- c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
 ```
 
@@ -130,6 +135,7 @@ Below, we specify the 60th and 30th percentiles to demarcate exemplar
 high and low levels of economic strain exposure, respectively.
 
 ``` r
+
 hi_lo_cut <- c(0.6, 0.3)
 ```
 
@@ -140,6 +146,7 @@ will be considered infancy, the second two (34 and 25 months)
 toddlerhood, and the final (58 months) childhood.
 
 ``` r
+
 epochs <- c("Infancy", "Infancy", "Toddlerhood", "Toddlerhood", "Childhood")
 ```
 
@@ -153,6 +160,7 @@ examine an example question comparing the causal effects of 0 vs 3 doses
 of exposure to economic strain on children’s behavior problems.
 
 ``` r
+
 reference <- c("l-l-l")
 
 comparison <- c("h-h-h")
@@ -163,6 +171,7 @@ comparison <- c("h-h-h")
 We specify out outcome as behavior problems at 58 months.
 
 ``` r
+
 outcome <-  "StrDif_Tot.58"
 ```
 
@@ -171,6 +180,7 @@ outcome <-  "StrDif_Tot.58"
 We specify both time-invariant and time-varying confounders.
 
 ``` r
+
 ti_conf <- c( "state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
   "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
   "peri_health", "caregiv_health", "gov_assist")
@@ -196,15 +206,15 @@ tv_conf <- c("SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
 We specify no concurrent confounders as, given our data, we are unable
 to disentangle them from mediators or colliders.
 
-  
+\
 
 ### STEP P4. Data Preparation & Inspection
 
 #### P4.3b. Required: Read in Wide Data
 
-We highly recommend first implementing the *Data Requirements &
-Preparation Vignette*
-https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html
+We highly recommend first implementing the [Data Requirements &
+Preparation
+vignette](https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html)
 before assigning to the variable, `data`, one of the following wide data
 formats (see Figure 1) for use in the package:
 
@@ -230,6 +240,7 @@ vignette](https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html
 for beginning with other data types, including missing data).
 
 ``` r
+
 data("sim_data_mice", package = "devMSMs")
 
 data <- sim_data_mice
@@ -254,6 +265,7 @@ head(mice::complete(data, 1), n = c(5, 10))
 We set a seed for reproducibility.
 
 ``` r
+
 set.seed(1234)
 
 obj <- initMSM(
@@ -287,6 +299,7 @@ Below, we inspect the MSMS object to view and confirm how variables are
 categorized.
 
 ``` r
+
 print(obj)
 #> Exposure (continuous): ESETA1.6, ESETA1.15, ESETA1.24, ESETA1.35, ESETA1.58
 #> Corresponding epoch: Infancy, Infancy, Toddlerhood, Toddlerhood, Childhood
@@ -354,7 +367,7 @@ print(obj)
 #>      gov_assist  ti_conf   -1
 ```
 
-  
+\
 
 #### P4.5. Recommended: Inspect Exposure Histories and Data
 
@@ -400,6 +413,7 @@ outcome descriptive statistics, and two summary tables of the
 confounders considered at each time point.
 
 ``` r
+
 inspectData(data = data, 
             obj = obj, 
             outcome = outcome, 
@@ -580,16 +594,16 @@ inspectData(data = data,
 Here, we see summaries of the data types as well as reasonable cell
 counts in each of our specified histories, for each imputed dataset.
 
-  
-  
+\
+\
 
 ## PHASE 1: Confounder Adjustment
 
 The goal of this first phase is to minimize the associations between
 confounders and exposure using IPTW balancing weights. We strongly
 advise the user to carefully inspect each weights formula to ensure
-weights are created and evaluated appropriately at each step.  
-  
+weights are created and evaluated appropriately at each step.\
+\
 
 ### STEP 1: Create Full Weights Formulas & Conduct Pre-Balance Checking
 
@@ -647,6 +661,7 @@ to make them automatically in this example.
 We first create full formulas.
 
 ``` r
+
 type <- "full"
 
 full_formulas <- createFormulas(obj = obj, 
@@ -663,6 +678,7 @@ all appropriate confounders are present in each formula.
 We inspect the formulas below.
 
 ``` r
+
 print(full_formulas)
 #> USER ALERT: Please manually inspect the full balancing formula below:
 #> At time point 6, the full formula for ESETA1.6 is: 
@@ -681,7 +697,7 @@ print(full_formulas)
 #> ESETA1.58 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + SAAmylase.6 + SAAmylase.15 + SAAmylase.24 + MDI.6 + MDI.15 + RHasSO.6 + RHasSO.15 + RHasSO.24 + RHasSO.35 + WndNbrhood.6 + WndNbrhood.24 + WndNbrhood.35 + IBRAttn.6 + IBRAttn.15 + IBRAttn.24 + B18Raw.6 + B18Raw.15 + B18Raw.24 + HOMEETA1.6 + HOMEETA1.15 + HOMEETA1.24 + HOMEETA1.35 + InRatioCor.6 +      InRatioCor.15 + InRatioCor.24 + InRatioCor.35 + CORTB.6 + CORTB.15 + CORTB.24 + EARS_TJo.24 + EARS_TJo.35 + LESMnPos.24 + LESMnPos.35 + LESMnNeg.24 + LESMnNeg.35 + StrDif_Tot.35 + fscore.35 + ESETA1.6 + ESETA1.15 + ESETA1.24 + ESETA1.35
 ```
 
-  
+\
 
 #### 1b. Conduct Exploratory Pre-Balance Assessment
 
@@ -691,7 +707,7 @@ confounders prior to weighting using the
 [`assessBalance()`](https://istallworthy.github.io/devMSMs/reference/assessBalance.md)
 function. This function draws on the `calcBalStats()` function (see the
 Assessing Balance for Time-Varying Exposure section in the accompanying
-manuscript).  
+manuscript).\
 
 The
 [`assessBalance()`](https://istallworthy.github.io/devMSMs/reference/assessBalance.md)
@@ -737,6 +753,7 @@ income and parent education as important confounders in the relation
 between economic strain and behavior problems.
 
 ``` r
+
 balance_thresh <- c(0.05, 0.1) 
 
 imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35", 
@@ -746,6 +763,7 @@ imp_conf <- c("InRatioCor.6", "InRatioCor.15", "InRatioCor.24", "InRatioCor.35",
 We create prebalance statistics below.
 
 ``` r
+
 prebalance_stats <- assessBalance(obj = obj, 
                                   data = data, 
                                   balance_thresh = balance_thresh, 
@@ -783,6 +801,7 @@ measured. For example, my first time point measures ESETA1 at 6 months
 which corresponds to `t` = 1.
 
 ``` r
+
 print(prebalance_stats, 
       i = 1, 
       t = 1, 
@@ -856,6 +875,7 @@ at different time points by not specifying `i`. This can also be used to
 view balance statistics when the data are not imputed.
 
 ``` r
+
 print(prebalance_stats, 
       t = 1, 
       save.out = save.out)
@@ -931,6 +951,7 @@ imbalanced confounders at each exposure time point. We can view this in
 one imputed dataset or averaged across them.
 
 ``` r
+
 summary(prebalance_stats, 
         i = 1, 
         save.out = save.out)
@@ -982,6 +1003,7 @@ confounders that are imbalanced in relation to their respective balance
 thresholds.
 
 ``` r
+
 plot(prebalance_stats, 
      i = 1, 
      t = 1, 
@@ -992,6 +1014,7 @@ plot(prebalance_stats,
 
 ``` r
 
+
 plot(prebalance_stats, 
      t = 1, 
      save.out = save.out)
@@ -999,22 +1022,22 @@ plot(prebalance_stats,
 
 ![](Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-22-2.png)
 
-  
-  
+\
+\
 The love plots depict the standardized associations between confounder
 and exposure at each exposure time point, with the vertical red dashed
 lines indicating balance thresholds. Imbalanced confounders are shown in
 red with variable name labels.
 
-  
-  
+\
+\
 
 ### STEP 2: Create Simplified Weights Formulas & Determine Optimal Weighting Method
 
 The goal of this second step is to create shortened, more parsimonious
 weights formulas for determining the optimal IPTW weighting method that
-most successfully reduces imbalance in the data.  
-  
+most successfully reduces imbalance in the data.\
+\
 
 #### 2a. Create Simplified Weights Formulas
 
@@ -1043,6 +1066,7 @@ this step if they occur at lags greater than *t*-1 for each formula.
 We create short formulas below.
 
 ``` r
+
 type <- "short" 
 
 short_formulas <- createFormulas(obj = obj, 
@@ -1057,6 +1081,7 @@ And then inspect them to make sure they contain only time-varying
 covariates at a lag of one prior to the exposure time point.
 
 ``` r
+
 print(short_formulas)
 #> USER ALERT: Please manually inspect the short balancing formula below that includes time-varying confounders at t-1 only:
 #> At time point 6, the short formula for ESETA1.6 is: 
@@ -1080,7 +1105,7 @@ instance, at the 58-month exposure time point, the formula contains all
 time invariant confounders and only time-varying confounders at the
 35-month time point.
 
-  
+\
 
 #### 2b. Create IPTW Balancing Weights Using Multiple Weighting Methods
 
@@ -1105,6 +1130,7 @@ formulas (see Step 2a).
 We specify the short formulas below.
 
 ``` r
+
 formulas <- short_formulas
 ```
 
@@ -1121,6 +1147,7 @@ found in the [*WeightIt* documentation](NA).
 We begin with specifying CBPS as a weighting method.
 
 ``` r
+
 method <- "cbps"
 ```
 
@@ -1144,13 +1171,14 @@ view information about weights creation.
 
 The function returns a list of weights objects each in the form of
 WeightItMSM output (with an entry for each imputed dataset when
-appropriate).  
+appropriate).\
 
 ##### CBPS
 
 Below, we create IPTW weights using the default CBPS method.
 
 ``` r
+
 weights.cbps <- createWeights(obj = obj, 
                              data = data, 
                              method = method,
@@ -1199,6 +1227,7 @@ If we had previously saved out CBPS weights, we could read them in
 instead of re-creating them.
 
 ``` r
+
 # weights.cbps <- readRDS('file_path_to_saved_weights.rds')
 ```
 
@@ -1210,6 +1239,7 @@ imputed dataset. Here, we note a median weight value of 0.77 (SD= 1.18)
 but with a fairly extensive range of 0 - 9.
 
 ``` r
+
 print(weights.cbps, 
       i = 1)
 #> 
@@ -1221,6 +1251,7 @@ Next, we look inside the output to summarize the weighting process
 dataset (we chose the first one here).
 
 ``` r
+
 summary(weights.cbps[[1]])[[1]]
 #>                   Summary of weights
 #> 
@@ -1259,6 +1290,7 @@ dataset. The user has the option to supply `save.out` to save plots to
 the home directory.
 
 ``` r
+
 plot(weights.cbps, 
      i = 1, 
      save.out = save.out)
@@ -1275,12 +1307,13 @@ We then create and inspect IPTW balancing weights using all other
 available methods in order to evaluate and compare their performance in
 subsequent steps. Here, we summarize and plot averaging across all
 imputed datasets in order to get a sense for their overall performance.
-Example inspections are for the first imputed dataset.  
-  
+Example inspections are for the first imputed dataset.\
+\
 
 ##### GLM
 
 ``` r
+
 method <- "glm"
 
 weights.glm <- createWeights(obj = obj, 
@@ -1328,11 +1361,12 @@ plot(weights.glm,
 As shown above, the GLM method produces a higher median of 1.27 and a
 much greater range of weights.
 
-  
+\
 
 ##### GBM
 
 ``` r
+
 method <- "gbm"
 
 weights.gbm <- createWeights(obj = obj,
@@ -1340,6 +1374,16 @@ weights.gbm <- createWeights(obj = obj,
                              method = method,
                              formulas = formulas,
                              save.out = save.out)
+#> Warning: No `criterion` was provided. Using "p.mean".
+#> No `criterion` was provided. Using "p.mean".
+#> No `criterion` was provided. Using "p.mean".
+#> No `criterion` was provided. Using "p.mean".
+#> No `criterion` was provided. Using "p.mean".
+#> No `criterion` was provided. Using "p.mean".
+#> No `criterion` was provided. Using "p.mean".
+#> No `criterion` was provided. Using "p.mean".
+#> No `criterion` was provided. Using "p.mean".
+#> No `criterion` was provided. Using "p.mean".
 
 print(weights.gbm,
       i = 1)
@@ -1380,11 +1424,12 @@ plot(weights.gbm,
 The GBM method produces a similar mean as GLM and a similarly large
 range (0-216).
 
-  
+\
 
 ##### Bart
 
 ``` r
+
 method <- "bart"
 
 weights.bart <- createWeights(obj = obj, 
@@ -1396,7 +1441,7 @@ weights.bart <- createWeights(obj = obj,
 print(weights.bart, 
       i = 1)
 #> 
-#> For imputation 1 and the `bart` weighting method, the median weight value is 1.22 (SD = 19.61; range = 0-672).
+#> For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 17.48; range = 0-580).
 
 summary(weights.bart[[1]])[[1]]
 #>                   Summary of weights
@@ -1404,23 +1449,23 @@ summary(weights.bart[[1]])[[1]]
 #> - Weight ranges:
 #> 
 #>     Min                                   Max
-#> all   0 |---------------------------| 672.046
+#> all   0 |---------------------------| 579.864
 #> 
 #> - Units with the 5 most extreme weights:
 #>                                          
-#>        1235   1145    591     475      79
-#>  all 46.043 57.854 67.481 153.083 672.046
+#>       1235   1145     591     475      30
+#>  all 55.09 71.775 125.957 145.136 579.864
 #> 
 #> - Weight statistics:
 #> 
 #>     Coef of Var   MAD Entropy # Zeros
-#> all        6.89 1.024   1.569       0
+#> all       6.122 1.027   1.515       0
 #> 
 #> - Effective Sample Sizes:
 #> 
-#>              Total
-#> Unweighted 1292.  
-#> Weighted     26.68
+#>             Total
+#> Unweighted 1292. 
+#> Weighted     33.6
 
 plot(weights.bart, 
      i = 1, 
@@ -1431,11 +1476,12 @@ plot(weights.bart,
 
 The bart method has a similar median and an even larger range (0-945).
 
-  
+\
 
 ##### Super
 
 ``` r
+
 method <- "super"
 
 weights.super <- createWeights(obj = obj, 
@@ -1674,7 +1720,7 @@ plot(weights.super,
 
 The super method produces a similar median and a range of 0-270.
 
-  
+\
 
 #### 2c. Assess All Weighting Methods to Determine Optimal Method
 
@@ -1706,14 +1752,15 @@ function also provides summary balance statistics averaging across all
 time points (and imputed datasets if they are supplied).
 
 We retain the same optional important confounders (`imp_conf`) and
-balance threshold (`balance_thresh`) as we specified earlier.  
-  
+balance threshold (`balance_thresh`) as we specified earlier.\
+\
 
 ##### CBPS
 
 We first assess balance for the CBPS weighting method.
 
 ``` r
+
 weights <- weights.cbps 
 
 balance_stats.cbps <- assessBalance(data = data, 
@@ -1736,6 +1783,7 @@ examine balance for the first imputed dataset. The user has the option
 to supply `save.out` to save printed output to the home directory.
 
 ``` r
+
 summary(balance_stats.cbps, 
         save.out = save.out)
 #> USER ALERT: Averaging across imputed datasets using `cbps` weighting method: As shown below, 2 out of 241 (0.8%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.06 (max: 0.07):
@@ -1787,6 +1835,7 @@ point shown here). We can also plot balance for any given imputed
 datset.
 
 ``` r
+
 plot(balance_stats.cbps, 
      t = 4, 
      save.out = save.out)
@@ -1795,6 +1844,7 @@ plot(balance_stats.cbps,
 ![](Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-38-1.png)
 
 ``` r
+
 
 plot(balance_stats.cbps, 
      t = 4, 
@@ -1815,6 +1865,7 @@ directory. Below, we show an example of balance statistics for the first
 time point, averaged across imputed datasets.
 
 ``` r
+
 print(balance_stats.cbps, 
       t = 4, 
       save.out = save.out)
@@ -1950,11 +2001,12 @@ exposure with correlation values of 0.065 and 0.061.
 Below, we assess balance for each weighting method before comparing them
 all.
 
-  
+\
 
 ##### GLM
 
 ``` r
+
 weights <- weights.glm
 
 balance_stats.glm <- assessBalance(data = data, 
@@ -1968,6 +2020,7 @@ balance_stats.glm <- assessBalance(data = data,
 ##### GBM
 
 ``` r
+
 weights <- weights.gbm
 
 balance_stats.gbm <- assessBalance(data = data,
@@ -1981,6 +2034,7 @@ balance_stats.gbm <- assessBalance(data = data,
 ##### Bart
 
 ``` r
+
 weights <-  weights.bart
 
 balance_stats.bart <- assessBalance(data = data, 
@@ -1994,6 +2048,7 @@ balance_stats.bart <- assessBalance(data = data,
 ##### Super
 
 ``` r
+
 weights <- weights.super 
 
 balance_stats.super <- assessBalance(data = data, 
@@ -2004,7 +2059,7 @@ balance_stats.super <- assessBalance(data = data,
                                      save.out = save.out)
 ```
 
-  
+\
 
 From these summaries, we identify the optimal weighting method for a
 dataset, or the one that yields the best confounder balance. To do this,
@@ -2021,14 +2076,15 @@ following guidance:
 - Lowest maximum absolute balance statistic, across all confounders and
   time points (and imputed datasets, where applicable), indicating
   weakest remaining relation between exposure and confounder for the
-  least balanced confounder (from summary output);  
+  least balanced confounder (from summary output);\
 - Reasonable effective sample size following weighting (for all imputed
   datasets, where applicable), indicating reasonable power to detect
-  effects (from *WeightIt* summary output).  
+  effects (from *WeightIt* summary output).\
   For the first three, we examine summaries for each of the weighting
   methods.
 
 ``` r
+
 summary(balance_stats.cbps, 
         save.out = save.out)
 #> USER ALERT: Averaging across imputed datasets using `cbps` weighting method: As shown below, 2 out of 241 (0.8%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.06 (max: 0.07):
@@ -2088,17 +2144,17 @@ summary(balance_stats.gbm,
 
 summary(balance_stats.bart, 
         save.out = save.out)
-#> USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 22 out of 241 (9.1%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.14 (max: 0.23):
+#> USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 21 out of 241 (8.7%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.22):
 #> +-----------+-----------------------+----------------------------+
 #> | Exposure  | Total # of covariates | # of imbalanced covariates |
 #> +===========+=======================+============================+
-#> | ESETA1.6  | 28                    | 8                          |
+#> | ESETA1.6  | 28                    | 6                          |
 #> +-----------+-----------------------+----------------------------+
-#> | ESETA1.15 | 38                    | 11                         |
+#> | ESETA1.15 | 38                    | 13                         |
 #> +-----------+-----------------------+----------------------------+
 #> | ESETA1.24 | 47                    | 2                          |
 #> +-----------+-----------------------+----------------------------+
-#> | ESETA1.35 | 59                    | 1                          |
+#> | ESETA1.35 | 59                    | 0                          |
 #> +-----------+-----------------------+----------------------------+
 #> | ESETA1.58 | 69                    | 0                          |
 #> +-----------+-----------------------+----------------------------+
@@ -2135,6 +2191,7 @@ sample size (“Unweighted”) across weighting methods. We do this just for
 the first imputed dataset.
 
 ``` r
+
 summary(weights.cbps[[1]])[[1]][6]
 #> $negative.entropy
 #>       all 
@@ -2153,7 +2210,7 @@ summary(weights.gbm[[1]])[[1]][6]
 summary(weights.bart[[1]])[[1]][6]
 #> $negative.entropy
 #>      all 
-#> 1.568552
+#> 1.515228
 
 summary(weights.super[[1]])[[1]][6]
 #> $negative.entropy
@@ -2167,8 +2224,8 @@ effective sample size of 605.
 From these inspections, we identify the best performing weighting method
 as CBPS.
 
-  
-  
+\
+\
 
 ### STEP 3: Create Updated Formulas & Re-Specify Weights Using Optimal Weighting Method
 
@@ -2176,8 +2233,8 @@ The goal of this next step is to more closely inspect the balance reults
 of the best-performing weights created by the shortened weights
 formulas, and add to the shortened formulas any time-varying confounders
 at lags \> *t*-1 that were not successfully balanced, to create a final
-round of weights.  
-  
+round of weights.\
+\
 
 #### 3a. Examine Balance of Optimal Weighting Method
 
@@ -2191,6 +2248,7 @@ We more closely inspect the balance of the CBPS weights, averaged across
 imputed datasets.
 
 ``` r
+
 print(balance_stats.cbps)
 #> 
 #> +-----------+----------------+---------------+------------+----------+
@@ -2691,7 +2749,7 @@ plot(balance_stats.cbps,
 With real-world data, it is often difficult to fully balance the many
 confounding variables, especially across time. If a user does find that
 no confounders remain imbalanced, they can skip to Step 3d. Given that
-we identified remaining imbalanced confounders, we proceed to Step 3b.  
+we identified remaining imbalanced confounders, we proceed to Step 3b.\
 
 #### Step 3b. Update Simplified Formulas
 
@@ -2725,6 +2783,7 @@ Below, we update our short formulas using the balance statistics from
 the best-performing weights.
 
 ``` r
+
 type <- "update"
 
 bal_stats <- balance_stats.cbps
@@ -2741,6 +2800,7 @@ option to supply `save.out` to save printed output to the home
 directory.
 
 ``` r
+
 print(updated_formulas, 
       save.out = save.out) 
 #> USER ALERT: Please manually inspect the updated balancing formula below that includes time-varying confounders at t-1 and those greater at further lags that remained imbalanced:
@@ -2768,7 +2828,7 @@ for 24-month income did not successfully balance prior levels of income.
 We will then use these weights formulas to recreate CBPS weights in an
 effort to achieve the greatest reduction in balance.
 
-  
+\
 
 #### Step 3c. Create Final Balancing Weights
 
@@ -2803,6 +2863,7 @@ Below, we use the updated formulas and the CPBS weighting method to
 create a final round of IPTW balancing weights.
 
 ``` r
+
 formulas <- updated_formulas
 
 method <- "cbps"
@@ -2820,6 +2881,7 @@ option to supply `save.out` to save printed or plot output to the home
 directory.
 
 ``` r
+
 print(final_weights, 
       i = 1)
 #> 
@@ -2835,7 +2897,7 @@ plot(final_weights,
 As shown above, these weights have a median value of 0.77 and a range of
 0-9, the same as before.
 
-  
+\
 
 #### 3d. Trim Final Balancing Weights
 
@@ -2859,12 +2921,14 @@ weight value of that quantile, to reduce the heavy right tail.
 Below, we use the default 95th percentile for trimming weights.
 
 ``` r
+
 quantile <- 0.95 
 ```
 
 We trim the final weights below.
 
 ``` r
+
 weights <- final_weights
 
 trim_weights <- trimWeights(weights = weights, 
@@ -2882,6 +2946,7 @@ below. The user has the option to supply `save.out` to save plots to the
 home directory.
 
 ``` r
+
 print(trim_weights, 
       i = 1)
 #> 
@@ -2894,11 +2959,11 @@ plot(trim_weights,
 
 ![](Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-53-1.png)
 
-  
+\
 As shown above, the weights still have a median value of 0.77 but a
 smaller standard deviation and a range that now only goes from 0-4.
 
-  
+\
 
 ##### Sensitvity Analyses
 
@@ -2909,6 +2974,7 @@ recommended sensitivity analyses at subsequent steps.
 We first create weights at the 92nd quantile value.
 
 ``` r
+
 quantile <- 0.92 
 
 trim_weights.s1 <- trimWeights(weights = weights, 
@@ -2933,6 +2999,7 @@ an even smaller standard deviation and range.
 And then at the 98th quantile value.
 
 ``` r
+
 quantile <- 0.98 
 
 trim_weights.s2 <- trimWeights(weights = weights, 
@@ -2959,7 +3026,7 @@ the upper range value varying by quantile cutoff. We will assess the
 consequences of any differences (e.g., different ranges) in subsequent
 steps.
 
-  
+\
 
 ### Step 4: Conduct Final Balance Assessment
 
@@ -2988,6 +3055,7 @@ Below, we assess balance for our trimmed weights.
 Assess balance of trimmed weights
 
 ``` r
+
 weights <- trim_weights
 
 final_balance_stats_trim <- assessBalance(data = data, 
@@ -3001,6 +3069,7 @@ final_balance_stats_trim <- assessBalance(data = data,
 Summarize and inspect.
 
 ``` r
+
 summary(final_balance_stats_trim, 
         save.out = save.out)
 #> USER ALERT: Averaging across imputed datasets using `cbps` weighting method: As shown below, 1 out of 241 (0.4%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.05 (max: 0.05):
@@ -3140,6 +3209,7 @@ in relation to exposure at 15 months and an effective sample size of
 We then assess balance of untrimmed weights
 
 ``` r
+
 weights <- final_weights
 
 final_balance_stats_untrim <- assessBalance(data = data, 
@@ -3153,6 +3223,7 @@ final_balance_stats_untrim <- assessBalance(data = data,
 Summarize and inspect
 
 ``` r
+
 summary(final_balance_stats_untrim, 
         save.out = save.out)
 #> Averaging across imputed datasets using cbps weighting method.
@@ -3211,6 +3282,7 @@ datasets. The user has the option to supply `save.out` to save plot
 output to the home directory.
 
 ``` r
+
 summary(final_balance_stats_trim, 
         save.out = save.out)
 #> USER ALERT: Averaging across imputed datasets using `cbps` weighting method: As shown below, 1 out of 241 (0.4%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.05 (max: 0.05):
@@ -3244,10 +3316,11 @@ list out these imbalanced confounders that are time invariant and assign
 them to `covariates`.
 
 ``` r
+
 # covariates <- c("list_imbalanced_ti_conf")
 ```
 
-  
+\
 
 #### Sensitvity Analyses
 
@@ -3259,6 +3332,7 @@ We first assess balance for the weights trimmed at the 93rd quantile
 value.
 
 ``` r
+
 weights <- trim_weights.s1
 
 final_balance_stats.s1 <- assessBalance(data = data, 
@@ -3378,12 +3452,13 @@ From this, we similarly find that income at 6 months is imbalanced with
 respect to exposure at 15 months (albeit with a slighter stronger
 correlation than the main analyses).
 
-  
+\
 
 We next assess balance for the weights trimmed at the 98th quantile
 value.
 
 ``` r
+
 weights <- trim_weights.s2
 
 final_balance_stats.s2 <- assessBalance(data = data, 
@@ -3417,15 +3492,15 @@ summary(final_balance_stats.s2,
 From this, we find no remaining imbalanced confounders (similar to the
 untrimmed results).
 
-  
-  
+\
+\
 
 ## PHASE 2: Assess Substantive Associations between Exposure and Outcome
 
 Having created IPTW balancing weights that minimize associations between
 confounders and exposure at each time point, we can move to the
-substantive modeling phase.  
-  
+substantive modeling phase.\
+\
 
 ### Step 5: Fit Weighted Outcome Model
 
@@ -3436,7 +3511,7 @@ and compares various counterfactuals, or the effects of different
 developmental histories of exposure on the outcome, to test substantive
 hypotheses about dose and timing.
 
-  
+\
 
 #### Step 5a. Select a Weighted Outcome Model
 
@@ -3481,6 +3556,7 @@ We first inspect the following list of models.
 Below, we specify the M0 model.
 
 ``` r
+
 m <- "m0"
 ```
 
@@ -3508,6 +3584,7 @@ lower-level interactoins) between exposure main effects to the
 function below.
 
 ``` r
+
 #int_order <- 2
 ```
 
@@ -3533,6 +3610,7 @@ function power can be used to create a power link function.
 Below, we retain the default family and link functions.
 
 ``` r
+
 family <- gaussian
 
 link <- "identity" 
@@ -3546,6 +3624,7 @@ output.
 We fit the outcome model using trimmed weights below.
 
 ``` r
+
 weights <- trim_weights
 
 models <- fitModel(data = data, 
@@ -3567,6 +3646,7 @@ We then inspect the model output. The user has the option to supply
 We inspect the model averaged across imputed datasets.
 
 ``` r
+
 print(models, 
       save.out = save.out)
 #> Warning in pool.vector(w, dfcom = dfcom, custom.t = custom.t, rule = rule):
@@ -3603,7 +3683,7 @@ exposure variables to test whether exposure predicts variation in the
 outcome. Models are pooled prior to conducting the likelihood ratio test
 for imputed data.)
 
-  
+\
 
 ##### Sensitivity Analyses
 
@@ -3618,6 +3698,7 @@ sensitivity analyses, we recomend the user supply a new name (e.g.,
 We first fit the same model to the weights trimmed at the 92nd quantile.
 
 ``` r
+
 weights <- trim_weights.s1
 
 models.s1 <- fitModel(data = data, 
@@ -3659,12 +3740,13 @@ print(models.s1,
 
 We similarly find a significant likelihood ratio test.
 
-  
+\
 
 We then fit the same model with the weights trimmed at the 98th
 quantile.
 
 ``` r
+
 weights <- trim_weights.s2
 
 models.s2 <- fitModel(data = data, 
@@ -3704,7 +3786,7 @@ print(models.s2,
 #> +--------------------+--------+-----------------+--------+
 ```
 
-With a comparable result.  
+With a comparable result.\
 
 ### Step 6. Estimate, Compare, and Visualize Model-Predicted Outcome as a Function of Exposure History
 
@@ -3766,6 +3848,7 @@ specified, that 60th and 30th percentile values to denote high and low
 levels of economic strain, respectively.
 
 ``` r
+
 hi_lo_cut <- c(0.6, 0.3) 
 ```
 
@@ -3813,6 +3896,7 @@ Below, we retain the default Benjamini-Hochburg method for multiple
 comparison.
 
 ``` r
+
 mc_comp_method <- "BH"
 ```
 
@@ -3827,6 +3911,7 @@ Below, given our interest in histories of high economic strain, we
 specify that we wish to tally high doses of exposure.
 
 ``` r
+
 dose_level <- "h"
 ```
 
@@ -3840,6 +3925,7 @@ https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).
 Below, we specify plotting labels and 4 colors.
 
 ``` r
+
 exp_lab <- "Economic Strain" 
 
 out_lab <- "Behavior Problems" 
@@ -3855,6 +3941,7 @@ low and high confidence intervals, and corrected p-values, labeled by
 history and dose.
 
 ``` r
+
 model <- models 
 
 results <- compareHistories(fit = model, 
@@ -3879,6 +3966,7 @@ imputed datsets). The user has the option to supply `save.out` to save
 printed output to the home directory.
 
 ``` r
+
 print(results) 
 #> Summary of Exposure Main Effects:
 #> USER ALERT: Out of the total of 1292 individuals in the sample, below is the distribution of the 333 (26%) individuals that fall into 2 user-selected exposure histories (out of the 27 total) created from 30th and 60th percentile values for low and high levels of exposure-epoch Infancy, Toddlerhood, Childhood.
@@ -3919,6 +4007,7 @@ histories is reasonable.
 We then summarize these results.
 
 ``` r
+
 summary(results, 
         save.out = save.out)
 #>                term   estimate  std.error statistic       df   p.value
@@ -3938,6 +4027,7 @@ Lastly, we plot the results. The user has the option to supply
 `save.out` to save plot output to the home directory.
 
 ``` r
+
 plot(results, 
      save.out = save.out)
 #> `height` was translated to `width`.
@@ -3945,7 +4035,7 @@ plot(results,
 
 ![](Workflow_Continuous_Exposure_files/figure-html/unnamed-chunk-78-1.png)
 
-  
+\
 
 ##### Sensitvity Analyses
 
@@ -3960,6 +4050,7 @@ We first compare the same histories using the model fit with weights
 trimmed at the 92nd quantile value.
 
 ``` r
+
 model <- models.s1 
 
 results.s1 <- compareHistories(fit = model, 
@@ -3985,12 +4076,13 @@ As shown above, results indicate a marginal but non-significant contrast
 between “l-l-l” and “h-h-h” histories of economic strain exposure in
 relation to behavior problems in early childhood.
 
-  
+\
 
 We then compare the same histories using the model fit with weights
 trimmed at the 98th quantile value.
 
 ``` r
+
 model <- models.s2 
 
 results.s2 <- compareHistories(fit = model, 
@@ -4015,8 +4107,8 @@ summary(results.s2,
 Similarly, we find no evidence for differences in behavioral problems as
 function of history of exposure to economic strain.
 
-  
-  
+\
+\
 
 ## References
 

@@ -26,7 +26,7 @@ The code contained in this vignette is also available, integrated code
 from the other vignettes, in the [ExampleWorkflow.rmd
 file](https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd).
 
-  
+\
 
 ## P3.1 Recommended: Home Directory
 
@@ -39,11 +39,12 @@ directory by the *devMSMs* functions automatically when `save.out` =
 TRUE.
 
 ``` r
+
 home_dir <- NA
 # home_dir <- '/Users/isabella/Library/CloudStorage/Box-Box/BSL General/MSMs/testing/isa'
 ```
 
-  
+\
 
 ## P3.2 Recommended: Time Point Delimiter
 
@@ -62,10 +63,11 @@ expression (regex) form.
 Below, we use the default period as a time delimiter.
 
 ``` r
+
 sep <- "\\."
 ```
 
-  
+\
 
 ## P3.3 Required: Exposure Variable
 
@@ -120,10 +122,11 @@ months), toddlerhood (24 and 35 months), and early childhood (58 months)
 so we include all exposure time points.
 
 ``` r
+
 exposure <- c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
 ```
 
-  
+\
 
 ## P3.4 Required for Continuous Exposure: High and Low Exemplar Cutoff Values
 
@@ -182,10 +185,11 @@ Below, we specify the 60th and 30th percentiles to demarcate high and
 low levels of economic strain exposure, respectively.
 
 ``` r
+
 hi_lo_cut <- c(0.6, 0.3)
 ```
 
-  
+\
 
 ## P3.5 Optional: Exposure Epochs
 
@@ -224,10 +228,11 @@ Below, we specify ‘infancy’ (“ESETA1.6”, “ESETA1.15), ‘toddlerhood�
 (”ESETA1.24”, “ESETA1.35”), and ‘childhood’ (“ESETA1.58”).
 
 ``` r
+
 epoch <- c("Infancy", "Infancy", "Toddlerhood", "Toddlerhood", "Childhood") 
 ```
 
-  
+\
 
 ## P3.6 Recommended: Hypotheses-Relevant Exposure Histories
 
@@ -276,6 +281,7 @@ well as all histories that contain 1 dose of exposure to high economic
 strain at different epochs.
 
 ``` r
+
 reference <- c("l-l-l")
 
 comparison <- c("h-h-h", 
@@ -284,7 +290,7 @@ comparison <- c("h-h-h",
                 "l-h-l")
 ```
 
-  
+\
 
 ## P3.7 Required: Outcome Variable
 
@@ -308,10 +314,11 @@ For this example, we specify behavior problems measured at 58 months as
 the outcome.
 
 ``` r
+
 outcome <- "StrDif_Tot.58"
 ```
 
-  
+\
 
 ## P3.8 Recommended: Confounders
 
@@ -348,12 +355,13 @@ were measured at the baseline study visit, prior to the first exposure
 time point.
 
 ``` r
+
 ti_conf <- c( "state", "BioDadInHH2", "PmAge2", "PmBlac2", "TcBlac2", "PmMrSt2", "PmEd2", "KFASTScr",
   "RMomAgeU", "RHealth", "HomeOwnd", "SWghtLB", "SurpPreg", "SmokTotl", "DrnkFreq",
   "peri_health", "caregiv_health", "gov_assist")
 ```
 
-  
+\
 
 ### P3.8b Recommended: Time-varying Confounders
 
@@ -385,6 +393,7 @@ in mind that any interactions that include factor variables will be
 decomposed into interactions at each factor level.
 
 ``` r
+
 tv_conf <- c("SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
   "MDI.6", "MDI.15",
   "RHasSO.6", "RHasSO.15", "RHasSO.24", "RHasSO.35", 
@@ -401,7 +410,7 @@ tv_conf <- c("SAAmylase.6", "SAAmylase.15", "SAAmylase.24",
   "fscore.35")
 ```
 
-  
+\
 
 ### P3.8c Optional: Concurrent Confounders
 
@@ -422,10 +431,11 @@ included contemporaneously in the balancing formulas (overriding the
 default which is to only include lagged confounders).
 
 ``` r
+
 concur_conf <- "B18Raw.6"
 ```
 
-  
+\
 
 The user can now proceed to the *Data Requirements* or *Workflows*
 vignettes.

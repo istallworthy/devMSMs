@@ -40,7 +40,7 @@ To use a non-default file name, specify a character string with the file name. I
 There might be naming conflicts where two objects get saved to the same file. In these cases, users should specify a custom name.
 default is FALSE.}
 
-\item{\dots}{arguments passed to \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} or \code{\link[=summary.weightitMSM]{summary.weightitMSM()}}}
+\item{\dots}{arguments passed to \code{\link[WeightIt:weightitMSM]{WeightIt::weightitMSM()}} or \code{\link[WeightIt:summary.weightit]{WeightIt::summary.weightitMSM()}}}
 
 \item{x, object}{\code{devMSM_weights} object from \code{createWeights()}}
 
@@ -87,15 +87,15 @@ w <- createWeights(data = data, formulas = f,
 
 w <- createWeights(data = data, formulas = f,
                    method = "cbps")
-\dontshow{if (requireNamespace("gbm", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (requireNamespace("gbm", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 w <- createWeights(data = data, formulas = f,
                    method = "gbm")
 \dontshow{\}) # examplesIf}
-\dontshow{if (requireNamespace("dbarts", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (requireNamespace("dbarts", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 w <- createWeights(data = data, formulas = f,
                    method = "bart")
 \dontshow{\}) # examplesIf}
-\dontshow{if (requireNamespace("SuperLearner", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (requireNamespace("SuperLearner", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 w <- createWeights(data = data, formulas = f,
                    method = "super")
 \dontshow{\}) # examplesIf}

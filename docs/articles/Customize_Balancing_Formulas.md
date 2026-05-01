@@ -13,6 +13,7 @@ from the other vignettes, in the ExampleWorkflow.rmd.
 We specify core inputs to the *devMSMs* functions.
 
 ``` r
+
 exposure <- c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58")
 
 tv_conf <- c(
@@ -48,7 +49,7 @@ obj <- devMSMs::initMSM(
 )
 ```
 
-  
+\
 
 The
 [`createFormulas()`](https://istallworthy.github.io/devMSMs/reference/createFormulas.md)
@@ -72,7 +73,7 @@ the example exposure of economic strain (ESETA1) measured at 6, 15, 24,
 35, and 58 months in relation to the outcome of behavior problems
 (StrDif_Tot) measured at 58 months.
 
-  
+\
 
 ## Customize Full Weights Formulas (Steps 1 & 4)
 
@@ -101,6 +102,7 @@ We first specify confounders to retain contemporaneously when creating
 our MSM object.
 
 ``` r
+
 obj <- devMSMs::initMSM(
   data = sim_data_wide, 
   exposure = exposure, 
@@ -111,6 +113,7 @@ obj <- devMSMs::initMSM(
 ```
 
 ``` r
+
 full_formulas <- createFormulas(obj  = obj, 
                                 type = "full")
 
@@ -160,6 +163,7 @@ arguments for the exposure, ESETA1, at 6-, 15-, 24-, 35-, and 58-month
 time points.
 
 ``` r
+
 custom <- list(
   ESETA1.6 ~ BioDadInHH2 + DrnkFreq + gov_assist,
   ESETA1.15 ~ BioDadInHH2 + DrnkFreq + gov_assist,
@@ -173,6 +177,7 @@ custom <- list(
 then checks and retains these formulas for further use with the package.
 
 ``` r
+
 full_formulas <- createFormulas(obj = obj, 
                                 custom = custom)
 
@@ -194,7 +199,7 @@ print(full_formulas)
 #> ESETA1.58 ~ BioDadInHH2 + DrnkFreq + gov_assist
 ```
 
-  
+\
 
 ## Customize Short Weights Formulas (Step 2)
 
@@ -236,6 +241,7 @@ Without this specification, income at 6 months would have been omitted
 in formulas for exposure at 24, 35, and 58 months.
 
 ``` r
+
 short_formulas <- createFormulas(obj = obj, 
                                  type = "short", 
                                  keep_conf = c("InRatioCor.6"))
@@ -257,7 +263,7 @@ print(short_formulas)
 #> ESETA1.58 ~ state + BioDadInHH2 + PmAge2 + PmBlac2 + TcBlac2 + PmMrSt2 + PmEd2 + KFASTScr + RMomAgeU + RHealth + HomeOwnd + SWghtLB + SurpPreg + SmokTotl + DrnkFreq + peri_health + caregiv_health + gov_assist + RHasSO.35 + WndNbrhood.35 + HOMEETA1.35 + InRatioCor.35 + EARS_TJo.35 + LESMnPos.35 + LESMnNeg.35 + StrDif_Tot.35 + fscore.35 + ESETA1.35 + InRatioCor.6
 ```
 
-  
+\
 
 ## Customize Updated Weights Formulas (Step 3)
 
@@ -276,7 +282,7 @@ note,
 [`createFormulas()`](https://istallworthy.github.io/devMSMs/reference/createFormulas.md)
 does not check that formulas in the `custom` field meet criteria for the
 updated formula or identify any imbalanced confounders, and the user is
-responsible for ensuring the validity of these formulas.  
+responsible for ensuring the validity of these formulas.\
 
 ## References
 

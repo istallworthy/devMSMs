@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-This vignette guides a user through the process of using *devMSMs* to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.
+This vignette guides a user through the process of using *devMSMs* to fit marginal structural models (MSMs) with a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.
 
 The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript (<a href="https://osf.io/preprints/psyarxiv/284mb">preprintgh</a>). We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow. <br>
 
@@ -167,7 +167,7 @@ We specify no concurrent confounders as, given our data, we are unable to disent
 
 ### P4.3b. Required: Read in Wide Data
 
-We highly recommend first implementing the *Data Requirements & Preparation Vignette* https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html before assigning to the variable, `data`, one of the following wide data formats (see Figure 1) for use in the package:
+We highly recommend first implementing the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements & Preparation vignette</a> before assigning to the variable, `data`, one of the following wide data formats (see Figure 1) for use in the package:
 
 -   a single data frame of data in wide format with no missing data
 

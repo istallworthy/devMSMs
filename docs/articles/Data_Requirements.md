@@ -68,7 +68,7 @@ Figure 1) for use in the package:
   [`mice::mice()`](https://amices.org/mice/reference/mice.html)) of data
   imputed in wide format
 
-- a list of data imputed in wide format as data frames.  
+- a list of data imputed in wide format as data frames.\
 
 As shown in the figure below, for use of the *devMSMs* package, data in
 any of the above 3 formats, must be wide and contain an “ID” column for
@@ -82,7 +82,7 @@ confounders (e.g., assessment version) can be included in the dataset
 for use and specification in the final outcome modeling step (*Workflow*
 vignettes Step 5).
 
-  
+\
 
     #>   id ti_X tv_Y1.1 tv_Y1.2 tv_Y2.1 tv_Y2.2 exposure.1 exposure.2 outcome.2
     #> 1  1  0.5      50      65      NA    0.04          3          4        80
@@ -104,11 +104,14 @@ different time points (e.g., age.1, age.2 and income.1, income.2, where
 exposure and outcome of interest (darker yellow), where G and H are
 time-varying values on each exposure, and column I is the outcome value
 at the final wave/timepoint. Missing data are denoted as *NA* and will
-need to be imputed (Step P2). {#tinytable_7vp7wiso28v2uhecz5rs}
+need to be imputed (Step P2). {#tinytable_jv9lms44ggkxyh34pocu .table
+.tinytable style="width: auto; margin-left: auto; margin-right: auto;"
+quarto-disable-processing="true"}
 
 ## Loading packages
 
 ``` r
+
 options(repos = c(CRAN = "https://cloud.r-project.org/"))
 
 install.packages("devtools")
@@ -139,6 +142,7 @@ identifiers), in one of three ways:
 1.  a single data frame with no missing data;
 
 ``` r
+
 data("sim_data_wide", package = "devMSMs")
 
 head(sim_data_wide, n = c(5, 10))
@@ -150,12 +154,13 @@ head(sim_data_wide, n = c(5, 10))
 #> 5  5     0       0           1        1       25       0    20       1 41.153
 ```
 
-  
+\
 
 2.  imputed data in the form of a mids object (output from
     [`mice::mice()`](https://amices.org/mice/reference/mice.html));
 
 ``` r
+
 require("mice", quietly = TRUE)
 #> 
 #> Attaching package: 'mice'
@@ -186,11 +191,12 @@ head(mice::complete(sim_data_mice, 1), n = c(5, 10))
 #> 5   -0.247    0.084   0.153
 ```
 
-  
+\
 
 3.  imputed data as a list of imputed data frames.
 
 ``` r
+
 data("sim_data_imp_list", package = "devMSMs")
 
 head(sim_data_imp_list[[1]], n = c(5, 10))
@@ -208,7 +214,7 @@ head(sim_data_imp_list[[1]], n = c(5, 10))
 #> 5   -0.247    0.084
 ```
 
-  
+\
 
 The helper functions (summarized in Table 1) for the following
 recommended preliminary steps can be found at this
@@ -218,11 +224,12 @@ functions (see [Installation](https://istallworthy.github.io/devMSMs/)).
 
     #> [1] "<S4 class 'tinytable' [package \"tinytable\"] with 57 slots>"
 
-  
+\
 
 We first install the *devMSMs* and *devMSMsHelpers* packages.
 
 ``` r
+
 install.packages("devtools")
 require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs", quiet = TRUE)
@@ -230,6 +237,7 @@ devtools::install_github("istallworthy/devMSMsHelpers", quiet = TRUE)
 ```
 
 ``` r
+
 library(devMSMs)
 library(devMSMsHelpers)
 ```
@@ -250,6 +258,7 @@ and StrDif_Tot, or behavior problems measured by the SDQ, as the
 outcome.
 
 ``` r
+
 set.seed(1234)
 
 exposure = c("ESETA1.6", "ESETA1.15", "ESETA1.24", "ESETA1.35", "ESETA1.58") 
@@ -278,7 +287,7 @@ tv_conf = c("SAAmylase.6","SAAmylase.15", "SAAmylase.24",
 outcome <- "StrDif_Tot.58"
 ```
 
-  
+\
 
 ## P4. Data Preparation & Inspection
 
@@ -288,21 +297,22 @@ locally (`save.out` = FALSE) and printing it to the console ( `verbose`
 path to a home directory if `save.out` = TRUE.
 
 ``` r
+
 save.out <- FALSE
 
 verbose <- TRUE
 ```
 
 As shown in the Figure below, users have several options for reading in
-data. They can begin this workflow with the following options:  
+data. They can begin this workflow with the following options:\
 
 - (P4.1) long data: complete or with missingness that can be formatted
   and converted to wide data and (P4.3) imputed as needed
 - (P4.2) wide data: complete or missingness that can be formatted and
-  (P4.3) imputed as needed  
+  (P4.3) imputed as needed\
 - (P4.3) data already imputed in wide format can be read in as a list
 
-  
+\
 
 ![](https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/prelim_steps_overview.png)
 
@@ -310,8 +320,8 @@ Figure 2. Schematic of recommended preliminary steps showing the
 transformation of the different kinds of starting data to the three
 kinds of data accepted by *devMSMs*.
 
-  
-  
+\
+\
 
 ### P4.1. Single Long Data Frame
 
@@ -332,6 +342,7 @@ at 6, 15, 24, 35, and 58 months in relation to the outcome of behavior
 problems (StrDif_Tot) measured at 58 months.
 
 ``` r
+
 data("sim_data_long_miss", package = "devMSMs")
 
 data_long <- sim_data_long_miss
@@ -345,7 +356,7 @@ head(data_long, n = c(5, 10))
 #> 5  1     0           1 27.245       0       0       1    15       24       29
 ```
 
-  
+\
 
 #### P4.1a. Format Long Data
 
@@ -363,6 +374,7 @@ integer that indicates time point in the variable names.
 Below, we format the simulated long FLP data.
 
 ``` r
+
 factor_confounders <- c("state", "TcBlac2", "BioDadInHH2", "HomeOwnd", "PmBlac2",
                         "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
                         "RHasSO")
@@ -415,7 +427,7 @@ head(data_long_f, n = c(5, 10))
 We get a descriptive statistics summary of the exposure, ESETA1, and the
 outcome, StrDif_Tot.58, for our visual inspections.
 
-  
+\
 
 #### P4.1b. Tranform Formatted Long Data to Wide
 
@@ -430,6 +442,7 @@ points (encompassing exposure, confounder, and outcome time points) in
 the data as 6, 15, 24, 35, and 58 to `times`.
 
 ``` r
+
 require("stats", quietly = TRUE)
 
 sep <- "\\."
@@ -462,8 +475,8 @@ head(data_wide_f, n = c(5, 10))
 #> 21       27
 ```
 
-  
-  
+\
+\
 
 ### P4.2. Single Wide Data Frame
 
@@ -474,6 +487,7 @@ Below, we we load in a single complete, wide data frame simulated from
 FLP as an example.
 
 ``` r
+
 data("sim_data_wide", package = "devMSMs")
 
 data_wide <- sim_data_wide
@@ -487,12 +501,13 @@ head(data_wide, n = c(5, 10))
 #> 5  5     0       0           1        1       25       0    20       1 41.153
 ```
 
-  
+\
 
 Data with missingness is more common with human data. Below we read in
 simulated wide FLP data with missingness.
 
 ``` r
+
 data("sim_data_wide_miss", package = "devMSMs")
 
 data_wide <- sim_data_wide_miss
@@ -506,7 +521,7 @@ head(data_wide, n = c(5, 10))
 #> 5  5     0       0           1        1       25       0    20       1 41.153
 ```
 
-  
+\
 
 #### P4.2a. Format Wide Data
 
@@ -529,6 +544,7 @@ make into factors and integers in wide format (e.g., “variable.t”), as
 well as the ID and missingness indicators.
 
 ``` r
+
 factor_confounders <- c(
   "state", "TcBlac2", "BioDadInHH2", "HomeOwnd", "PmBlac2",
   "PmMrSt2", "SurpPreg", "RHealth", "SmokTotl", "DrnkFreq",
@@ -589,8 +605,8 @@ head(data_wide_f, n = c(5, 10))
 #> 5  5     0       0           1        1       25       0    20       1 41.153
 ```
 
-  
-  
+\
+\
 
 ### P4.3. Formatted Wide Data with Missingness
 
@@ -613,7 +629,7 @@ As shown below, users can use a helper function to impute their wide
 data or impute elsewhere and read in the imputed data as a list for use
 with *devMSMs*.
 
-  
+\
 
 #### P4.3a. Multiply Impute Formatted, Wide Data Frame using MICE
 
@@ -627,7 +643,11 @@ draws on the [`mice()`](https://amices.org/mice/reference/mice.html)
 function from the *mice* package (van Buuren & Oudshoorn, 2011) to
 conduct multiple imputation by chained equations (mice). All other
 variables present in the dataset are used to impute missing data in each
-column.
+column. Given existing work demonstrating its superiority, *devMSMs*
+implements the ‘within’ approach for imputed data (Granger et al., 2019;
+Leyrat et al., 2021), conducting all steps on each imputed dataset
+before pooling estimates using Rubin’s rules to create one final set of
+average predictions and history comparisons.
 
 The user can specify the imputation method through the `method` field
 drawing from the following list: “pmm” (predictive mean matching),
@@ -635,8 +655,7 @@ drawing from the following list: “pmm” (predictive mean matching),
 sample from observed values), “rf” (random forest) or “cart”
 (classification and regression trees). Random forest imputation is the
 default given evidence for its efficiency and superior performance (Shah
-et al., 2014). Please review the *mice* documentation for more
-details.  
+et al., 2014). Please review the *mice* documentation for more details.\
 Additionally, users can specify an integer value to `seed` in order to
 offset the random number generator in *mice()* and make reproducible
 imputations.
@@ -688,6 +707,7 @@ here just for illustrative purposes. We recommend setting both `m` = 5
 and `maxit` = 5 (*mice* default) when running data.)
 
 ``` r
+
 s <- 1234
 
 m <- 2
@@ -739,7 +759,7 @@ We inspect the output to the console for any warnings from
 The mice object can now be assigned to `data` for use in the *deveMSMs*
 package (see *Workflows* vignettes).
 
-  
+\
 
 #### P4.3b. Read in as a List of Wide Imputed Data Saved Locally
 
@@ -754,6 +774,7 @@ example. (See the example Rmarkdown file for code to do this with files
 saved locally.)
 
 ``` r
+
 data("sim_data_imp_list", package = "devMSMs")
 
 data <- sim_data_imp_list
@@ -773,8 +794,8 @@ head(data[[1]], n = c(5, 10))
 #> 5   -0.247    0.084
 ```
 
-  
-  
+\
+\
 
 ## References
 
@@ -784,11 +805,20 @@ Kindergarten from the Quality of Pre-Kindergarten Teacher–Child
 Interactions and Instruction. Applied Developmental Science, 12(3),
 140–153. https://doi.org/10.1080/10888690802199418
 
+Granger, E., Sergeant, J. C., & Lunt, M. (2019). Avoiding pitfalls when
+combining multiple imputation and propensity scores. Statistics in
+Medicine, 38(26), 5120–5132. https://doi.org/10.1002/sim.8355
+
 Kainz, K., Greifer, N., Givens, A., Swietek, K., Lombardi, B. M., Zietz,
 S., & Kohn, J. L. (2017). Improving Causal Inference: Recommendations
 for Covariate Selection and Balance in Propensity Score Methods. Journal
 of the Society for Social Work and Research, 8(2), 279–303.
 https://doi.org/10.1086/691464
+
+Leyrat, C., Carpenter, J. R., Bailly, S., & Williamson, E. J. (2021).
+Common Methods for Handling Missing Data in Marginal Structural Models:
+What Works and Why. American Journal of Epidemiology, 190(4), 663–672.
+https://doi.org/10.1093/aje/kwaa225
 
 Vernon-Feagans, L., Cox, M., Willoughby, M., Burchinal, M.,
 Garrett-Peters, P., Mills-Koonce, R., Garrett-Peiers, P., Conger, R. D.,

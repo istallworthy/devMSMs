@@ -297,7 +297,7 @@ createFormulas <- function(
 
 #' @rdname createFormulas
 #'
-#' @param x devMSM_formulas object from [createFormulas()]
+#' @param x devMSM_formulas object from [devMSMs::createFormulas()]
 #' @param ... ignored
 #' @export
 print.devMSM_formulas <- function(x, ...) {

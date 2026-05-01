@@ -6,12 +6,12 @@
 #' exposures.
 #'
 #' @seealso 
-#'  [cobalt] package, <https://cran.r-project.org/web/packages/cobalt/index.html>;
+#'  [cobalt::cobalt()] package, <https://cran.r-project.org/web/packages/cobalt/index.html>;
 #'  Jackson, 2016 for more on assessing balance for time-varying exposures, 
 #'  <https://pubmed.ncbi.nlm.nih.gov/27479649/>
 #'
 #' @inheritParams devMSM_common_docs
-#' @param weights (optional) list of IPTW weights output from [createWeights()]
+#' @param weights (optional) list of IPTW weights output from [devMSMs::createWeights()]
 #' @param balance_thresh (optional) one or two numbers between 0 and 1
 #'   indicating a single balancing threshold or thresholds for more and less
 #'   important confounders, respectively (default = 0.1)
@@ -186,7 +186,7 @@ assessBalance <- function(
 
 #' @rdname assessBalance
 #'
-#' @param x devMSM_bal_stats object from [assessBalance()]
+#' @param x devMSM_bal_stats object from [devMSMs::assessBalance()]
 #' @inheritParams devMSM_common_docs
 #' @param ... ignored
 #'
@@ -327,7 +327,7 @@ print.devMSM_bal_stats <- function(x, i = NA, t = TRUE, save.out = FALSE, ...) {
 
 #' @rdname assessBalance
 #'
-#' @param object devMSM_bal_stats object from [assessBalance()]
+#' @param object devMSM_bal_stats object from [devMSMs::assessBalance()]
 #' @inheritParams devMSM_common_docs
 #' @param ... ignored
 #'

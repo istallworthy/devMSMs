@@ -6,7 +6,7 @@
 #' @seealso [WeightIt::glm_weightit()] for more on family/link specifications.
 #'
 #' @param outcome name of outcome variable with ".timepoint" suffix. 
-#'   See [initMSM()] for details on suffix
+#'   See [devMSMs::initMSM()] for details on suffix
 #' @param model character indicating one of the following outcome models:
 #'  * "m0" (exposure main effects)
 #'  * "m1" (exposure main effects & covariates)

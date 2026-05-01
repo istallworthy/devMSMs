@@ -43,6 +43,7 @@
     <li><a class="dropdown-item" href="../articles/Customize_Balancing_Formulas.html">Customizing Weights Formulas</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../articles/FAQs.html">FAQs</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -61,7 +62,7 @@
       <h1>Workflow: Continuous Exposure</h1>
 
       <p class="author">Isabella Stallworthy</p>
-      <p class="date">2026-04-16</p>
+      <p class="date">2026-05-01</p>
 
       <small class="dont-index">Source: <a href="https://github.com/istallworthy/devMSMs/blob/HEAD/vignettes/Workflow_Continuous_Exposure.qmd" class="external-link"><code>vignettes/Workflow_Continuous_Exposure.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -72,7 +73,7 @@
 
 
 
-    <p>This vignette guides a user through the process of using <em>devMSMs</em> to fit marginal structural models (MSMs) with a a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.</p>
+    <p>This vignette guides a user through the process of using <em>devMSMs</em> to fit marginal structural models (MSMs) with a continuously distributed exposure variable. The users should first view the <a href="https://istallworthy.github.io/devMSMs/articles/Terminology.html">Terminology</a>, <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements</a>, and <a href="https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html">Specifying Core Inputs</a> vignettes.</p>
 <p>The code contained in this vignette is also available, integrated code from the other vignettes, in the <a href="https://github.com/istallworthy/devMSMs/blob/main/ExampleWorkflow.Rmd" class="external-link">ExampleWorkflow.rmd file</a>. This workflow is designed to complement the conceptual and high-level practical details provided in the manuscript (<a href="https://osf.io/preprints/psyarxiv/284mb" class="external-link">preprintgh</a>). We strongly suggest users familiarize themselves with concepts of the MSM process outlined in the manuscript and the practical steps and functions put forth in the following sections before implementing this workflow. <br></p>
 <section class="section level2"><h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -196,7 +197,7 @@
 </h3>
 <section class="level3"><h4 id="p4-3b--required-read-in-wide-data">P4.3b. Required: Read in Wide Data<a class="anchor" aria-label="anchor" href="#p4-3b--required-read-in-wide-data"></a>
 </h4>
-<p>We highly recommend first implementing the <em>Data Requirements &amp; Preparation Vignette</em> https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html before assigning to the variable, <code>data</code>, one of the following wide data formats (see Figure 1) for use in the package:</p>
+<p>We highly recommend first implementing the <a href="https://istallworthy.github.io/devMSMs/articles/Data_Requirements.html">Data Requirements &amp; Preparation vignette</a> before assigning to the variable, <code>data</code>, one of the following wide data formats (see Figure 1) for use in the package:</p>
 <ul>
 <li><p>a single data frame of data in wide format with no missing data</p></li>
 <li><p>a mids object (output from mice::mice()) of data imputed in wide format</p></li>
@@ -1021,6 +1022,16 @@ The love plots depict the standardized associations between confounder and expos
 <span>                             method <span class="op">=</span> <span class="va">method</span>,</span>
 <span>                             formulas <span class="op">=</span> <span class="va">formulas</span>,</span>
 <span>                             save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: No `criterion` was provided. Using "p.mean".</span></span>
+<span><span class="co">#&gt; No `criterion` was provided. Using "p.mean".</span></span>
+<span><span class="co">#&gt; No `criterion` was provided. Using "p.mean".</span></span>
+<span><span class="co">#&gt; No `criterion` was provided. Using "p.mean".</span></span>
+<span><span class="co">#&gt; No `criterion` was provided. Using "p.mean".</span></span>
+<span><span class="co">#&gt; No `criterion` was provided. Using "p.mean".</span></span>
+<span><span class="co">#&gt; No `criterion` was provided. Using "p.mean".</span></span>
+<span><span class="co">#&gt; No `criterion` was provided. Using "p.mean".</span></span>
+<span><span class="co">#&gt; No `criterion` was provided. Using "p.mean".</span></span>
+<span><span class="co">#&gt; No `criterion` was provided. Using "p.mean".</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">weights.gbm</span>,</span>
 <span>      i <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
@@ -1078,7 +1089,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>      i <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.22 (SD = 19.61; range = 0-672).</span></span>
+<span><span class="co">#&gt; For imputation 1 and the `bart` weighting method, the median weight value is 1.23 (SD = 17.48; range = 0-580).</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   Summary of weights</span></span>
@@ -1086,23 +1097,23 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="co">#&gt; - Weight ranges:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Min                                   Max</span></span>
-<span><span class="co">#&gt; all   0 |---------------------------| 672.046</span></span>
+<span><span class="co">#&gt; all   0 |---------------------------| 579.864</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Units with the 5 most extreme weights:</span></span>
 <span><span class="co">#&gt;                                          </span></span>
-<span><span class="co">#&gt;        1235   1145    591     475      79</span></span>
-<span><span class="co">#&gt;  all 46.043 57.854 67.481 153.083 672.046</span></span>
+<span><span class="co">#&gt;       1235   1145     591     475      30</span></span>
+<span><span class="co">#&gt;  all 55.09 71.775 125.957 145.136 579.864</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Weight statistics:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Coef of Var   MAD Entropy # Zeros</span></span>
-<span><span class="co">#&gt; all        6.89 1.024   1.569       0</span></span>
+<span><span class="co">#&gt; all       6.122 1.027   1.515       0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - Effective Sample Sizes:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;              Total</span></span>
-<span><span class="co">#&gt; Unweighted 1292.  </span></span>
-<span><span class="co">#&gt; Weighted     26.68</span></span>
+<span><span class="co">#&gt;             Total</span></span>
+<span><span class="co">#&gt; Unweighted 1292. </span></span>
+<span><span class="co">#&gt; Weighted     33.6</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weights.bart</span>, </span>
 <span>     i <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -1710,17 +1721,17 @@ The love plots depict the standardized associations between confounder and expos
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">balance_stats.bart</span>, </span>
 <span>        save.out <span class="op">=</span> <span class="va">save.out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 22 out of 241 (9.1%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.14 (max: 0.23):</span></span>
+<span><span class="co">#&gt; USER ALERT: Averaging across imputed datasets using `bart` weighting method: As shown below, 21 out of 241 (8.7%) covariates across time points remain imbalanced with a remaining median absolute correlation of 0.13 (max: 0.22):</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | Exposure  | Total # of covariates | # of imbalanced covariates |</span></span>
 <span><span class="co">#&gt; +===========+=======================+============================+</span></span>
-<span><span class="co">#&gt; | ESETA1.6  | 28                    | 8                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.6  | 28                    | 6                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.15 | 38                    | 11                         |</span></span>
+<span><span class="co">#&gt; | ESETA1.15 | 38                    | 13                         |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.24 | 47                    | 2                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
-<span><span class="co">#&gt; | ESETA1.35 | 59                    | 1                          |</span></span>
+<span><span class="co">#&gt; | ESETA1.35 | 59                    | 0                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
 <span><span class="co">#&gt; | ESETA1.58 | 69                    | 0                          |</span></span>
 <span><span class="co">#&gt; +-----------+-----------------------+----------------------------+</span></span>
@@ -1768,7 +1779,7 @@ The love plots depict the standardized associations between confounder and expos
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.bart</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $negative.entropy</span></span>
 <span><span class="co">#&gt;      all </span></span>
-<span><span class="co">#&gt; 1.568552</span></span>
+<span><span class="co">#&gt; 1.515228</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">weights.super</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $negative.entropy</span></span>

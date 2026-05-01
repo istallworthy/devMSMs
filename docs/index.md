@@ -8,7 +8,7 @@ processes* involving questions about when (timing) and at what levels
 order to inform our scientific understanding and improve people’s lives.
 However, for many, conceptual, methodological, and practical barriers
 have prevented the use of methods for causal inference developed in
-other fields.  
+other fields.\
 
 The goal of this *devMSMs* package and accompanying tutorial paper,
 *Investigating Causal Questions about Temporal and Cumulative
@@ -29,7 +29,7 @@ broader environment) over time. A weighted model can then be fitted
 relating a time-varying exposure and a future outcome. Finally, the
 model-predicted effects of different exposure histories that vary in
 dose and timing can be evaluated and compared as counterfactuals, to
-reveal putative causal effects.  
+reveal putative causal effects.\
 
 We employ the term *exposure* (sometimes referred to as “treatment” in
 other literatures) to encompass a variety of environmental factors,
@@ -42,8 +42,8 @@ the family (e.g., parenting), home (e.g., economic strain), school
 politico-cultural-economic context (e.g., inequality). Exposures could
 also reflect factors internal to the child, including neurodevelopmental
 (e.g., risk markers), physiological (e.g., stress), and behavioral
-(e.g., anxiety) patterns to which the child’s development is exposed.  
-  
+(e.g., anxiety) patterns to which the child’s development is exposed.\
+\
 
 ## Core Features
 
@@ -79,20 +79,20 @@ Core features of *devMSMs* include:
 - A brief conceptual introduction, example empirical application, and
   additional resources in the accompanying tutorial paper
 
-  
+\
 
 ## Overview
 
 The package contains 7 core functions for implementing the two phases of
 the MSM process: longitudinal confounder adjustment and outcome modeling
-of longitudinal data with time-varying exposures.  
+of longitudinal data with time-varying exposures.\
 ![devMSMs
-overview](https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png)  
-  
+overview](https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_overview.png)\
+\
 
 Below is a summary of the terms used in the *devMSMs* vignettes and
 functions. More details and examples can be found in the accompanying
-manuscript.  
+manuscript.\
 
 | Term | Definition |
 |----|----|
@@ -107,7 +107,7 @@ manuscript.
 | **Time invariant confounder** | A confounder that occurs only at a single time point, prior to the exposure and remains stable and/or is not possibly affected by exposure. |
 | **Collider** | A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias. |
 
-  
+\
 
 ## Installation
 
@@ -115,22 +115,24 @@ manuscript.
 package:
 
 ``` r
+
 require(devtools, quietly = TRUE)
 devtools::install_github("istallworthy/devMSMs")
 library(devMSMs)
 ```
 
-  
+\
 
 The helper functions can be installed from the accompanying
 *devMSMsHelpers* repo:
 
 ``` r
+
 devtools::install_github("istallworthy/devMSMsHelpers")
 library(devMSMsHelpers)
 ```
 
-  
+\
 
 ## Recommended Workflow
 
@@ -153,24 +155,24 @@ exposures) for implementing the steps below.
 ![devMSMs schematic of
 workflow](https://raw.githubusercontent.com/istallworthy/devMSMs/main/man/figures/devMSMs_schematic_of_workflow.png)
 
-  
+\
 
 ## Citation & Bug Reports
 
-Please cite your use *devMSMs* using the following citation:  
-  
+Please cite your use *devMSMs* using the following citation:\
+\
 Stallworthy I, Greifer N, DeJoseph M, Padrutt E, Butts K, Berry D
-(2024).  
+(2024).\
 *devMSMs*: Implementing Marginal Structural Models with Longitudinal
 Data. R package version 0.0.0.9000,
 <https://istallworthy.github.io/devMSMs/>.
 
-  
+\
 
 Please report any bugs at the following link:
 <https://github.com/istallworthy/devMSMs/issues>
 
-  
+\
 
 ## Additional Resources
 

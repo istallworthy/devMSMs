@@ -109,7 +109,7 @@ plot(bw)
 
 }
 \seealso{
-\link{cobalt} package, \url{https://cran.r-project.org/web/packages/cobalt/index.html};
+\code{\link[cobalt:cobalt-package]{cobalt::cobalt()}} package, \url{https://cran.r-project.org/web/packages/cobalt/index.html};
 Jackson, 2016 for more on assessing balance for time-varying exposures,
 \url{https://pubmed.ncbi.nlm.nih.gov/27479649/}
 }

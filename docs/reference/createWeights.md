@@ -64,7 +64,8 @@ summary(object, i = 1, ...)
 
   arguments passed to
   [`WeightIt::weightitMSM()`](https://ngreifer.github.io/WeightIt/reference/weightitMSM.html)
-  or `summary.weightitMSM()`
+  or
+  [`WeightIt::summary.weightitMSM()`](https://ngreifer.github.io/WeightIt/reference/summary.weightit.html)
 
 - x, object:
 
@@ -126,11 +127,13 @@ w <- createWeights(data = data, formulas = f,
                    method = "cbps")
 w <- createWeights(data = data, formulas = f,
                    method = "gbm")
+#> Warning: No `criterion` was provided. Using "p.mean".
+#> Warning: No `criterion` was provided. Using "p.mean".
+#> Warning: No `criterion` was provided. Using "p.mean".
 w <- createWeights(data = data, formulas = f,
                    method = "bart")
 w <- createWeights(data = data, formulas = f,
                    method = "super")
-#> Loading required package: nnls
 #> Warning: All algorithms have zero weight
 #> Warning: All metalearner coefficients are zero, predictions will all be equal to 0
 #> Warning: All algorithms have zero weight

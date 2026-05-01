@@ -12,11 +12,11 @@ NULL
 #' 
 #' @param data data in wide format as: a data frame, list of imputed data
 #'  frames, or `mids` object from the `mice` package
-#' @param obj initialized MSM object from [initMSM()]
-#' @param formulas list of balancing formulas at each time point output from [createFormulas()]
-#' @param weights list of IPTW weights output from [createWeights()]
-#' @param fit list of model outputs from [fitModel()]
-#' @param bal_stats list of balance statistics from [assessBalance()]
+#' @param obj initialized MSM object from [devMSMs::initMSM()]
+#' @param formulas list of balancing formulas at each time point output from [devMSMs::createFormulas()]
+#' @param weights list of IPTW weights output from [devMSMs::createWeights()]
+#' @param fit list of model outputs from [devMSMs::fitModel()]
+#' @param bal_stats list of balance statistics from [devMSMs::assessBalance()]
 #' 
 #' @param verbose (optional) TRUE or FALSE indicator for printing output to console.
 #' default is FALSE.

@@ -420,7 +420,7 @@ compareHistories <- function(
 
 #' @rdname compareHistories
 #'
-#' @param x devMSM_histories object from [compareHistories()]
+#' @param x devMSM_histories object from [devMSMs::compareHistories()]
 #' @param ... ignored
 #'
 #' @export
@@ -498,7 +498,7 @@ print.devMSM_comparisons <- function(x, save.out = FALSE, ...) {
 #' @rdname compareHistories
 #'
 #' @inheritParams devMSM_common_docs
-#' @param x devMSM_histories object from [compareHistories()]
+#' @param x devMSM_histories object from [devMSMs::compareHistories()]
 #' @param colors (optional) character specifying Brewer palette or list of
 #'   colors (n(epochs)+1) for plotting (default is "Dark2" palette)
 #' @param exp_lab (optional) character label for exposure variable in plots
@@ -608,7 +608,7 @@ plot.devMSM_comparisons <- function(x, colors = "Dark2", exp_lab = NULL, out_lab
 
 #' @rdname compareHistories
 #'
-#' @param object devMSM_histories object from [compareHistories()]
+#' @param object devMSM_histories object from [devMSMs::compareHistories()]
 #' @param type Either "preds" or "comps" corresponding to the
 #'  results of [marginaleffects::avg_predictions()] at low and high dosages or
 #'  [marginaleffects::avg_comparisons()] respectively

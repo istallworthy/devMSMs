@@ -7,9 +7,8 @@ Inputs](https://istallworthy.github.io/devMSMs/articles/Specify_Core_Inputs.html
 [Recommended Preliminary
 Steps](https://istallworthy.github.io/devMSMs/articles/Preliminary_Steps.html),
 and *Workflows* vignettes. A more thorough introduction to these
-concepts can be found in the forthcoming manuscript: *\[insert
-link\]*.  
-  
+concepts can be found in the forthcoming manuscript: *\[insert link\]*.\
+\
 
 Key Terminology
 
@@ -27,21 +26,23 @@ Key Terminology
 | **Collider** | A variable that represents a common effect of exposure at a given time point and outcome; adjusting for which introduces bias. |
 
 Summary of terminology used in *devMSMs*
-{#tinytable_z9xvy0g8pj83gk5cl2s0}
+{#tinytable_ay85bhw0tvun6iq9qh8a .table .tinytable
+style="width: auto; margin-left: auto; margin-right: auto;"
+quarto-disable-processing="true"}
 
-  
+\
 
 ## Weights Formula
 
 Weights formula are formula, or mathematical equations, created at each
 exposure time point, regressing exposure on confounders for the purpose
 of creating and/or assessing balancing weights. The general form is
-given by:  
-  
+given by:\
+\
 
     ESETA1.t ~ time-invariant confounders + time-varying confounders + lagged exposures + lagged outcomes
 
-  
+\
 
 Below is a table that summarizes the three formula `type`s that will be
 used.
@@ -56,9 +57,11 @@ creating balancing weights and assessing their performance in devMSMs
 with respect to their inclusion of time-varying confounders and the
 `type` specification to create them using the
 [`createFormulas()`](https://istallworthy.github.io/devMSMs/reference/createFormulas.md)
-function. {#tinytable_t3j8d8fb4d3rmxm8uxa5}
+function. {#tinytable_hnpurdev4ttr4gbggax4 .table .tinytable
+style="width: auto; margin-left: auto; margin-right: auto;"
+quarto-disable-processing="true"}
 
-  
+\
 
 ## 7 core functions of *devMSMs*
 
@@ -75,4 +78,6 @@ There are 7 key functions that are used in the *devMSMs* workflow.
 | [`compareHistories()`](https://istallworthy.github.io/reference/compareHistories) | Estimate, compare, & visualize model-predicted outcomes as a function of exposure history. | `data`, `msmObject`, `fitted model` | Tables of estimated values and comparisons. Boxplot. |
 
 Summary of the 7 core functions of the *devMSMs* package.
-{#tinytable_73c63f9ce8ng9iyzul9w}
+{#tinytable_xhx9hv5zlmks7yf7bexk .table .tinytable
+style="width: auto; margin-left: auto; margin-right: auto;"
+quarto-disable-processing="true"}

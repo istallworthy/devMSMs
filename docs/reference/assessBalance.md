@@ -106,9 +106,9 @@ datasets)
 
 ## See also
 
-cobalt package,
-<https://cran.r-project.org/web/packages/cobalt/index.html>; Jackson,
-2016 for more on assessing balance for time-varying exposures,
+[cobalt::cobalt](https://ngreifer.github.io/cobalt/reference/cobalt-package.html)
+package, <https://cran.r-project.org/web/packages/cobalt/index.html>;
+Jackson, 2016 for more on assessing balance for time-varying exposures,
 <https://pubmed.ncbi.nlm.nih.gov/27479649/>
 
 ## Examples

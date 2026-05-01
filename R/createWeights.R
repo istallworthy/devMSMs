@@ -10,7 +10,7 @@
 #' @inheritParams devMSM_common_docs
 #' @param method character string of `weightitMSM()` balancing method
 #'   abbreviation (default is generalized linear models propensity score weighting `"glm"`)
-#' @param \dots arguments passed to [WeightIt::weightitMSM()] or [summary.weightitMSM()]
+#' @param \dots arguments passed to [WeightIt::weightitMSM()] or [WeightIt::summary.weightitMSM()]
 #' @param x,object `devMSM_weights` object from `createWeights()`
 #' @return a list containing [WeightIt::weightitMSM()] output. It is the length
 #'  of the number of datasets (1 for a data.frame or the number of imputed datasets).
@@ -99,7 +99,7 @@ createWeights <- function(
     # TODO: Isa and Noah to discuss defaults; keeping weightIt defaults 
     custom_args <- switch(method,
       "super" = list(SL.library = c("SL.glm", "SL.glm.interaction")),
-      "gbm" = list(criterion = "p.mean"), # required? even tho doc says there is default
+      # "gbm" = list(criterion = "p.mean"), # required? even tho doc says there is default. #IS removed 4/29/26 to use default with binary
       list()
     )
     

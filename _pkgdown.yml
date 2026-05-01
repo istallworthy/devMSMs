@@ -11,7 +11,7 @@ home:
     structure: [links, license, community, citation, authors]
 navbar:
   structure:
-    left:  [reference, articles, news]
+    left:  [reference, articles, faq]
     right: [search, github]
   components:
     articles:
@@ -29,3 +29,6 @@ navbar:
         href: articles/Assessing_Balance_Tv.html
       - text: Customizing Weights Formulas
         href: articles/Customize_Balancing_Formulas.html
+    faq:
+      text: FAQs
+      href: articles/FAQs.html
